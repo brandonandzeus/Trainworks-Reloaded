@@ -1,0 +1,79 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>TrainworksReloaded.Plugin</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <AssemblyVersion>0.1.0</AssemblyVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BepInEx.Analyzers" Version="1.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="BepInEx.PluginInfoProps" Version="2.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TrainworksReloaded.Base\TrainworksReloaded.Base.csproj" />
+  </ItemGroup>
+  
+  <!-- For builds we need to copy these files as monster train does not use these DLLs as part of its assembly -->
+  <ItemGroup>
+    <!-- microsoft.extensions.configuration does not release a 2.1 variation -->
+    <Content Include="$(UserProfile)\.nuget\packages\microsoft.extensions.configuration\9.0.2\lib\netstandard2.0\*.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(UserProfile)\.nuget\packages\microsoft.extensions.configuration.json\9.0.2\lib\netstandard2.1\*.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(UserProfile)\.nuget\packages\microsoft.extensions.configuration.abstractions\9.0.2\lib\netstandard2.0\*.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(UserProfile)\.nuget\packages\simpleinjector\5.5.0\lib\netstandard2.1\*.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(UserProfile)\.nuget\packages\microsoft.extensions.configuration.fileextensions\9.0.2\lib\netstandard2.0\*.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(UserProfile)\.nuget\packages\microsoft.extensions.fileproviders.abstractions\9.0.2\lib\netstandard2.0\*.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(UserProfile)\.nuget\packages\microsoft.extensions.fileproviders.physical\9.0.2\lib\netstandard2.0\*.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(UserProfile)\.nuget\packages\microsoft.extensions.primitives\9.0.2\lib\netstandard2.0\*.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(UserProfile)\.nuget\packages\microsoft.extensions.filesystemglobbing\9.0.2\lib\netstandard2.0\*.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(UserProfile)\.nuget\packages\system.memory\4.5.5\lib\netstandard2.0\*.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(UserProfile)\.nuget\packages\system.memory\4.5.5\lib\netstandard2.0\*.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(UserProfile)\.nuget\packages\system.text.json\9.0.2\lib\netstandard2.0\*.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(UserProfile)\.nuget\packages\microsoft.bcl.asyncinterfaces\9.0.2\lib\netstandard2.1\*.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(UserProfile)\.nuget\packages\system.numerics.vectors\4.4.0\lib\netstandard2.0\*.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(UserProfile)\.nuget\packages\system.text.encodings.web\9.0.2\lib\netstandard2.0\*.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(UserProfile)\.nuget\packages\system.io.pipelines\9.0.2\lib\netstandard2.0\*.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(UserProfile)\.nuget\packages\system.buffers\4.5.1\lib\netstandard2.0\*.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>
