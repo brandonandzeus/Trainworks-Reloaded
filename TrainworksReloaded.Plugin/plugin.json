@@ -1,7 +1,53 @@
 {
-    "cards":[
+  "cards": [
+    {
+      "id": "StarterFireStarter",
+      "override": true, //if override is true, we will override a pre-existing card (works with both vanilla and other mod creators so long as you load after them.)
+      "cost": 0
+    },
+    {
+      "id": "blue_eyes_white_dragon", //unique name for the plugin (Required)
+      "override": false, //Useful for overriding existing cards
+      "names": {
+        "english": "Blue Eyes White Dragon",
+        "french": "Dragon Blanc Aux Yeux Bleux"
+      },
+      "extra_description": {
+        "english": "Rawr",
+        "french": "le rawr"
+      },
+      "cost": "8", //default: 0
+      "type": "monster", // can be: "invalid", "spell" (default), "monster", "blight", "junk", "equipment", "room" 
+      "cost_type": "default", // can be: "default" (default), "x", "unplayable"
+      "rarity": "rare", // can be: "common" (default), "uncommon", "starter", "rare", "champion"
+      "class": "example", // if excluded it is general, elsewise we assign class
+      "unlock_level": 0, // what level to unlock 0 and 1 are always available
+      "ability": false, // whether this card is an ability
+      "ability_effects_other_floors": false, // whether this ability will effect other floors
+      "cooldown": 0, //ability cooldown
+      "initial_cooldown": 0, //ability cooldown when played
+      "targets_room": false, //whether this card targets a room
+      "targetless": false, //whether this card has no targets
+      "dlc": "none", //what dlc do you need to have access to this card, currently only option is none
+      "traits": [],
+      "effects": [],
+      "triggers": [],
+      "effect_triggers": [],
+      "initial_upgrades": [],
+      "shared_discovery_cards": [],
+      "shared_mastery_cards": [],
+      "count_for_mastery": true,
+      "hide_in_logbook": false,
+      "lore_tooltips": [
         {
-            "id": "blue_eyes_white_dragon"
+          "english": "This legendary dragon is a powerful engine of destruction. Virtually invincible, very few have faced this awesome creature and lived to tell the tale",
+          "french": "Ce dragon legendaire est un puissant moteur de destruction. Rares sont ceux qui ont survecu a cette terrifiante creature quasiment invincible pour en parler"
         }
-    ]
+      ],
+      "target_assist": "front_friendly", //can be: front_friendly, back_friendly, front_enemy, back_enemy
+      "artist": "Unknown" //I don't know who did the OG art for blue eyes
+      // "vfx": ""
+      // "mastery_card": "blue_eyes_white_dragon" (If this exists, this card will be hidden from the logbook and be mastered when the other card is mastered)
+    }
+  ]
 }

@@ -40,6 +40,8 @@ namespace TrainworksReloaded.Core.Impl
                 var configuration = new ConfigurationBuilder();
                 foreach (var action in configActions[key])
                 {
+                    var basePath = Path.GetDirectoryName(action.Method.DeclaringType.Assembly.Location);
+                    configuration.SetBasePath(basePath);
                     action(configuration);
                 }
                 var definition = new PluginDefinition(configuration.Build());

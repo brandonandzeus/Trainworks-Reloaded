@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using TrainworksReloaded.Base;
+using TrainworksReloaded.Base.Card;
 using TrainworksReloaded.Core;
 using TrainworksReloaded.Core.Interfaces;
 

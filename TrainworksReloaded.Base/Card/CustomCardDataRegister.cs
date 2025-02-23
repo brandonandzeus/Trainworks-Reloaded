@@ -8,9 +8,9 @@ using TrainworksReloaded.Core;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
 
-namespace TrainworksReloaded.Base
+namespace TrainworksReloaded.Base.Card
 {
-    public class CustomCardDataRegister : Dictionary<string, CardData>, IRegister<CardData>
+    public class CustomCardDataRegister : Dictionary<string, CardData>, ICustomRegister<CardData>
     {
         public CardPool CustomCardPool;
         public ReorderableArray<CardData> CardPoolBacking;
@@ -22,7 +22,7 @@ namespace TrainworksReloaded.Base
         public void Register(string key, CardData item)
         {
             CardPoolBacking.Add(item);
-            this.Add(key, item);
+            Add(key, item);
         }
     }
 }

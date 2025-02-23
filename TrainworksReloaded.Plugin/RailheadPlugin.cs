@@ -12,6 +12,7 @@ using System;
 using System.Linq;
 using System.IO;
 using Microsoft.Extensions.FileProviders;
+using TrainworksReloaded.Base.Card;
 
 namespace TrainworkReloaded.Plugin
 {
@@ -19,52 +20,52 @@ namespace TrainworkReloaded.Plugin
     [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
     public class Plugin : BaseUnityPlugin
     {
-        internal static new ManualLogSource Logger = new("MySource");
+        internal static new ManualLogSource Logger = new("TrainworksReloaded");
 
         private void Awake()
         {
+            // Setup Game Client
+            var client = new GameDataClient();
+            DepInjector.AddClient(client);
+
             // Plugin startup logic
             Logger = base.Logger;
-            Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
-
 
             //everything rail head
             var builder = Railhead.GetBuilder();
             builder.Configure(MyPluginInfo.PLUGIN_GUID, c =>
             {
-                var basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                var path = Path.Combine(basePath, "plugin.json");
-                c.AddJsonFile(path);
-            });
-
-            builder.ConfigureLoaders(c =>
-            {
-
+                c.AddJsonFile("plugin.json");
             });
 
             Railend.ConfigurePreAction(c =>
             {
+                //Register for Logging
                 c.RegisterInstance<ManualLogSource>(Logger);
-                c.RegisterSingleton<IRegister<CardData>, CustomCardDataRegister>();
+
+                //Register hooking into games dependency injection system
+                c.RegisterInstance<GameDataClient>(client);
+
+                //Register Card Data
+                c.Register<IRegister<CardData>, CardDataRegister>(); //lookup for all registered card data
+                c.Register<CardDataRegister, CardDataRegister>();
+                c.RegisterSingleton<ICustomRegister<CardData>, CustomCardDataRegister>(); //a place to register and access custom card data
                 c.RegisterSingleton<CustomCardDataRegister, CustomCardDataRegister>();
-                c.Register<IDataPipeline<IRegister<CardData>>, CardDataPipeline>();
-                c.RegisterInitializer<IRegister<CardData>>(x =>
+                c.Register<IDataPipeline<ICustomRegister<CardData>>, CardDataPipeline>(); //a data pipeline to run as soon as register is needed
+                c.RegisterInitializer<ICustomRegister<CardData>>(x =>
                 {
-                    var pipeline = c.GetInstance<IDataPipeline<IRegister<CardData>>>();
+                    var pipeline = c.GetInstance<IDataPipeline<ICustomRegister<CardData>>>();
                     pipeline.Run(x);
                 });
+
+                //Register Loggers
+                c.RegisterConditional(typeof(IModLogger<>), typeof(ModLogger<>), c => !c.Handled);
             });
 
             var harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
             harmony.PatchAll();
 
-            /*
-            Logger.LogInfo("Loaded Assemblies:");
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies().OrderBy(a => a.FullName))
-            {
-                Console.WriteLine($"{assembly.FullName} - Location: {assembly.Location}");
-            }
-            */
+            Logger.LogInfo($"Plugin {MyPluginInfo.PLUGIN_GUID} is loaded!");
         }
     }
 }
