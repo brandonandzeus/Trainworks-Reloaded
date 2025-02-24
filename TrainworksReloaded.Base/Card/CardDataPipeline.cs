@@ -1,10 +1,12 @@
 ﻿using BepInEx.Logging;
 using HarmonyLib;
 using Microsoft.Extensions.Configuration;
+using ShinyShoe;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using TrainworksReloaded.Base.Extensions;
+using TrainworksReloaded.Base.Localization;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
@@ -16,12 +18,14 @@ namespace TrainworksReloaded.Base.Card
     {
         private readonly PluginAtlas atlas;
         private readonly IRegister<CardData> register;
+        private readonly ICustomRegister<LocalizationTerm> termRegister;
         private readonly IModLogger<CardDataPipeline> logger;
 
-        public CardDataPipeline(PluginAtlas atlas, IRegister<CardData> register, IModLogger<CardDataPipeline> logger)
+        public CardDataPipeline(PluginAtlas atlas, IRegister<CardData> register, ICustomRegister<LocalizationTerm> termRegister, IModLogger<CardDataPipeline> logger)
         {
             this.atlas = atlas;
             this.register = register;
+            this.termRegister = termRegister;
             this.logger = logger;
         }
 
@@ -51,12 +55,14 @@ namespace TrainworksReloaded.Base.Card
 
             var name = $"{key}-{id}";
             var namekey = $"CardData_nameKey-{name}";
+            var descriptionKey = $"CardData_descriptionKey-{name}";
             var checkOverride = configuration.GetSection("override").ParseBool() ?? false;
 
             string guid;
-            if (checkOverride && register.TryLookupName(id, out CardData? data, out bool? _))
+            if (checkOverride && register.TryLookupName(id, out CardData? data))
             {
                 logger.Log(Core.Interfaces.LogLevel.Info, $"Overriding Card {id}... ");
+                descriptionKey = data.GetOverrideDescriptionKey();
                 namekey = data.GetNameKey();
                 guid = data.GetID();
             }
@@ -68,9 +74,26 @@ namespace TrainworksReloaded.Base.Card
                 guid = Guid.NewGuid().ToString();
             }
 
-            //handle name key
-            AccessTools.Field(typeof(CardData), "nameKey").SetValue(data, namekey);
+            //handle id
             AccessTools.Field(typeof(CardData), "id").SetValue(data, guid);
+
+            //handle names
+            AccessTools.Field(typeof(CardData), "nameKey").SetValue(data, namekey);
+            var localizationNameTerm = configuration.GetSection("names").ParseLocalizationTerm();
+            if (localizationNameTerm != null)
+            {
+                localizationNameTerm.Key = namekey;
+                termRegister.Register(namekey, localizationNameTerm);
+            }
+
+            //handle description
+            AccessTools.Field(typeof(CardData), "overrideDescriptionKey").SetValue(data, descriptionKey);
+            var localizationDescTerm = configuration.GetSection("extra_description").ParseLocalizationTerm();
+            if (localizationDescTerm != null)
+            {
+                localizationDescTerm.Key = descriptionKey;
+                termRegister.Register(descriptionKey, localizationDescTerm);
+            }
 
             //handle one-to-one values
             var defaultCost = checkOverride ? (int)AccessTools.Field(typeof(CardData), "cost").GetValue(data) : 0;
@@ -88,20 +111,61 @@ namespace TrainworksReloaded.Base.Card
             var defaultCooldown = checkOverride ? (int)AccessTools.Field(typeof(CardData), "cooldownAfterActivated").GetValue(data) : 0;
             AccessTools.Field(typeof(CardData), "cooldownAfterActivated").SetValue(data, configuration.GetSection("cooldown").ParseInt() ?? defaultCooldown);
 
-            var defaultAbility = checkOverride ? (bool)AccessTools.Field(typeof(CardData), "isUnitAbility").GetValue(data) : false;
+            var defaultAbility = checkOverride && (bool)AccessTools.Field(typeof(CardData), "isUnitAbility").GetValue(data);
             AccessTools.Field(typeof(CardData), "isUnitAbility").SetValue(data, configuration.GetSection("ability").ParseBool() ?? defaultAbility);
 
-            var defaultTargetsRoom = checkOverride ? (bool)AccessTools.Field(typeof(CardData), "targetsRoom").GetValue(data) : false;
+            var defaultTargetsRoom = checkOverride && (bool)AccessTools.Field(typeof(CardData), "targetsRoom").GetValue(data);
             AccessTools.Field(typeof(CardData), "targetsRoom").SetValue(data, configuration.GetSection("targets_room").ParseBool() ?? defaultTargetsRoom);
 
-            var defaultTargetless = checkOverride ? (bool)AccessTools.Field(typeof(CardData), "targetless").GetValue(data) : false;
+            var defaultTargetless = checkOverride && (bool)AccessTools.Field(typeof(CardData), "targetless").GetValue(data);
             AccessTools.Field(typeof(CardData), "targetless").SetValue(data, configuration.GetSection("targetless").ParseBool() ?? defaultTargetless);
 
-            //handle names
+            var defaultRarity = checkOverride ? (CollectableRarity)AccessTools.Field(typeof(CardData), "rarity").GetValue(data) : CollectableRarity.Common;
+            AccessTools.Field(typeof(CardData), "rarity").SetValue(data, configuration.GetSection("rarity").ParseRarity() ?? defaultRarity);
 
-            //handle description
-            //AccessTools.Field(typeof(CardData), "overrideDescriptionKey").SetValue(data, configuration.GetSection("override_description_key").ParseString());
-            
+            var defaultDLC = checkOverride ? (DLC)AccessTools.Field(typeof(CardData), "requiredDLC").GetValue(data) : DLC.None;
+            AccessTools.Field(typeof(CardData), "requiredDLC").SetValue(data, configuration.GetSection("dlc").ParseDLC() ?? defaultDLC);
+
+            var defaultUnlockLevel = checkOverride ? (int)AccessTools.Field(typeof(CardData), "unlockLevel").GetValue(data) : 0;
+            AccessTools.Field(typeof(CardData), "unlockLevel").SetValue(data, configuration.GetSection("unlock_level").ParseInt() ?? defaultUnlockLevel);
+
+            var ignoreWhenCountingMastery = checkOverride && (bool)AccessTools.Field(typeof(CardData), "ignoreWhenCountingMastery").GetValue(data);
+            AccessTools.Field(typeof(CardData), "ignoreWhenCountingMastery").SetValue(data, configuration.GetSection("count_for_mastery").ParseBool() ?? ignoreWhenCountingMastery);
+
+            var hideInLogbook = checkOverride && (bool)AccessTools.Field(typeof(CardData), "hideInLogbook").GetValue(data);
+            AccessTools.Field(typeof(CardData), "hideInLogbook").SetValue(data, configuration.GetSection("hide_in_logbook").ParseBool() ?? hideInLogbook);
+
+            var initialKeyboardTarget = checkOverride ? (CardInitialKeyboardTarget)AccessTools.Field(typeof(CardData), "initialKeyboardTarget").GetValue(data) : CardInitialKeyboardTarget.FrontFriendly;
+            AccessTools.Field(typeof(CardData), "initialKeyboardTarget").SetValue(data, configuration.GetSection("target_assist").ParseKeyboardTarget() ?? initialKeyboardTarget);
+
+            var canAbilityTargetOtherFloors = checkOverride && (bool)AccessTools.Field(typeof(CardData), "canAbilityTargetOtherFloors").GetValue(data);
+            AccessTools.Field(typeof(CardData), "canAbilityTargetOtherFloors").SetValue(data, configuration.GetSection("ability_effects_other_floors").ParseBool() ?? canAbilityTargetOtherFloors);
+
+            var artistAttribution = checkOverride ? (string)AccessTools.Field(typeof(CardData), "artistAttribution").GetValue(data) : "";
+            AccessTools.Field(typeof(CardData), "artistAttribution").SetValue(data, configuration.GetSection("artist").ParseString() ?? artistAttribution);
+
+            //handle tooltips
+            int tooltip_count = 0;
+            var tooltips = checkOverride ? [] : (List<String>)AccessTools.Field(typeof(CardData), "cardLoreTooltipKeys").GetValue(data);
+            foreach (var tooltip in configuration.GetSection("lore_tooltips").GetChildren())
+            {
+                var localizationTooltipTerm = tooltip.ParseLocalizationTerm();
+                if (localizationTooltipTerm != null)
+                {
+                    string tooltipKey = $"CardData_tooltipKey{tooltip_count}-{name}";
+                    if (checkOverride && tooltips.Contains(localizationTooltipTerm.Key))
+                    {
+                        tooltipKey = localizationTooltipTerm.Key;
+                    }
+                    else
+                    {
+                        localizationTooltipTerm.Key = tooltipKey;
+                    }
+                    termRegister.Register(tooltipKey, localizationTooltipTerm);
+                    tooltip_count++;
+                }
+            }
+
             //register before filling in data using 
             if (!checkOverride)
                 service.Register(name, data);

@@ -11,6 +11,7 @@ namespace TrainworksReloaded.Core.Extensions
         {
             return section.Value;
         }
+
         public static int? ParseInt(this IConfigurationSection section)
         {
             var val = section.Value;

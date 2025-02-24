@@ -13,8 +13,8 @@ namespace TrainworksReloaded.Core.Impl
 {
     public class LazyBuilder : ILazyBuilder
     {
-        public Dictionary<String, List<Action<IConfigurationBuilder>>> configActions = new Dictionary<String, List<Action<IConfigurationBuilder>>>();
-        public List<Action<Container>> containerActions = new List<Action<Container>>();
+        public Dictionary<String, List<Action<IConfigurationBuilder>>> configActions = [];
+        public List<Action<Container>> containerActions = [];
         public void Configure(string pluginId, Action<IConfigurationBuilder> action)
         {
             if (configActions.TryGetValue(pluginId, out var actions)){
@@ -22,7 +22,7 @@ namespace TrainworksReloaded.Core.Impl
             }
             else
             {
-                configActions.Add(pluginId, new List<Action<IConfigurationBuilder>>() { action } );
+                configActions.Add(pluginId, [action] );
             }
         }
 
@@ -34,17 +34,21 @@ namespace TrainworksReloaded.Core.Impl
 
         public void Build(Container container)
         {
+            //build atlas from configuration
             var atlas = new PluginAtlas();
             foreach (var key in configActions.Keys)
             {
                 var configuration = new ConfigurationBuilder();
+                var directory = new HashSet<string>();
                 foreach (var action in configActions[key])
                 {
                     var basePath = Path.GetDirectoryName(action.Method.DeclaringType.Assembly.Location);
+                    directory.Add(basePath);
                     configuration.SetBasePath(basePath);
                     action(configuration);
                 }
                 var definition = new PluginDefinition(configuration.Build());
+                definition.AssetDirectories.AddRange(directory);
                 atlas.PluginDefinitions.Add(key, definition);
             }
             container.RegisterInstance<PluginAtlas>(atlas);

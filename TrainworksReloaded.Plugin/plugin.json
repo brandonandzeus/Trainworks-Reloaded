@@ -3,16 +3,33 @@
     {
       "id": "StarterFireStarter",
       "override": true, //if override is true, we will override a pre-existing card (works with both vanilla and other mod creators so long as you load after them.)
-      "cost": 0
+      "cost": 0,
+      "names": {
+        "english": "Starter of Fire",
+        "french": "Le Starter of Fire"
+      }
     },
     {
       "id": "blue_eyes_white_dragon", //unique name for the plugin (Required)
       "override": false, //Useful for overriding existing cards
       "names": {
+        "type": "Text", // provided here, but the only type that exists is 'Text'
+        "description": "", //doesn't do much
+        "group": "CardData_BlueEyes", //it is recommended to give your localization terms a Group if they are related
+        "speaker_descriptions": "", //used for text-to-speech
         "english": "Blue Eyes White Dragon",
-        "french": "Dragon Blanc Aux Yeux Bleux"
+        "french": "Dragon Blanc Aux Yeux Bleux",
+        "german": "",
+        "russian": "",
+        "portuguese": "",
+        "chinese": "",
+        "spanish": "",
+        "chinese_traditional": "",
+        "korean": "",
+        "japanese": ""
       },
       "extra_description": {
+        "group": "CardData_BlueEyes", //it is recommended to give your localization terms a Group if they are related
         "english": "Rawr",
         "french": "le rawr"
       },
@@ -40,6 +57,7 @@
       "hide_in_logbook": false,
       "lore_tooltips": [
         {
+          "key": "", //if overriding a lore tooltip, provide a key
           "english": "This legendary dragon is a powerful engine of destruction. Virtually invincible, very few have faced this awesome creature and lived to tell the tale",
           "french": "Ce dragon legendaire est un puissant moteur de destruction. Rares sont ceux qui ont survecu a cette terrifiante creature quasiment invincible pour en parler"
         }

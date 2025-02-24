@@ -11,7 +11,7 @@ namespace TrainworksReloaded.Core.Interfaces
     /// <typeparam name="T"></typeparam>
     public interface IRegister<T>
     {
-        public bool TryLookupName(string name, [NotNullWhen(true)] out T? lookup, [NotNullWhen(true)] out bool? isModded);
-        public bool TryLookupId(string id, [NotNullWhen(true)] out T? lookup, [NotNullWhen(true)] out bool? isModded);
+        public bool TryLookupName(string name, [NotNullWhen(true)] out T? lookup);
+        public bool TryLookupId(string id, [NotNullWhen(true)] out T? lookup);
     }
 }

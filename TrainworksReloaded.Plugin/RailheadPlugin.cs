@@ -13,6 +13,9 @@ using System.Linq;
 using System.IO;
 using Microsoft.Extensions.FileProviders;
 using TrainworksReloaded.Base.Card;
+using I2.Loc;
+using static MonoMod.Cil.RuntimeILReferenceBag.FastDelegateInvokers;
+using TrainworksReloaded.Base.Localization;
 
 namespace TrainworkReloaded.Plugin
 {
@@ -22,7 +25,7 @@ namespace TrainworkReloaded.Plugin
     {
         internal static new ManualLogSource Logger = new("TrainworksReloaded");
 
-        private void Awake()
+        public void Awake()
         {
             // Setup Game Client
             var client = new GameDataClient();
@@ -58,9 +61,27 @@ namespace TrainworkReloaded.Plugin
                     pipeline.Run(x);
                 });
 
+                //Register Localization
+                c.RegisterSingleton<ICustomRegister<LocalizationTerm>, CustomLocalizationTermRegistry>();
+                c.RegisterSingleton<CustomLocalizationTermRegistry, CustomLocalizationTermRegistry>();
+
                 //Register Loggers
+                c.RegisterSingleton<IModLogger<CustomLocalizationTermRegistry>, ModLogger<CustomLocalizationTermRegistry>>();
                 c.RegisterConditional(typeof(IModLogger<>), typeof(ModLogger<>), c => !c.Handled);
             });
+
+            //var basePath = Path.GetDirectoryName(typeof(Plugin).Assembly.Location);
+            //LocalizationManager.InitializeIfNeeded();
+            //for (int i = 0; i < LocalizationManager.Sources.Count; i++)
+            //{
+            //    var source = LocalizationManager.Sources[i];
+            //    foreach (var category in source.GetCategories())
+            //    {
+            //        var str = source.Export_CSV(category);
+            //        var file_name = $"{i}_{category}.csv";
+            //        File.WriteAllText(Path.Combine(basePath, file_name), str);
+            //    }
+            //}
 
             var harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
             harmony.PatchAll();
