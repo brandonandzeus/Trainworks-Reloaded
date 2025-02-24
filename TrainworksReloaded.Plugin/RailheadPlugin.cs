@@ -17,6 +17,9 @@ using I2.Loc;
 using static MonoMod.Cil.RuntimeILReferenceBag.FastDelegateInvokers;
 using TrainworksReloaded.Base.Localization;
 using TrainworksReloaded.Base.Class;
+using UnityEngine;
+using TrainworksReloaded.Base.Prefab;
+using UnityEngine.AddressableAssets;
 
 namespace TrainworkReloaded.Plugin
 {
@@ -28,9 +31,29 @@ namespace TrainworkReloaded.Plugin
 
         public void Awake()
         {
+            //Pregame Actions
+            var configToolsCSV = Config.Bind("Tools", "Generate CSVs", false, "Enable to Generate the Games' CSV Files on Launch");
+            if (configToolsCSV.Value)
+            {
+                var basePath = Path.GetDirectoryName(typeof(Plugin).Assembly.Location);
+                LocalizationManager.InitializeIfNeeded();
+                for (int i = 0; i < LocalizationManager.Sources.Count; i++)
+                {
+                    var source = LocalizationManager.Sources[i];
+                    foreach (var category in source.GetCategories())
+                    {
+                        var str = source.Export_CSV(category);
+                        var file_name = $"{i}_{category}.csv";
+                        File.WriteAllText(Path.Combine(basePath, file_name), str);
+                    }
+                }
+            }
+
+
             // Setup Game Client
             var client = new GameDataClient();
             DepInjector.AddClient(client);
+
 
             // Plugin startup logic
             Logger = base.Logger;
@@ -68,23 +91,27 @@ namespace TrainworkReloaded.Plugin
                 c.RegisterSingleton<IRegister<LocalizationTerm>, CustomLocalizationTermRegistry>();
                 c.RegisterSingleton<CustomLocalizationTermRegistry, CustomLocalizationTermRegistry>();
 
+                c.RegisterSingleton<IRegister<GameObject>, GameobjectRegister>();
+                c.RegisterSingleton<GameobjectRegister, GameobjectRegister>();
+                c.RegisterInitializer<GameobjectRegister>(x =>
+                {
+                    Addressables.ResourceLocators.Add(x);
+                });
+                c.Register<IDataPipeline<IRegister<GameObject>>, TextureImportPipeline>(); //a data pipeline to run as soon as register is needed
+                c.RegisterInitializer<IRegister<GameObject>>(x =>
+                {
+                    var pipeline = c.GetInstance<IDataPipeline<IRegister<GameObject>>>();
+                    pipeline.Run(x);
+                });
+
+
                 //Register Loggers
                 c.RegisterSingleton<IModLogger<CustomLocalizationTermRegistry>, ModLogger<CustomLocalizationTermRegistry>>();
                 c.RegisterConditional(typeof(IModLogger<>), typeof(ModLogger<>), c => !c.Handled);
             });
 
-            //var basePath = Path.GetDirectoryName(typeof(Plugin).Assembly.Location);
-            //LocalizationManager.InitializeIfNeeded();
-            //for (int i = 0; i < LocalizationManager.Sources.Count; i++)
-            //{
-            //    var source = LocalizationManager.Sources[i];
-            //    foreach (var category in source.GetCategories())
-            //    {
-            //        var str = source.Export_CSV(category);
-            //        var file_name = $"{i}_{category}.csv";
-            //        File.WriteAllText(Path.Combine(basePath, file_name), str);
-            //    }
-            //}
+
+
 
             var harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
             harmony.PatchAll();

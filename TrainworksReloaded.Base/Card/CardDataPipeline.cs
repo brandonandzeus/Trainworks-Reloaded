@@ -13,11 +13,13 @@ using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 namespace TrainworksReloaded.Base.Card
 {
-    public class CardDataDefinition(CardData data, IConfiguration configuration, bool isOverride)
+    public class CardDataDefinition(string key, CardData data, IConfiguration configuration, bool isOverride)
     {
+        public string ModKey { get; set; } = key;
         public CardData Data { get; set; } = data;
         public IConfiguration Configuration { get; set; } = configuration;
         public bool IsOverride { get; set; } = isOverride;
@@ -200,7 +202,7 @@ namespace TrainworksReloaded.Base.Card
             if (!checkOverride)
                 service.Register(name, data);
 
-            return new CardDataDefinition(data, configuration, checkOverride);
+            return new CardDataDefinition(key, data, configuration, checkOverride);
         }
 
         /// <summary>
@@ -261,7 +263,15 @@ namespace TrainworksReloaded.Base.Card
                 AccessTools.Field(typeof(CardData), "linkedMasteryCard").SetValue(data, MasteryCard);
             }
 
-
+            //will this work?
+            var gameObjectRegister = container.GetInstance<IRegister<GameObject>>();
+            var cardArtReference = configuration.GetSection("card_art_reference").ParseString();
+            var gameObjectName = $"{definition.ModKey}-{cardArtReference}";
+            if (cardArtReference != null && gameObjectRegister.TryLookupName(gameObjectName, out var gameObject, out var _))
+            {
+                var assetRef = (AssetReferenceGameObject)AccessTools.Field(typeof(CardData), "cardArtPrefabVariantRef").GetValue(data);
+                assetRef.SetAssetAndId(gameObjectName,gameObject);
+            }
         }
 
     }

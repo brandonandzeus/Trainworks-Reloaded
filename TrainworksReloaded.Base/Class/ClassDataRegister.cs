@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
@@ -28,6 +29,9 @@ namespace TrainworksReloaded.Base.Class
 
         public void Register(string key, ClassData item)
         {
+            var gamedata = SaveManager.Value.GetAllGameData();
+            var CardDatas = (List<ClassData>)AccessTools.Field(typeof(AllGameData), "classDatas").GetValue(gamedata);
+            CardDatas.Add(item);
             this.Add(key, item);
         }
 

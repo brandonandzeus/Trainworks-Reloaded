@@ -1,4 +1,10 @@
 {
+  "textures": [
+    {
+      "id": "Gasoline",
+      "path": "textures/gas.png"
+    }
+  ],
   "cards": [
     {
       "id": "StarterFireStarter",
@@ -34,6 +40,7 @@
         "english": "Rawr",
         "french": "le rawr"
       },
+      "card_art_reference": "Gasoline",
       "cost": "8", //default: 0
       "type": "monster", // can be: "invalid", "spell" (default), "monster", "blight", "junk", "equipment", "room" 
       "cost_type": "default", // can be: "default" (default), "x", "unplayable"
