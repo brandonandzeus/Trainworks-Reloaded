@@ -14,7 +14,7 @@ namespace TrainworksReloaded.Plugin.Patches
     {
         public static void Postfix(AssetLoadingData ____assetLoadingData)
         {
-            var register = Railend.GetContainer().GetInstance<CustomCardDataRegister>();
+            var register = Railend.GetContainer().GetInstance<CardDataRegister>();
             ____assetLoadingData.CardPoolsAll.Add(register.CustomCardPool);
 
             var localization = Railend.GetContainer().GetInstance<CustomLocalizationTermRegistry>();

@@ -12,12 +12,12 @@ using static RotaryHeart.Lib.DataBaseExample;
 
 namespace TrainworksReloaded.Base.Card
 {
-    public class CustomCardDataRegister : Dictionary<string, CardData>, IRegister<CardData>
+    public class CardDataRegister : Dictionary<string, CardData>, IRegister<CardData>
     {
         private readonly Lazy<SaveManager> SaveManager;
         public CardPool CustomCardPool;
         public ReorderableArray<CardData> CardPoolBacking;
-        public CustomCardDataRegister(GameDataClient client)
+        public CardDataRegister(GameDataClient client)
         {
             SaveManager = new Lazy<SaveManager>(() =>
             {

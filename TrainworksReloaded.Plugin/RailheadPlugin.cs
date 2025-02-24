@@ -51,8 +51,8 @@ namespace TrainworkReloaded.Plugin
                 c.RegisterInstance<GameDataClient>(client);
 
                 //Register Card Data
-                c.RegisterSingleton<IRegister<CardData>, CustomCardDataRegister>(); //a place to register and access custom card data
-                c.RegisterSingleton<CustomCardDataRegister, CustomCardDataRegister>();
+                c.RegisterSingleton<IRegister<CardData>, CardDataRegister>(); //a place to register and access custom card data
+                c.RegisterSingleton<CardDataRegister, CardDataRegister>();
                 c.Register<IDataPipeline<IRegister<CardData>>, CardDataPipeline>(); //a data pipeline to run as soon as register is needed
                 c.RegisterInitializer<IRegister<CardData>>(x =>
                 {

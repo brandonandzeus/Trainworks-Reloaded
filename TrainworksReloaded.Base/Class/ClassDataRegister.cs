@@ -28,7 +28,7 @@ namespace TrainworksReloaded.Base.Class
 
         public void Register(string key, ClassData item)
         {
-            throw new NotImplementedException();
+            this.Add(key, item);
         }
 
         public bool TryLookupId(string id, [NotNullWhen(true)] out ClassData? lookup, [NotNullWhen(true)] out bool? IsModded)
