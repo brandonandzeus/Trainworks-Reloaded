@@ -7,7 +7,7 @@ using static RimLight;
 
 namespace TrainworksReloaded.Base.Class
 {
-    public class ClassDataRegister : IRegister<ClassData>
+    public class ClassDataRegister : Dictionary<string, ClassData>, IRegister<ClassData>
     {
         private readonly Lazy<SaveManager> SaveManager;
 
@@ -26,28 +26,37 @@ namespace TrainworksReloaded.Base.Class
             });
         }
 
-        public bool TryLookupId(string id, [NotNullWhen(true)] out ClassData? lookup)
+        public void Register(string key, ClassData item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool TryLookupId(string id, [NotNullWhen(true)] out ClassData? lookup, [NotNullWhen(true)] out bool? IsModded)
         {   
             lookup = null;
+            IsModded = null;
             foreach (var @class in SaveManager.Value.GetAllGameData().GetAllClassDatas())
             {
                 if (@class.GetID().Equals(id, StringComparison.OrdinalIgnoreCase))
                 {
                     lookup = @class;
+                    IsModded = ContainsKey(@class.name);
                     return true;
                 }
             }
             return false;
         }
 
-        public bool TryLookupName(string name, [NotNullWhen(true)] out ClassData? lookup)
+        public bool TryLookupName(string name, [NotNullWhen(true)] out ClassData? lookup, [NotNullWhen(true)] out bool? IsModded)
         {
             lookup = null;
+            IsModded = null;
             foreach (var @class in SaveManager.Value.GetAllGameData().GetAllClassDatas())
             {
                 if (@class.name.Equals(name, StringComparison.OrdinalIgnoreCase))
                 {
                     lookup = @class;
+                    IsModded = ContainsKey(@class.name);
                     return true;
                 }
             }

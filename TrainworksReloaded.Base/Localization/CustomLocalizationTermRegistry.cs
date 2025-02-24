@@ -1,12 +1,13 @@
 ﻿using I2.Loc;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using TrainworksReloaded.Core.Interfaces;
 
 namespace TrainworksReloaded.Base.Localization
 {
-    public class CustomLocalizationTermRegistry : Dictionary<string, LocalizationTerm>, ICustomRegister<LocalizationTerm>
+    public class CustomLocalizationTermRegistry : Dictionary<string, LocalizationTerm>, IRegister<LocalizationTerm>
     {
         private readonly IModLogger<CustomLocalizationTermRegistry> logger;
 
@@ -34,6 +35,16 @@ namespace TrainworksReloaded.Base.Localization
             List<string> categories = LocalizationManager.Sources[0].GetCategories(true);
             foreach (string Category in categories)
                 LocalizationManager.Sources[0].Import_CSV(Category, builder.ToString(), eSpreadsheetUpdateMode.Merge, ',');
+        }
+
+        public bool TryLookupName(string name, [NotNullWhen(true)] out LocalizationTerm? lookup, [NotNullWhen(true)] out bool? IsModded)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool TryLookupId(string id, [NotNullWhen(true)] out LocalizationTerm? lookup, [NotNullWhen(true)] out bool? IsModded)
+        {
+            throw new NotImplementedException();
         }
     }
 }

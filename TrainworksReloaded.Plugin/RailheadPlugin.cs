@@ -51,14 +51,12 @@ namespace TrainworkReloaded.Plugin
                 c.RegisterInstance<GameDataClient>(client);
 
                 //Register Card Data
-                c.Register<IRegister<CardData>, CardDataRegister>(); //lookup for all registered card data
-                c.Register<CardDataRegister, CardDataRegister>();
-                c.RegisterSingleton<ICustomRegister<CardData>, CustomCardDataRegister>(); //a place to register and access custom card data
+                c.RegisterSingleton<IRegister<CardData>, CustomCardDataRegister>(); //a place to register and access custom card data
                 c.RegisterSingleton<CustomCardDataRegister, CustomCardDataRegister>();
-                c.Register<IDataPipeline<ICustomRegister<CardData>>, CardDataPipeline>(); //a data pipeline to run as soon as register is needed
-                c.RegisterInitializer<ICustomRegister<CardData>>(x =>
+                c.Register<IDataPipeline<IRegister<CardData>>, CardDataPipeline>(); //a data pipeline to run as soon as register is needed
+                c.RegisterInitializer<IRegister<CardData>>(x =>
                 {
-                    var pipeline = c.GetInstance<IDataPipeline<ICustomRegister<CardData>>>();
+                    var pipeline = c.GetInstance<IDataPipeline<IRegister<CardData>>>();
                     pipeline.Run(x);
                 });
 
@@ -67,7 +65,7 @@ namespace TrainworkReloaded.Plugin
                 c.Register<ClassDataRegister, ClassDataRegister>();
 
                 //Register Localization
-                c.RegisterSingleton<ICustomRegister<LocalizationTerm>, CustomLocalizationTermRegistry>();
+                c.RegisterSingleton<IRegister<LocalizationTerm>, CustomLocalizationTermRegistry>();
                 c.RegisterSingleton<CustomLocalizationTermRegistry, CustomLocalizationTermRegistry>();
 
                 //Register Loggers

@@ -17,7 +17,6 @@ namespace TrainworksReloaded.Plugin.Patches
             var register = Railend.GetContainer().GetInstance<CustomCardDataRegister>();
             ____assetLoadingData.CardPoolsAll.Add(register.CustomCardPool);
 
-
             var localization = Railend.GetContainer().GetInstance<CustomLocalizationTermRegistry>();
             localization.LoadData();
         }
