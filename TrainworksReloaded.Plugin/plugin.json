@@ -7,7 +7,8 @@
       "names": {
         "english": "Starter of Fire",
         "french": "Le Starter of Fire"
-      }
+      },
+      "class": "ClassBanished"
     },
     {
       "id": "blue_eyes_white_dragon", //unique name for the plugin (Required)
@@ -37,7 +38,7 @@
       "type": "monster", // can be: "invalid", "spell" (default), "monster", "blight", "junk", "equipment", "room" 
       "cost_type": "default", // can be: "default" (default), "x", "unplayable"
       "rarity": "rare", // can be: "common" (default), "uncommon", "starter", "rare", "champion"
-      "class": "example", // if excluded it is general, elsewise we assign class
+      "class": "ClassBanished", // if excluded it is general, elsewise we assign class
       "unlock_level": 0, // what level to unlock 0 and 1 are always available
       "ability": false, // whether this card is an ability
       "ability_effects_other_floors": false, // whether this ability will effect other floors

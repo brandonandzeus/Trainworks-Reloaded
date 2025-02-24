@@ -2,6 +2,7 @@
 using HarmonyLib;
 using Microsoft.Extensions.Configuration;
 using ShinyShoe;
+using SimpleInjector;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -18,15 +19,15 @@ namespace TrainworksReloaded.Base.Card
     {
         private readonly PluginAtlas atlas;
         private readonly IRegister<CardData> register;
-        private readonly ICustomRegister<LocalizationTerm> termRegister;
         private readonly IModLogger<CardDataPipeline> logger;
+        private readonly Container container;
 
-        public CardDataPipeline(PluginAtlas atlas, IRegister<CardData> register, ICustomRegister<LocalizationTerm> termRegister, IModLogger<CardDataPipeline> logger)
+        public CardDataPipeline(PluginAtlas atlas, IRegister<CardData> register, IModLogger<CardDataPipeline> logger, Container container)
         {
             this.atlas = atlas;
             this.register = register;
-            this.termRegister = termRegister;
             this.logger = logger;
+            this.container = container;
         }
 
         public void Run(ICustomRegister<CardData> service)
@@ -77,6 +78,8 @@ namespace TrainworksReloaded.Base.Card
             //handle id
             AccessTools.Field(typeof(CardData), "id").SetValue(data, guid);
 
+            var termRegister = container.GetInstance<ICustomRegister<LocalizationTerm>>();
+
             //handle names
             AccessTools.Field(typeof(CardData), "nameKey").SetValue(data, namekey);
             var localizationNameTerm = configuration.GetSection("names").ParseLocalizationTerm();
@@ -93,6 +96,28 @@ namespace TrainworksReloaded.Base.Card
             {
                 localizationDescTerm.Key = descriptionKey;
                 termRegister.Register(descriptionKey, localizationDescTerm);
+            }
+
+            //handle tooltips
+            int tooltip_count = 0;
+            var tooltips = checkOverride ? [] : (List<String>)AccessTools.Field(typeof(CardData), "cardLoreTooltipKeys").GetValue(data);
+            foreach (var tooltip in configuration.GetSection("lore_tooltips").GetChildren())
+            {
+                var localizationTooltipTerm = tooltip.ParseLocalizationTerm();
+                if (localizationTooltipTerm != null)
+                {
+                    string tooltipKey = $"CardData_tooltipKey{tooltip_count}-{name}";
+                    if (checkOverride && tooltips.Contains(localizationTooltipTerm.Key))
+                    {
+                        tooltipKey = localizationTooltipTerm.Key;
+                    }
+                    else
+                    {
+                        localizationTooltipTerm.Key = tooltipKey;
+                    }
+                    termRegister.Register(tooltipKey, localizationTooltipTerm);
+                    tooltip_count++;
+                }
             }
 
             //handle one-to-one values
@@ -144,31 +169,18 @@ namespace TrainworksReloaded.Base.Card
             var artistAttribution = checkOverride ? (string)AccessTools.Field(typeof(CardData), "artistAttribution").GetValue(data) : "";
             AccessTools.Field(typeof(CardData), "artistAttribution").SetValue(data, configuration.GetSection("artist").ParseString() ?? artistAttribution);
 
-            //handle tooltips
-            int tooltip_count = 0;
-            var tooltips = checkOverride ? [] : (List<String>)AccessTools.Field(typeof(CardData), "cardLoreTooltipKeys").GetValue(data);
-            foreach (var tooltip in configuration.GetSection("lore_tooltips").GetChildren())
-            {
-                var localizationTooltipTerm = tooltip.ParseLocalizationTerm();
-                if (localizationTooltipTerm != null)
-                {
-                    string tooltipKey = $"CardData_tooltipKey{tooltip_count}-{name}";
-                    if (checkOverride && tooltips.Contains(localizationTooltipTerm.Key))
-                    {
-                        tooltipKey = localizationTooltipTerm.Key;
-                    }
-                    else
-                    {
-                        localizationTooltipTerm.Key = tooltipKey;
-                    }
-                    termRegister.Register(tooltipKey, localizationTooltipTerm);
-                    tooltip_count++;
-                }
-            }
 
             //register before filling in data using 
             if (!checkOverride)
                 service.Register(name, data);
+
+            //handle serialize references after registration to avoid lookup loops
+            var classRegister = container.GetInstance<IRegister<ClassData>>();
+            var classfield = configuration.GetSection("class").ParseString();
+            if (classfield != null && classRegister.TryLookupName(classfield, out var lookup))
+            {
+                AccessTools.Field(typeof(CardData), "linkedClass").SetValue(data, lookup);
+            }
         }
 
     }

@@ -16,6 +16,7 @@ using TrainworksReloaded.Base.Card;
 using I2.Loc;
 using static MonoMod.Cil.RuntimeILReferenceBag.FastDelegateInvokers;
 using TrainworksReloaded.Base.Localization;
+using TrainworksReloaded.Base.Class;
 
 namespace TrainworkReloaded.Plugin
 {
@@ -60,6 +61,10 @@ namespace TrainworkReloaded.Plugin
                     var pipeline = c.GetInstance<IDataPipeline<ICustomRegister<CardData>>>();
                     pipeline.Run(x);
                 });
+
+                //Register Class Data
+                c.Register<IRegister<ClassData>, ClassDataRegister>();
+                c.Register<ClassDataRegister, ClassDataRegister>();
 
                 //Register Localization
                 c.RegisterSingleton<ICustomRegister<LocalizationTerm>, CustomLocalizationTermRegistry>();
