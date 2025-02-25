@@ -14,6 +14,7 @@ using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using static RimLight;
 
 namespace TrainworksReloaded.Base.Card
 {
@@ -215,6 +216,8 @@ namespace TrainworksReloaded.Base.Card
             var configuration = definition.Configuration;
             var data = definition.Data;
 
+            logger.Log(Core.Interfaces.LogLevel.Info, $"Finalizing Card {data.name}... ");
+
             //handle linked class
             var classRegister = container.GetInstance<IRegister<ClassData>>();
             var classfield = configuration.GetSection("class").ParseString();
@@ -225,7 +228,7 @@ namespace TrainworksReloaded.Base.Card
 
             //handle discovery cards
             var SharedDiscoveryCards = new List<CardData>();
-            var SharedDiscoveryCardConfig = configuration.GetSection("shared_discovery_cards").GetChildren().Select(x => x.ParseString());
+            var SharedDiscoveryCardConfig = configuration.GetSection("shared_discovery_cards").GetChildren().Select(x => x.GetSection("id").ParseString());
             foreach (var ConfigCard in SharedDiscoveryCardConfig)
             {
                 if (ConfigCard == null)
@@ -241,7 +244,7 @@ namespace TrainworksReloaded.Base.Card
 
             //handle mastery cards
             var SharedMasteryCards = new List<CardData>();
-            var SharedMasteryCardConfig = configuration.GetSection("shared_mastery_cards").GetChildren().Select(x => x.ParseString());
+            var SharedMasteryCardConfig = configuration.GetSection("shared_mastery_cards").GetChildren().Select(x => x.GetSection("id").ParseString());
             foreach (var ConfigCard in SharedMasteryCardConfig)
             {
                 if (ConfigCard == null)
@@ -256,22 +259,53 @@ namespace TrainworksReloaded.Base.Card
             }
             AccessTools.Field(typeof(CardData), "sharedMasteryCards").SetValue(data, SharedMasteryCards);
 
-
+            //handle mastery card
             var MasteryCardInfo = configuration.GetSection("mastery_card").ParseString();
             if (MasteryCardInfo != null && service.TryLookupName(MasteryCardInfo, out var MasteryCard, out var _))
             {
                 AccessTools.Field(typeof(CardData), "linkedMasteryCard").SetValue(data, MasteryCard);
             }
 
-            //will this work?
+            //handle art
             var gameObjectRegister = container.GetInstance<IRegister<GameObject>>();
             var cardArtReference = configuration.GetSection("card_art_reference").ParseString();
             var gameObjectName = $"{definition.ModKey}-{cardArtReference}";
             if (cardArtReference != null && gameObjectRegister.TryLookupName(gameObjectName, out var gameObject, out var _))
             {
                 var assetRef = (AssetReferenceGameObject)AccessTools.Field(typeof(CardData), "cardArtPrefabVariantRef").GetValue(data);
+                if(assetRef == null)
+                {
+                    assetRef = new AssetReferenceGameObject();
+                    AccessTools.Field(typeof(CardData), "cardArtPrefabVariantRef").SetValue(data, assetRef);
+                }
                 assetRef.SetAssetAndId(gameObjectName,gameObject);
             }
+
+            //handle traits
+            var cardDataTraitRegister = container.GetInstance<IRegister<CardTraitData>>();
+            var cardTraitDatas = new List<CardTraitData>();
+            var cardTraitDatasConfig = configuration.GetSection("traits").GetChildren();
+            foreach (var configTrait in cardTraitDatasConfig)
+            {
+                if (configTrait == null)
+                {
+                    continue;
+                }
+                var idConfig = configTrait.GetSection("id").Value;
+                if (idConfig == null)
+                {
+                    continue;
+                }
+
+                var id = $"{definition.ModKey}-Trait-{idConfig}";
+                logger.Log(Core.Interfaces.LogLevel.Info, $"Searching for Trait {id}");
+                if (cardDataTraitRegister.TryLookupId(id, out var card, out var _))
+                {
+                    cardTraitDatas.Add(card);
+                }
+            }
+            if (cardTraitDatas.Count != 0)
+                AccessTools.Field(typeof(CardData), "traits").SetValue(data, cardTraitDatas);
         }
 
     }

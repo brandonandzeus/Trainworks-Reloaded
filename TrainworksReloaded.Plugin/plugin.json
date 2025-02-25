@@ -5,6 +5,34 @@
       "path": "textures/gas.png"
     }
   ],
+  "traits": [
+    {
+      "id": "Unpurge",
+      "name": "CardTraitUnpurgable",
+      "track_type": "subtype_in_deck",
+      "card_type_target": "any",
+      "entry_duration": "this_turn",
+      "param_str": "",
+      "param_description": "",
+      "param_int": 0,
+      "param_int_2": 0,
+      "param_int_3": 0,
+      "param_float": 0.0,
+      "param_subtype": "SubtypesData_None",
+      "param_use_scaling_params": false,
+      "param_bool": true,
+      "trait_is_removable": false,
+      "tooltip_suppressed": false,
+      "effect_text_suppressed": false,
+      "status_effect_tooltips_suppressed": false,
+      //"param_card_data": "",
+      //"param_card_upgrade_data": "",
+      "param_status_effects": [],
+      "param_team": "None",
+      "stack_mode": "None",
+      "draw_in_deployment_phase": false
+    }
+  ],
   "cards": [
     {
       "id": "StarterFireStarter",
@@ -14,7 +42,12 @@
         "english": "Starter of Fire",
         "french": "Le Starter of Fire"
       },
-      "class": "ClassBanished"
+      "card_art_reference": "Gasoline",
+      "traits": [
+        {
+          "id": "Unpurge"
+        }
+      ] //you can only grab traits that you have defined mod-wise, vanilla traits are not accessible outside of trait definition. Override clears all traits and adds yours, so you will have to redefine them.
     },
     {
       "id": "blue_eyes_white_dragon", //unique name for the plugin (Required)
@@ -65,7 +98,7 @@
       "hide_in_logbook": false,
       "lore_tooltips": [
         {
-          "key": "", //if overriding a lore tooltip, provide a key
+          "id": "", //if overriding a lore tooltip, provide an id
           "english": "This legendary dragon is a powerful engine of destruction. Virtually invincible, very few have faced this awesome creature and lived to tell the tale",
           "french": "Ce dragon legendaire est un puissant moteur de destruction. Rares sont ceux qui ont survecu a cette terrifiante creature quasiment invincible pour en parler"
         }

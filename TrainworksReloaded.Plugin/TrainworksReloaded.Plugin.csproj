@@ -20,6 +20,15 @@
   <ItemGroup>
     <ProjectReference Include="..\TrainworksReloaded.Base\TrainworksReloaded.Base.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="plugin.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="textures/*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   
   <!-- For builds we need to copy these files as monster train does not use these DLLs as part of its assembly -->
   <ItemGroup>

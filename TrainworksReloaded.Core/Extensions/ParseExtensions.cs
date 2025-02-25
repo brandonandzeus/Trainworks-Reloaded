@@ -24,6 +24,19 @@ namespace TrainworksReloaded.Core.Extensions
             }
             return null;
         }
+        public static float? ParseFloat(this IConfigurationSection section)
+        {
+            var val = section.Value;
+            if (val == null)
+            {
+                return null;
+            }
+            if (float.TryParse(val, out var i))
+            {
+                return i;
+            }
+            return null;
+        }
         public static bool? ParseBool(this IConfigurationSection section)
         {
             var val = section.Value;

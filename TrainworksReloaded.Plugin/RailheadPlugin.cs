@@ -20,6 +20,7 @@ using TrainworksReloaded.Base.Class;
 using UnityEngine;
 using TrainworksReloaded.Base.Prefab;
 using UnityEngine.AddressableAssets;
+using TrainworksReloaded.Base.Trait;
 
 namespace TrainworkReloaded.Plugin
 {
@@ -28,6 +29,8 @@ namespace TrainworkReloaded.Plugin
     public class Plugin : BaseUnityPlugin
     {
         internal static new ManualLogSource Logger = new("TrainworksReloaded");
+
+        internal static Lazy<Container> Container = new(() => Railend.GetContainer());
 
         public void Awake()
         {
@@ -84,13 +87,24 @@ namespace TrainworkReloaded.Plugin
                 });
 
                 //Register Class Data
-                c.Register<IRegister<ClassData>, ClassDataRegister>();
-                c.Register<ClassDataRegister, ClassDataRegister>();
+                c.RegisterSingleton<IRegister<ClassData>, ClassDataRegister>();
+                c.RegisterSingleton<ClassDataRegister, ClassDataRegister>();
+
+                //Register Trait Data
+                c.RegisterSingleton<IRegister<CardTraitData>, CardTraitDataRegister>();
+                c.RegisterSingleton<CardTraitDataRegister, CardTraitDataRegister>();
+                c.Register<IDataPipeline<IRegister<CardTraitData>>, CardTraitDataPipeline>(); 
+                c.RegisterInitializer<IRegister<CardTraitData>>(x =>
+                {
+                    var pipeline = c.GetInstance<IDataPipeline<IRegister<CardTraitData>>>();
+                    pipeline.Run(x);
+                });
 
                 //Register Localization
                 c.RegisterSingleton<IRegister<LocalizationTerm>, CustomLocalizationTermRegistry>();
                 c.RegisterSingleton<CustomLocalizationTermRegistry, CustomLocalizationTermRegistry>();
 
+                //Register Assets
                 c.RegisterSingleton<IRegister<GameObject>, GameobjectRegister>();
                 c.RegisterSingleton<GameobjectRegister, GameobjectRegister>();
                 c.RegisterInitializer<GameobjectRegister>(x =>
@@ -109,8 +123,6 @@ namespace TrainworkReloaded.Plugin
                 c.RegisterSingleton<IModLogger<CustomLocalizationTermRegistry>, ModLogger<CustomLocalizationTermRegistry>>();
                 c.RegisterConditional(typeof(IModLogger<>), typeof(ModLogger<>), c => !c.Handled);
             });
-
-
 
 
             var harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);

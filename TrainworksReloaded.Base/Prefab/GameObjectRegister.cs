@@ -49,7 +49,8 @@ namespace TrainworksReloaded.Base.Prefab
 
         public bool TryLookupId(string id, [NotNullWhen(true)] out GameObject? lookup, [NotNullWhen(true)] out bool? IsModded)
         {
-            throw new NotImplementedException();
+            IsModded = true;
+            return this.TryGetValue(id, out lookup);
         }
 
         public bool TryLookupName(string name, [NotNullWhen(true)] out GameObject? lookup, [NotNullWhen(true)] out bool? IsModded)
