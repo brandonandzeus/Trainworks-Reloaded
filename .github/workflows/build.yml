@@ -26,7 +26,7 @@ jobs:
 
       - name: Setup NuGet Credentials
         run: |
-          dotnet nuget add source "https://nuget.pkg.github.com/Monster-Train-2-Modding-Group/index.json" -n monster-train-packages -u ${{ secrets.GITHUB_ACTOR }} -p ${{ secrets.GITHUB_TOKEN }}
+          dotnet nuget add source "https://nuget.pkg.github.com/Monster-Train-2-Modding-Group/index.json" -n monster-train-packages -p ${{ secrets.GITHUB_TOKEN }}
       
       - name: Restore Dependencies
         run: dotnet restore
