@@ -26,7 +26,7 @@ jobs:
 
       - name: Setup NuGet Credentials
         run: |
-          dotnet nuget add source "https://nuget.pkg.github.com/Monster-Train-2-Modding-Group/index.json" `
+          dotnet nuget update source "https://nuget.pkg.github.com/Monster-Train-2-Modding-Group/index.json" `
             --name monster-train-packages `
             --username ${{ secrets.GITHUB_ACTOR }} `
             --password ${{ secrets.GITHUB_TOKEN }} `
