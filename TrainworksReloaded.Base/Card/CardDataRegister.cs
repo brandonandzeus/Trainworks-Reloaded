@@ -8,6 +8,7 @@ using System.Text;
 using TrainworksReloaded.Core;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
+using static RimLight;
 using static RotaryHeart.Lib.DataBaseExample;
 
 namespace TrainworksReloaded.Base.Card
@@ -15,9 +16,10 @@ namespace TrainworksReloaded.Base.Card
     public class CardDataRegister : Dictionary<string, CardData>, IRegister<CardData>
     {
         private readonly Lazy<SaveManager> SaveManager;
+        private readonly IModLogger<CardDataRegister> logger;
         public CardPool CustomCardPool;
         public ReorderableArray<CardData> CardPoolBacking;
-        public CardDataRegister(GameDataClient client)
+        public CardDataRegister(GameDataClient client, IModLogger<CardDataRegister> logger)
         {
             SaveManager = new Lazy<SaveManager>(() =>
             {
@@ -32,9 +34,11 @@ namespace TrainworksReloaded.Base.Card
             });
             CustomCardPool = ScriptableObject.CreateInstance<CardPool>();
             CardPoolBacking = (ReorderableArray<CardData>)AccessTools.Field(typeof(CardPool), "cardDataList").GetValue(CustomCardPool);
+            this.logger = logger;
         }
         public void Register(string key, CardData item)
         {
+            logger.Log(Core.Interfaces.LogLevel.Info, $"Registering Card {key}... ");
             CardPoolBacking.Add(item);
             var gamedata = SaveManager.Value.GetAllGameData();
             var CardDatas = (List<CardData>)AccessTools.Field(typeof(AllGameData), "cardDatas").GetValue(gamedata);

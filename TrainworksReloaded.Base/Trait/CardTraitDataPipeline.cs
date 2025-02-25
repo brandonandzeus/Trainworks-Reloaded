@@ -69,7 +69,6 @@ namespace TrainworksReloaded.Base.Trait
             }
             var name = $"{key}-Trait-{id}";
             var data = new CardTraitData();
-            logger.Log(LogLevel.Info, $"Register Trait ({name})");
 
             //handle one-to-one values
             var traitStateName = "";

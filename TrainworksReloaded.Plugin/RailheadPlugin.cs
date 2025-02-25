@@ -21,6 +21,7 @@ using UnityEngine;
 using TrainworksReloaded.Base.Prefab;
 using UnityEngine.AddressableAssets;
 using TrainworksReloaded.Base.Trait;
+using TrainworksReloaded.Base.Effect;
 
 namespace TrainworkReloaded.Plugin
 {
@@ -100,6 +101,16 @@ namespace TrainworkReloaded.Plugin
                     pipeline.Run(x);
                 });
 
+                //Register Effect Data
+                c.RegisterSingleton<IRegister<CardEffectData>, CardEffectDataRegister>();
+                c.RegisterSingleton<CardEffectDataRegister, CardEffectDataRegister>();
+                c.Register<IDataPipeline<IRegister<CardEffectData>>, CardEffectDataPipeline>();
+                c.RegisterInitializer<IRegister<CardEffectData>>(x =>
+                {
+                    var pipeline = c.GetInstance<IDataPipeline<IRegister<CardEffectData>>>();
+                    pipeline.Run(x);
+                });
+
                 //Register Localization
                 c.RegisterSingleton<IRegister<LocalizationTerm>, CustomLocalizationTermRegistry>();
                 c.RegisterSingleton<CustomLocalizationTermRegistry, CustomLocalizationTermRegistry>();
@@ -120,6 +131,9 @@ namespace TrainworkReloaded.Plugin
 
 
                 //Register Loggers
+                c.RegisterSingleton<IModLogger<CardEffectDataRegister>, ModLogger<CardEffectDataRegister>>();
+                c.RegisterSingleton<IModLogger<CardDataRegister>, ModLogger<CardDataRegister>>();
+                c.RegisterSingleton<IModLogger<CardTraitDataRegister>, ModLogger<CardTraitDataRegister>>();
                 c.RegisterSingleton<IModLogger<CustomLocalizationTermRegistry>, ModLogger<CustomLocalizationTermRegistry>>();
                 c.RegisterConditional(typeof(IModLogger<>), typeof(ModLogger<>), c => !c.Handled);
             });

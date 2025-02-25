@@ -98,7 +98,6 @@ namespace TrainworksReloaded.Base.Card
             }
             else
             {
-                logger.Log(Core.Interfaces.LogLevel.Info, $"Registering Card {id}... ");
                 data = ScriptableObject.CreateInstance<CardData>();
                 data.name = name;
                 guid = Guid.NewGuid().ToString();
@@ -298,7 +297,6 @@ namespace TrainworksReloaded.Base.Card
                 }
 
                 var id = $"{definition.ModKey}-Trait-{idConfig}";
-                logger.Log(Core.Interfaces.LogLevel.Info, $"Searching for Trait {id}");
                 if (cardDataTraitRegister.TryLookupId(id, out var card, out var _))
                 {
                     cardTraitDatas.Add(card);
@@ -306,6 +304,29 @@ namespace TrainworksReloaded.Base.Card
             }
             if (cardTraitDatas.Count != 0)
                 AccessTools.Field(typeof(CardData), "traits").SetValue(data, cardTraitDatas);
+
+            var cardEffectRegister = container.GetInstance<IRegister<CardEffectData>>();
+            var cardEffectDatas = new List<CardEffectData>();
+            var cardEffectDatasConfig = configuration.GetSection("effects").GetChildren();
+            foreach (var configEffect in cardEffectDatasConfig)
+            {
+                if (configEffect == null)
+                {
+                    continue;
+                }
+                var idConfig = configEffect.GetSection("id").Value;
+                if (idConfig == null)
+                {
+                    continue;
+                }
+                var id = $"{definition.ModKey}-Effect-{idConfig}";
+                if (cardEffectRegister.TryLookupId(id, out var card, out var _))
+                {
+                    cardEffectDatas.Add(card);
+                }
+            }
+            if (cardEffectDatas.Count != 0)
+                AccessTools.Field(typeof(CardData), "effects").SetValue(data, cardEffectDatas);
         }
 
     }

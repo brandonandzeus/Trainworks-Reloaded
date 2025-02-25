@@ -54,8 +54,8 @@ namespace TrainworksReloaded.Base.Prefab
                             name = name
                         };
                         var prefab = gameObject.AddComponent<AddressableAssetPrefab>();
-                        gameObject.AddComponent<RectTransform>();
 
+                        gameObject.AddComponent<RectTransform>();
                         var cardArt = new GameObject
                         {
                             name = "CardSprite"
