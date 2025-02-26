@@ -98,7 +98,7 @@ namespace TrainworksReloaded.Base.Card
                 return null;
             }
 
-            var name = $"{key}-{id}";
+            var name = key.GetId("Card", id);
             var namekey = $"CardData_nameKey-{name}";
             var descriptionKey = $"CardData_descriptionKey-{name}";
             var checkOverride = configuration.GetSection("override").ParseBool() ?? false;
@@ -124,23 +124,23 @@ namespace TrainworksReloaded.Base.Card
             var termRegister = container.GetInstance<IRegister<LocalizationTerm>>();
 
             //handle names
-            AccessTools.Field(typeof(CardData), "nameKey").SetValue(data, namekey);
             var localizationNameTerm = configuration.GetSection("names").ParseLocalizationTerm();
             if (localizationNameTerm != null)
             {
+                AccessTools.Field(typeof(CardData), "nameKey").SetValue(data, namekey);
                 localizationNameTerm.Key = namekey;
                 termRegister.Register(namekey, localizationNameTerm);
             }
 
             //handle description
-            AccessTools
-                .Field(typeof(CardData), "overrideDescriptionKey")
-                .SetValue(data, descriptionKey);
             var localizationDescTerm = configuration
                 .GetSection("extra_description")
                 .ParseLocalizationTerm();
             if (localizationDescTerm != null)
             {
+                AccessTools
+                    .Field(typeof(CardData), "overrideDescriptionKey")
+                    .SetValue(data, descriptionKey);
                 localizationDescTerm.Key = descriptionKey;
                 termRegister.Register(descriptionKey, localizationDescTerm);
             }
@@ -340,6 +340,7 @@ namespace TrainworksReloaded.Base.Card
         {
             var configuration = definition.Configuration;
             var data = definition.Data;
+            var key = definition.Key;
 
             logger.Log(Core.Interfaces.LogLevel.Info, $"Finalizing Card {data.name}... ");
 
@@ -348,7 +349,11 @@ namespace TrainworksReloaded.Base.Card
             var classfield = configuration.GetSection("class").ParseString();
             if (
                 classfield != null
-                && classRegister.TryLookupName(classfield, out var lookup, out var _)
+                && classRegister.TryLookupName(
+                    classfield.ToId(key, "Class"),
+                    out var lookup,
+                    out var _
+                )
             )
             {
                 AccessTools.Field(typeof(CardData), "linkedClass").SetValue(data, lookup);
@@ -366,8 +371,7 @@ namespace TrainworksReloaded.Base.Card
                 {
                     continue;
                 }
-
-                if (service.TryLookupName(ConfigCard, out var card, out var _))
+                if (service.TryLookupName(ConfigCard.ToId(key, "Card"), out var card, out var _))
                 {
                     SharedDiscoveryCards.Add(card);
                 }
@@ -389,7 +393,7 @@ namespace TrainworksReloaded.Base.Card
                     continue;
                 }
 
-                if (service.TryLookupName(ConfigCard, out var card, out var _))
+                if (service.TryLookupName(ConfigCard.ToId(key, "Card"), out var card, out var _))
                 {
                     SharedMasteryCards.Add(card);
                 }
@@ -402,7 +406,11 @@ namespace TrainworksReloaded.Base.Card
             var MasteryCardInfo = configuration.GetSection("mastery_card").ParseString();
             if (
                 MasteryCardInfo != null
-                && service.TryLookupName(MasteryCardInfo, out var MasteryCard, out var _)
+                && service.TryLookupName(
+                    MasteryCardInfo.ToId(key, "Card"),
+                    out var MasteryCard,
+                    out var _
+                )
             )
             {
                 AccessTools
@@ -413,22 +421,24 @@ namespace TrainworksReloaded.Base.Card
             //handle art
             var gameObjectRegister = container.GetInstance<IRegister<GameObject>>();
             var cardArtReference = configuration.GetSection("card_art_reference").ParseString();
-            var gameObjectName = $"{definition.Key}-{cardArtReference}";
-            if (
-                cardArtReference != null
-                && gameObjectRegister.TryLookupName(gameObjectName, out var gameObject, out var _)
-            )
+            if (cardArtReference != null)
             {
-                var assetRef = (AssetReferenceGameObject)
-                    AccessTools.Field(typeof(CardData), "cardArtPrefabVariantRef").GetValue(data);
-                if (assetRef == null)
+                var gameObjectName = cardArtReference.ToId(key, "GameObject");
+                if (gameObjectRegister.TryLookupName(gameObjectName, out var gameObject, out var _))
                 {
-                    assetRef = new AssetReferenceGameObject();
-                    AccessTools
-                        .Field(typeof(CardData), "cardArtPrefabVariantRef")
-                        .SetValue(data, assetRef);
+                    var assetRef = (AssetReferenceGameObject)
+                        AccessTools
+                            .Field(typeof(CardData), "cardArtPrefabVariantRef")
+                            .GetValue(data);
+                    if (assetRef == null)
+                    {
+                        assetRef = new AssetReferenceGameObject();
+                        AccessTools
+                            .Field(typeof(CardData), "cardArtPrefabVariantRef")
+                            .SetValue(data, assetRef);
+                    }
+                    assetRef.SetAssetAndId(gameObjectName, gameObject);
                 }
-                assetRef.SetAssetAndId(gameObjectName, gameObject);
             }
 
             //handle traits

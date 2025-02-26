@@ -11,7 +11,7 @@ namespace TrainworksReloaded.Base
 
         public override string ToString()
         {
-            return $"[{type.FullName}] {data.ToString()}";
+            return $"[{type.Name}] {data.ToString()}";
         }
     }
 

@@ -8,15 +8,15 @@
         "english": "Starter of Fire",
         "french": "Le Starter of Fire"
       },
-      "card_art_reference": "Gasoline",
+      "card_art_reference": "@Gasoline",
       "effects": [
         {
-          "id": "DealThreeDamage"
+          "id": "@DealThreeDamage"
         }
       ],
       "traits": [
         {
-          "id": "Unpurge"
+          "id": "@Unpurge"
         }
       ] //you can only grab traits that you have defined mod-wise, vanilla traits are not accessible outside of trait definition. Override clears all traits and adds yours, so you will have to redefine them.
     },
@@ -44,7 +44,7 @@
         "english": "Rawr",
         "french": "le rawr"
       },
-      "card_art_reference": "Gasoline",
+      "card_art_reference": "@Gasoline",
       "cost": "8", //default: 0
       "type": "monster", // can be: "invalid", "spell" (default), "monster", "blight", "junk", "equipment", "room" 
       "cost_type": "default", // can be: "default" (default), "x", "unplayable"
@@ -171,6 +171,48 @@
       "param_team": "None",
       "stack_mode": "None",
       "draw_in_deployment_phase": false
+    }
+  ],
+  "upgrades": [
+    {
+      "id": "Smaller",
+      "override": false,
+      "titles": {
+        "english": "One Makes You Smaller"
+      },
+      "descriptions": {
+        "english": "Smol"
+      },
+      "notifications": {
+        "english": "You Small"
+      },
+      "icon": "",
+      "allow_secondary_tooltip_placement": true,
+      "hide_icon_on_card": false,
+      "use_upgrade_hightlight_tags": true,
+      "show_description_on_cards": true,
+      "is_unique": false,
+      "bonus_damage": 0,
+      "bonus_hp": 0,
+      "cost_reduction": 0,
+      "x_cost_reduction": 0,
+      "bonus_heal": 0,
+      "bonus_size": -1,
+      "restrict_to_room_capacity": false,
+      "bonus_equipment": 0,
+      "ability_upgrade": "",
+      "does_not_replace_ability": false,
+      "status_effect_upgrades": [],
+      "trait_upgrades": [],
+      "remove_trait_upgrades": [],
+      "trigger_upgrades": [],
+      "card_trigger_upgrades": [],
+      "room_modifier_upgrades": [],
+      "filters": [],
+      "remove_upgrades": []
+      //"applied_vfx": "",
+      //"remove_vfx": "",
+      //"persistent_vfx": ""
     }
   ]
 }

@@ -36,7 +36,7 @@ namespace TrainworksReloaded.Base.Prefab
                     {
                         continue;
                     }
-                    var name = $"{config.Key}-{id}";
+                    var name = $"{config.Key}-GameObject-{id}";
 
                     foreach (var directory in config.Value.AssetDirectories)
                     {
