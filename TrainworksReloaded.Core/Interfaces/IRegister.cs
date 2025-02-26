@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace TrainworksReloaded.Core.Interfaces
 {
@@ -11,7 +8,15 @@ namespace TrainworksReloaded.Core.Interfaces
     /// <typeparam name="T"></typeparam>
     public interface IRegister<T> : IRegisterableDictionary<T>
     {
-        public bool TryLookupName(string name, [NotNullWhen(true)] out T? lookup, [NotNullWhen(true)] out bool? IsModded);
-        public bool TryLookupId(string id, [NotNullWhen(true)] out T? lookup, [NotNullWhen(true)] out bool? IsModded);
+        public bool TryLookupName(
+            string name,
+            [NotNullWhen(true)] out T? lookup,
+            [NotNullWhen(true)] out bool? IsModded
+        );
+        public bool TryLookupId(
+            string id,
+            [NotNullWhen(true)] out T? lookup,
+            [NotNullWhen(true)] out bool? IsModded
+        );
     }
 }

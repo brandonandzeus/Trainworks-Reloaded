@@ -1,22 +1,18 @@
-﻿using HarmonyLib;
+﻿using System.Collections.Generic;
+using HarmonyLib;
 using Microsoft.Extensions.Configuration;
 using SimpleInjector;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml.Linq;
-using TrainworksReloaded.Base.Card;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
-using UnityEngine;
 
 namespace TrainworksReloaded.Base.Trait
 {
     public class CardTraitDefinition(string key, CardTraitData data, IConfiguration configuration)
+        : IDefinition<CardTraitData>
     {
-        public string ModKey { get; set; } = key;
+        public string Key { get; set; } = key;
         public CardTraitData Data { get; set; } = data;
         public IConfiguration Configuration { get; set; } = configuration;
     }
@@ -26,13 +22,24 @@ namespace TrainworksReloaded.Base.Trait
         private readonly PluginAtlas atlas;
         private readonly IModLogger<CardTraitDataPipeline> logger;
         private readonly Container container;
+        private readonly IEnumerable<IDataPipelineSetup<CardTraitData>> setups;
+        private readonly IEnumerable<IDataPipelineFinalizer<CardTraitData>> finalizers;
 
-        public CardTraitDataPipeline(PluginAtlas atlas, IModLogger<CardTraitDataPipeline> logger, Container container)
+        public CardTraitDataPipeline(
+            PluginAtlas atlas,
+            IModLogger<CardTraitDataPipeline> logger,
+            Container container,
+            IEnumerable<IDataPipelineSetup<CardTraitData>> setups,
+            IEnumerable<IDataPipelineFinalizer<CardTraitData>> finalizers
+        )
         {
             this.atlas = atlas;
             this.logger = logger;
             this.container = container;
+            this.setups = setups;
+            this.finalizers = finalizers;
         }
+
         public void Run(IRegister<CardTraitData> service)
         {
             var processList = new List<CardTraitDefinition>();
@@ -47,7 +54,11 @@ namespace TrainworksReloaded.Base.Trait
             }
         }
 
-        private List<CardTraitDefinition> LoadTraits(IRegister<CardTraitData> service, string key, IConfiguration pluginConfig)
+        private List<CardTraitDefinition> LoadTraits(
+            IRegister<CardTraitData> service,
+            string key,
+            IConfiguration pluginConfig
+        )
         {
             var processList = new List<CardTraitDefinition>();
             foreach (var child in pluginConfig.GetSection("traits").GetChildren())
@@ -60,7 +71,12 @@ namespace TrainworksReloaded.Base.Trait
             }
             return processList;
         }
-        private CardTraitDefinition? LoadTraitConfiguration(IRegister<CardTraitData> service, string key, IConfiguration configuration)
+
+        private CardTraitDefinition? LoadTraitConfiguration(
+            IRegister<CardTraitData> service,
+            string key,
+            IConfiguration configuration
+        )
         {
             var id = configuration.GetSection("id").ParseString();
             if (id == null)
@@ -72,70 +88,155 @@ namespace TrainworksReloaded.Base.Trait
 
             //handle one-to-one values
             var traitStateName = "";
-            AccessTools.Field(typeof(CardTraitData), "traitStateName").SetValue(data, configuration.GetSection("name").ParseString() ?? traitStateName);
+            AccessTools
+                .Field(typeof(CardTraitData), "traitStateName")
+                .SetValue(data, configuration.GetSection("name").ParseString() ?? traitStateName);
 
             var paramTrackedValue = CardStatistics.TrackedValueType.SubtypeInDeck;
-            AccessTools.Field(typeof(CardTraitData), "paramTrackedValue").SetValue(data, configuration.GetSection("track_type").ParseTrackedValueType() ?? paramTrackedValue);
+            AccessTools
+                .Field(typeof(CardTraitData), "paramTrackedValue")
+                .SetValue(
+                    data,
+                    configuration.GetSection("track_type").ParseTrackedValueType()
+                        ?? paramTrackedValue
+                );
 
             var paramCardType = CardStatistics.CardTypeTarget.Any;
-            AccessTools.Field(typeof(CardTraitData), "paramCardType").SetValue(data, configuration.GetSection("track_type").ParseCardTypeTarget() ?? paramCardType);
+            AccessTools
+                .Field(typeof(CardTraitData), "paramCardType")
+                .SetValue(
+                    data,
+                    configuration.GetSection("track_type").ParseCardTypeTarget() ?? paramCardType
+                );
 
             var paramEntryDuration = CardStatistics.EntryDuration.ThisTurn;
-            AccessTools.Field(typeof(CardTraitData), "paramEntryDuration").SetValue(data, configuration.GetSection("entry_duration").ParseEntryDuration() ?? paramEntryDuration);
+            AccessTools
+                .Field(typeof(CardTraitData), "paramEntryDuration")
+                .SetValue(
+                    data,
+                    configuration.GetSection("entry_duration").ParseEntryDuration()
+                        ?? paramEntryDuration
+                );
 
             var paramStr = "";
-            AccessTools.Field(typeof(CardTraitData), "paramStr").SetValue(data, configuration.GetSection("param_str").ParseString() ?? paramStr);
+            AccessTools
+                .Field(typeof(CardTraitData), "paramStr")
+                .SetValue(data, configuration.GetSection("param_str").ParseString() ?? paramStr);
 
             var paramDescription = "";
-            AccessTools.Field(typeof(CardTraitData), "paramDescription").SetValue(data, configuration.GetSection("param_description").ParseString() ?? paramDescription);
+            AccessTools
+                .Field(typeof(CardTraitData), "paramDescription")
+                .SetValue(
+                    data,
+                    configuration.GetSection("param_description").ParseString() ?? paramDescription
+                );
 
             var paramInt = 0;
-            AccessTools.Field(typeof(CardTraitData), "paramInt").SetValue(data, configuration.GetSection("param_int").ParseInt() ?? paramInt);
+            AccessTools
+                .Field(typeof(CardTraitData), "paramInt")
+                .SetValue(data, configuration.GetSection("param_int").ParseInt() ?? paramInt);
 
             var paramInt2 = 0;
-            AccessTools.Field(typeof(CardTraitData), "paramInt2").SetValue(data, configuration.GetSection("param_int_2").ParseInt() ?? paramInt2);
+            AccessTools
+                .Field(typeof(CardTraitData), "paramInt2")
+                .SetValue(data, configuration.GetSection("param_int_2").ParseInt() ?? paramInt2);
 
             var paramInt3 = 0;
-            AccessTools.Field(typeof(CardTraitData), "paramInt3").SetValue(data, configuration.GetSection("param_int_3").ParseInt() ?? paramInt3);
+            AccessTools
+                .Field(typeof(CardTraitData), "paramInt3")
+                .SetValue(data, configuration.GetSection("param_int_3").ParseInt() ?? paramInt3);
 
             var paramFloat = 0.0f;
-            AccessTools.Field(typeof(CardTraitData), "paramFloat").SetValue(data, configuration.GetSection("param_float").ParseFloat() ?? paramFloat);
+            AccessTools
+                .Field(typeof(CardTraitData), "paramFloat")
+                .SetValue(data, configuration.GetSection("param_float").ParseFloat() ?? paramFloat);
 
             var subtype = "SubtypeData_None";
-            AccessTools.Field(typeof(CardTraitData), "paramSubtype").SetValue(data, configuration.GetSection("param_subtype").ParseString() ?? subtype);
+            AccessTools
+                .Field(typeof(CardTraitData), "paramSubtype")
+                .SetValue(data, configuration.GetSection("param_subtype").ParseString() ?? subtype);
 
             var paramUseScalingParams = false;
-            AccessTools.Field(typeof(CardTraitData), "paramUseScalingParams").SetValue(data, configuration.GetSection("param_use_scaling_params").ParseBool() ?? paramUseScalingParams);
+            AccessTools
+                .Field(typeof(CardTraitData), "paramUseScalingParams")
+                .SetValue(
+                    data,
+                    configuration.GetSection("param_use_scaling_params").ParseBool()
+                        ?? paramUseScalingParams
+                );
 
             var paramBool = false;
-            AccessTools.Field(typeof(CardTraitData), "paramBool").SetValue(data, configuration.GetSection("param_bool").ParseBool() ?? paramBool);
+            AccessTools
+                .Field(typeof(CardTraitData), "paramBool")
+                .SetValue(data, configuration.GetSection("param_bool").ParseBool() ?? paramBool);
 
             var traitIsRemovable = false;
-            AccessTools.Field(typeof(CardTraitData), "traitIsRemovable").SetValue(data, configuration.GetSection("trait_is_removable").ParseBool() ?? traitIsRemovable);
+            AccessTools
+                .Field(typeof(CardTraitData), "traitIsRemovable")
+                .SetValue(
+                    data,
+                    configuration.GetSection("trait_is_removable").ParseBool() ?? traitIsRemovable
+                );
 
             var tooltipSuppressed = false;
-            AccessTools.Field(typeof(CardTraitData), "tooltipSuppressed").SetValue(data, configuration.GetSection("tooltip_suppressed").ParseBool() ?? tooltipSuppressed);
+            AccessTools
+                .Field(typeof(CardTraitData), "tooltipSuppressed")
+                .SetValue(
+                    data,
+                    configuration.GetSection("tooltip_suppressed").ParseBool() ?? tooltipSuppressed
+                );
 
             var effectTextSuppressed = false;
-            AccessTools.Field(typeof(CardTraitData), "effectTextSuppressed").SetValue(data, configuration.GetSection("effect_text_suppressed").ParseBool() ?? effectTextSuppressed);
+            AccessTools
+                .Field(typeof(CardTraitData), "effectTextSuppressed")
+                .SetValue(
+                    data,
+                    configuration.GetSection("effect_text_suppressed").ParseBool()
+                        ?? effectTextSuppressed
+                );
 
             var statusEffectTooltipsSuppressed = false;
-            AccessTools.Field(typeof(CardTraitData), "statusEffectTooltipsSuppressed").SetValue(data, configuration.GetSection("status_effect_tooltips_suppressed").ParseBool() ?? statusEffectTooltipsSuppressed);
+            AccessTools
+                .Field(typeof(CardTraitData), "statusEffectTooltipsSuppressed")
+                .SetValue(
+                    data,
+                    configuration.GetSection("status_effect_tooltips_suppressed").ParseBool()
+                        ?? statusEffectTooltipsSuppressed
+                );
 
             var paramTeamType = Team.Type.None;
-            AccessTools.Field(typeof(CardTraitData), "paramTeamType").SetValue(data, configuration.GetSection("param_team").ParseTeamType() ?? paramTeamType);
+            AccessTools
+                .Field(typeof(CardTraitData), "paramTeamType")
+                .SetValue(
+                    data,
+                    configuration.GetSection("param_team").ParseTeamType() ?? paramTeamType
+                );
 
             var stackMode = CardTraitData.StackMode.None;
-            AccessTools.Field(typeof(CardTraitData), "stackMode").SetValue(data, configuration.GetSection("stack_mode").ParseStackMode() ?? stackMode);
+            AccessTools
+                .Field(typeof(CardTraitData), "stackMode")
+                .SetValue(
+                    data,
+                    configuration.GetSection("stack_mode").ParseStackMode() ?? stackMode
+                );
 
             var drawInDeploymentPhase = false;
-            AccessTools.Field(typeof(CardTraitData), "drawInDeploymentPhase").SetValue(data, configuration.GetSection("draw_in_deployment_phase").ParseBool() ?? drawInDeploymentPhase);
+            AccessTools
+                .Field(typeof(CardTraitData), "drawInDeploymentPhase")
+                .SetValue(
+                    data,
+                    configuration.GetSection("draw_in_deployment_phase").ParseBool()
+                        ?? drawInDeploymentPhase
+                );
 
             service.Register(name, data);
             return new CardTraitDefinition(key, data, configuration);
-
         }
-        private void FinalizeCardTraitData(IRegister<CardTraitData> service, CardTraitDefinition definition)
+
+        private void FinalizeCardTraitData(
+            IRegister<CardTraitData> service,
+            CardTraitDefinition definition
+        )
         {
             var configuration = definition.Configuration;
             var data = definition.Data;
@@ -143,8 +244,6 @@ namespace TrainworksReloaded.Base.Trait
             //AccessTools.Field(typeof(CardTraitData), "paramCardTraitData").SetValue(data, configuration.GetSection("cost").ParseInt() ?? defaultCost);
             //AccessTools.Field(typeof(CardTraitData), "paramCardUpgradeData").SetValue(data, configuration.GetSection("cost").ParseInt() ?? defaultCost);
             //AccessTools.Field(typeof(CardTraitData), "paramStatusEffects").SetValue(data, configuration.GetSection("cost").ParseInt() ?? defaultCost);
-
         }
-
     }
 }

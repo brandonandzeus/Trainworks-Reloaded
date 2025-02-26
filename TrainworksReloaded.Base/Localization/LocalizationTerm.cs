@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using static UnityEngine.ParticleSystem.PlaybackState;
-
-namespace TrainworksReloaded.Base.Localization
+﻿namespace TrainworksReloaded.Base.Localization
 {
     public class LocalizationTerm
     {

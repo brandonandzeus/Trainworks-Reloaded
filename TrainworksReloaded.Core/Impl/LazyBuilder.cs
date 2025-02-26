@@ -1,13 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using SimpleInjector;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using TrainworksReloaded.Core.Interfaces;
-
 
 namespace TrainworksReloaded.Core.Impl
 {
@@ -15,14 +8,16 @@ namespace TrainworksReloaded.Core.Impl
     {
         public Dictionary<String, List<Action<IConfigurationBuilder>>> configActions = [];
         public List<Action<Container>> containerActions = [];
+
         public void Configure(string pluginId, Action<IConfigurationBuilder> action)
         {
-            if (configActions.TryGetValue(pluginId, out var actions)){
+            if (configActions.TryGetValue(pluginId, out var actions))
+            {
                 actions.Add(action);
             }
             else
             {
-                configActions.Add(pluginId, [action] );
+                configActions.Add(pluginId, [action]);
             }
         }
 
@@ -30,7 +25,6 @@ namespace TrainworksReloaded.Core.Impl
         {
             containerActions.Add(action);
         }
-
 
         public void Build(Container container)
         {
@@ -42,7 +36,9 @@ namespace TrainworksReloaded.Core.Impl
                 var directory = new HashSet<string>();
                 foreach (var action in configActions[key])
                 {
-                    var basePath = Path.GetDirectoryName(action.Method.DeclaringType.Assembly.Location);
+                    var basePath = Path.GetDirectoryName(
+                        action.Method.DeclaringType.Assembly.Location
+                    );
                     directory.Add(basePath);
                     configuration.SetBasePath(basePath);
                     action(configuration);

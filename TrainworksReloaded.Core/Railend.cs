@@ -1,8 +1,4 @@
 ﻿using SimpleInjector;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
 
 namespace TrainworksReloaded.Core
 {
@@ -15,10 +11,9 @@ namespace TrainworksReloaded.Core
         private static readonly List<Action<Container>> PostContainerActions = new();
         private static readonly Lazy<Container> container = new(() =>
         {
-
             var init = Railhead.GetBuilderForInit();
             var container = new Container();
-            foreach(var action in PreContainerActions)
+            foreach (var action in PreContainerActions)
             {
                 action(container);
             }
@@ -30,6 +25,7 @@ namespace TrainworksReloaded.Core
             container.Verify();
             return container;
         });
+
         /// <summary>
         /// Registers an Action that runs on the container after the Atlas has been registered
         /// </summary>
@@ -38,12 +34,14 @@ namespace TrainworksReloaded.Core
         {
             PreContainerActions.Add(action);
         }
+
         public static void ConfigurePostAction(Action<Container> action)
         {
             PostContainerActions.Add(action);
         }
+
         /// <summary>
-        /// Do not run this function, it begins the initialization process. 
+        /// Do not run this function, it begins the initialization process.
         /// YOU WILL BREAK COMPATIBILITY.
         /// Let Trainworks run this!
         /// </summary>

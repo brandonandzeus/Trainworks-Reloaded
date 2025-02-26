@@ -1,31 +1,23 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
+using HarmonyLib;
+using I2.Loc;
 using Microsoft.Extensions.Configuration;
 using SimpleInjector;
-using System.Reflection;
+using TrainworksReloaded.Base;
+using TrainworksReloaded.Base.Card;
+using TrainworksReloaded.Base.Class;
+using TrainworksReloaded.Base.Effect;
+using TrainworksReloaded.Base.Localization;
+using TrainworksReloaded.Base.Prefab;
+using TrainworksReloaded.Base.Trait;
 using TrainworksReloaded.Core;
 using TrainworksReloaded.Core.Interfaces;
-using TrainworksReloaded.Base;
-using TrainworksReloaded.Plugin;
-using HarmonyLib;
-using System;
-using System.Linq;
-using System.IO;
-using Microsoft.Extensions.FileProviders;
-using TrainworksReloaded.Base.Card;
-using I2.Loc;
-using static MonoMod.Cil.RuntimeILReferenceBag.FastDelegateInvokers;
-using TrainworksReloaded.Base.Localization;
-using TrainworksReloaded.Base.Class;
 using UnityEngine;
-using TrainworksReloaded.Base.Prefab;
 using UnityEngine.AddressableAssets;
-using TrainworksReloaded.Base.Trait;
-using TrainworksReloaded.Base.Effect;
 
-namespace TrainworkReloaded.Plugin
+namespace TrainworksReloaded.Plugin
 {
-
     [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
     public class Plugin : BaseUnityPlugin
     {
@@ -36,7 +28,12 @@ namespace TrainworkReloaded.Plugin
         public void Awake()
         {
             //Pregame Actions
-            var configToolsCSV = Config.Bind("Tools", "Generate CSVs", false, "Enable to Generate the Games' CSV Files on Launch");
+            var configToolsCSV = Config.Bind(
+                "Tools",
+                "Generate CSVs",
+                false,
+                "Enable to Generate the Games' CSV Files on Launch"
+            );
             if (configToolsCSV.Value)
             {
                 var basePath = Path.GetDirectoryName(typeof(Plugin).Assembly.Location);
@@ -53,29 +50,30 @@ namespace TrainworkReloaded.Plugin
                 }
             }
 
-
             // Setup Game Client
             var client = new GameDataClient();
             DepInjector.AddClient(client);
-
 
             // Plugin startup logic
             Logger = base.Logger;
 
             //everything rail head
             var builder = Railhead.GetBuilder();
-            builder.Configure(MyPluginInfo.PLUGIN_GUID, c =>
-            {
-                c.AddJsonFile("plugin.json");
-            });
+            builder.Configure(
+                MyPluginInfo.PLUGIN_GUID,
+                c =>
+                {
+                    c.AddJsonFile("plugin.json");
+                }
+            );
 
             Railend.ConfigurePreAction(c =>
             {
                 //Register for Logging
-                c.RegisterInstance<ManualLogSource>(Logger);
+                c.RegisterInstance(Logger);
 
                 //Register hooking into games dependency injection system
-                c.RegisterInstance<GameDataClient>(client);
+                c.RegisterInstance(client);
 
                 //Register Card Data
                 c.RegisterSingleton<IRegister<CardData>, CardDataRegister>(); //a place to register and access custom card data
@@ -94,7 +92,7 @@ namespace TrainworkReloaded.Plugin
                 //Register Trait Data
                 c.RegisterSingleton<IRegister<CardTraitData>, CardTraitDataRegister>();
                 c.RegisterSingleton<CardTraitDataRegister, CardTraitDataRegister>();
-                c.Register<IDataPipeline<IRegister<CardTraitData>>, CardTraitDataPipeline>(); 
+                c.Register<IDataPipeline<IRegister<CardTraitData>>, CardTraitDataPipeline>();
                 c.RegisterInitializer<IRegister<CardTraitData>>(x =>
                 {
                     var pipeline = c.GetInstance<IDataPipeline<IRegister<CardTraitData>>>();
@@ -113,7 +111,10 @@ namespace TrainworkReloaded.Plugin
 
                 //Register Localization
                 c.RegisterSingleton<IRegister<LocalizationTerm>, CustomLocalizationTermRegistry>();
-                c.RegisterSingleton<CustomLocalizationTermRegistry, CustomLocalizationTermRegistry>();
+                c.RegisterSingleton<
+                    CustomLocalizationTermRegistry,
+                    CustomLocalizationTermRegistry
+                >();
 
                 //Register Assets
                 c.RegisterSingleton<IRegister<GameObject>, GameobjectRegister>();
@@ -129,15 +130,22 @@ namespace TrainworkReloaded.Plugin
                     pipeline.Run(x);
                 });
 
-
                 //Register Loggers
-                c.RegisterSingleton<IModLogger<CardEffectDataRegister>, ModLogger<CardEffectDataRegister>>();
+                c.RegisterSingleton<
+                    IModLogger<CardEffectDataRegister>,
+                    ModLogger<CardEffectDataRegister>
+                >();
                 c.RegisterSingleton<IModLogger<CardDataRegister>, ModLogger<CardDataRegister>>();
-                c.RegisterSingleton<IModLogger<CardTraitDataRegister>, ModLogger<CardTraitDataRegister>>();
-                c.RegisterSingleton<IModLogger<CustomLocalizationTermRegistry>, ModLogger<CustomLocalizationTermRegistry>>();
+                c.RegisterSingleton<
+                    IModLogger<CardTraitDataRegister>,
+                    ModLogger<CardTraitDataRegister>
+                >();
+                c.RegisterSingleton<
+                    IModLogger<CustomLocalizationTermRegistry>,
+                    ModLogger<CustomLocalizationTermRegistry>
+                >();
                 c.RegisterConditional(typeof(IModLogger<>), typeof(ModLogger<>), c => !c.Handled);
             });
-
 
             var harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
             harmony.PatchAll();

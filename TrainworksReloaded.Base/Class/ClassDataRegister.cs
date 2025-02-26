@@ -1,10 +1,8 @@
-﻿using HarmonyLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
+using HarmonyLib;
 using TrainworksReloaded.Core.Interfaces;
-using static RimLight;
 
 namespace TrainworksReloaded.Base.Class
 {
@@ -30,13 +28,19 @@ namespace TrainworksReloaded.Base.Class
         public void Register(string key, ClassData item)
         {
             var gamedata = SaveManager.Value.GetAllGameData();
-            var CardDatas = (List<ClassData>)AccessTools.Field(typeof(AllGameData), "classDatas").GetValue(gamedata);
+            var CardDatas =
+                (List<ClassData>)
+                    AccessTools.Field(typeof(AllGameData), "classDatas").GetValue(gamedata);
             CardDatas.Add(item);
             this.Add(key, item);
         }
 
-        public bool TryLookupId(string id, [NotNullWhen(true)] out ClassData? lookup, [NotNullWhen(true)] out bool? IsModded)
-        {   
+        public bool TryLookupId(
+            string id,
+            [NotNullWhen(true)] out ClassData? lookup,
+            [NotNullWhen(true)] out bool? IsModded
+        )
+        {
             lookup = null;
             IsModded = null;
             foreach (var @class in SaveManager.Value.GetAllGameData().GetAllClassDatas())
@@ -51,7 +55,11 @@ namespace TrainworksReloaded.Base.Class
             return false;
         }
 
-        public bool TryLookupName(string name, [NotNullWhen(true)] out ClassData? lookup, [NotNullWhen(true)] out bool? IsModded)
+        public bool TryLookupName(
+            string name,
+            [NotNullWhen(true)] out ClassData? lookup,
+            [NotNullWhen(true)] out bool? IsModded
+        )
         {
             lookup = null;
             IsModded = null;

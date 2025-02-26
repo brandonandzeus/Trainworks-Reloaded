@@ -1,16 +1,10 @@
-﻿using HarmonyLib;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using ShinyShoe;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 using TrainworksReloaded.Base.Localization;
 using static CardEffectData;
 using static CardStatistics;
 using static CharacterTriggerData;
 using static CharacterUI;
-using static PlayerManager;
 
 namespace TrainworksReloaded.Base.Extensions
 {
@@ -51,6 +45,7 @@ namespace TrainworksReloaded.Base.Extensions
                 _ => null,
             };
         }
+
         public static CollectableRarity? ParseRarity(this IConfigurationSection section)
         {
             var val = section.Value;
@@ -67,8 +62,8 @@ namespace TrainworksReloaded.Base.Extensions
                 "champion" => CollectableRarity.Champion,
                 _ => null,
             };
-
         }
+
         public static DLC? ParseDLC(this IConfigurationSection section)
         {
             var val = section.Value;
@@ -82,7 +77,10 @@ namespace TrainworksReloaded.Base.Extensions
                 _ => null,
             };
         }
-        public static CardInitialKeyboardTarget? ParseKeyboardTarget(this IConfigurationSection section)
+
+        public static CardInitialKeyboardTarget? ParseKeyboardTarget(
+            this IConfigurationSection section
+        )
         {
             var val = section.Value;
             if (val == null)
@@ -97,7 +95,6 @@ namespace TrainworksReloaded.Base.Extensions
                 "back_enemy" => CardInitialKeyboardTarget.BackEnemy,
                 _ => null,
             };
-
         }
 
         public static LocalizationTerm? ParseLocalizationTerm(this IConfigurationSection section)
@@ -117,21 +114,23 @@ namespace TrainworksReloaded.Base.Extensions
             var chinese_traditional = section.GetSection("chinese_traditional").Value;
             var korean = section.GetSection("korean").Value;
             var japanese = section.GetSection("japanese").Value;
-            if (key == null &&
-                type == null &&
-                description == null &&
-                group == null &&
-                speaker_descriptions == null &&
-                english == null &&
-                french == null &&
-                german == null &&
-                russian == null &&
-                portuguese == null &&
-                chinese == null &&
-                spanish == null &&
-                chinese_traditional == null &&
-                korean == null &&
-                japanese == null)
+            if (
+                key == null
+                && type == null
+                && description == null
+                && group == null
+                && speaker_descriptions == null
+                && english == null
+                && french == null
+                && german == null
+                && russian == null
+                && portuguese == null
+                && chinese == null
+                && spanish == null
+                && chinese_traditional == null
+                && korean == null
+                && japanese == null
+            )
             {
                 return null;
             }
@@ -152,12 +151,13 @@ namespace TrainworksReloaded.Base.Extensions
                 Spanish = spanish ?? "",
                 ChineseTraditional = chinese_traditional ?? "",
                 Korean = korean ?? "",
-                Japanese = japanese ?? ""
+                Japanese = japanese ?? "",
             };
-
         }
 
-        public static CardStatistics.TrackedValueType? ParseTrackedValueType(this IConfigurationSection section)
+        public static CardStatistics.TrackedValueType? ParseTrackedValueType(
+            this IConfigurationSection section
+        )
         {
             var val = section.Value;
             if (val == null)
@@ -194,7 +194,8 @@ namespace TrainworksReloaded.Base.Extensions
                 "any_exhausted" => TrackedValueType.AnyExhausted,
                 "any_monster_spawned_top_floor" => TrackedValueType.AnyMonsterSpawnedTopFloor,
                 "monster_subtype_played" => TrackedValueType.MonsterSubtypePlayed,
-                "status_effect_count_in_target_room" => TrackedValueType.StatusEffectCountInTargetRoom,
+                "status_effect_count_in_target_room" =>
+                    TrackedValueType.StatusEffectCountInTargetRoom,
                 "corruption_in_target_room" => TrackedValueType.CorruptionInTargetRoom,
                 "turn_count" => TrackedValueType.TurnCount,
                 "regal_count_in_target_room" => TrackedValueType.RegalCountInTargetRoom,
@@ -202,7 +203,8 @@ namespace TrainworksReloaded.Base.Extensions
                 "moon_phase" => TrackedValueType.MoonPhase,
                 "magic_power_in_target_room" => TrackedValueType.MagicPowerInTargetRoom,
                 "gold" => TrackedValueType.Gold,
-                "status_effect_count_on_last_ability_activator" => TrackedValueType.StatusEffectCountOnLastAbilityActivator,
+                "status_effect_count_on_last_ability_activator" =>
+                    TrackedValueType.StatusEffectCountOnLastAbilityActivator,
                 "const_one" => TrackedValueType.ConstOne,
                 "pyre_heart_resurrection" => TrackedValueType.PyreHeartResurrection,
                 "num_specific_cards_in_deck" => TrackedValueType.NumSpecificCardsInDeck,
@@ -211,7 +213,10 @@ namespace TrainworksReloaded.Base.Extensions
                 _ => null,
             };
         }
-        public static CardStatistics.CardTypeTarget? ParseCardTypeTarget(this IConfigurationSection section)
+
+        public static CardStatistics.CardTypeTarget? ParseCardTypeTarget(
+            this IConfigurationSection section
+        )
         {
             var val = section.Value;
             if (val == null)
@@ -230,7 +235,10 @@ namespace TrainworksReloaded.Base.Extensions
                 _ => null,
             };
         }
-        public static CardStatistics.EntryDuration? ParseEntryDuration(this IConfigurationSection section)
+
+        public static CardStatistics.EntryDuration? ParseEntryDuration(
+            this IConfigurationSection section
+        )
         {
             var val = section.Value;
             if (val == null)
@@ -242,9 +250,10 @@ namespace TrainworksReloaded.Base.Extensions
                 "this_turn" => EntryDuration.ThisTurn,
                 "this_battle" => EntryDuration.ThisBattle,
                 "previous_turn" => EntryDuration.PreviousTurn,
-                _ => null
+                _ => null,
             };
         }
+
         public static Team.Type? ParseTeamType(this IConfigurationSection section)
         {
             var val = section.Value;
@@ -258,9 +267,10 @@ namespace TrainworksReloaded.Base.Extensions
                 "heroes" => Team.Type.Heroes,
                 "monsters" => Team.Type.Monsters,
                 "both" => Team.Type.Heroes | Team.Type.Monsters,
-                _ => null
+                _ => null,
             };
         }
+
         public static CardTraitData.StackMode? ParseStackMode(this IConfigurationSection section)
         {
             var val = section.Value;
@@ -274,9 +284,10 @@ namespace TrainworksReloaded.Base.Extensions
                 "none" => CardTraitData.StackMode.None,
                 "param_int" => CardTraitData.StackMode.ParamInt,
                 "param_int_largest" => CardTraitData.StackMode.ParamIntLargest,
-                 _ => null
+                _ => null,
             };
         }
+
         public static TargetMode? ParseTargetMode(this IConfigurationSection section)
         {
             var val = section.Value;
@@ -315,10 +326,13 @@ namespace TrainworksReloaded.Base.Extensions
                 "weakest_all_rooms" => TargetMode.WeakestAllRooms,
                 "strongest_all_rooms" => TargetMode.StrongestAllRooms,
                 "last_equipped_character" => TargetMode.LastEquippedCharacter,
-                _ => null
+                _ => null,
             };
         }
-        public static CardEffectData.HealthFilter? ParseHealthFilter(this IConfigurationSection section)
+
+        public static CardEffectData.HealthFilter? ParseHealthFilter(
+            this IConfigurationSection section
+        )
         {
             var val = section.Value;
             if (val == null)
@@ -331,9 +345,10 @@ namespace TrainworksReloaded.Base.Extensions
                 "both" => CardEffectData.HealthFilter.Both,
                 "undamaged" => CardEffectData.HealthFilter.Undamaged,
                 "damaged" => CardEffectData.HealthFilter.Damaged,
-                _ => null
+                _ => null,
             };
         }
+
         public static CardSelectionMode? ParseCardSelectionMode(this IConfigurationSection section)
         {
             var val = section.Value;
@@ -350,10 +365,12 @@ namespace TrainworksReloaded.Base.Extensions
                 "random_to_deck" => CardSelectionMode.RandomToDeck,
                 "random_to_room" => CardSelectionMode.RandomToRoom,
                 "random_to_hand_with_upgrades" => CardSelectionMode.RandomToHandWithUpgrades,
-                "random_to_room_until_capacity_full" => CardSelectionMode.RandomToRoomUntilCapacityFull,
-                _ => null
+                "random_to_room_until_capacity_full" =>
+                    CardSelectionMode.RandomToRoomUntilCapacityFull,
+                _ => null,
             };
         }
+
         public static Anim? ParseAnim(this IConfigurationSection section)
         {
             var val = section.Value;
@@ -373,9 +390,10 @@ namespace TrainworksReloaded.Base.Extensions
                 "death" => Anim.Death,
                 "talk" => Anim.Talk,
                 "hover" => Anim.Hover,
-                _ => null
+                _ => null,
             };
         }
+
         public static Trigger? ParseTrigger(this IConfigurationSection section)
         {
             var val = section.Value;
@@ -449,7 +467,7 @@ namespace TrainworksReloaded.Base.Extensions
                 "on_train_room_loop" => Trigger.OnTrainRoomLoop,
                 "on_status_effect_changed" => Trigger.OnStatusEffectChanged,
                 "on_attacking_before_damage" => Trigger.OnAttackingBeforeDamage,
-                _ => null
+                _ => null,
             };
         }
     }

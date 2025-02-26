@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace TrainworksReloaded.Base
 {
@@ -8,12 +6,14 @@ namespace TrainworksReloaded.Base
     {
         public bool IsInitialized { get; set; }
         public IProvider Provider { get; set; }
+
         public ProviderDetails(bool isInit, IProvider provider)
         {
             this.IsInitialized = isInit;
             this.Provider = provider;
         }
     }
+
     public class GameDataClient : Dictionary<string, ProviderDetails>, IClient
     {
         public void NewProviderAvailable(IProvider newProvider)

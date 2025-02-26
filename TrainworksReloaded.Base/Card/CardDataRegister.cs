@@ -1,15 +1,10 @@
-﻿using HarmonyLib;
-using Malee;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
-using TrainworksReloaded.Core;
+using HarmonyLib;
+using Malee;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
-using static RimLight;
-using static RotaryHeart.Lib.DataBaseExample;
 
 namespace TrainworksReloaded.Base.Card
 {
@@ -19,6 +14,7 @@ namespace TrainworksReloaded.Base.Card
         private readonly IModLogger<CardDataRegister> logger;
         public CardPool CustomCardPool;
         public ReorderableArray<CardData> CardPoolBacking;
+
         public CardDataRegister(GameDataClient client, IModLogger<CardDataRegister> logger)
         {
             SaveManager = new Lazy<SaveManager>(() =>
@@ -33,20 +29,29 @@ namespace TrainworksReloaded.Base.Card
                 }
             });
             CustomCardPool = ScriptableObject.CreateInstance<CardPool>();
-            CardPoolBacking = (ReorderableArray<CardData>)AccessTools.Field(typeof(CardPool), "cardDataList").GetValue(CustomCardPool);
+            CardPoolBacking =
+                (ReorderableArray<CardData>)
+                    AccessTools.Field(typeof(CardPool), "cardDataList").GetValue(CustomCardPool);
             this.logger = logger;
         }
+
         public void Register(string key, CardData item)
         {
             logger.Log(Core.Interfaces.LogLevel.Info, $"Registering Card {key}... ");
             CardPoolBacking.Add(item);
             var gamedata = SaveManager.Value.GetAllGameData();
-            var CardDatas = (List<CardData>)AccessTools.Field(typeof(AllGameData), "cardDatas").GetValue(gamedata);
+            var CardDatas =
+                (List<CardData>)
+                    AccessTools.Field(typeof(AllGameData), "cardDatas").GetValue(gamedata);
             CardDatas.Add(item);
             Add(key, item);
         }
 
-        public bool TryLookupId(string id, [NotNullWhen(true)] out CardData? lookup, [NotNullWhen(true)] out bool? IsModded)
+        public bool TryLookupId(
+            string id,
+            [NotNullWhen(true)] out CardData? lookup,
+            [NotNullWhen(true)] out bool? IsModded
+        )
         {
             lookup = null;
             IsModded = null;
@@ -62,7 +67,11 @@ namespace TrainworksReloaded.Base.Card
             return false;
         }
 
-        public bool TryLookupName(string name, [NotNullWhen(true)] out CardData? lookup, [NotNullWhen(true)] out bool? IsModded)
+        public bool TryLookupName(
+            string name,
+            [NotNullWhen(true)] out CardData? lookup,
+            [NotNullWhen(true)] out bool? IsModded
+        )
         {
             lookup = null;
             IsModded = null;

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TrainworksReloaded.Core.Interfaces
+﻿namespace TrainworksReloaded.Core.Interfaces
 {
     /// <summary>
-    /// Marks 
+    /// Marks
     /// </summary>
     public interface IDataPipeline<T>
     {

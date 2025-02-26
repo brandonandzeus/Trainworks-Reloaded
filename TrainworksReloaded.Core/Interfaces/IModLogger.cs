@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TrainworksReloaded.Core.Interfaces
+﻿namespace TrainworksReloaded.Core.Interfaces
 {
     [Flags]
     public enum LogLevel
@@ -14,8 +10,9 @@ namespace TrainworksReloaded.Core.Interfaces
         Message = 8,
         Info = 0x10,
         Debug = 0x20,
-        All = 0x3F
+        All = 0x3F,
     }
+
     public interface IModLogger<T>
     {
         void Log(LogLevel level, object data);
