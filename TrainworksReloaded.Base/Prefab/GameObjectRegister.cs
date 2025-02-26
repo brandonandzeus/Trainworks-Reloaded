@@ -8,13 +8,19 @@ using UnityEngine.ResourceManagement.ResourceLocations;
 
 namespace TrainworksReloaded.Base.Prefab
 {
-    public class GameobjectRegister
+    public class GameObjectRegister
         : Dictionary<string, GameObject>,
             IRegister<GameObject>,
             IResourceLocator
     {
-        public Dictionary<Hash128, (string, GameObject)> HashToObjectMap { get; set; } =
-            new Dictionary<Hash128, (string, GameObject)>();
+        private readonly IModLogger<GameObjectRegister> logger;
+
+        public GameObjectRegister(IModLogger<GameObjectRegister> logger)
+        {
+            this.logger = logger;
+        }
+
+        public Dictionary<Hash128, (string, GameObject)> HashToObjectMap { get; set; } = [];
         IEnumerable<object> IResourceLocator.Keys
         {
             get { return HashToObjectMap.Keys.Cast<object>(); }
@@ -28,7 +34,7 @@ namespace TrainworksReloaded.Base.Prefab
                 var location = new ResourceLocationBase(
                     value.Item1,
                     value.Item1,
-                    typeof(GameobjectRegister).FullName,
+                    typeof(GameObjectRegister).FullName,
                     []
                 )
                 {
@@ -45,6 +51,7 @@ namespace TrainworksReloaded.Base.Prefab
 
         public void Register(string key, GameObject item)
         {
+            logger.Log(LogLevel.Info, $"Register GameObject ({key})");
             HashToObjectMap.Add(Hash128.Compute(key), (key, item));
             this.Add(key, item);
         }

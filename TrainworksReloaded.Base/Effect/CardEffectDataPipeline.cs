@@ -10,22 +10,24 @@ using TrainworksReloaded.Core.Interfaces;
 
 namespace TrainworksReloaded.Base.Effect
 {
-    public class CardEffectDefinition(string key, CardEffectData data, IConfiguration configuration)
-    {
-        public string ModKey { get; set; } = key;
-        public CardEffectData Data { get; set; } = data;
-        public IConfiguration Configuration { get; set; } = configuration;
-    }
-
     public class CardEffectDataPipeline : IDataPipeline<IRegister<CardEffectData>>
     {
         private readonly PluginAtlas atlas;
         private readonly Container container;
+        private readonly IEnumerable<IDataPipelineSetup<CardEffectData>> setups;
+        private readonly IEnumerable<IDataPipelineFinalizer<CardEffectData>> finalizers;
 
-        public CardEffectDataPipeline(PluginAtlas atlas, Container container)
+        public CardEffectDataPipeline(
+            PluginAtlas atlas,
+            Container container,
+            IEnumerable<IDataPipelineSetup<CardEffectData>> setups,
+            IEnumerable<IDataPipelineFinalizer<CardEffectData>> finalizers
+        )
         {
             this.atlas = atlas;
             this.container = container;
+            this.setups = setups;
+            this.finalizers = finalizers;
         }
 
         public void Run(IRegister<CardEffectData> service)
@@ -39,6 +41,10 @@ namespace TrainworksReloaded.Base.Effect
             foreach (var definition in processList)
             {
                 FinalizeCardEffectData(service, definition);
+                foreach (var finalizer in finalizers)
+                {
+                    finalizer.Finalize(definition);
+                }
             }
         }
 
@@ -54,6 +60,10 @@ namespace TrainworksReloaded.Base.Effect
                 var data = LoadEffectConfiguration(service, key, child);
                 if (data != null)
                 {
+                    foreach (var setup in setups)
+                    {
+                        setup.Setup(data);
+                    }
                     processList.Add(data);
                 }
             }

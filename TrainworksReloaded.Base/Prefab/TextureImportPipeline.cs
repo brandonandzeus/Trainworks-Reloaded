@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
@@ -10,9 +11,15 @@ namespace TrainworksReloaded.Base.Prefab
     {
         private readonly PluginAtlas atlas;
 
-        public TextureImportPipeline(PluginAtlas atlas)
+        private readonly IEnumerable<IDataPipelineSetup<TextureImport>> setups;
+
+        public TextureImportPipeline(
+            PluginAtlas atlas,
+            IEnumerable<IDataPipelineSetup<TextureImport>> setups
+        )
         {
             this.atlas = atlas;
+            this.setups = setups;
         }
 
         public void Run(IRegister<GameObject> service)
@@ -46,53 +53,20 @@ namespace TrainworksReloaded.Base.Prefab
                             continue;
                         }
 
-                        var gameObject = new GameObject { name = name };
-                        var prefab = gameObject.AddComponent<AddressableAssetPrefab>();
-
-                        gameObject.AddComponent<RectTransform>();
-                        var cardArt = new GameObject { name = "CardSprite" };
-                        cardArt.transform.SetParent(gameObject.transform);
-                        var canvasRenderer = cardArt.AddComponent<CanvasRenderer>();
-                        //var spriteRenderer = cardArt.AddComponent<SpriteRenderer>();
-
-                        var image = cardArt.AddComponent<Image>();
-                        var sprite = Sprite.Create(
-                            texture2d,
-                            new Rect(0, 0, texture2d.width, texture2d.height),
-                            new Vector2(0.5f, 0.5f),
-                            128f
-                        );
-                        image.sprite = sprite;
-                        image.preserveAspect = true;
-                        image.SetNativeSize();
-
-                        var rectTransform = cardArt.GetComponent<RectTransform>();
-                        if (rectTransform != null)
-                        {
-                            rectTransform.anchorMin = Vector2.zero; // Bottom-left corner
-                            rectTransform.anchorMax = Vector2.one; // Top-right corner
-                            rectTransform.offsetMin = Vector2.zero; // Zero out offsets
-                            rectTransform.offsetMax = Vector2.zero;
-                            rectTransform.pivot = new Vector2(0.5f, 0.5f); // Center pivot
-                        }
-
-                        var material = new Material(Shader.Find("Shiny Shoe/CardEffects"));
-                        //var material = new Material(Shader.Find("Sprites/Default"));
-                        material.mainTexture = sprite.texture;
-                        material.SetTexture("_Layer1Tex", sprite.texture);
-                        image.material = material;
-                        //spriteRenderer.material = material;
-                        //spriteRenderer.sprite = sprite;
-                        canvasRenderer.materialCount = 1;
-                        canvasRenderer.SetMaterial(material, 0);
-
-                        var cardEffectTransforms = new GameObject { name = "CardEffectTransforms" };
-                        cardEffectTransforms.transform.SetParent(gameObject.transform);
-
-                        gameObject.layer = 5;
+                        var gameObject = new GameObject { name = name, layer = 5 };
                         GameObject.DontDestroyOnLoad(gameObject);
 
-                        service.Add(name, gameObject);
+                        service.Register(name, gameObject);
+                        foreach (var setup in setups)
+                        {
+                            setup.Setup(
+                                new TextureImportDefinition(
+                                    name,
+                                    new TextureImport(texture2d, gameObject),
+                                    texture
+                                )
+                            );
+                        }
                         break;
                     }
                 }

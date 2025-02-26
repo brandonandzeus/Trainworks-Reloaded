@@ -79,6 +79,8 @@ namespace TrainworksReloaded.Plugin
                 c.RegisterSingleton<IRegister<CardData>, CardDataRegister>(); //a place to register and access custom card data
                 c.RegisterSingleton<CardDataRegister, CardDataRegister>();
                 c.Register<IDataPipeline<IRegister<CardData>>, CardDataPipeline>(); //a data pipeline to run as soon as register is needed
+                c.Collection.Register<IDataPipelineSetup<CardData>>(new List<Type>());
+                c.Collection.Register<IDataPipelineFinalizer<CardData>>(new List<Type>());
                 c.RegisterInitializer<IRegister<CardData>>(x =>
                 {
                     var pipeline = c.GetInstance<IDataPipeline<IRegister<CardData>>>();
@@ -93,6 +95,8 @@ namespace TrainworksReloaded.Plugin
                 c.RegisterSingleton<IRegister<CardTraitData>, CardTraitDataRegister>();
                 c.RegisterSingleton<CardTraitDataRegister, CardTraitDataRegister>();
                 c.Register<IDataPipeline<IRegister<CardTraitData>>, CardTraitDataPipeline>();
+                c.Collection.Register<IDataPipelineSetup<CardTraitData>>(new List<Type>());
+                c.Collection.Register<IDataPipelineFinalizer<CardTraitData>>(new List<Type>());
                 c.RegisterInitializer<IRegister<CardTraitData>>(x =>
                 {
                     var pipeline = c.GetInstance<IDataPipeline<IRegister<CardTraitData>>>();
@@ -103,6 +107,8 @@ namespace TrainworksReloaded.Plugin
                 c.RegisterSingleton<IRegister<CardEffectData>, CardEffectDataRegister>();
                 c.RegisterSingleton<CardEffectDataRegister, CardEffectDataRegister>();
                 c.Register<IDataPipeline<IRegister<CardEffectData>>, CardEffectDataPipeline>();
+                c.Collection.Register<IDataPipelineSetup<CardEffectData>>(new List<Type>());
+                c.Collection.Register<IDataPipelineFinalizer<CardEffectData>>(new List<Type>());
                 c.RegisterInitializer<IRegister<CardEffectData>>(x =>
                 {
                     var pipeline = c.GetInstance<IDataPipeline<IRegister<CardEffectData>>>();
@@ -117,13 +123,16 @@ namespace TrainworksReloaded.Plugin
                 >();
 
                 //Register Assets
-                c.RegisterSingleton<IRegister<GameObject>, GameobjectRegister>();
-                c.RegisterSingleton<GameobjectRegister, GameobjectRegister>();
-                c.RegisterInitializer<GameobjectRegister>(x =>
+                c.RegisterSingleton<IRegister<GameObject>, GameObjectRegister>();
+                c.RegisterSingleton<GameObjectRegister, GameObjectRegister>();
+                c.RegisterInitializer<GameObjectRegister>(x =>
                 {
                     Addressables.ResourceLocators.Add(x);
                 });
                 c.Register<IDataPipeline<IRegister<GameObject>>, TextureImportPipeline>(); //a data pipeline to run as soon as register is needed
+                c.Collection.Append<IDataPipelineSetup<TextureImport>, TextureImportCardArtSetup>(
+                    Lifestyle.Singleton
+                );
                 c.RegisterInitializer<IRegister<GameObject>>(x =>
                 {
                     var pipeline = c.GetInstance<IDataPipeline<IRegister<GameObject>>>();
@@ -131,6 +140,10 @@ namespace TrainworksReloaded.Plugin
                 });
 
                 //Register Loggers
+                c.RegisterSingleton<
+                    IModLogger<GameObjectRegister>,
+                    ModLogger<GameObjectRegister>
+                >();
                 c.RegisterSingleton<
                     IModLogger<CardEffectDataRegister>,
                     ModLogger<CardEffectDataRegister>

@@ -15,14 +15,9 @@ namespace TrainworksReloaded.Base
         }
     }
 
-    public class ModLogger<T> : IModLogger<T>
+    public class ModLogger<T>(ManualLogSource manualLogSource) : IModLogger<T>
     {
-        private readonly ManualLogSource manualLogSource;
-
-        public ModLogger(ManualLogSource manualLogSource)
-        {
-            this.manualLogSource = manualLogSource;
-        }
+        private readonly ManualLogSource manualLogSource = manualLogSource;
 
         public void Log(Core.Interfaces.LogLevel level, object data)
         {

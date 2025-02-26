@@ -9,14 +9,6 @@ using TrainworksReloaded.Core.Interfaces;
 
 namespace TrainworksReloaded.Base.Trait
 {
-    public class CardTraitDefinition(string key, CardTraitData data, IConfiguration configuration)
-        : IDefinition<CardTraitData>
-    {
-        public string Key { get; set; } = key;
-        public CardTraitData Data { get; set; } = data;
-        public IConfiguration Configuration { get; set; } = configuration;
-    }
-
     public class CardTraitDataPipeline : IDataPipeline<IRegister<CardTraitData>>
     {
         private readonly PluginAtlas atlas;
@@ -51,6 +43,10 @@ namespace TrainworksReloaded.Base.Trait
             foreach (var definition in processList)
             {
                 FinalizeCardTraitData(service, definition);
+                foreach (var finalizer in finalizers)
+                {
+                    finalizer.Finalize(definition);
+                }
             }
         }
 
@@ -66,6 +62,10 @@ namespace TrainworksReloaded.Base.Trait
                 var data = LoadTraitConfiguration(service, key, child);
                 if (data != null)
                 {
+                    foreach (var setup in setups)
+                    {
+                        setup.Setup(data);
+                    }
                     processList.Add(data);
                 }
             }

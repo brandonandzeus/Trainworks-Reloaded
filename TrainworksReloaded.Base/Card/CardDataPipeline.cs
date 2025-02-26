@@ -15,33 +15,20 @@ using UnityEngine.AddressableAssets;
 
 namespace TrainworksReloaded.Base.Card
 {
-    public class CardDataDefinition(
-        string key,
-        CardData data,
-        IConfiguration configuration,
-        bool isOverride
-    ) : IDefinition<CardData>
-    {
-        public string Key { get; set; } = key;
-        public CardData Data { get; set; } = data;
-        public IConfiguration Configuration { get; set; } = configuration;
-        public bool IsOverride { get; set; } = isOverride;
-    }
-
     public class CardDataPipeline : IDataPipeline<IRegister<CardData>>
     {
         private readonly PluginAtlas atlas;
         private readonly IModLogger<CardDataPipeline> logger;
         private readonly Container container;
-        private readonly IEnumerable<IDataPipelineSetup<IRegister<CardData>>> setups;
-        private readonly IEnumerable<IDataPipelineFinalizer<IRegister<CardData>>> finalizers;
+        private readonly IEnumerable<IDataPipelineSetup<CardData>> setups;
+        private readonly IEnumerable<IDataPipelineFinalizer<CardData>> finalizers;
 
         public CardDataPipeline(
             PluginAtlas atlas,
             IModLogger<CardDataPipeline> logger,
             Container container,
-            IEnumerable<IDataPipelineSetup<IRegister<CardData>>> setups,
-            IEnumerable<IDataPipelineFinalizer<IRegister<CardData>>> finalizers
+            IEnumerable<IDataPipelineSetup<CardData>> setups,
+            IEnumerable<IDataPipelineFinalizer<CardData>> finalizers
         )
         {
             this.atlas = atlas;
@@ -63,6 +50,10 @@ namespace TrainworksReloaded.Base.Card
             foreach (var definition in processList)
             {
                 FinalizeCardData(service, definition);
+                foreach (var finalizer in finalizers)
+                {
+                    finalizer.Finalize(definition);
+                }
             }
         }
 
@@ -85,6 +76,10 @@ namespace TrainworksReloaded.Base.Card
                 var data = LoadCardConfiguration(service, key, child);
                 if (data != null)
                 {
+                    foreach (var setup in setups)
+                    {
+                        setup.Setup(data);
+                    }
                     processList.Add(data);
                 }
             }
