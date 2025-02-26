@@ -11,6 +11,9 @@ env:
   base_version: '0.1.0'
   nuget_source: 'https://nuget.pkg.github.com/Monster-Train-2-Modding-Group/index.json'
 
+permissions:
+  packages: write
+
 jobs:
   build:
     name: Build and Pack NuGet Packages
