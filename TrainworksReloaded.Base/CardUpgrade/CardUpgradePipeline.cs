@@ -161,7 +161,6 @@ namespace TrainworksReloaded.Base.CardUpgrade
             }
 
             //bools
-
             var allowSecondaryTooltipPlacement =
                 checkOverride
                 && (bool)
@@ -253,6 +252,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
                         ?? doNotReplaceExistingUnitAbility
                 );
 
+            //int
             var bonusDamage = checkOverride
                 ? (int)AccessTools.Field(typeof(CardUpgradeData), "bonusDamage").GetValue(data)
                 : 0;

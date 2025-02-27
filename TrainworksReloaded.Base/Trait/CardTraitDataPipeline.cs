@@ -83,7 +83,7 @@ namespace TrainworksReloaded.Base.Trait
             {
                 return null;
             }
-            var name = $"{key}-Trait-{id}";
+            var name = key.GetId("Trait", id);
             var data = new CardTraitData();
 
             //handle one-to-one values

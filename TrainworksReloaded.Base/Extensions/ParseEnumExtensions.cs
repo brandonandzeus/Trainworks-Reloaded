@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using ShinyShoe;
 using TrainworksReloaded.Base.Localization;
+using static BossState;
 using static CardEffectData;
 using static CardStatistics;
 using static CharacterTriggerData;
@@ -13,7 +14,7 @@ namespace TrainworksReloaded.Base.Extensions
         public static CardData.CostType? ParseCostType(this IConfigurationSection section)
         {
             var val = section.Value;
-            if (val == null)
+            if (string.IsNullOrEmpty(val))
             {
                 return null;
             }
@@ -29,7 +30,7 @@ namespace TrainworksReloaded.Base.Extensions
         public static CardType? ParseCardType(this IConfigurationSection section)
         {
             var val = section.Value;
-            if (val == null)
+            if (string.IsNullOrEmpty(val))
             {
                 return null;
             }
@@ -49,7 +50,7 @@ namespace TrainworksReloaded.Base.Extensions
         public static CollectableRarity? ParseRarity(this IConfigurationSection section)
         {
             var val = section.Value;
-            if (val == null)
+            if (string.IsNullOrEmpty(val))
             {
                 return null;
             }
@@ -67,7 +68,7 @@ namespace TrainworksReloaded.Base.Extensions
         public static DLC? ParseDLC(this IConfigurationSection section)
         {
             var val = section.Value;
-            if (val == null)
+            if (string.IsNullOrEmpty(val))
             {
                 return null;
             }
@@ -83,7 +84,7 @@ namespace TrainworksReloaded.Base.Extensions
         )
         {
             var val = section.Value;
-            if (val == null)
+            if (string.IsNullOrEmpty(val))
             {
                 return null;
             }
@@ -160,7 +161,7 @@ namespace TrainworksReloaded.Base.Extensions
         )
         {
             var val = section.Value;
-            if (val == null)
+            if (string.IsNullOrEmpty(val))
             {
                 return null;
             }
@@ -219,7 +220,7 @@ namespace TrainworksReloaded.Base.Extensions
         )
         {
             var val = section.Value;
-            if (val == null)
+            if (string.IsNullOrEmpty(val))
             {
                 return null;
             }
@@ -241,7 +242,7 @@ namespace TrainworksReloaded.Base.Extensions
         )
         {
             var val = section.Value;
-            if (val == null)
+            if (string.IsNullOrEmpty(val))
             {
                 return null;
             }
@@ -257,7 +258,7 @@ namespace TrainworksReloaded.Base.Extensions
         public static Team.Type? ParseTeamType(this IConfigurationSection section)
         {
             var val = section.Value;
-            if (val == null)
+            if (string.IsNullOrEmpty(val))
             {
                 return null;
             }
@@ -274,7 +275,7 @@ namespace TrainworksReloaded.Base.Extensions
         public static CardTraitData.StackMode? ParseStackMode(this IConfigurationSection section)
         {
             var val = section.Value;
-            if (val == null)
+            if (string.IsNullOrEmpty(val))
             {
                 return null;
             }
@@ -291,7 +292,7 @@ namespace TrainworksReloaded.Base.Extensions
         public static TargetMode? ParseTargetMode(this IConfigurationSection section)
         {
             var val = section.Value;
-            if (val == null)
+            if (string.IsNullOrEmpty(val))
             {
                 return null;
             }
@@ -335,7 +336,7 @@ namespace TrainworksReloaded.Base.Extensions
         )
         {
             var val = section.Value;
-            if (val == null)
+            if (string.IsNullOrEmpty(val))
             {
                 return null;
             }
@@ -352,7 +353,7 @@ namespace TrainworksReloaded.Base.Extensions
         public static CardSelectionMode? ParseCardSelectionMode(this IConfigurationSection section)
         {
             var val = section.Value;
-            if (val == null)
+            if (string.IsNullOrEmpty(val))
             {
                 return null;
             }
@@ -374,7 +375,7 @@ namespace TrainworksReloaded.Base.Extensions
         public static Anim? ParseAnim(this IConfigurationSection section)
         {
             var val = section.Value;
-            if (val == null)
+            if (string.IsNullOrEmpty(val))
             {
                 return null;
             }
@@ -397,7 +398,7 @@ namespace TrainworksReloaded.Base.Extensions
         public static Trigger? ParseTrigger(this IConfigurationSection section)
         {
             var val = section.Value;
-            if (val == null)
+            if (string.IsNullOrEmpty(val))
             {
                 return null;
             }
@@ -468,6 +469,62 @@ namespace TrainworksReloaded.Base.Extensions
                 "on_status_effect_changed" => Trigger.OnStatusEffectChanged,
                 "on_attacking_before_damage" => Trigger.OnAttackingBeforeDamage,
                 _ => null,
+            };
+        }
+
+        public static AttackPhase? ParseAttackPhase(this IConfigurationSection section)
+        {
+            var val = section.Value;
+            if (string.IsNullOrEmpty(val))
+            {
+                return null;
+            }
+
+            return val.ToLower() switch
+            {
+                "none" => 0, // No flags set
+                "casting" => AttackPhase.Casting,
+                "relentless" => AttackPhase.Relentless,
+                "both" => AttackPhase.Casting | AttackPhase.Relentless, // Both flags set
+                _ => null, // Invalid input
+            };
+        }
+
+        public static CharacterDeathVFX.Type? ParseCharacterDeathType(
+            this IConfigurationSection section
+        )
+        {
+            var val = section.Value;
+            if (string.IsNullOrEmpty(val))
+            {
+                return null;
+            }
+
+            return val.ToLower() switch
+            {
+                "none" => CharacterDeathVFX.Type.NONE,
+                "normal" => CharacterDeathVFX.Type.Normal,
+                "large" => CharacterDeathVFX.Type.Large,
+                "boss" => CharacterDeathVFX.Type.Boss,
+                _ => null, // Invalid input
+            };
+        }
+
+        public static TitanAffinity? ParseTitanAffinity(this IConfigurationSection section)
+        {
+            var val = section.Value;
+            if (string.IsNullOrEmpty(val))
+            {
+                return null;
+            }
+
+            return val.ToLower() switch
+            {
+                "none" => TitanAffinity.None,
+                "entropy" => TitanAffinity.Entropy,
+                "savagery" => TitanAffinity.Savagery,
+                "dominion" => TitanAffinity.Dominion,
+                _ => null, // Invalid input
             };
         }
     }

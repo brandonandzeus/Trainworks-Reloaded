@@ -457,7 +457,7 @@ namespace TrainworksReloaded.Base.Card
                     continue;
                 }
 
-                var id = $"{definition.Key}-Trait-{idConfig}";
+                var id = idConfig.ToId(key, "Trait");
                 if (cardDataTraitRegister.TryLookupId(id, out var card, out var _))
                 {
                     cardTraitDatas.Add(card);
@@ -480,12 +480,13 @@ namespace TrainworksReloaded.Base.Card
                 {
                     continue;
                 }
-                var id = $"{definition.Key}-Effect-{idConfig}";
+                var id = idConfig.ToId(key, "Effect");
                 if (cardEffectRegister.TryLookupId(id, out var card, out var _))
                 {
                     cardEffectDatas.Add(card);
                 }
             }
+
             if (cardEffectDatas.Count != 0)
                 AccessTools.Field(typeof(CardData), "effects").SetValue(data, cardEffectDatas);
         }

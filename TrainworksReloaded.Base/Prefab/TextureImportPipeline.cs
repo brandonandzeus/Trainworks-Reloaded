@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
@@ -36,7 +37,7 @@ namespace TrainworksReloaded.Base.Prefab
                     {
                         continue;
                     }
-                    var name = $"{config.Key}-GameObject-{id}";
+                    var name = config.Key.GetId("GameObject", id);
 
                     foreach (var directory in config.Value.AssetDirectories)
                     {

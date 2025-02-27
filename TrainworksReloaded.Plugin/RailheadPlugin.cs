@@ -7,6 +7,7 @@ using SimpleInjector;
 using TrainworksReloaded.Base;
 using TrainworksReloaded.Base.Card;
 using TrainworksReloaded.Base.CardUpgrade;
+using TrainworksReloaded.Base.Character;
 using TrainworksReloaded.Base.Class;
 using TrainworksReloaded.Base.Effect;
 using TrainworksReloaded.Base.Localization;
@@ -105,6 +106,18 @@ namespace TrainworksReloaded.Plugin
                     pipeline.Run(x);
                 });
 
+                //Register Character Data
+                c.RegisterSingleton<IRegister<CharacterData>, CharacterDataRegister>(); //a place to register and access custom card data
+                c.RegisterSingleton<CharacterDataRegister, CharacterDataRegister>();
+                c.Register<IDataPipeline<IRegister<CharacterData>>, CharacterDataPipeline>(); //a data pipeline to run as soon as register is needed
+                c.Collection.Register<IDataPipelineSetup<CharacterData>>(new List<Type>());
+                c.Collection.Register<IDataPipelineFinalizer<CharacterData>>(new List<Type>());
+                c.RegisterInitializer<IRegister<CharacterData>>(x =>
+                {
+                    var pipeline = c.GetInstance<IDataPipeline<IRegister<CharacterData>>>();
+                    pipeline.Run(x);
+                });
+
                 //Register Class Data
                 c.RegisterSingleton<IRegister<ClassData>, ClassDataRegister>();
                 c.RegisterSingleton<ClassDataRegister, ClassDataRegister>();
@@ -153,6 +166,10 @@ namespace TrainworksReloaded.Plugin
                 >();
 
                 //Register Loggers
+                c.RegisterSingleton<
+                    IModLogger<CharacterDataRegister>,
+                    ModLogger<CharacterDataRegister>
+                >();
                 c.RegisterSingleton<
                     IModLogger<GameObjectRegister>,
                     ModLogger<GameObjectRegister>
