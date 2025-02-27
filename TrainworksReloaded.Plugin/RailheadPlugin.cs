@@ -84,13 +84,21 @@ namespace TrainworksReloaded.Plugin
                 {
                     Addressables.ResourceLocators.Add(x);
                 });
-                c.Register<IDataPipeline<IRegister<GameObject>>, TextureImportPipeline>(); //a data pipeline to run as soon as register is needed
-                c.Collection.Append<IDataPipelineSetup<TextureImport>, TextureImportCardArtSetup>(
-                    Lifestyle.Singleton
-                );
                 c.RegisterInitializer<IRegister<GameObject>>(x =>
                 {
                     var pipeline = c.GetInstance<IDataPipeline<IRegister<GameObject>>>();
+                    pipeline.Run(x);
+                });
+                c.Register<IDataPipeline<IRegister<GameObject>>, GameObjectImportPipeline>(); //a data pipeline to run as soon as register is needed
+                c.Collection.Append<IDataPipelineSetup<GameObject>, GameObjectCardArtSetup>(
+                    Lifestyle.Singleton
+                );
+                c.RegisterSingleton<IRegister<Sprite>, SpriteRegister>();
+                c.RegisterSingleton<SpriteRegister, SpriteRegister>();
+                c.Register<IDataPipeline<IRegister<Sprite>>, SpritePipeline>();
+                c.RegisterInitializer<IRegister<Sprite>>(x =>
+                {
+                    var pipeline = c.GetInstance<IDataPipeline<IRegister<Sprite>>>();
                     pipeline.Run(x);
                 });
 
@@ -165,33 +173,12 @@ namespace TrainworksReloaded.Plugin
                     CustomLocalizationTermRegistry
                 >();
 
-                //Register Loggers
-                c.RegisterSingleton<
-                    IModLogger<CharacterDataRegister>,
-                    ModLogger<CharacterDataRegister>
-                >();
-                c.RegisterSingleton<
-                    IModLogger<GameObjectRegister>,
-                    ModLogger<GameObjectRegister>
-                >();
-                c.RegisterSingleton<
-                    IModLogger<CardEffectDataRegister>,
-                    ModLogger<CardEffectDataRegister>
-                >();
-                c.RegisterSingleton<
-                    IModLogger<CardUpgradeRegister>,
-                    ModLogger<CardUpgradeRegister>
-                >();
-                c.RegisterSingleton<IModLogger<CardDataRegister>, ModLogger<CardDataRegister>>();
-                c.RegisterSingleton<
-                    IModLogger<CardTraitDataRegister>,
-                    ModLogger<CardTraitDataRegister>
-                >();
-                c.RegisterSingleton<
-                    IModLogger<CustomLocalizationTermRegistry>,
-                    ModLogger<CustomLocalizationTermRegistry>
-                >();
-                c.RegisterConditional(typeof(IModLogger<>), typeof(ModLogger<>), c => !c.Handled);
+                c.RegisterConditional(
+                    typeof(IModLogger<>),
+                    typeof(ModLogger<>),
+                    Lifestyle.Singleton,
+                    c => !c.Handled
+                );
             });
 
             var harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);

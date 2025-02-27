@@ -1,28 +1,30 @@
 {
   "cards": [
-    //{
-    //  "id": "StarterFireStarter",
-    //  "override": true, //if override is true, we will override a pre-existing card (works with both vanilla and other mod creators so long as you load after them.)
-    //  "cost": 0,
-    //  "names": {
-    //    "english": "Starter of Fire",
-    //    "french": "Le Starter of Fire"
-    //  },
-    //  "card_art_reference": "@Gasoline",
-    //  "effects": [
-    //    {
-    //      "id": "@DealThreeDamage"
-    //    }
-    //  ],
-    //  "traits": [
-    //    {
-    //      "id": "@Unpurge"
-    //    }
-    //  ] //you can only grab traits that you have defined mod-wise, vanilla traits are not accessible outside of trait definition. Override clears all traits and adds yours, so you will have to redefine them.
-    //},
+    {
+      "id": "StarterFireStarter",
+      "override": true, //if override is true, we will override a pre-existing card (works with both vanilla and other mod creators so long as you load after them.)
+      "cost": 0,
+      "names": {
+        "english": "Starter of Fire",
+        "french": "Le Starter of Fire"
+      },
+      "card_art_reference": "@Gasoline",
+      "effects": [
+        {
+          "id": "@DealThreeDamage"
+        }
+      ],
+      "traits": [
+        {
+          "id": "@Unpurge"
+        }
+      ] //you can only grab traits that you have defined mod-wise, vanilla traits are not accessible outside of trait definition. Override clears all traits and adds yours, so you will have to redefine them.
+    },
     {
       "id": "JustCause",
       "override": true,
+      "type": "monster",
+      "targets_room": true,
       "effects": [
         {
           "id": "@SpawnOminous"
@@ -227,11 +229,17 @@
       "additional_tooltips": []
     }
   ],
-  "textures": [
+  "sprites": [
+    {
+      "id": "Gasoline",
+      "path": "textures/gas.png"
+    }
+  ],
+  "game_objects": [
     {
       "id": "Gasoline",
       "type": "card_art",
-      "path": "textures/gas.png"
+      "sprite": "@Gasoline"
     }
   ],
   "traits": [

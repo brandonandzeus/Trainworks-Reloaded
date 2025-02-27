@@ -1,43 +1,45 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 namespace TrainworksReloaded.Base.Prefab
 {
-    public class TextureImportPipeline : IDataPipeline<IRegister<GameObject>>
+    public class SpritePipeline : IDataPipeline<IRegister<Sprite>>
     {
         private readonly PluginAtlas atlas;
 
-        private readonly IEnumerable<IDataPipelineSetup<TextureImport>> setups;
+        private readonly IEnumerable<IDataPipelineSetup<Sprite>> setups;
 
-        public TextureImportPipeline(
-            PluginAtlas atlas,
-            IEnumerable<IDataPipelineSetup<TextureImport>> setups
-        )
+        public SpritePipeline(PluginAtlas atlas, IEnumerable<IDataPipelineSetup<Sprite>> setups)
         {
             this.atlas = atlas;
             this.setups = setups;
         }
 
-        public void Run(IRegister<GameObject> service)
+        public void Run(IRegister<Sprite> service)
         {
             foreach (var config in atlas.PluginDefinitions)
             {
+                var key = config.Key;
                 foreach (
-                    var texture in config.Value.Configuration.GetSection("textures").GetChildren()
+                    var spriteConfig in config
+                        .Value.Configuration.GetSection("sprites")
+                        .GetChildren()
                 )
                 {
-                    var id = texture.GetSection("id").Value;
-                    var path = texture.GetSection("path").Value;
+                    var id = spriteConfig.GetSection("id").Value;
+                    var path = spriteConfig.GetSection("path").Value;
                     if (path == null || id == null)
                     {
                         continue;
                     }
-                    var name = config.Key.GetId("GameObject", id);
+                    var name = key.GetId("Sprite", id);
 
                     foreach (var directory in config.Value.AssetDirectories)
                     {
@@ -46,27 +48,24 @@ namespace TrainworksReloaded.Base.Prefab
                         {
                             continue;
                         }
-
                         var data = File.ReadAllBytes(fullpath);
                         var texture2d = new Texture2D(2, 2);
                         if (!texture2d.LoadImage(data))
                         {
                             continue;
                         }
-
-                        var gameObject = new GameObject { name = name, layer = 5 };
-                        GameObject.DontDestroyOnLoad(gameObject);
-
-                        service.Register(name, gameObject);
+                        var sprite = Sprite.Create(
+                            texture2d,
+                            new Rect(0, 0, texture2d.width, texture2d.height),
+                            new Vector2(0.5f, 0.5f),
+                            128f
+                        );
+                        sprite.name = name;
+                        service.Register(name, sprite);
+                        var definition = new SpriteDefinition(key, sprite, spriteConfig);
                         foreach (var setup in setups)
                         {
-                            setup.Setup(
-                                new TextureImportDefinition(
-                                    name,
-                                    new TextureImport(texture2d, gameObject),
-                                    texture
-                                )
-                            );
+                            setup.Setup(definition);
                         }
                         break;
                     }

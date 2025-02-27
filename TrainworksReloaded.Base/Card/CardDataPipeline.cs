@@ -424,7 +424,7 @@ namespace TrainworksReloaded.Base.Card
             if (cardArtReference != null)
             {
                 var gameObjectName = cardArtReference.ToId(key, "GameObject");
-                if (gameObjectRegister.TryLookupName(gameObjectName, out var gameObject, out var _))
+                if (gameObjectRegister.TryLookupId(gameObjectName, out var gameObject, out var _))
                 {
                     var assetRef = (AssetReferenceGameObject)
                         AccessTools

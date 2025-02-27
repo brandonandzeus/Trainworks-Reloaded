@@ -5,6 +5,7 @@ using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
 using UnityEngine.AddressableAssets.ResourceLocators;
 using UnityEngine.ResourceManagement.ResourceLocations;
+using static RimLight;
 
 namespace TrainworksReloaded.Base.Prefab
 {

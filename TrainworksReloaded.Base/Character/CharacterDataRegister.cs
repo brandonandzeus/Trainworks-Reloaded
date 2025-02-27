@@ -34,7 +34,7 @@ namespace TrainworksReloaded.Base.Character
 
         public void Register(string key, CharacterData item)
         {
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Registering Character {key}... ");
+            logger.Log(Core.Interfaces.LogLevel.Info, $"Register Character {key}... ");
             var gamedata = SaveManager.Value.GetAllGameData();
             var CharacterDatas =
                 (List<CharacterData>)
