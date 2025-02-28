@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using ShinyShoe;
 using TrainworksReloaded.Base.Localization;
+using TrainworksReloaded.Core.Extensions;
+using UnityEngine;
 using static BossState;
 using static CardEffectData;
 using static CardStatistics;
@@ -98,6 +100,19 @@ namespace TrainworksReloaded.Base.Extensions
             };
         }
 
+        public static Color? ParseColor(this IConfigurationSection section)
+        {
+            var r = section.GetSection("r").ParseFloat();
+            var g = section.GetSection("g").ParseFloat();
+            var b = section.GetSection("b").ParseFloat();
+            var a = section.GetSection("a").ParseFloat();
+            if (r == null && g == null && b == null && a == null)
+            {
+                return null;
+            }
+            return new Color(r ?? 0.0f, g ?? 0.0f, b ?? 0.0f, a ?? 1.0f);
+        }
+
         public static LocalizationTerm? ParseLocalizationTerm(this IConfigurationSection section)
         {
             var key = section.GetSection("id").Value;
@@ -153,6 +168,22 @@ namespace TrainworksReloaded.Base.Extensions
                 ChineseTraditional = chinese_traditional ?? "",
                 Korean = korean ?? "",
                 Japanese = japanese ?? "",
+            };
+        }
+
+        public static ClassCardStyle? ParseCardStyle(this IConfigurationSection section)
+        {
+            var val = section.Value;
+            if (string.IsNullOrEmpty(val))
+            {
+                return null;
+            }
+            return val.ToLower() switch
+            {
+                "none" => ClassCardStyle.None,
+                "banished" => ClassCardStyle.Banished,
+                "pyreborne" => ClassCardStyle.Pyreborne,
+                _ => null,
             };
         }
 

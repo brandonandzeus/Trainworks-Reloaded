@@ -1,10 +1,8 @@
 ﻿namespace TrainworksReloaded.Core.Interfaces
 {
-    /// <summary>
-    /// Marks
-    /// </summary>
-    public interface IDataPipeline<T>
+    public interface IDataPipeline<T, U>
+        where T : IRegister<U>
     {
-        public void Run(T service);
+        public List<IDefinition<U>> Run(T service);
     }
 }

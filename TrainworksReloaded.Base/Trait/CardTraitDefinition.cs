@@ -9,5 +9,7 @@ namespace TrainworksReloaded.Base.Trait
         public string Key { get; set; } = key;
         public CardTraitData Data { get; set; } = data;
         public IConfiguration Configuration { get; set; } = configuration;
+        public string Id { get; set; } = "";
+        public bool IsModded { get; set; } = true;
     }
 }

@@ -13,5 +13,7 @@ namespace TrainworksReloaded.Base.Prefab
         public string Key { get; set; } = key;
         public GameObject Data { get; set; } = data;
         public IConfiguration Configuration { get; set; } = configuration;
+        public string Id { get; set; } = "";
+        public bool IsModded { get; set; }
     }
 }

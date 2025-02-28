@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using HarmonyLib;
+using TrainworksReloaded.Base.Character;
 using TrainworksReloaded.Core.Interfaces;
 
 namespace TrainworksReloaded.Base.Class
@@ -9,8 +10,9 @@ namespace TrainworksReloaded.Base.Class
     public class ClassDataRegister : Dictionary<string, ClassData>, IRegister<ClassData>
     {
         private readonly Lazy<SaveManager> SaveManager;
+        private readonly IModLogger<ClassDataRegister> logger;
 
-        public ClassDataRegister(GameDataClient client)
+        public ClassDataRegister(GameDataClient client, IModLogger<ClassDataRegister> logger)
         {
             SaveManager = new Lazy<SaveManager>(() =>
             {
@@ -23,15 +25,17 @@ namespace TrainworksReloaded.Base.Class
                     return new SaveManager();
                 }
             });
+            this.logger = logger;
         }
 
         public void Register(string key, ClassData item)
         {
+            logger.Log(Core.Interfaces.LogLevel.Info, $"Register Class {key}... ");
             var gamedata = SaveManager.Value.GetAllGameData();
-            var CardDatas =
+            var ClassDatas =
                 (List<ClassData>)
                     AccessTools.Field(typeof(AllGameData), "classDatas").GetValue(gamedata);
-            CardDatas.Add(item);
+            ClassDatas.Add(item);
             this.Add(key, item);
         }
 

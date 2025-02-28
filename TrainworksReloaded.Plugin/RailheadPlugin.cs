@@ -14,6 +14,7 @@ using TrainworksReloaded.Base.Localization;
 using TrainworksReloaded.Base.Prefab;
 using TrainworksReloaded.Base.Trait;
 using TrainworksReloaded.Core;
+using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -62,10 +63,17 @@ namespace TrainworksReloaded.Plugin
             //everything rail head
             var builder = Railhead.GetBuilder();
             builder.Configure(
-                MyPluginInfo.PLUGIN_GUID,
+                "StewardClan",
                 c =>
                 {
                     c.AddJsonFile("plugin.json");
+                }
+            );
+            builder.Configure(
+                "FireStarter",
+                c =>
+                {
+                    c.AddJsonFile("fire_starter.json");
                 }
             );
 
@@ -77,94 +85,17 @@ namespace TrainworksReloaded.Plugin
                 //Register hooking into games dependency injection system
                 c.RegisterInstance(client);
 
-                //Register Assets
-                c.RegisterSingleton<IRegister<GameObject>, GameObjectRegister>();
-                c.RegisterSingleton<GameObjectRegister, GameObjectRegister>();
-                c.RegisterInitializer<GameObjectRegister>(x =>
-                {
-                    Addressables.ResourceLocators.Add(x);
-                });
-                c.RegisterInitializer<IRegister<GameObject>>(x =>
-                {
-                    var pipeline = c.GetInstance<IDataPipeline<IRegister<GameObject>>>();
-                    pipeline.Run(x);
-                });
-                c.Register<IDataPipeline<IRegister<GameObject>>, GameObjectImportPipeline>(); //a data pipeline to run as soon as register is needed
-                c.Collection.Append<IDataPipelineSetup<GameObject>, GameObjectCardArtSetup>(
-                    Lifestyle.Singleton
+                c.Register<Finalizer, Finalizer>();
+                c.Collection.Register<IDataFinalizer>(
+                    [
+                        typeof(CardDataFinalizer),
+                        typeof(CardEffectFinalizer),
+                        typeof(CardTraitDataFinalizer),
+                        typeof(CardUpgradeFinalizer),
+                        typeof(CharacterDataFinalizer),
+                        typeof(ClassDataFinalizer),
+                    ]
                 );
-                c.RegisterSingleton<IRegister<Sprite>, SpriteRegister>();
-                c.RegisterSingleton<SpriteRegister, SpriteRegister>();
-                c.Register<IDataPipeline<IRegister<Sprite>>, SpritePipeline>();
-                c.RegisterInitializer<IRegister<Sprite>>(x =>
-                {
-                    var pipeline = c.GetInstance<IDataPipeline<IRegister<Sprite>>>();
-                    pipeline.Run(x);
-                });
-
-                //Register Card Data
-                c.RegisterSingleton<IRegister<CardData>, CardDataRegister>(); //a place to register and access custom card data
-                c.RegisterSingleton<CardDataRegister, CardDataRegister>();
-                c.Register<IDataPipeline<IRegister<CardData>>, CardDataPipeline>(); //a data pipeline to run as soon as register is needed
-                c.Collection.Register<IDataPipelineSetup<CardData>>(new List<Type>());
-                c.Collection.Register<IDataPipelineFinalizer<CardData>>(new List<Type>());
-                c.RegisterInitializer<IRegister<CardData>>(x =>
-                {
-                    var pipeline = c.GetInstance<IDataPipeline<IRegister<CardData>>>();
-                    pipeline.Run(x);
-                });
-
-                //Register Character Data
-                c.RegisterSingleton<IRegister<CharacterData>, CharacterDataRegister>(); //a place to register and access custom card data
-                c.RegisterSingleton<CharacterDataRegister, CharacterDataRegister>();
-                c.Register<IDataPipeline<IRegister<CharacterData>>, CharacterDataPipeline>(); //a data pipeline to run as soon as register is needed
-                c.Collection.Register<IDataPipelineSetup<CharacterData>>(new List<Type>());
-                c.Collection.Register<IDataPipelineFinalizer<CharacterData>>(new List<Type>());
-                c.RegisterInitializer<IRegister<CharacterData>>(x =>
-                {
-                    var pipeline = c.GetInstance<IDataPipeline<IRegister<CharacterData>>>();
-                    pipeline.Run(x);
-                });
-
-                //Register Class Data
-                c.RegisterSingleton<IRegister<ClassData>, ClassDataRegister>();
-                c.RegisterSingleton<ClassDataRegister, ClassDataRegister>();
-
-                //Register Effect Data
-                c.RegisterSingleton<IRegister<CardEffectData>, CardEffectDataRegister>();
-                c.RegisterSingleton<CardEffectDataRegister, CardEffectDataRegister>();
-                c.Register<IDataPipeline<IRegister<CardEffectData>>, CardEffectDataPipeline>();
-                c.Collection.Register<IDataPipelineSetup<CardEffectData>>(new List<Type>());
-                c.Collection.Register<IDataPipelineFinalizer<CardEffectData>>(new List<Type>());
-                c.RegisterInitializer<IRegister<CardEffectData>>(x =>
-                {
-                    var pipeline = c.GetInstance<IDataPipeline<IRegister<CardEffectData>>>();
-                    pipeline.Run(x);
-                });
-
-                //Register Trait Data
-                c.RegisterSingleton<IRegister<CardTraitData>, CardTraitDataRegister>();
-                c.RegisterSingleton<CardTraitDataRegister, CardTraitDataRegister>();
-                c.Register<IDataPipeline<IRegister<CardTraitData>>, CardTraitDataPipeline>();
-                c.Collection.Register<IDataPipelineSetup<CardTraitData>>(new List<Type>());
-                c.Collection.Register<IDataPipelineFinalizer<CardTraitData>>(new List<Type>());
-                c.RegisterInitializer<IRegister<CardTraitData>>(x =>
-                {
-                    var pipeline = c.GetInstance<IDataPipeline<IRegister<CardTraitData>>>();
-                    pipeline.Run(x);
-                });
-
-                //Register Upgrade Data
-                c.RegisterSingleton<IRegister<CardUpgradeData>, CardUpgradeRegister>();
-                c.RegisterSingleton<CardUpgradeRegister, CardUpgradeRegister>();
-                c.Register<IDataPipeline<IRegister<CardUpgradeData>>, CardUpgradePipeline>();
-                c.Collection.Register<IDataPipelineSetup<CardUpgradeData>>(new List<Type>());
-                c.Collection.Register<IDataPipelineFinalizer<CardUpgradeData>>(new List<Type>());
-                c.RegisterInitializer<IRegister<CardUpgradeData>>(x =>
-                {
-                    var pipeline = c.GetInstance<IDataPipeline<IRegister<CardUpgradeData>>>();
-                    pipeline.Run(x);
-                });
 
                 //Register Localization
                 c.RegisterSingleton<IRegister<LocalizationTerm>, CustomLocalizationTermRegistry>();
@@ -174,11 +105,134 @@ namespace TrainworksReloaded.Plugin
                 >();
 
                 c.RegisterConditional(
+                    typeof(ICache<>),
+                    typeof(Cache<>),
+                    Lifestyle.Singleton,
+                    c => !c.Handled
+                );
+                c.RegisterConditional(
                     typeof(IModLogger<>),
                     typeof(ModLogger<>),
                     Lifestyle.Singleton,
                     c => !c.Handled
                 );
+
+                c.RegisterDecorator(
+                    typeof(IDataPipeline<,>),
+                    typeof(CacheDataPipelineDecorator<,>)
+                );
+
+                //Register Assets
+                c.RegisterSingleton<IRegister<GameObject>, GameObjectRegister>();
+                c.RegisterSingleton<GameObjectRegister, GameObjectRegister>();
+                c.RegisterInitializer<GameObjectRegister>(x =>
+                {
+                    Addressables.ResourceLocators.Add(x);
+                });
+                c.RegisterInitializer<IRegister<GameObject>>(x =>
+                {
+                    var pipeline = c.GetInstance<
+                        IDataPipeline<IRegister<GameObject>, GameObject>
+                    >();
+                    pipeline.Run(x);
+                });
+                c.Register<
+                    IDataPipeline<IRegister<GameObject>, GameObject>,
+                    GameObjectImportPipeline
+                >(); //a data pipeline to run as soon as register is needed
+                c.RegisterDecorator<
+                    IDataPipeline<IRegister<GameObject>, GameObject>,
+                    GameObjectCardArtSetup
+                >();
+
+                c.RegisterSingleton<IRegister<Sprite>, SpriteRegister>();
+                c.RegisterSingleton<SpriteRegister, SpriteRegister>();
+                c.Register<IDataPipeline<IRegister<Sprite>, Sprite>, SpritePipeline>();
+                c.RegisterInitializer<IRegister<Sprite>>(x =>
+                {
+                    var pipeline = c.GetInstance<IDataPipeline<IRegister<Sprite>, Sprite>>();
+                    pipeline.Run(x);
+                });
+
+                //Register Card Data
+                c.RegisterSingleton<IRegister<CardData>, CardDataRegister>(); //a place to register and access custom card data
+                c.RegisterSingleton<CardDataRegister, CardDataRegister>();
+                c.Register<IDataPipeline<IRegister<CardData>, CardData>, CardDataPipeline>(); //a data pipeline to run as soon as register is needed
+                c.RegisterInitializer<IRegister<CardData>>(x =>
+                {
+                    var pipeline = c.GetInstance<IDataPipeline<IRegister<CardData>, CardData>>();
+                    pipeline.Run(x);
+                });
+
+                //Register Character Data
+                c.RegisterSingleton<IRegister<CharacterData>, CharacterDataRegister>(); //a place to register and access custom card data
+                c.RegisterSingleton<CharacterDataRegister, CharacterDataRegister>();
+                c.Register<
+                    IDataPipeline<IRegister<CharacterData>, CharacterData>,
+                    CharacterDataPipeline
+                >(); //a data pipeline to run as soon as register is needed
+                c.RegisterInitializer<IRegister<CharacterData>>(x =>
+                {
+                    var pipeline = c.GetInstance<
+                        IDataPipeline<IRegister<CharacterData>, CharacterData>
+                    >();
+                    pipeline.Run(x);
+                });
+
+                //Register Class Data
+                c.RegisterSingleton<IRegister<ClassData>, ClassDataRegister>();
+                c.RegisterSingleton<ClassDataRegister, ClassDataRegister>();
+                c.Register<IDataPipeline<IRegister<ClassData>, ClassData>, ClassDataPipeline>();
+                c.RegisterInitializer<IRegister<ClassData>>(x =>
+                {
+                    var pipeline = c.GetInstance<IDataPipeline<IRegister<ClassData>, ClassData>>();
+                    pipeline.Run(x);
+                });
+
+                //Register Effect Data
+                c.RegisterSingleton<IRegister<CardEffectData>, CardEffectDataRegister>();
+                c.RegisterSingleton<CardEffectDataRegister, CardEffectDataRegister>();
+                c.Register<
+                    IDataPipeline<IRegister<CardEffectData>, CardEffectData>,
+                    CardEffectDataPipeline
+                >();
+                c.RegisterInitializer<IRegister<CardEffectData>>(x =>
+                {
+                    var pipeline = c.GetInstance<
+                        IDataPipeline<IRegister<CardEffectData>, CardEffectData>
+                    >();
+                    pipeline.Run(x);
+                });
+
+                //Register Trait Data
+                c.RegisterSingleton<IRegister<CardTraitData>, CardTraitDataRegister>();
+                c.RegisterSingleton<CardTraitDataRegister, CardTraitDataRegister>();
+                c.Register<
+                    IDataPipeline<IRegister<CardTraitData>, CardTraitData>,
+                    CardTraitDataPipeline
+                >();
+                c.RegisterInitializer<IRegister<CardTraitData>>(x =>
+                {
+                    var pipeline = c.GetInstance<
+                        IDataPipeline<IRegister<CardTraitData>, CardTraitData>
+                    >();
+                    pipeline.Run(x);
+                });
+
+                //Register Upgrade Data
+                c.RegisterSingleton<IRegister<CardUpgradeData>, CardUpgradeRegister>();
+                c.RegisterSingleton<CardUpgradeRegister, CardUpgradeRegister>();
+                c.Register<
+                    IDataPipeline<IRegister<CardUpgradeData>, CardUpgradeData>,
+                    CardUpgradePipeline
+                >();
+                c.RegisterInitializer<IRegister<CardUpgradeData>>(x =>
+                {
+                    var pipeline = c.GetInstance<
+                        IDataPipeline<IRegister<CardUpgradeData>, CardUpgradeData>
+                    >();
+                    pipeline.Run(x);
+                });
             });
 
             var harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);

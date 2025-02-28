@@ -10,9 +10,10 @@ namespace TrainworksReloaded.Base.Card
         bool isOverride
     ) : IDefinition<CardData>
     {
+        public string Id { get; set; } = "";
         public string Key { get; set; } = key;
         public CardData Data { get; set; } = data;
         public IConfiguration Configuration { get; set; } = configuration;
-        public bool IsOverride { get; set; } = isOverride;
+        public bool IsModded => !isOverride;
     }
 }

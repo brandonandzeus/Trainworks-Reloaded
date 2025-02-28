@@ -10,25 +10,18 @@ using UnityEngine.UIElements;
 
 namespace TrainworksReloaded.Base.Prefab
 {
-    public class GameObjectImportPipeline : IDataPipeline<IRegister<GameObject>>
+    public class GameObjectImportPipeline : IDataPipeline<IRegister<GameObject>, GameObject>
     {
         private readonly PluginAtlas atlas;
-        private readonly Container container;
-        private readonly IEnumerable<IDataPipelineSetup<GameObject>> setups;
 
-        public GameObjectImportPipeline(
-            PluginAtlas atlas,
-            Container container,
-            IEnumerable<IDataPipelineSetup<GameObject>> setups
-        )
+        public GameObjectImportPipeline(PluginAtlas atlas)
         {
             this.atlas = atlas;
-            this.container = container;
-            this.setups = setups;
         }
 
-        public void Run(IRegister<GameObject> service)
+        public List<IDefinition<GameObject>> Run(IRegister<GameObject> service)
         {
+            var definitions = new List<IDefinition<GameObject>>();
             foreach (var config in atlas.PluginDefinitions)
             {
                 var key = config.Key;
@@ -49,14 +42,16 @@ namespace TrainworksReloaded.Base.Prefab
                     GameObject.DontDestroyOnLoad(gameObject);
 
                     service.Register(name, gameObject);
-                    var definition = new GameObjectDefinition(key, gameObject, gameObjectConfig);
-                    foreach (var setup in setups)
+                    var definition = new GameObjectDefinition(key, gameObject, gameObjectConfig)
                     {
-                        setup.Setup(definition);
-                    }
+                        Id = id,
+                        IsModded = true,
+                    };
+                    definitions.Add(definition);
                     break;
                 }
             }
+            return definitions;
         }
     }
 }

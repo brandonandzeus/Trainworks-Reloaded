@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using TrainworksReloaded.Core.Interfaces;
 
-namespace TrainworksReloaded.Base.CardUpgrade
+namespace TrainworksReloaded.Base.Class
 {
-    public class CardUpgradeDefinition(
+    public class ClassDataDefinition(
         string key,
-        CardUpgradeData data,
+        ClassData data,
         IConfiguration configuration,
         bool isOverride
-    ) : IDefinition<CardUpgradeData>
+    ) : IDefinition<ClassData>
     {
         public string Key { get; set; } = key;
-        public CardUpgradeData Data { get; set; } = data;
+        public ClassData Data { get; set; } = data;
         public IConfiguration Configuration { get; set; } = configuration;
         public string Id { get; set; } = "";
         public bool IsModded { get; set; } = !isOverride;

@@ -15,46 +15,32 @@ using UnityEngine.AddressableAssets;
 
 namespace TrainworksReloaded.Base.Card
 {
-    public class CardDataPipeline : IDataPipeline<IRegister<CardData>>
+    public class CardDataPipeline : IDataPipeline<IRegister<CardData>, CardData>
     {
         private readonly PluginAtlas atlas;
         private readonly IModLogger<CardDataPipeline> logger;
-        private readonly Container container;
-        private readonly IEnumerable<IDataPipelineSetup<CardData>> setups;
-        private readonly IEnumerable<IDataPipelineFinalizer<CardData>> finalizers;
+        private readonly IRegister<LocalizationTerm> termRegister;
 
         public CardDataPipeline(
             PluginAtlas atlas,
             IModLogger<CardDataPipeline> logger,
-            Container container,
-            IEnumerable<IDataPipelineSetup<CardData>> setups,
-            IEnumerable<IDataPipelineFinalizer<CardData>> finalizers
+            IRegister<LocalizationTerm> termRegister
         )
         {
             this.atlas = atlas;
             this.logger = logger;
-            this.container = container;
-            this.setups = setups;
-            this.finalizers = finalizers;
+            this.termRegister = termRegister;
         }
 
-        public void Run(IRegister<CardData> service)
+        public List<IDefinition<CardData>> Run(IRegister<CardData> service)
         {
             // We load all cards and then finalize them to avoid dependency loops
-            var processList = new List<CardDataDefinition>();
+            var processList = new List<IDefinition<CardData>>();
             foreach (var config in atlas.PluginDefinitions)
             {
                 processList.AddRange(LoadCards(service, config.Key, config.Value.Configuration));
             }
-
-            foreach (var definition in processList)
-            {
-                FinalizeCardData(service, definition);
-                foreach (var finalizer in finalizers)
-                {
-                    finalizer.Finalize(definition);
-                }
-            }
+            return processList;
         }
 
         /// <summary>
@@ -76,10 +62,6 @@ namespace TrainworksReloaded.Base.Card
                 var data = LoadCardConfiguration(service, key, child);
                 if (data != null)
                 {
-                    foreach (var setup in setups)
-                    {
-                        setup.Setup(data);
-                    }
                     processList.Add(data);
                 }
             }
@@ -121,8 +103,6 @@ namespace TrainworksReloaded.Base.Card
             //handle id
             AccessTools.Field(typeof(CardData), "id").SetValue(data, guid);
 
-            var termRegister = container.GetInstance<IRegister<LocalizationTerm>>();
-
             //handle names
             var localizationNameTerm = configuration.GetSection("names").ParseLocalizationTerm();
             if (localizationNameTerm != null)
@@ -134,7 +114,7 @@ namespace TrainworksReloaded.Base.Card
 
             //handle description
             var localizationDescTerm = configuration
-                .GetSection("extra_description")
+                .GetSection("descriptions")
                 .ParseLocalizationTerm();
             if (localizationDescTerm != null)
             {
@@ -328,167 +308,7 @@ namespace TrainworksReloaded.Base.Card
             if (!checkOverride)
                 service.Register(name, data);
 
-            return new CardDataDefinition(key, data, configuration, checkOverride);
-        }
-
-        /// <summary>
-        /// Finalize Card Definitions
-        /// Handles Data to avoid lookup looks for names and ids
-        /// </summary>
-        /// <param name="definition"></param>
-        private void FinalizeCardData(IRegister<CardData> service, CardDataDefinition definition)
-        {
-            var configuration = definition.Configuration;
-            var data = definition.Data;
-            var key = definition.Key;
-
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Finalizing Card {data.name}... ");
-
-            //handle linked class
-            var classRegister = container.GetInstance<IRegister<ClassData>>();
-            var classfield = configuration.GetSection("class").ParseString();
-            if (
-                classfield != null
-                && classRegister.TryLookupName(
-                    classfield.ToId(key, "Class"),
-                    out var lookup,
-                    out var _
-                )
-            )
-            {
-                AccessTools.Field(typeof(CardData), "linkedClass").SetValue(data, lookup);
-            }
-
-            //handle discovery cards
-            var SharedDiscoveryCards = new List<CardData>();
-            var SharedDiscoveryCardConfig = configuration
-                .GetSection("shared_discovery_cards")
-                .GetChildren()
-                .Select(x => x.GetSection("id").ParseString());
-            foreach (var ConfigCard in SharedDiscoveryCardConfig)
-            {
-                if (ConfigCard == null)
-                {
-                    continue;
-                }
-                if (service.TryLookupName(ConfigCard.ToId(key, "Card"), out var card, out var _))
-                {
-                    SharedDiscoveryCards.Add(card);
-                }
-            }
-            AccessTools
-                .Field(typeof(CardData), "sharedDiscoveryCards")
-                .SetValue(data, SharedDiscoveryCards);
-
-            //handle mastery cards
-            var SharedMasteryCards = new List<CardData>();
-            var SharedMasteryCardConfig = configuration
-                .GetSection("shared_mastery_cards")
-                .GetChildren()
-                .Select(x => x.GetSection("id").ParseString());
-            foreach (var ConfigCard in SharedMasteryCardConfig)
-            {
-                if (ConfigCard == null)
-                {
-                    continue;
-                }
-
-                if (service.TryLookupName(ConfigCard.ToId(key, "Card"), out var card, out var _))
-                {
-                    SharedMasteryCards.Add(card);
-                }
-            }
-            AccessTools
-                .Field(typeof(CardData), "sharedMasteryCards")
-                .SetValue(data, SharedMasteryCards);
-
-            //handle mastery card
-            var MasteryCardInfo = configuration.GetSection("mastery_card").ParseString();
-            if (
-                MasteryCardInfo != null
-                && service.TryLookupName(
-                    MasteryCardInfo.ToId(key, "Card"),
-                    out var MasteryCard,
-                    out var _
-                )
-            )
-            {
-                AccessTools
-                    .Field(typeof(CardData), "linkedMasteryCard")
-                    .SetValue(data, MasteryCard);
-            }
-
-            //handle art
-            var gameObjectRegister = container.GetInstance<IRegister<GameObject>>();
-            var cardArtReference = configuration.GetSection("card_art_reference").ParseString();
-            if (cardArtReference != null)
-            {
-                var gameObjectName = cardArtReference.ToId(key, "GameObject");
-                if (gameObjectRegister.TryLookupId(gameObjectName, out var gameObject, out var _))
-                {
-                    var assetRef = (AssetReferenceGameObject)
-                        AccessTools
-                            .Field(typeof(CardData), "cardArtPrefabVariantRef")
-                            .GetValue(data);
-                    if (assetRef == null)
-                    {
-                        assetRef = new AssetReferenceGameObject();
-                        AccessTools
-                            .Field(typeof(CardData), "cardArtPrefabVariantRef")
-                            .SetValue(data, assetRef);
-                    }
-                    assetRef.SetAssetAndId(gameObjectName, gameObject);
-                }
-            }
-
-            //handle traits
-            var cardDataTraitRegister = container.GetInstance<IRegister<CardTraitData>>();
-            var cardTraitDatas = new List<CardTraitData>();
-            var cardTraitDatasConfig = configuration.GetSection("traits").GetChildren();
-            foreach (var configTrait in cardTraitDatasConfig)
-            {
-                if (configTrait == null)
-                {
-                    continue;
-                }
-                var idConfig = configTrait.GetSection("id").Value;
-                if (idConfig == null)
-                {
-                    continue;
-                }
-
-                var id = idConfig.ToId(key, "Trait");
-                if (cardDataTraitRegister.TryLookupId(id, out var card, out var _))
-                {
-                    cardTraitDatas.Add(card);
-                }
-            }
-            if (cardTraitDatas.Count != 0)
-                AccessTools.Field(typeof(CardData), "traits").SetValue(data, cardTraitDatas);
-
-            var cardEffectRegister = container.GetInstance<IRegister<CardEffectData>>();
-            var cardEffectDatas = new List<CardEffectData>();
-            var cardEffectDatasConfig = configuration.GetSection("effects").GetChildren();
-            foreach (var configEffect in cardEffectDatasConfig)
-            {
-                if (configEffect == null)
-                {
-                    continue;
-                }
-                var idConfig = configEffect.GetSection("id").Value;
-                if (idConfig == null)
-                {
-                    continue;
-                }
-                var id = idConfig.ToId(key, "Effect");
-                if (cardEffectRegister.TryLookupId(id, out var card, out var _))
-                {
-                    cardEffectDatas.Add(card);
-                }
-            }
-
-            if (cardEffectDatas.Count != 0)
-                AccessTools.Field(typeof(CardData), "effects").SetValue(data, cardEffectDatas);
+            return new CardDataDefinition(key, data, configuration, checkOverride) { Id = id };
         }
     }
 }

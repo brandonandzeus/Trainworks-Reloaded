@@ -15,48 +15,34 @@ using UnityEngine.AddressableAssets;
 
 namespace TrainworksReloaded.Base.Character
 {
-    public class CharacterDataPipeline : IDataPipeline<IRegister<CharacterData>>
+    public class CharacterDataPipeline : IDataPipeline<IRegister<CharacterData>, CharacterData>
     {
         private readonly PluginAtlas atlas;
         private readonly IModLogger<CharacterDataPipeline> logger;
-        private readonly Container container;
-        private readonly IEnumerable<IDataPipelineSetup<CharacterData>> setups;
-        private readonly IEnumerable<IDataPipelineFinalizer<CharacterData>> finalizers;
+        private readonly IRegister<LocalizationTerm> termRegister;
 
         public CharacterDataPipeline(
             PluginAtlas atlas,
             IModLogger<CharacterDataPipeline> logger,
-            Container container,
-            IEnumerable<IDataPipelineSetup<CharacterData>> setups,
-            IEnumerable<IDataPipelineFinalizer<CharacterData>> finalizers
+            IRegister<LocalizationTerm> termRegister
         )
         {
             this.atlas = atlas;
             this.logger = logger;
-            this.container = container;
-            this.setups = setups;
-            this.finalizers = finalizers;
+            this.termRegister = termRegister;
         }
 
-        public void Run(IRegister<CharacterData> service)
+        public List<IDefinition<CharacterData>> Run(IRegister<CharacterData> service)
         {
             // We load all cards and then finalize them to avoid dependency loops
-            var processList = new List<CharacterDataDefinition>();
+            var processList = new List<IDefinition<CharacterData>>();
             foreach (var config in atlas.PluginDefinitions)
             {
                 processList.AddRange(
                     LoadCharacters(service, config.Key, config.Value.Configuration)
                 );
             }
-
-            foreach (var definition in processList)
-            {
-                FinalizeCharacterData(service, definition);
-                foreach (var finalizer in finalizers)
-                {
-                    finalizer.Finalize(definition);
-                }
-            }
+            return processList;
         }
 
         /// <summary>
@@ -78,10 +64,6 @@ namespace TrainworksReloaded.Base.Character
                 var data = LoadCharacterConfiguration(service, key, child);
                 if (data != null)
                 {
-                    foreach (var setup in setups)
-                    {
-                        setup.Setup(data);
-                    }
                     processList.Add(data);
                 }
             }
@@ -120,8 +102,6 @@ namespace TrainworksReloaded.Base.Character
 
             //handle id
             AccessTools.Field(typeof(CharacterData), "id").SetValue(data, guid);
-
-            var termRegister = container.GetInstance<IRegister<LocalizationTerm>>();
 
             //handle names
             var localizationNameTerm = configuration.GetSection("names").ParseLocalizationTerm();
@@ -374,15 +354,5 @@ namespace TrainworksReloaded.Base.Character
 
             return new CharacterDataDefinition(key, data, configuration, checkOverride);
         }
-
-        /// <summary>
-        /// Finalize Card Definitions
-        /// Handles Data to avoid lookup looks for names and ids
-        /// </summary>
-        /// <param name="definition"></param>
-        private void FinalizeCharacterData(
-            IRegister<CharacterData> service,
-            CharacterDataDefinition definition
-        ) { }
     }
 }

@@ -3,6 +3,7 @@ using TrainworksReloaded.Base.Card;
 using TrainworksReloaded.Base.Class;
 using TrainworksReloaded.Base.Localization;
 using TrainworksReloaded.Core;
+using TrainworksReloaded.Core.Impl;
 
 namespace TrainworksReloaded.Plugin.Patches
 {
@@ -24,6 +25,9 @@ namespace TrainworksReloaded.Plugin.Patches
 
             var localization = Railend.GetContainer().GetInstance<CustomLocalizationTermRegistry>();
             localization.LoadData();
+
+            var finalizer = Railend.GetContainer().GetInstance<Finalizer>();
+            finalizer.FinalizeData();
         }
     }
 }

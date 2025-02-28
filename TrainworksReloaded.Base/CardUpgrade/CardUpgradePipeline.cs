@@ -14,46 +14,32 @@ using UnityEngine;
 
 namespace TrainworksReloaded.Base.CardUpgrade
 {
-    public class CardUpgradePipeline : IDataPipeline<IRegister<CardUpgradeData>>
+    public class CardUpgradePipeline : IDataPipeline<IRegister<CardUpgradeData>, CardUpgradeData>
     {
         private readonly PluginAtlas atlas;
         private readonly IModLogger<CardUpgradePipeline> logger;
-        private readonly Container container;
-        private readonly IEnumerable<IDataPipelineSetup<CardUpgradeData>> setups;
-        private readonly IEnumerable<IDataPipelineFinalizer<CardUpgradeData>> finalizers;
+        private readonly IRegister<LocalizationTerm> termRegister;
 
         public CardUpgradePipeline(
             PluginAtlas atlas,
             IModLogger<CardUpgradePipeline> logger,
-            Container container,
-            IEnumerable<IDataPipelineSetup<CardUpgradeData>> setups,
-            IEnumerable<IDataPipelineFinalizer<CardUpgradeData>> finalizers
+            IRegister<LocalizationTerm> termRegister
         )
         {
             this.atlas = atlas;
             this.logger = logger;
-            this.container = container;
-            this.setups = setups;
-            this.finalizers = finalizers;
+            this.termRegister = termRegister;
         }
 
-        public void Run(IRegister<CardUpgradeData> service)
+        public List<IDefinition<CardUpgradeData>> Run(IRegister<CardUpgradeData> service)
         {
             // We load all cards and then finalize them to avoid dependency loops
-            var processList = new List<CardUpgradeDefinition>();
+            var processList = new List<IDefinition<CardUpgradeData>>();
             foreach (var config in atlas.PluginDefinitions)
             {
                 processList.AddRange(LoadCards(service, config.Key, config.Value.Configuration));
             }
-
-            foreach (var definition in processList)
-            {
-                FinalizeCardUpgradeData(service, definition);
-                foreach (var finalizer in finalizers)
-                {
-                    finalizer.Finalize(definition);
-                }
-            }
+            return processList;
         }
 
         /// <summary>
@@ -75,10 +61,6 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 var data = LoadCardConfiguration(service, key, child);
                 if (data != null)
                 {
-                    foreach (var setup in setups)
-                    {
-                        setup.Setup(data);
-                    }
                     processList.Add(data);
                 }
             }
@@ -121,7 +103,6 @@ namespace TrainworksReloaded.Base.CardUpgrade
 
             //handle id
             AccessTools.Field(typeof(CardUpgradeData), "id").SetValue(data, guid);
-            var termRegister = container.GetInstance<IRegister<LocalizationTerm>>();
 
             //handle titles
             var localizationNameTerm = configuration.GetSection("titles").ParseLocalizationTerm();
@@ -336,10 +317,5 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 service.Register(name, data);
             return new CardUpgradeDefinition(key, data, configuration, checkOverride);
         }
-
-        private void FinalizeCardUpgradeData(
-            IRegister<CardUpgradeData> service,
-            CardUpgradeDefinition definition
-        ) { }
     }
 }

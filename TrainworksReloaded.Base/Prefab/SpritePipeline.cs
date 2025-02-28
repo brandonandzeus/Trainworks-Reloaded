@@ -10,20 +10,18 @@ using UnityEngine.UIElements;
 
 namespace TrainworksReloaded.Base.Prefab
 {
-    public class SpritePipeline : IDataPipeline<IRegister<Sprite>>
+    public class SpritePipeline : IDataPipeline<IRegister<Sprite>, Sprite>
     {
         private readonly PluginAtlas atlas;
 
-        private readonly IEnumerable<IDataPipelineSetup<Sprite>> setups;
-
-        public SpritePipeline(PluginAtlas atlas, IEnumerable<IDataPipelineSetup<Sprite>> setups)
+        public SpritePipeline(PluginAtlas atlas)
         {
             this.atlas = atlas;
-            this.setups = setups;
         }
 
-        public void Run(IRegister<Sprite> service)
+        public List<IDefinition<Sprite>> Run(IRegister<Sprite> service)
         {
+            var definitions = new List<IDefinition<Sprite>>();
             foreach (var config in atlas.PluginDefinitions)
             {
                 var key = config.Key;
@@ -62,15 +60,17 @@ namespace TrainworksReloaded.Base.Prefab
                         );
                         sprite.name = name;
                         service.Register(name, sprite);
-                        var definition = new SpriteDefinition(key, sprite, spriteConfig);
-                        foreach (var setup in setups)
+                        var definition = new SpriteDefinition(key, sprite, spriteConfig)
                         {
-                            setup.Setup(definition);
-                        }
+                            Id = id,
+                            IsModded = true,
+                        };
+                        definitions.Add(definition);
                         break;
                     }
                 }
             }
+            return definitions;
         }
     }
 }

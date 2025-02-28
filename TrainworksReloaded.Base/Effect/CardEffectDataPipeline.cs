@@ -10,42 +10,23 @@ using TrainworksReloaded.Core.Interfaces;
 
 namespace TrainworksReloaded.Base.Effect
 {
-    public class CardEffectDataPipeline : IDataPipeline<IRegister<CardEffectData>>
+    public class CardEffectDataPipeline : IDataPipeline<IRegister<CardEffectData>, CardEffectData>
     {
         private readonly PluginAtlas atlas;
-        private readonly Container container;
-        private readonly IEnumerable<IDataPipelineSetup<CardEffectData>> setups;
-        private readonly IEnumerable<IDataPipelineFinalizer<CardEffectData>> finalizers;
 
-        public CardEffectDataPipeline(
-            PluginAtlas atlas,
-            Container container,
-            IEnumerable<IDataPipelineSetup<CardEffectData>> setups,
-            IEnumerable<IDataPipelineFinalizer<CardEffectData>> finalizers
-        )
+        public CardEffectDataPipeline(PluginAtlas atlas)
         {
             this.atlas = atlas;
-            this.container = container;
-            this.setups = setups;
-            this.finalizers = finalizers;
         }
 
-        public void Run(IRegister<CardEffectData> service)
+        public List<IDefinition<CardEffectData>> Run(IRegister<CardEffectData> service)
         {
-            var processList = new List<CardEffectDefinition>();
+            var processList = new List<IDefinition<CardEffectData>>();
             foreach (var config in atlas.PluginDefinitions)
             {
                 processList.AddRange(LoadEffects(service, config.Key, config.Value.Configuration));
             }
-
-            foreach (var definition in processList)
-            {
-                FinalizeCardEffectData(service, definition);
-                foreach (var finalizer in finalizers)
-                {
-                    finalizer.Finalize(definition);
-                }
-            }
+            return processList;
         }
 
         private List<CardEffectDefinition> LoadEffects(
@@ -60,10 +41,6 @@ namespace TrainworksReloaded.Base.Effect
                 var data = LoadEffectConfiguration(service, key, child);
                 if (data != null)
                 {
-                    foreach (var setup in setups)
-                    {
-                        setup.Setup(data);
-                    }
                     processList.Add(data);
                 }
             }
@@ -376,72 +353,6 @@ namespace TrainworksReloaded.Base.Effect
 
             service.Register(name, data);
             return new CardEffectDefinition(key, data, configuration);
-        }
-
-        private void FinalizeCardEffectData(
-            IRegister<CardEffectData> service,
-            CardEffectDefinition definition
-        )
-        {
-            var configuration = definition.Configuration;
-            var key = definition.Key;
-            var data = definition.Data;
-
-            var characterDataRegister = container.GetInstance<IRegister<CharacterData>>();
-
-            var characterConfig = configuration.GetSection("param_character_data").Value;
-            if (
-                characterConfig != null
-                && characterDataRegister.TryLookupName(
-                    characterConfig.ToId(key, "Character"),
-                    out var characterData,
-                    out var _
-                )
-            )
-            {
-                AccessTools
-                    .Field(typeof(CardEffectData), "paramCharacterData")
-                    .SetValue(data, characterData);
-            }
-
-            var characterConfig2 = configuration.GetSection("param_character_data_2").Value;
-            if (
-                characterConfig2 != null
-                && characterDataRegister.TryLookupName(
-                    characterConfig2.ToId(key, "Character"),
-                    out var characterData2,
-                    out var _
-                )
-            )
-            {
-                AccessTools
-                    .Field(typeof(CardEffectData), "paramAdditionalCharacterData")
-                    .SetValue(data, characterData2);
-            }
-
-            //card pools
-            var characterDataPool = new List<CharacterData>();
-            var characterDataPoolConfig = configuration
-                .GetSection("param_character_data_pool")
-                .GetChildren()
-                .Select(x => x.Value);
-            foreach (var characterDataConfig in characterDataPoolConfig)
-            {
-                if (
-                    characterDataConfig != null
-                    && characterDataRegister.TryLookupName(
-                        characterDataConfig.ToId(key, "Character"),
-                        out var card,
-                        out var _
-                    )
-                )
-                {
-                    characterDataPool.Add(card);
-                }
-            }
-            AccessTools
-                .Field(typeof(CardEffectData), "paramCharacterDataPool")
-                .SetValue(data, characterDataPool);
         }
     }
 }

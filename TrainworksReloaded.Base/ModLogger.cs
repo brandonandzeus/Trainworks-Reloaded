@@ -11,7 +11,7 @@ namespace TrainworksReloaded.Base
 
         public override string ToString()
         {
-            return $"{$"[{type.Name}]", -30} {data}";
+            return $"{$"[{type.Name}]", -32} {data}";
         }
     }
 

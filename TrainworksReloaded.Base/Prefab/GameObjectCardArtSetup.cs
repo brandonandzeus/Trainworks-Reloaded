@@ -1,4 +1,5 @@
-﻿using SimpleInjector;
+﻿using System.Collections.Generic;
+using SimpleInjector;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
@@ -6,18 +7,28 @@ using UnityEngine.UI;
 
 namespace TrainworksReloaded.Base.Prefab
 {
-    public class GameObjectCardArtSetup : IDataPipelineSetup<GameObject>
+    public class GameObjectCardArtSetup : IDataPipeline<IRegister<GameObject>, GameObject>
     {
-        private readonly IModLogger<GameObjectCardArtSetup> logger;
-        private readonly Container container;
+        private readonly IDataPipeline<IRegister<GameObject>, GameObject> decoratee;
+        private readonly IRegister<Sprite> spriteRegister;
 
         public GameObjectCardArtSetup(
-            IModLogger<GameObjectCardArtSetup> logger,
-            Container container
+            IDataPipeline<IRegister<GameObject>, GameObject> decoratee,
+            IRegister<Sprite> spriteRenderer
         )
         {
-            this.logger = logger;
-            this.container = container;
+            this.decoratee = decoratee;
+            this.spriteRegister = spriteRenderer;
+        }
+
+        public List<IDefinition<GameObject>> Run(IRegister<GameObject> service)
+        {
+            var definitions = decoratee.Run(service);
+            foreach (var definition in definitions)
+            {
+                Setup(definition);
+            }
+            return definitions;
         }
 
         public void Setup(IDefinition<GameObject> definition)
@@ -30,8 +41,7 @@ namespace TrainworksReloaded.Base.Prefab
             }
 
             var id = spriteVal.ToId(definition.Key, "Sprite");
-            var sprite_register = container.GetInstance<IRegister<Sprite>>();
-            if (!sprite_register.TryLookupId(id, out var sprite, out _))
+            if (!spriteRegister.TryLookupId(id, out var sprite, out _))
             {
                 return;
             }

@@ -13,6 +13,7 @@ namespace TrainworksReloaded.Base.Character
         public string Key { get; set; } = key;
         public CharacterData Data { get; set; } = data;
         public IConfiguration Configuration { get; set; } = configuration;
-        public bool IsOverride { get; set; } = isOverride;
+        public string Id { get; set; } = "";
+        public bool IsModded { get; set; } = !isOverride;
     }
 }

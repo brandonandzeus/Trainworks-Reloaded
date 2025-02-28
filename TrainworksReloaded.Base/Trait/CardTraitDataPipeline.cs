@@ -9,45 +9,25 @@ using TrainworksReloaded.Core.Interfaces;
 
 namespace TrainworksReloaded.Base.Trait
 {
-    public class CardTraitDataPipeline : IDataPipeline<IRegister<CardTraitData>>
+    public class CardTraitDataPipeline : IDataPipeline<IRegister<CardTraitData>, CardTraitData>
     {
         private readonly PluginAtlas atlas;
         private readonly IModLogger<CardTraitDataPipeline> logger;
-        private readonly Container container;
-        private readonly IEnumerable<IDataPipelineSetup<CardTraitData>> setups;
-        private readonly IEnumerable<IDataPipelineFinalizer<CardTraitData>> finalizers;
 
-        public CardTraitDataPipeline(
-            PluginAtlas atlas,
-            IModLogger<CardTraitDataPipeline> logger,
-            Container container,
-            IEnumerable<IDataPipelineSetup<CardTraitData>> setups,
-            IEnumerable<IDataPipelineFinalizer<CardTraitData>> finalizers
-        )
+        public CardTraitDataPipeline(PluginAtlas atlas, IModLogger<CardTraitDataPipeline> logger)
         {
             this.atlas = atlas;
             this.logger = logger;
-            this.container = container;
-            this.setups = setups;
-            this.finalizers = finalizers;
         }
 
-        public void Run(IRegister<CardTraitData> service)
+        public List<IDefinition<CardTraitData>> Run(IRegister<CardTraitData> service)
         {
-            var processList = new List<CardTraitDefinition>();
+            var processList = new List<IDefinition<CardTraitData>>();
             foreach (var config in atlas.PluginDefinitions)
             {
                 processList.AddRange(LoadTraits(service, config.Key, config.Value.Configuration));
             }
-
-            foreach (var definition in processList)
-            {
-                FinalizeCardTraitData(service, definition);
-                foreach (var finalizer in finalizers)
-                {
-                    finalizer.Finalize(definition);
-                }
-            }
+            return processList;
         }
 
         private List<CardTraitDefinition> LoadTraits(
@@ -62,10 +42,6 @@ namespace TrainworksReloaded.Base.Trait
                 var data = LoadTraitConfiguration(service, key, child);
                 if (data != null)
                 {
-                    foreach (var setup in setups)
-                    {
-                        setup.Setup(data);
-                    }
                     processList.Add(data);
                 }
             }
@@ -230,20 +206,7 @@ namespace TrainworksReloaded.Base.Trait
                 );
 
             service.Register(name, data);
-            return new CardTraitDefinition(key, data, configuration);
-        }
-
-        private void FinalizeCardTraitData(
-            IRegister<CardTraitData> service,
-            CardTraitDefinition definition
-        )
-        {
-            var configuration = definition.Configuration;
-            var data = definition.Data;
-
-            //AccessTools.Field(typeof(CardTraitData), "paramCardTraitData").SetValue(data, configuration.GetSection("cost").ParseInt() ?? defaultCost);
-            //AccessTools.Field(typeof(CardTraitData), "paramCardUpgradeData").SetValue(data, configuration.GetSection("cost").ParseInt() ?? defaultCost);
-            //AccessTools.Field(typeof(CardTraitData), "paramStatusEffects").SetValue(data, configuration.GetSection("cost").ParseInt() ?? defaultCost);
+            return new CardTraitDefinition(key, data, configuration) { Id = id };
         }
     }
 }
