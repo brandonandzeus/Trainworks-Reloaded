@@ -19,16 +19,19 @@ namespace TrainworksReloaded.Base.CardUpgrade
         private readonly PluginAtlas atlas;
         private readonly IModLogger<CardUpgradePipeline> logger;
         private readonly IRegister<LocalizationTerm> termRegister;
+        private readonly IGuidProvider guidProvider;
 
         public CardUpgradePipeline(
             PluginAtlas atlas,
             IModLogger<CardUpgradePipeline> logger,
-            IRegister<LocalizationTerm> termRegister
+            IRegister<LocalizationTerm> termRegister,
+            IGuidProvider guidProvider
         )
         {
             this.atlas = atlas;
             this.logger = logger;
             this.termRegister = termRegister;
+            this.guidProvider = guidProvider;
         }
 
         public List<IDefinition<CardUpgradeData>> Run(IRegister<CardUpgradeData> service)
@@ -98,7 +101,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
             {
                 data = ScriptableObject.CreateInstance<CardUpgradeData>();
                 data.name = name;
-                guid = Guid.NewGuid().ToString();
+                guid = guidProvider.GetGuidDeterministic(name).ToString();
             }
 
             //handle id

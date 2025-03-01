@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using HarmonyLib;
 using TrainworksReloaded.Base.Extensions;
+using TrainworksReloaded.Base.Prefab;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
@@ -17,27 +18,30 @@ namespace TrainworksReloaded.Base.Card
         private readonly ICache<IDefinition<CardData>> cache;
         private readonly IRegister<ClassData> classRegister;
         private readonly IRegister<CardData> cardRegister;
-        private readonly IRegister<GameObject> gameObjectRegister;
         private readonly IRegister<CardTraitData> traitRegister;
         private readonly IRegister<CardEffectData> effectRegister;
+        private readonly IRegister<AssetReferenceGameObject> assetReferenceRegister;
+        private readonly FallbackDataProvider fallbackDataProvider;
 
         public CardDataFinalizer(
             IModLogger<CardDataFinalizer> logger,
             ICache<IDefinition<CardData>> cache,
             IRegister<ClassData> classRegister,
             IRegister<CardData> cardRegister,
-            IRegister<GameObject> gameObjectRegister,
             IRegister<CardTraitData> traitRegister,
-            IRegister<CardEffectData> effectRegister
+            IRegister<CardEffectData> effectRegister,
+            IRegister<AssetReferenceGameObject> assetReferenceRegister,
+            FallbackDataProvider fallbackDataProvider
         )
         {
             this.logger = logger;
             this.cache = cache;
             this.classRegister = classRegister;
             this.cardRegister = cardRegister;
-            this.gameObjectRegister = gameObjectRegister;
             this.traitRegister = traitRegister;
             this.effectRegister = effectRegister;
+            this.assetReferenceRegister = assetReferenceRegister;
+            this.fallbackDataProvider = fallbackDataProvider;
         }
 
         public void FinalizeData()
@@ -152,20 +156,17 @@ namespace TrainworksReloaded.Base.Card
             if (cardArtReference != null)
             {
                 var gameObjectName = cardArtReference.ToId(key, "GameObject");
-                if (gameObjectRegister.TryLookupId(gameObjectName, out var gameObject, out var _))
+                if (
+                    assetReferenceRegister.TryLookupId(
+                        gameObjectName,
+                        out var gameObject,
+                        out var _
+                    )
+                )
                 {
-                    var assetRef = (AssetReferenceGameObject)
-                        AccessTools
-                            .Field(typeof(CardData), "cardArtPrefabVariantRef")
-                            .GetValue(data);
-                    if (assetRef == null)
-                    {
-                        assetRef = new AssetReferenceGameObject();
-                        AccessTools
-                            .Field(typeof(CardData), "cardArtPrefabVariantRef")
-                            .SetValue(data, assetRef);
-                    }
-                    assetRef.SetAssetAndId(gameObjectName, gameObject);
+                    AccessTools
+                        .Field(typeof(CardData), "cardArtPrefabVariantRef")
+                        .SetValue(data, gameObject);
                 }
             }
 
@@ -215,6 +216,10 @@ namespace TrainworksReloaded.Base.Card
 
             if (cardEffectDatas.Count != 0)
                 AccessTools.Field(typeof(CardData), "effects").SetValue(data, cardEffectDatas);
+
+            AccessTools
+                .Field(typeof(CardData), "fallbackData")
+                .SetValue(data, fallbackDataProvider.FallbackData);
         }
     }
 }

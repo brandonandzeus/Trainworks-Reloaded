@@ -121,6 +121,16 @@ namespace TrainworksReloaded.Base.Class
                 AccessTools.Field(iconSetType, "silhouette").SetValue(iconSet, lookup4);
             }
 
+            //handle starter relics
+            var starterRelics =
+                (List<RelicData>)
+                    AccessTools.Field(typeof(ClassData), "starterRelics").GetValue(data);
+            if (starterRelics == null)
+            {
+                starterRelics = new List<RelicData>();
+                AccessTools.Field(typeof(ClassData), "starterRelics").SetValue(data, starterRelics);
+            }
+
             //handle champion data
             var champions = configuration.GetSection("champions").GetChildren().ToList();
             var championDatas =
@@ -210,6 +220,52 @@ namespace TrainworksReloaded.Base.Class
                 {
                     championData.championPortrait = icon3;
                 }
+
+                //upgrade upgrade tree
+                var upgradeTreeData = ScriptableObject.CreateInstance<CardUpgradeTreeData>();
+                if (championData.championCardData != null)
+                {
+                    var championSpawn = championData.championCardData.GetSpawnCharacterData();
+                    if (championSpawn != null)
+                    {
+                        AccessTools
+                            .Field(typeof(CardUpgradeTreeData), "champion")
+                            .SetValue(upgradeTreeData, championSpawn);
+                    }
+                }
+                var upgradeTrees = new List<CardUpgradeTreeData.UpgradeTree>();
+                AccessTools
+                    .Field(typeof(CardUpgradeTreeData), "upgradeTrees")
+                    .SetValue(upgradeTreeData, upgradeTrees);
+                var upgradeTreeConfig = champion.GetSection("upgrade_tree").GetChildren();
+                foreach (var config in upgradeTreeConfig)
+                {
+                    var upgradeTree = new CardUpgradeTreeData.UpgradeTree();
+                    var upgrades = new List<CardUpgradeData>();
+                    AccessTools
+                        .Field(typeof(CardUpgradeTreeData.UpgradeTree), "cardUpgrades")
+                        .SetValue(upgradeTree, upgrades);
+                    foreach (var upgrade in config.GetChildren())
+                    {
+                        var upgradeString = upgrade.ParseString();
+                        if (
+                            upgradeString != null
+                            && upgradeDataRegister.TryLookupName(
+                                upgradeString.ToId(key, "Upgrade"),
+                                out var upgradeObj,
+                                out var _
+                            )
+                        )
+                        {
+                            upgrades.Add(upgradeObj);
+                        }
+                    }
+                    upgradeTrees.Add(upgradeTree);
+                }
+
+                AccessTools
+                    .Field(typeof(ChampionData), "upgradeTree")
+                    .SetValue(championData, upgradeTreeData);
 
                 championDatas.Add(championData);
             }

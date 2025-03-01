@@ -3,6 +3,7 @@ using BepInEx.Logging;
 using HarmonyLib;
 using I2.Loc;
 using Microsoft.Extensions.Configuration;
+using ShinyShoe.Logging;
 using SimpleInjector;
 using TrainworksReloaded.Base;
 using TrainworksReloaded.Base.Card;
@@ -37,6 +38,14 @@ namespace TrainworksReloaded.Plugin
                 false,
                 "Enable to Generate the Games' CSV Files on Launch"
             );
+
+            var configIncludeGameLogs = Config.Bind(
+                "Logs",
+                "Include Game Logs",
+                false,
+                "Enable Game Logs to BepInEx Console"
+            );
+
             if (configToolsCSV.Value)
             {
                 var basePath = Path.GetDirectoryName(typeof(Plugin).Assembly.Location);
@@ -59,6 +68,10 @@ namespace TrainworksReloaded.Plugin
 
             // Plugin startup logic
             Logger = base.Logger;
+            if (configIncludeGameLogs.Value)
+            {
+                Log.AddProvider(new ModLogger<Plugin>(Logger));
+            }
 
             //everything rail head
             var builder = Railhead.GetBuilder();
@@ -84,6 +97,8 @@ namespace TrainworksReloaded.Plugin
 
                 //Register hooking into games dependency injection system
                 c.RegisterInstance(client);
+
+                c.RegisterSingleton<IGuidProvider, DeterministicGuidGenerator>();
 
                 c.Register<Finalizer, Finalizer>();
                 c.Collection.Register<IDataFinalizer>(
@@ -123,11 +138,21 @@ namespace TrainworksReloaded.Plugin
                 );
 
                 //Register Assets
+                c.Register<FallbackDataProvider, FallbackDataProvider>();
                 c.RegisterSingleton<IRegister<GameObject>, GameObjectRegister>();
                 c.RegisterSingleton<GameObjectRegister, GameObjectRegister>();
+                c.RegisterSingleton<
+                    IRegister<AssetReferenceGameObject>,
+                    AssetReferenceGameObjectRegister
+                >();
+                c.RegisterSingleton<
+                    AssetReferenceGameObjectRegister,
+                    AssetReferenceGameObjectRegister
+                >();
                 c.RegisterInitializer<GameObjectRegister>(x =>
                 {
                     Addressables.ResourceLocators.Add(x);
+                    Addressables.ResourceManager.ResourceProviders.Add(x);
                 });
                 c.RegisterInitializer<IRegister<GameObject>>(x =>
                 {

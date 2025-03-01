@@ -1,5 +1,6 @@
 ﻿using System;
 using BepInEx.Logging;
+using ShinyShoe.Logging;
 using TrainworksReloaded.Core.Interfaces;
 
 namespace TrainworksReloaded.Base
@@ -15,9 +16,26 @@ namespace TrainworksReloaded.Base
         }
     }
 
-    public class ModLogger<T>(ManualLogSource manualLogSource) : IModLogger<T>
+    public class ModLogger<T>(ManualLogSource manualLogSource) : IModLogger<T>, ILogProvider
     {
         private readonly ManualLogSource manualLogSource = manualLogSource;
+
+        public void CloseLog() { }
+
+        public void Debug(string log, LogOptions options)
+        {
+            Log(Core.Interfaces.LogLevel.Debug, log);
+        }
+
+        public void Error(string log, LogOptions options)
+        {
+            Log(Core.Interfaces.LogLevel.Error, log);
+        }
+
+        public void Info(string log, LogOptions options)
+        {
+            Log(Core.Interfaces.LogLevel.Info, log);
+        }
 
         public void Log(Core.Interfaces.LogLevel level, object data)
         {
@@ -25,6 +43,16 @@ namespace TrainworksReloaded.Base
                 (BepInEx.Logging.LogLevel)(int)level,
                 new ModLoggerWrapper(typeof(T), data)
             );
+        }
+
+        public void Verbose(string log, LogOptions options)
+        {
+            Log(Core.Interfaces.LogLevel.Debug, log);
+        }
+
+        public void Warning(string log, LogOptions options)
+        {
+            Log(Core.Interfaces.LogLevel.Warning, log);
         }
     }
 }

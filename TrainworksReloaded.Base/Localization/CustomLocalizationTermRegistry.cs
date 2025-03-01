@@ -40,9 +40,19 @@ namespace TrainworksReloaded.Base.Localization
             LocalizationManager.InitializeIfNeeded();
             List<string> categories = LocalizationManager.Sources[0].GetCategories(true);
             foreach (string Category in categories)
+            {
                 LocalizationManager
                     .Sources[0]
                     .Import_CSV(Category, builder.ToString(), eSpreadsheetUpdateMode.Merge, ',');
+                LocalizationManager
+                    .Sources[0]
+                    .Import_CSV(
+                        Category,
+                        builder.ToString(),
+                        eSpreadsheetUpdateMode.AddNewTerms,
+                        ','
+                    );
+            }
         }
 
         public bool TryLookupName(

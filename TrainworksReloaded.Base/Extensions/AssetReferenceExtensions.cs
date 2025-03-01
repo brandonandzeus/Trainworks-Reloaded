@@ -21,6 +21,19 @@ namespace TrainworksReloaded.Base.Extensions
             AccessTools
                 .Field(typeof(AssetReference), "m_AssetGUID")
                 .SetValue(assetReference, registeredGUID);
+            AccessTools
+                .Field(typeof(AssetReference), "m_debugName")
+                .SetValue(assetReference, $"TR-{registeredGUID}");
+        }
+
+        public static void SetId(this AssetReference assetReference, string registeredGUID)
+        {
+            AccessTools
+                .Field(typeof(AssetReference), "m_AssetGUID")
+                .SetValue(assetReference, registeredGUID);
+            AccessTools
+                .Field(typeof(AssetReference), "m_debugName")
+                .SetValue(assetReference, $"TR-{registeredGUID}");
         }
     }
 }

@@ -12,6 +12,28 @@
       "card_art_reference": "@MechanicalOutrage"
     },
     {
+      "id": "Gravitas",
+      "names": {
+        "english": "A Butler's Gravitas"
+      },
+      "cost": "0",
+      "type": "spell",
+      "rarity": "common",
+      "class": "@ClassSteward",
+      "card_art_reference": "@MechanicalOutrage"
+    },
+    {
+      "id": "PyreRefactor",
+      "names": {
+        "english": "Pyre Refactor"
+      },
+      "cost": "2",
+      "type": "spell",
+      "rarity": "uncommon",
+      "class": "@ClassSteward",
+      "card_art_reference": "@MechanicalOutrage"
+    },
+    {
       "id": "SpawnAlbert", //unique name for the plugin (Required)
       "override": false, //Useful for overriding existing cards
       "names": {
@@ -50,7 +72,11 @@
       "targetless": false, //whether this card has no targets
       "dlc": "none", //what dlc do you need to have access to this card, currently only option is none
       "traits": [],
-      "effects": [],
+      "effects": [
+        {
+          "id": "@SpawnAlbert"
+        }
+      ],
       "triggers": [],
       "effect_triggers": [],
       "initial_upgrades": [],
@@ -75,13 +101,13 @@
     {
       "id": "ClassSteward",
       "titles": {
-        "english": "Stewards"
+        "english": "Steward Guild"
       },
       "descriptions": {
-        "english": "Stewardly"
+        "english": "Direct the faithful train stewards towards keeping the train together, even against their growing madness."
       },
       "subclass_descriptions": {
-        "english": "Stewardly"
+        "english": "Direct the faithful train stewards towards keeping the train together, even against their growing madness."
       },
       "icons": {
         "small": "@StewardIconSmall",
@@ -121,7 +147,7 @@
           "id": "StewardChampion",
           "card_data": "@SpawnAlbert",
           "starter_card": "@DealDamageAndPyre",
-          "upgradeTree": [
+          "upgrade_tree": [
             [ "@AlbertXReductionBuffer" ],
             [ "@AlbertXReductionBuffer" ],
             [ "@AlbertXReductionBuffer" ]
@@ -134,7 +160,7 @@
       ],
       "sfx_cue": "",
       "starter_upgrade": "",
-      "draft_pool": "",
+      "enhancer_pool": "",
       "is_crew": false,
       "starter_relics": [],
       "unlock_data": {
@@ -166,7 +192,7 @@
         "korean": "",
         "japanese": ""
       },
-      "character_art": "",
+      "character_art": "4a67bba634a51d54f80fcde4a955dcbc",
       "hide_in_logbook": false,
       "size": 3,
       "block_size_increase": false,
@@ -213,6 +239,15 @@
         "health": 10,
         "attack": 15
       }
+    }
+  ],
+  "effects": [
+    {
+      "id": "SpawnAlbert",
+      "name": "CardEffectSpawnMonster",
+      "target_mode": "room",
+      "target_card_type": "spell",
+      "param_character_data": "@SpawnAlbert"
     }
   ],
   "sprites": [

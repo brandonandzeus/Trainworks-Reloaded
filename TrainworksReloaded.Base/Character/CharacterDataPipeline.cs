@@ -20,16 +20,19 @@ namespace TrainworksReloaded.Base.Character
         private readonly PluginAtlas atlas;
         private readonly IModLogger<CharacterDataPipeline> logger;
         private readonly IRegister<LocalizationTerm> termRegister;
+        private readonly IGuidProvider guidProvider;
 
         public CharacterDataPipeline(
             PluginAtlas atlas,
             IModLogger<CharacterDataPipeline> logger,
-            IRegister<LocalizationTerm> termRegister
+            IRegister<LocalizationTerm> termRegister,
+            IGuidProvider guidProvider
         )
         {
             this.atlas = atlas;
             this.logger = logger;
             this.termRegister = termRegister;
+            this.guidProvider = guidProvider;
         }
 
         public List<IDefinition<CharacterData>> Run(IRegister<CharacterData> service)
@@ -97,7 +100,7 @@ namespace TrainworksReloaded.Base.Character
             {
                 data = ScriptableObject.CreateInstance<CharacterData>();
                 data.name = name;
-                guid = Guid.NewGuid().ToString();
+                guid = guidProvider.GetGuidDeterministic(name).ToString();
             }
 
             //handle id
