@@ -11,6 +11,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceLocations;
 using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.ResourceManagement.ResourceProviders.Experimental;
+using UnityEngine.ResourceManagement.Util;
 using static RimLight;
 
 namespace TrainworksReloaded.Base.Prefab
@@ -69,10 +70,8 @@ namespace TrainworksReloaded.Base.Prefab
         public bool Locate(object key, out IList<IResourceLocation> locations)
         {
             locations = [];
-            logger.Log(LogLevel.Info, key);
             if (key is Hash128 hash && HashToObjectMap.TryGetValue(hash, out var value))
             {
-                logger.Log(LogLevel.Info, hash);
                 var location = new ResourceLocationBase(
                     value.Item1,
                     value.Item1,
@@ -97,33 +96,33 @@ namespace TrainworksReloaded.Base.Prefab
         )
             where TObject : class
         {
-            return AsyncOperationCache
-                .Instance.Acquire<InternalOp<TObject>>()
-                .Start(location, dependencies, this[location.InternalId]);
-        }
-
-        internal class InternalOp<TObject> : AsyncOperationBase<TObject>
-            where TObject : class
-        {
-            public IAsyncOperation<TObject> Start(
-                IResourceLocation location,
-                IList<object> deps,
-                object result
-            )
+            if (location == null)
             {
-                base.Validate();
-                base.Context = location;
-                if (result is TObject @object)
-                {
-                    this.SetResult(@object);
-                }
-                else
-                {
-                    this.SetResult(default!);
-                }
+                throw new ArgumentNullException("location");
+            }
 
-                base.InvokeCompletionEvent();
-                return this;
+            if (!typeof(TObject).IsAssignableFrom(typeof(GameObject)))
+            {
+                throw new ArgumentNullException("gameobject");
+            }
+
+            logger.Log(LogLevel.Info, $"Providing for {location.InternalId}");
+            if (this[location.InternalId] is TObject @object)
+            {
+                return new CompletedOperation<TObject>().Start(
+                    location,
+                    location.InternalId,
+                    @object
+                );
+            }
+            else
+            {
+                logger.Log(LogLevel.Info, $"Did not Find for {location.InternalId}");
+                return new CompletedOperation<TObject>().Start(
+                    location,
+                    location.InternalId,
+                    default!
+                );
             }
         }
 

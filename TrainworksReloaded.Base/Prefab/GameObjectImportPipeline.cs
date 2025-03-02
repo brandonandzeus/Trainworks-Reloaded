@@ -48,7 +48,6 @@ namespace TrainworksReloaded.Base.Prefab
                         IsModded = true,
                     };
                     definitions.Add(definition);
-                    break;
                 }
             }
             return definitions;

@@ -34,6 +34,17 @@
       "card_art_reference": "@MechanicalOutrage"
     },
     {
+      "id": "BreakingPoint",
+      "names": {
+        "english": "Breaking Point"
+      },
+      "cost": "3",
+      "type": "spell",
+      "rarity": "rare",
+      "class": "@ClassSteward",
+      "card_art_reference": "@MechanicalOutrage"
+    },
+    {
       "id": "SpawnAlbert", //unique name for the plugin (Required)
       "override": false, //Useful for overriding existing cards
       "names": {
@@ -270,6 +281,10 @@
     {
       "id": "MechanicalOutrage",
       "path": "textures/MechanicalOutrage.png"
+    },
+    {
+      "id": "Albert",
+      "path": "textures/MechanicalOutrage.png"
     }
   ],
   "game_objects": [
@@ -277,6 +292,11 @@
       "id": "MechanicalOutrage",
       "type": "card_art",
       "sprite": "@MechanicalOutrage"
+    },
+    {
+      "id": "Albert",
+      "type": "card_art",
+      "sprite": "@Albert"
     }
   ],
   "upgrades": [
