@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using HarmonyLib;
 using TrainworksReloaded.Base.Card;
@@ -17,18 +18,21 @@ namespace TrainworksReloaded.Base.Character
         private readonly IModLogger<CharacterDataFinalizer> logger;
         private readonly ICache<IDefinition<CharacterData>> cache;
         private readonly IRegister<AssetReferenceGameObject> assetReferenceRegister;
+        private readonly IRegister<CharacterTriggerData> triggerRegister;
         private readonly FallbackDataProvider dataProvider;
 
         public CharacterDataFinalizer(
             IModLogger<CharacterDataFinalizer> logger,
             ICache<IDefinition<CharacterData>> cache,
             IRegister<AssetReferenceGameObject> assetReferenceRegister,
+            IRegister<CharacterTriggerData> triggerRegister,
             FallbackDataProvider dataProvider
         )
         {
             this.logger = logger;
             this.cache = cache;
             this.assetReferenceRegister = assetReferenceRegister;
+            this.triggerRegister = triggerRegister;
             this.dataProvider = dataProvider;
         }
 
@@ -69,6 +73,34 @@ namespace TrainworksReloaded.Base.Character
                         .SetValue(data, gameObject);
                 }
             }
+
+            //handle triggers
+            var triggerDatas = new List<CharacterTriggerData>();
+            var triggerDatasConfigs = configuration
+                .GetSection("triggers")
+                .GetChildren()
+                .Select(xs => xs.GetSection("id").ParseString())
+                .ToList();
+            foreach (var triggerData in triggerDatasConfigs)
+            {
+                if (triggerData == null)
+                {
+                    continue;
+                }
+                logger.Log(Core.Interfaces.LogLevel.Info, $"Looking for {triggerData}");
+                if (
+                    triggerRegister.TryLookupId(
+                        triggerData.ToId(key, "CTrigger"),
+                        out var card,
+                        out var _
+                    )
+                )
+                {
+                    logger.Log(Core.Interfaces.LogLevel.Info, $"Found {triggerData}");
+                    triggerDatas.Add(card);
+                }
+            }
+            AccessTools.Field(typeof(CharacterData), "triggers").SetValue(data, triggerDatas);
 
             //status effects
             var status_effects = new List<StatusEffectStackData>();

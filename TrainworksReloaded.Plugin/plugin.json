@@ -237,7 +237,11 @@
       "boss_room_cast_vfx": "",
       "starting_status_effects": [],
       "status_effect_immunities": [],
-      "triggers": [],
+      "triggers": [
+        {
+          "id": "@SummonAlbert"
+        }
+      ],
       "subtypes": [ "SubtypesData_Champion_83f21cbe-9d9b-4566-a2c3-ca559ab8ff34" ],
       "remove_triggers_on_relentless": false,
       "boss_action_groups": [],
@@ -259,6 +263,20 @@
       }
     }
   ],
+  "character_triggers": [
+    {
+      "id": "SummonAlbert",
+      "trigger": "on_spawn",
+      "effects": [
+        {
+          "id": "@BufferAlbertAttack"
+        },
+        {
+          "id": "@BufferAlbertHealth"
+        }
+      ]
+    }
+  ],
   "effects": [
     {
       "id": "SpawnAlbert",
@@ -266,6 +284,18 @@
       "target_mode": "room",
       "target_card_type": "spell",
       "param_character_data": "@SpawnAlbert"
+    },
+    {
+      "id": "BufferAlbertAttack",
+      "name": "CardEffectBuffDamage",
+      "target_mode": "self",
+      "param_int": 1
+    },
+    {
+      "id": "BufferAlbertHealth",
+      "name": "CardEffectBuffMaxHealth",
+      "target_mode": "self",
+      "param_int": 1
     }
   ],
   "sprites": [
@@ -309,7 +339,7 @@
   "traits": [
     {
       "id": "BuffAttackByCost",
-      "name": "CardTraitScalingUpgradeUnitAttack",
+      "name": "CardTraitScalingBuffDamage",
       "track_type": "played_cost",
       "param_int": 2
     },

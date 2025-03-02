@@ -8,6 +8,7 @@ using static CardEffectData;
 using static CardStatistics;
 using static CharacterTriggerData;
 using static CharacterUI;
+using static MetagameSaveData;
 
 namespace TrainworksReloaded.Base.Extensions
 {
@@ -183,6 +184,62 @@ namespace TrainworksReloaded.Base.Extensions
                 "none" => ClassCardStyle.None,
                 "banished" => ClassCardStyle.Banished,
                 "pyreborne" => ClassCardStyle.Pyreborne,
+                _ => null,
+            };
+        }
+
+        public static TrackedValue? ParseTrackedValue(this IConfigurationSection section)
+        {
+            var val = section.Value;
+            if (string.IsNullOrEmpty(val))
+            {
+                return null;
+            }
+
+            return val switch
+            {
+                "none" => TrackedValue.None,
+                "kill_enemies" => TrackedValue.KillEnemies,
+                "play_spells" => TrackedValue.PlaySpells,
+                "play_units" => TrackedValue.PlayUnits,
+                "started_runs" => TrackedValue.StartedRuns,
+                "covenant_level" => TrackedValue.CovenantLevel,
+                "unlocked_pyre_hearts" => TrackedValue.UnlockedPyreHearts,
+                "equipment_used" => TrackedValue.EquipmentUsed,
+                "defeated_true_final_boss" => TrackedValue.DefeatedTrueFinalBoss,
+                "cards_discarded" => TrackedValue.CardsDiscarded,
+                "cards_consumed" => TrackedValue.CardsConsumed,
+                "healing_done_after_crew_unlocked" => TrackedValue.HealingDoneAfterCrewUnlocked,
+                "units_resurrected_after_crew_unlocked" =>
+                    TrackedValue.UnitsResurrectedAfterCrewUnlocked,
+                "consume_spells_returned_after_crew_unlocked" =>
+                    TrackedValue.ConsumeSpellsReturnedAfterCrewUnlocked,
+                "units_moved" => TrackedValue.UnitsMoved,
+                "pyre_damage" => TrackedValue.PyreDamage,
+                "debuffs_applied" => TrackedValue.DebuffsApplied,
+                "enemies_defeated_with_spells" => TrackedValue.EnemiesDefeatedWithSpells,
+                "battles_won_with_trial" => TrackedValue.BattlesWonWithTrial,
+                "magic_power_bonus_damage" => TrackedValue.MagicPowerBonusDamage,
+                "play_five_spells_in_turn_after_crew_unlocked" =>
+                    TrackedValue.PlayFiveSpellsInTurnAfterCrewUnlocked,
+                "play_dragon_or_demon_units" => TrackedValue.PlayDragonOrDemonUnits,
+                "damage_done_by_train_stewards" => TrackedValue.DamageDoneByTrainStewards,
+                "num_challenges_won" => TrackedValue.NumChallengesWon,
+                "defeated_all_seraph_variants" => TrackedValue.DefeatedAllSeraphVariants,
+                "defeated_all_seraph_variants_at_max_covenant" =>
+                    TrackedValue.DefeatedAllSeraphVariantsAtMaxCovenant,
+                "win_with_all_class_combos" => TrackedValue.WinWithAllClassCombos,
+                "win_with_all_class_combos_at_max_covenant" =>
+                    TrackedValue.WinWithAllClassCombosAtMaxCovenant,
+                "all_classes_at_max_level" => TrackedValue.AllClassesAtMaxLevel,
+                "win_with_all_classes_at_max_covenant" =>
+                    TrackedValue.WinWithAllClassesAtMaxCovenant,
+                "cards_frozen" => TrackedValue.CardsFrozen,
+                "coins_spents" => TrackedValue.CoinsSpents,
+                "room_capacity_increased_after_crew_unlocked" =>
+                    TrackedValue.RoomCapacityIncreasedAfterCrewUnlocked,
+                "defeat_tfb_with_all_class_combos_at_max_covenant" =>
+                    TrackedValue.DefeatTfbWithAllClassCombosAtMaxCovenant,
                 _ => null,
             };
         }
@@ -426,7 +483,7 @@ namespace TrainworksReloaded.Base.Extensions
             };
         }
 
-        public static Trigger? ParseTrigger(this IConfigurationSection section)
+        public static CharacterTriggerData.Trigger? ParseTrigger(this IConfigurationSection section)
         {
             var val = section.Value;
             if (string.IsNullOrEmpty(val))
@@ -436,69 +493,77 @@ namespace TrainworksReloaded.Base.Extensions
 
             return val.ToLower() switch
             {
-                "on_death" => Trigger.OnDeath,
-                "post_combat" => Trigger.PostCombat,
-                "on_spawn" => Trigger.OnSpawn,
-                "on_attacking" => Trigger.OnAttacking,
-                "on_kill" => Trigger.OnKill,
-                "on_any_hero_death_on_floor" => Trigger.OnAnyHeroDeathOnFloor,
-                "on_any_monster_death_on_floor" => Trigger.OnAnyMonsterDeathOnFloor,
-                "on_heal" => Trigger.OnHeal,
-                "on_team_turn_begin" => Trigger.OnTeamTurnBegin,
-                "pre_combat" => Trigger.PreCombat,
-                "post_ascension" => Trigger.PostAscension,
-                "post_combat_healing" => Trigger.PostCombatHealing,
-                "on_hit" => Trigger.OnHit,
-                "after_spawn_enchant" => Trigger.AfterSpawnEnchant,
-                "post_descension" => Trigger.PostDescension,
-                "on_any_unit_death_on_floor" => Trigger.OnAnyUnitDeathOnFloor,
-                "card_spell_played" => Trigger.CardSpellPlayed,
-                "card_monster_played" => Trigger.CardMonsterPlayed,
-                "end_turn_pre_hand_discard" => Trigger.EndTurnPreHandDiscard,
-                "on_feed" => Trigger.OnFeed,
-                "on_eaten" => Trigger.OnEaten,
-                "on_turn_begin" => Trigger.OnTurnBegin,
-                "on_burnout" => Trigger.OnBurnout,
-                "on_spawn_not_from_card" => Trigger.OnSpawnNotFromCard,
-                "on_unscaled_spawn" => Trigger.OnUnscaledSpawn,
-                "post_attempted_ascension" => Trigger.PostAttemptedAscension,
-                "post_attempted_descension" => Trigger.PostAttemptedDescension,
-                "on_hatched" => Trigger.OnHatched,
-                "card_corrupt_played" => Trigger.CardCorruptPlayed,
-                "corruption_added" => Trigger.CorruptionAdded,
-                "on_armor_added" => Trigger.OnArmorAdded,
-                "on_food_spawn" => Trigger.OnFoodSpawn,
-                "card_exhausted" => Trigger.CardExhausted,
-                "on_remove_hatch" => Trigger.OnRemoveHatch,
-                "on_own_ability_activated" => Trigger.OnOwnAbilityActivated,
-                "card_regal_played" => Trigger.CardRegalPlayed,
-                "regal_count_added" => Trigger.RegalCountAdded,
-                "on_unit_ability_available" => Trigger.OnUnitAbilityAvailable,
-                "on_unit_ability_unavailable" => Trigger.OnUnitAbilityUnavailable,
-                "on_shift" => Trigger.OnShift,
-                "on_equipment_added" => Trigger.OnEquipmentAdded,
-                "on_equipment_removed" => Trigger.OnEquipmentRemoved,
-                "on_deathwish" => Trigger.OnDeathwish,
-                "on_deathwish_lost" => Trigger.OnDeathwishLost,
-                "on_valiant" => Trigger.OnValiant,
-                "on_encounter_complete" => Trigger.OnEncounterComplete,
-                "on_pyregel_added" => Trigger.OnPyregelAdded,
-                "on_moon_phase_shift" => Trigger.OnMoonPhaseShift,
-                "on_equipment_added_to_ally" => Trigger.OnEquipmentAddedToAlly,
-                "on_timebomb" => Trigger.OnTimebomb,
-                "on_reanimated" => Trigger.OnReanimated,
-                "on_graft_equipment_added" => Trigger.OnGraftEquipmentAdded,
-                "on_new_status_effect_added" => Trigger.OnNewStatusEffectAdded,
-                "on_queued_status_effect_to_add" => Trigger.OnQueuedStatusEffectToAdd,
-                "on_moon_lit" => Trigger.OnMoonLit,
-                "on_moon_shade" => Trigger.OnMoonShade,
-                "on_moonlit_lost" => Trigger.OnMoonlitLost,
-                "on_moonshade_lost" => Trigger.OnMoonshadeLost,
-                "on_troop_added" => Trigger.OnTroopAdded,
-                "on_troop_removed" => Trigger.OnTroopRemoved,
-                "on_train_room_loop" => Trigger.OnTrainRoomLoop,
-                "on_status_effect_changed" => Trigger.OnStatusEffectChanged,
-                "on_attacking_before_damage" => Trigger.OnAttackingBeforeDamage,
+                "on_death" => CharacterTriggerData.Trigger.OnDeath,
+                "post_combat" => CharacterTriggerData.Trigger.PostCombat,
+                "on_spawn" => CharacterTriggerData.Trigger.OnSpawn,
+                "on_attacking" => CharacterTriggerData.Trigger.OnAttacking,
+                "on_kill" => CharacterTriggerData.Trigger.OnKill,
+                "on_any_hero_death_on_floor" => CharacterTriggerData.Trigger.OnAnyHeroDeathOnFloor,
+                "on_any_monster_death_on_floor" => CharacterTriggerData
+                    .Trigger
+                    .OnAnyMonsterDeathOnFloor,
+                "on_heal" => CharacterTriggerData.Trigger.OnHeal,
+                "on_team_turn_begin" => CharacterTriggerData.Trigger.OnTeamTurnBegin,
+                "pre_combat" => CharacterTriggerData.Trigger.PreCombat,
+                "post_ascension" => CharacterTriggerData.Trigger.PostAscension,
+                "post_combat_healing" => CharacterTriggerData.Trigger.PostCombatHealing,
+                "on_hit" => CharacterTriggerData.Trigger.OnHit,
+                "after_spawn_enchant" => CharacterTriggerData.Trigger.AfterSpawnEnchant,
+                "post_descension" => CharacterTriggerData.Trigger.PostDescension,
+                "on_any_unit_death_on_floor" => CharacterTriggerData.Trigger.OnAnyUnitDeathOnFloor,
+                "card_spell_played" => CharacterTriggerData.Trigger.CardSpellPlayed,
+                "card_monster_played" => CharacterTriggerData.Trigger.CardMonsterPlayed,
+                "end_turn_pre_hand_discard" => CharacterTriggerData.Trigger.EndTurnPreHandDiscard,
+                "on_feed" => CharacterTriggerData.Trigger.OnFeed,
+                "on_eaten" => CharacterTriggerData.Trigger.OnEaten,
+                "on_turn_begin" => CharacterTriggerData.Trigger.OnTurnBegin,
+                "on_burnout" => CharacterTriggerData.Trigger.OnBurnout,
+                "on_spawn_not_from_card" => CharacterTriggerData.Trigger.OnSpawnNotFromCard,
+                "on_unscaled_spawn" => CharacterTriggerData.Trigger.OnUnscaledSpawn,
+                "post_attempted_ascension" => CharacterTriggerData.Trigger.PostAttemptedAscension,
+                "post_attempted_descension" => CharacterTriggerData.Trigger.PostAttemptedDescension,
+                "on_hatched" => CharacterTriggerData.Trigger.OnHatched,
+                "card_corrupt_played" => CharacterTriggerData.Trigger.CardCorruptPlayed,
+                "corruption_added" => CharacterTriggerData.Trigger.CorruptionAdded,
+                "on_armor_added" => CharacterTriggerData.Trigger.OnArmorAdded,
+                "on_food_spawn" => CharacterTriggerData.Trigger.OnFoodSpawn,
+                "card_exhausted" => CharacterTriggerData.Trigger.CardExhausted,
+                "on_remove_hatch" => CharacterTriggerData.Trigger.OnRemoveHatch,
+                "on_own_ability_activated" => CharacterTriggerData.Trigger.OnOwnAbilityActivated,
+                "card_regal_played" => CharacterTriggerData.Trigger.CardRegalPlayed,
+                "regal_count_added" => CharacterTriggerData.Trigger.RegalCountAdded,
+                "on_unit_ability_available" => CharacterTriggerData.Trigger.OnUnitAbilityAvailable,
+                "on_unit_ability_unavailable" => CharacterTriggerData
+                    .Trigger
+                    .OnUnitAbilityUnavailable,
+                "on_shift" => CharacterTriggerData.Trigger.OnShift,
+                "on_equipment_added" => CharacterTriggerData.Trigger.OnEquipmentAdded,
+                "on_equipment_removed" => CharacterTriggerData.Trigger.OnEquipmentRemoved,
+                "on_deathwish" => CharacterTriggerData.Trigger.OnDeathwish,
+                "on_deathwish_lost" => CharacterTriggerData.Trigger.OnDeathwishLost,
+                "on_valiant" => CharacterTriggerData.Trigger.OnValiant,
+                "on_encounter_complete" => CharacterTriggerData.Trigger.OnEncounterComplete,
+                "on_pyregel_added" => CharacterTriggerData.Trigger.OnPyregelAdded,
+                "on_moon_phase_shift" => CharacterTriggerData.Trigger.OnMoonPhaseShift,
+                "on_equipment_added_to_ally" => CharacterTriggerData.Trigger.OnEquipmentAddedToAlly,
+                "on_timebomb" => CharacterTriggerData.Trigger.OnTimebomb,
+                "on_reanimated" => CharacterTriggerData.Trigger.OnReanimated,
+                "on_graft_equipment_added" => CharacterTriggerData.Trigger.OnGraftEquipmentAdded,
+                "on_new_status_effect_added" => CharacterTriggerData.Trigger.OnNewStatusEffectAdded,
+                "on_queued_status_effect_to_add" => CharacterTriggerData
+                    .Trigger
+                    .OnQueuedStatusEffectToAdd,
+                "on_moon_lit" => CharacterTriggerData.Trigger.OnMoonLit,
+                "on_moon_shade" => CharacterTriggerData.Trigger.OnMoonShade,
+                "on_moonlit_lost" => CharacterTriggerData.Trigger.OnMoonlitLost,
+                "on_moonshade_lost" => CharacterTriggerData.Trigger.OnMoonshadeLost,
+                "on_troop_added" => CharacterTriggerData.Trigger.OnTroopAdded,
+                "on_troop_removed" => CharacterTriggerData.Trigger.OnTroopRemoved,
+                "on_train_room_loop" => CharacterTriggerData.Trigger.OnTrainRoomLoop,
+                "on_status_effect_changed" => CharacterTriggerData.Trigger.OnStatusEffectChanged,
+                "on_attacking_before_damage" => CharacterTriggerData
+                    .Trigger
+                    .OnAttackingBeforeDamage,
                 _ => null,
             };
         }

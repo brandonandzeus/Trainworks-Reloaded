@@ -14,6 +14,7 @@ using TrainworksReloaded.Base.Effect;
 using TrainworksReloaded.Base.Localization;
 using TrainworksReloaded.Base.Prefab;
 using TrainworksReloaded.Base.Trait;
+using TrainworksReloaded.Base.Trigger;
 using TrainworksReloaded.Core;
 using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
@@ -109,6 +110,7 @@ namespace TrainworksReloaded.Plugin
                         typeof(CardUpgradeFinalizer),
                         typeof(CharacterDataFinalizer),
                         typeof(ClassDataFinalizer),
+                        typeof(CharacterTriggerFinalizer),
                     ]
                 );
 
@@ -200,6 +202,21 @@ namespace TrainworksReloaded.Plugin
                 {
                     var pipeline = c.GetInstance<
                         IDataPipeline<IRegister<CharacterData>, CharacterData>
+                    >();
+                    pipeline.Run(x);
+                });
+
+                //Register Character Trigger
+                c.RegisterSingleton<IRegister<CharacterTriggerData>, CharacterTriggerRegister>(); //a place to register and access custom card data
+                c.RegisterSingleton<CharacterTriggerRegister, CharacterTriggerRegister>();
+                c.Register<
+                    IDataPipeline<IRegister<CharacterTriggerData>, CharacterTriggerData>,
+                    CharacterTriggerPipeline
+                >(); //a data pipeline to run as soon as register is needed
+                c.RegisterInitializer<IRegister<CharacterTriggerData>>(x =>
+                {
+                    var pipeline = c.GetInstance<
+                        IDataPipeline<IRegister<CharacterTriggerData>, CharacterTriggerData>
                     >();
                     pipeline.Run(x);
                 });

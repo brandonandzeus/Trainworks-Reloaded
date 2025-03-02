@@ -1,0 +1,1321 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "",
+  "type": "object",
+  "definitions": {
+    "parse_term": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        },
+        "group": {
+          "type": "string",
+          "minLength": 1
+        },
+        "speaker_descriptions": {
+          "type": "string"
+        },
+        "english": {
+          "type": "string",
+          "minLength": 1
+        },
+        "french": {
+          "type": "string",
+          "minLength": 1
+        },
+        "german": {
+          "type": "string"
+        },
+        "russian": {
+          "type": "string"
+        },
+        "portuguese": {
+          "type": "string"
+        },
+        "chinese": {
+          "type": "string"
+        },
+        "spanish": {
+          "type": "string"
+        },
+        "chinese_traditional": {
+          "type": "string"
+        },
+        "korean": {
+          "type": "string"
+        },
+        "japanese": {
+          "type": "string"
+        }
+      }
+    },
+    "card_type": {
+      "type": "string",
+      "enum": [
+        "invalid",
+        "spell",
+        "monster",
+        "blight",
+        "junk",
+        "equipment",
+        "room"
+      ]
+    },
+    "cost_type": {
+      "type": "string",
+      "enum": [
+        "default",
+        "x",
+        "unplayable"
+      ]
+    },
+    "rarity": {
+      "type": "string",
+      "enum": [
+        "common",
+        "uncommon",
+        "starter",
+        "rare",
+        "champion"
+      ]
+    },
+    "dlc": {
+      "type": "string",
+      "enum": [
+        "none"
+      ]
+    },
+    "target_assist": {
+      "type": "string",
+      "enum": [
+        "front_friendly",
+        "back_friendly",
+        "front_enemy",
+        "back_enemy"
+      ]
+    },
+    "color": {
+      "type": "object",
+      "properties": {
+        "r": {
+          "type": "number"
+        },
+        "g": {
+          "type": "number"
+        },
+        "b": {
+          "type": "number"
+        },
+        "a": {
+          "type": "number"
+        }
+      }
+    },
+    "card_style": {
+      "type": "string",
+      "enum": [
+        "none",
+        "banished",
+        "pyreborne"
+      ]
+    },
+    "tracked_value": {
+      "type": "string",
+      "enum": [
+        "none",
+        "kill_enemies",
+        "play_spells",
+        "play_units",
+        "started_runs",
+        "covenant_level",
+        "unlocked_pyre_hearts",
+        "equipment_used",
+        "defeated_true_final_boss",
+        "cards_discarded",
+        "cards_consumed",
+        "healing_done_after_crew_unlocked",
+        "units_resurrected_after_crew_unlocked",
+        "consume_spells_returned_after_crew_unlocked",
+        "units_moved",
+        "pyre_damage",
+        "debuffs_applied",
+        "enemies_defeated_with_spells",
+        "battles_won_with_trial",
+        "magic_power_bonus_damage",
+        "play_five_spells_in_turn_after_crew_unlocked",
+        "play_dragon_or_demon_units",
+        "damage_done_by_train_stewards",
+        "num_challenges_won",
+        "defeated_all_seraph_variants",
+        "defeated_all_seraph_variants_at_max_covenant",
+        "win_with_all_class_combos",
+        "win_with_all_class_combos_at_max_covenant",
+        "all_classes_at_max_level",
+        "win_with_all_classes_at_max_covenant",
+        "cards_frozen",
+        "coins_spents",
+        "room_capacity_increased_after_crew_unlocked",
+        "defeat_tfb_with_all_class_combos_at_max_covenant"
+      ]
+    },
+    "tracked_value_type": {
+      "type": "string",
+      "enum": [
+        "subtype_in_deck",
+        "subtype_in_discard_pile",
+        "subtype_in_exhaust_pile",
+        "subtype_in_draw_pile",
+        "subtype_in_eaten_pile",
+        "type_in_deck",
+        "type_in_discard_pile",
+        "type_in_exhaust_pile",
+        "type_in_draw_pile",
+        "type_in_eaten_pile",
+        "played_cost",
+        "unmodified_played_cost",
+        "heroes_killed",
+        "spawned_monster_deaths",
+        "times_discarded",
+        "times_played",
+        "times_drawn",
+        "times_exhausted",
+        "last_sacrificed_monster_stats",
+        "any_hero_killed",
+        "any_monster_death",
+        "any_monster_spawned",
+        "any_discarded",
+        "any_card_played",
+        "any_card_drawn",
+        "any_exhausted",
+        "any_monster_spawned_top_floor",
+        "monster_subtype_played",
+        "status_effect_count_in_target_room",
+        "corruption_in_target_room",
+        "turn_count",
+        "regal_count_in_target_room",
+        "dragons_hoard_amount",
+        "moon_phase",
+        "magic_power_in_target_room",
+        "gold",
+        "status_effect_count_on_last_ability_activator",
+        "const_one",
+        "pyre_heart_resurrection",
+        "num_specific_cards_in_deck",
+        "any_status_effect_stacks_added",
+        "any_status_effect_stacks_removed"
+      ]
+    },
+    "card_type_target": {
+      "type": "string",
+      "enum": [
+        "any",
+        "spell",
+        "monster",
+        "blight",
+        "junk",
+        "equipment",
+        "train_room_attachment"
+      ]
+    },
+    "entry_duration": {
+      "type": "string",
+      "enum": [
+        "this_turn",
+        "this_battle",
+        "previous_turn"
+      ]
+    },
+    "team": {
+      "type": "string",
+      "enum": [
+        "none",
+        "both",
+        "heroes",
+        "monsters"
+      ]
+    },
+    "stack_mode": {
+      "type": "string",
+      "enum": [
+        "none",
+        "param_int",
+        "param_int_largest"
+      ]
+    },
+    "target_mode": {
+      "type": "string",
+      "enum": [
+        "room",
+        "random_in_room",
+        "front_in_room",
+        "room_heal_targets",
+        "self",
+        "last_attacked_character",
+        "front_with_status",
+        "tower",
+        "back_in_room",
+        "drop_target_character",
+        "draw_pile",
+        "discard",
+        "exhaust",
+        "eaten",
+        "weakest",
+        "last_attacker_character",
+        "hand",
+        "last_drawn_card",
+        "last_feeder_character",
+        "pyre",
+        "last_targeted_characters",
+        "last_damaged_characters",
+        "last_spawned_morsel",
+        "front_in_all_rooms",
+        "front_in_room_and_room_above",
+        "weakest_all_rooms",
+        "strongest_all_rooms",
+        "last_equipped_character"
+      ]
+    },
+    "health_filter": {
+      "type": "string",
+      "enum": [
+        "both",
+        "undamaged",
+        "damaged"
+      ]
+    },
+    "card_selection_mode": {
+      "type": "string",
+      "enum": [
+        "choose_to_hand",
+        "random_to_hand",
+        "choose_to_deck",
+        "random_to_deck",
+        "random_to_room",
+        "random_to_hand_with_upgrades",
+        "random_to_room_until_capacity_full"
+      ]
+    },
+    "anim": {
+      "type": "string",
+      "enum": [
+        "none",
+        "idle",
+        "attack",
+        "hit_react",
+        "idle_relentless",
+        "attack_spell",
+        "death",
+        "talk",
+        "hover"
+      ]
+    },
+    "character_trigger": {
+      "type": "string",
+      "enum": [
+        "on_death",
+        "post_combat",
+        "on_spawn",
+        "on_attacking",
+        "on_kill",
+        "on_any_hero_death_on_floor",
+        "on_any_monster_death_on_floor",
+        "on_heal",
+        "on_team_turn_begin",
+        "pre_combat",
+        "post_ascension",
+        "post_combat_healing",
+        "on_hit",
+        "after_spawn_enchant",
+        "post_descension",
+        "on_any_unit_death_on_floor",
+        "card_spell_played",
+        "card_monster_played",
+        "end_turn_pre_hand_discard",
+        "on_feed",
+        "on_eaten",
+        "on_turn_begin",
+        "on_burnout",
+        "on_spawn_not_from_card",
+        "on_unscaled_spawn",
+        "post_attempted_ascension",
+        "post_attempted_descension",
+        "on_hatched",
+        "card_corrupt_played",
+        "corruption_added",
+        "on_armor_added",
+        "on_food_spawn",
+        "card_exhausted",
+        "on_remove_hatch",
+        "on_own_ability_activated",
+        "card_regal_played",
+        "regal_count_added",
+        "on_unit_ability_available",
+        "on_unit_ability_unavailable",
+        "on_shift",
+        "on_equipment_added",
+        "on_equipment_removed",
+        "on_deathwish",
+        "on_deathwish_lost",
+        "on_valiant",
+        "on_encounter_complete",
+        "on_pyregel_added",
+        "on_moon_phase_shift",
+        "on_equipment_added_to_ally",
+        "on_timebomb",
+        "on_reanimated",
+        "on_graft_equipment_added",
+        "on_new_status_effect_added",
+        "on_queued_status_effect_to_add",
+        "on_moon_lit",
+        "on_moon_shade",
+        "on_moonlit_lost",
+        "on_moonshade_lost",
+        "on_troop_added",
+        "on_troop_removed",
+        "on_train_room_loop",
+        "on_status_effect_changed",
+        "on_attacking_before_damage"
+      ]
+    },
+    "attack_phase": {
+      "type": "string",
+      "enum": [
+        "none",
+        "casting",
+        "relentless",
+        "both"
+      ]
+    },
+    "death_type": {
+      "type": "string",
+      "enum": [
+        "none",
+        "normal",
+        "large",
+        "boss"
+      ]
+    },
+    "titan_affinity": {
+      "type": "string",
+      "enum": [
+        "none",
+        "entropy",
+        "savagery",
+        "dominion"
+      ]
+    }
+  },
+  "properties": {
+    "cards": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "override": {
+            "type": "boolean"
+          },
+          "names": {
+            "$ref": "#/definitions/parse_term"
+          },
+          "descriptions": {
+            "$ref": "#/definitions/parse_term"
+          },
+          "card_art_reference": {
+            "type": "string"
+          },
+          "cost": {
+            "type": "integer"
+          },
+          "type": {
+            "$ref": "#/definitions/card_type"
+          },
+          "cost_type": {
+            "$ref": "#/definitions/cost_type"
+          },
+          "rarity": {
+            "$ref": "#/definitions/rarity"
+          },
+          "class": {
+            "type": "string"
+          },
+          "unlock_level": {
+            "type": "integer"
+          },
+          "ability": {
+            "type": "boolean"
+          },
+          "ability_effects_other_floors": {
+            "type": "boolean"
+          },
+          "cooldown": {
+            "type": "integer"
+          },
+          "initial_cooldown": {
+            "type": "integer"
+          },
+          "targets_room": {
+            "type": "boolean"
+          },
+          "targetless": {
+            "type": "boolean"
+          },
+          "dlc": {
+            "$ref": "#/definitions/dlc"
+          },
+          "traits": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "effects": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "triggers": {
+            "type": "array",
+            "items": {
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "effect_triggers": {
+            "type": "array",
+            "items": {
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "initial_upgrades": {
+            "type": "array",
+            "items": {
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "shared_discovery_cards": {
+            "type": "array",
+            "items": {
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "shared_mastery_cards": {
+            "type": "array",
+            "items": {
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "count_for_mastery": {
+            "type": "boolean"
+          },
+          "hide_in_logbook": {
+            "type": "boolean"
+          },
+          "lore_tooltips": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/definitions/parse_term",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "target_assist": {
+            "$ref": "#/definitions/target_assist"
+          },
+          "artist": {
+            "type": "string"
+          },
+          "vfx": {
+            "type": "string"
+          },
+          "mastery_card": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "classes": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "titles": {
+            "$ref": "#/definitions/parse_term"
+          },
+          "descriptions": {
+            "$ref": "#/definitions/parse_term"
+          },
+          "subclass_descriptions": {
+            "$ref": "#/definitions/parse_term"
+          },
+          "icons": {
+            "type": "object",
+            "properties": {
+              "small": {
+                "type": "string"
+              },
+              "medium": {
+                "type": "string"
+              },
+              "large": {
+                "type": "string"
+              },
+              "silhouette": {
+                "type": "string"
+              }
+            }
+          },
+          "card_style": {
+            "$ref": "#/definitions/card_style"
+          },
+          "ui_color": {
+            "$ref": "#/definitions/color"
+          },
+          "ui_color_dark": {
+            "$ref": "#/definitions/color"
+          },
+          "ui_gradient": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "required": [
+                "time"
+              ],
+              "properties": {
+                "time": {
+                  "type": "number"
+                },
+                "color": {
+                  "$ref": "#/definitions/color"
+                }
+              }
+            }
+          },
+          "champions": {
+            "type": "array",
+            "uniqueItems": true,
+            "minItems": 1,
+            "items": {
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "card_data": {
+                  "type": "string"
+                },
+                "starter_card": {
+                  "type": "string"
+                },
+                "upgrade_tree": {
+                  "type": "array",
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id"
+                      ]
+                    }
+                  }
+                },
+                "icon": {
+                  "type": "string"
+                },
+                "locked_icon": {
+                  "type": "string"
+                },
+                "portrait": {
+                  "type": "string"
+                },
+                "selected_cue": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "sfx_cue": {
+            "type": "string"
+          },
+          "starter_upgrade": {
+            "type": "string"
+          },
+          "enhancer_pool": {
+            "type": "string"
+          },
+          "is_crew": {
+            "type": "boolean"
+          },
+          "starter_relics": {
+            "type": "array",
+            "items": {
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "unlock_data": {
+            "type": "object",
+            "properties": {
+              "descriptions": {
+                "$ref": "#/definitions/parse_term"
+              },
+              "track_value": {
+                "$ref": "#/definitions/tracked_value"
+              },
+              "param_int": {
+                "type": "integer"
+              }
+            }
+          },
+          "class_preview_texts": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/definitions/parse_term",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "characters": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "names": {
+            "$ref": "#/definitions/parse_term"
+          },
+          "character_art": {
+            "type": "string"
+          },
+          "hide_in_logbook": {
+            "type": "boolean"
+          },
+          "size": {
+            "type": "integer"
+          },
+          "block_size_increase": {
+            "type": "boolean"
+          },
+          "health": {
+            "type": "integer"
+          },
+          "can_be_healed": {
+            "type": "boolean"
+          },
+          "is_outer_train_boss": {
+            "type": "boolean"
+          },
+          "valid_attack_phase": {
+            "type": "string"
+          },
+          "is_mini_boss": {
+            "type": "boolean"
+          },
+          "death_type": {
+            "type": "string"
+          },
+          "can_attack": {
+            "type": "boolean"
+          },
+          "ascends_train_automatically": {
+            "type": "boolean"
+          },
+          "loops_between_floors": {
+            "type": "boolean"
+          },
+          "attack_damage": {
+            "type": "integer"
+          },
+          "animator": {
+            "type": "string"
+          },
+          "attack_teleports_to_defender": {
+            "type": "boolean"
+          },
+          "death_slides_backwards": {
+            "type": "boolean"
+          },
+          "chosen_variant": {
+            "type": "boolean"
+          },
+          "projectile_vfx": {
+            "type": "string"
+          },
+          "attack_vfx": {
+            "type": "string"
+          },
+          "impact_vfx": {
+            "type": "string"
+          },
+          "death_vfx": {
+            "type": "string"
+          },
+          "titan_affinity": {
+            "$ref": "#/definitions/titan_affinity"
+          },
+          "boss_cast_vfx": {
+            "type": "string"
+          },
+          "boss_room_cast_vfx": {
+            "type": "string"
+          },
+          "starting_status_effects": {
+            "type": "array",
+            "items": {
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "count": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "status_effect_immunities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "triggers": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "subtypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "remove_triggers_on_relentless": {
+            "type": "boolean"
+          },
+          "boss_action_groups": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "repeats": {
+                  "type": "integer"
+                },
+                "actions": {
+                  "type": "array",
+                  "items": {
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "tooltip": {
+                        "$ref": "#/definitions/parse_term"
+                      },
+                      "team": {
+                        "$ref": "#/definitions/team"
+                      },
+                      "effects": {
+                        "type": "array",
+                        "items": {
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "character_sound_data": {
+            "type": "string"
+          },
+          "character_chatter_data": {
+            "type": "string"
+          },
+          "enemy_relic_data": {
+            "type": "string"
+          },
+          "character_lore_tooltips": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "room_modifiers": {
+            "type": "array",
+            "items": {
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "ability": {
+            "type": "string"
+          },
+          "is_pyre": {
+            "type": "boolean"
+          },
+          "disable_in_daily_challenges": {
+            "type": "boolean"
+          },
+          "pyre_heart_data": {
+            "type": "string"
+          },
+          "equip_limit": {
+            "type": "integer"
+          },
+          "grafted_equipment": {
+            "type": "string"
+          },
+          "can_equip_only_grafted": {
+            "type": "boolean"
+          },
+          "endless_stats": {
+            "type": "object",
+            "properties": {
+              "health": {
+                "type": "integer"
+              },
+              "attack": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "health",
+              "attack"
+            ]
+          }
+        }
+      }
+    },
+    "character_triggers": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "trigger":{
+            "$ref":"#/definitions/character_trigger"
+          },
+          "descriptions":{
+            "$ref":"#/definitions/parse_term"
+          },
+          "text_on_trigger":{
+            "$ref":"#/definitions/parse_term"
+          },
+          "show_text_on_trigger_success_only":{
+            "type":"boolean"
+          },
+          "display_hint_text":{
+            "type":"boolean"
+          },
+          "hide_tooltip":{
+            "type":"boolean"
+          },
+          "allow_tooltips_when_hidden":{
+            "type":"boolean"
+          },
+          "suppress_notifications":{
+            "type":"boolean"
+          },
+          "trigger_once":{
+            "type":"boolean"
+          },
+          "only_trigger_if_equipped":{
+            "type":"boolean"
+          },
+          "effects":{
+            "type":"array",
+            "items": {
+              "required":["id"],
+              "properties": {
+                "id":{
+                  "type":"string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "effects": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "target_mode": {
+            "$ref": "#/definitions/target_mode"
+          },
+          "target_card_type": {
+            "$ref": "#/definitions/card_type_target"
+          },
+          "param_character_data": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "game_objects": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 1,
+      "items": {
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "sprite": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "sprites": {
+      "type": "array",
+      "items": {
+        "required": [
+          "id",
+          "path"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "traits": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "track_type": {
+            "type": "string"
+          },
+          "param_int": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "upgrades": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "override": {
+            "type": "boolean"
+          },
+          "titles": {
+            "$ref":"#/definitions/parse_term"
+          },
+          "descriptions": {
+            "$ref":"#/definitions/parse_term"
+          },
+          "notifications": {
+            "$ref":"#/definitions/parse_term"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "allow_secondary_tooltip_placement": {
+            "type": "boolean"
+          },
+          "hide_icon_on_card": {
+            "type": "boolean"
+          },
+          "use_upgrade_hightlight_tags": {
+            "type": "boolean"
+          },
+          "show_description_on_cards": {
+            "type": "boolean"
+          },
+          "is_unique": {
+            "type": "boolean"
+          },
+          "bonus_damage": {
+            "type": "integer"
+          },
+          "bonus_hp": {
+            "type": "integer"
+          },
+          "cost_reduction": {
+            "type": "integer"
+          },
+          "x_cost_reduction": {
+            "type": "integer"
+          },
+          "bonus_heal": {
+            "type": "integer"
+          },
+          "bonus_size": {
+            "type": "integer"
+          },
+          "restrict_to_room_capacity": {
+            "type": "boolean"
+          },
+          "bonus_equipment": {
+            "type": "integer"
+          },
+          "ability_upgrade": {
+            "type": "string"
+          },
+          "does_not_replace_ability": {
+            "type": "boolean"
+          },
+          "status_effect_upgrades": {
+            "type": "array",
+            "items": {
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "count": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "trait_upgrades": {
+            "type": "array",
+            "items": {
+              "type":"object",
+              "properties": {
+                "id":{
+                  "type":"string"
+                }
+              }
+            }
+          },
+          "remove_trait_upgrades": {
+            "type": "array",
+            "items": {
+              "type":"string"
+            }
+          },
+          "trigger_upgrades": {
+            "type": "array",
+            "items": {
+              "type":"object",
+              "properties": {
+                "id":{
+                  "type":"string"
+                }
+              }
+            }
+          },
+          "card_trigger_upgrades": {
+            "type": "array",
+            "items": {
+              "type":"object",
+              "properties": {
+                "id":{
+                  "type":"string"
+                }
+              }
+            }
+          },
+          "room_modifier_upgrades": {
+            "type": "array",
+            "items": {
+              "type":"object",
+              "properties": {
+                "id":{
+                  "type":"string"
+                }
+              }
+            }
+          },
+          "filters": {
+            "type": "array",
+            "items": {
+              "type":"object",
+              "properties": {
+                "id":{
+                  "type":"string"
+                }
+              }
+            }
+          },
+          "remove_upgrades": {
+            "type": "array",
+            "items": {
+              "type":"object",
+              "properties": {
+                "id":{
+                  "type":"string"
+                }
+              }
+            }
+          },
+          "applied_vfx": {
+            "type": "string"
+          },
+          "remove_vfx": {
+            "type": "string"
+          },
+          "persistent_vfx": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
