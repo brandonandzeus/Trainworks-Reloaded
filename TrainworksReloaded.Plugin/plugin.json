@@ -65,7 +65,7 @@
       },
       "descriptions": {
         "group": "CardData_Albert", //it is recommended to give your localization terms a Group if they are related
-        "english": "",
+        "english": "Gain +[trait0.paramint][x][attack] and +[trait1.paramint][x][health]",
         "french": ""
       },
       "card_art_reference": "@Albert",
@@ -79,10 +79,17 @@
       "ability_effects_other_floors": false, // whether this ability will effect other floors
       "cooldown": 0, //ability cooldown
       "initial_cooldown": 0, //ability cooldown when played
-      "targets_room": false, //whether this card targets a room
+      "targets_room": true, //whether this card targets a room
       "targetless": false, //whether this card has no targets
       "dlc": "none", //what dlc do you need to have access to this card, currently only option is none
-      "traits": [],
+      "traits": [
+        {
+          "id": "@BuffAttackByCost"
+        },
+        {
+          "id": "@BuffHealthByCost"
+        }
+      ],
       "effects": [
         {
           "id": "@SpawnAlbert"
@@ -216,7 +223,7 @@
       "can_attack": true,
       "ascends_train_automatically": false,
       "loops_between_floors": false,
-      "attack_damage": 15,
+      "attack_damage": 10,
       "animator": "",
       "attack_teleports_to_defender": true,
       "death_slides_backwards": true,
@@ -297,6 +304,20 @@
     {
       "id": "Portrait",
       "path": "textures/StewardPortrait.png"
+    }
+  ],
+  "traits": [
+    {
+      "id": "BuffAttackByCost",
+      "name": "CardTraitScalingUpgradeUnitAttack",
+      "track_type": "played_cost",
+      "param_int": 2
+    },
+    {
+      "id": "BuffHealthByCost",
+      "name": "CardTraitScalingUpgradeUnitHealth",
+      "track_type": "played_cost",
+      "param_int": 4
     }
   ],
   "game_objects": [

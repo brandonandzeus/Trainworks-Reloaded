@@ -351,6 +351,7 @@ namespace TrainworksReloaded.Base.Character
                         ?? bossTitanAffinity
                 );
 
+            //subtypes
             var subtypes =
                 (List<string>)
                     AccessTools.Field(typeof(CharacterData), "subtypeKeys").GetValue(data);
@@ -371,6 +372,35 @@ namespace TrainworksReloaded.Base.Character
                 if (str != null)
                     subtypes.Add(str);
             }
+
+            //status effect immunities
+            var statusEffectImmunities = (string[])
+                AccessTools.Field(typeof(CharacterData), "statusEffectImmunities").GetValue(data);
+            if (statusEffectImmunities == null)
+            {
+                statusEffectImmunities = [];
+            }
+            var statusEffectImmunitiesList = statusEffectImmunities.ToList();
+
+            if (checkOverride)
+            {
+                statusEffectImmunitiesList.Clear();
+            }
+
+            foreach (
+                var config in configuration
+                    .GetSection("status_effect_immunities")
+                    .GetChildren()
+                    .ToList()
+            )
+            {
+                var str = config.ParseString();
+                if (str != null)
+                    statusEffectImmunitiesList.Add(str);
+            }
+            AccessTools
+                .Field(typeof(CharacterData), "statusEffectImmunities")
+                .SetValue(data, statusEffectImmunitiesList.ToArray());
 
             //register before filling in data using
             if (!checkOverride)

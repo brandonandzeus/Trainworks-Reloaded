@@ -309,7 +309,7 @@ namespace TrainworksReloaded.Base.Effect
                 );
 
             //target team
-            var targetTeamType = Team.Type.Heroes;
+            var targetTeamType = Team.Type.None;
             AccessTools
                 .Field(typeof(CardEffectData), "targetTeamType")
                 .SetValue(
