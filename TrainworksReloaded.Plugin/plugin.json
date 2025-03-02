@@ -163,9 +163,9 @@
             [ "@AlbertXReductionBuffer" ],
             [ "@AlbertXReductionBuffer" ]
           ],
-          "icon": "",
-          "locked_icon": "",
-          "portrait": "",
+          "icon": "@ClanIcon",
+          "locked_icon": "@ClanLockedIcon",
+          "portrait": "@Portrait",
           "selected_cue": ""
         }
       ],
@@ -231,7 +231,7 @@
       "starting_status_effects": [],
       "status_effect_immunities": [],
       "triggers": [],
-      "subtypes": [],
+      "subtypes": [ "SubtypesData_Champion_83f21cbe-9d9b-4566-a2c3-ca559ab8ff34" ],
       "remove_triggers_on_relentless": false,
       "boss_action_groups": [],
       "character_sound_data": "",
@@ -285,6 +285,18 @@
     {
       "id": "Albert",
       "path": "textures/MechanicalOutrage.png"
+    },
+    {
+      "id": "ClanIcon",
+      "path": "textures/StewardClanIcon.png"
+    },
+    {
+      "id": "ClanLockedIcon",
+      "path": "textures/StewardClanLockedIcon.png"
+    },
+    {
+      "id": "Portrait",
+      "path": "textures/StewardPortrait.png"
     }
   ],
   "game_objects": [

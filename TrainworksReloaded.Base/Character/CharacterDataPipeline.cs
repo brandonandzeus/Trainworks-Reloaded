@@ -301,7 +301,7 @@ namespace TrainworksReloaded.Base.Character
                 : 0;
             AccessTools
                 .Field(typeof(CharacterData), "health")
-                .SetValue(data, configuration.GetSection("bonus_damage").ParseInt() ?? health);
+                .SetValue(data, configuration.GetSection("health").ParseInt() ?? health);
 
             var attackDamage = checkOverride
                 ? (int)AccessTools.Field(typeof(CharacterData), "attackDamage").GetValue(data)
@@ -350,6 +350,27 @@ namespace TrainworksReloaded.Base.Character
                     configuration.GetSection("titan_affinity").ParseTitanAffinity()
                         ?? bossTitanAffinity
                 );
+
+            var subtypes =
+                (List<string>)
+                    AccessTools.Field(typeof(CharacterData), "subtypeKeys").GetValue(data);
+            if (subtypes == null)
+            {
+                subtypes = new List<string>();
+                AccessTools.Field(typeof(CharacterData), "subtypeKeys").SetValue(data, subtypes);
+            }
+
+            if (checkOverride)
+            {
+                subtypes.Clear();
+            }
+
+            foreach (var config in configuration.GetSection("subtypes").GetChildren().ToList())
+            {
+                var str = config.ParseString();
+                if (str != null)
+                    subtypes.Add(str);
+            }
 
             //register before filling in data using
             if (!checkOverride)
