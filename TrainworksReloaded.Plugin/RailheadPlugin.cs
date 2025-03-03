@@ -75,21 +75,21 @@ namespace TrainworksReloaded.Plugin
             }
 
             //everything rail head
-            var builder = Railhead.GetBuilder();
-            builder.Configure(
-                "StewardClan",
-                c =>
-                {
-                    c.AddJsonFile("plugin.json");
-                }
-            );
-            builder.Configure(
-                "FireStarter",
-                c =>
-                {
-                    c.AddJsonFile("fire_starter.json");
-                }
-            );
+            //var builder = Railhead.GetBuilder();
+            //builder.Configure(
+            //    "StewardClan",
+            //    c =>
+            //    {
+            //        c.AddJsonFile("plugin.json");
+            //    }
+            //);
+            //builder.Configure(
+            //    "FireStarter",
+            //    c =>
+            //    {
+            //        c.AddJsonFile("fire_starter.json");
+            //    }
+            //);
 
             Railend.ConfigurePreAction(c =>
             {
@@ -111,6 +111,8 @@ namespace TrainworksReloaded.Plugin
                         typeof(CharacterDataFinalizer),
                         typeof(ClassDataFinalizer),
                         typeof(CharacterTriggerFinalizer),
+                        typeof(CardTriggerEffectFinalizer),
+                        typeof(VfxFinalizer),
                     ]
                 );
 
@@ -172,6 +174,7 @@ namespace TrainworksReloaded.Plugin
                     GameObjectCardArtSetup
                 >();
 
+                //Register Sprite
                 c.RegisterSingleton<IRegister<Sprite>, SpriteRegister>();
                 c.RegisterSingleton<SpriteRegister, SpriteRegister>();
                 c.Register<IDataPipeline<IRegister<Sprite>, Sprite>, SpritePipeline>();
@@ -202,6 +205,21 @@ namespace TrainworksReloaded.Plugin
                 {
                     var pipeline = c.GetInstance<
                         IDataPipeline<IRegister<CharacterData>, CharacterData>
+                    >();
+                    pipeline.Run(x);
+                });
+
+                //Register Card Trigger
+                c.RegisterSingleton<IRegister<CardTriggerEffectData>, CardTriggerEffectRegister>();
+                c.RegisterSingleton<CardTriggerEffectRegister, CardTriggerEffectRegister>();
+                c.Register<
+                    IDataPipeline<IRegister<CardTriggerEffectData>, CardTriggerEffectData>,
+                    CardTriggerEffectPipeline
+                >();
+                c.RegisterInitializer<IRegister<CardTriggerEffectData>>(x =>
+                {
+                    var pipeline = c.GetInstance<
+                        IDataPipeline<IRegister<CardTriggerEffectData>, CardTriggerEffectData>
                     >();
                     pipeline.Run(x);
                 });
@@ -273,6 +291,16 @@ namespace TrainworksReloaded.Plugin
                     var pipeline = c.GetInstance<
                         IDataPipeline<IRegister<CardUpgradeData>, CardUpgradeData>
                     >();
+                    pipeline.Run(x);
+                });
+
+                //Register Vfx
+                c.RegisterSingleton<IRegister<VfxAtLoc>, VfxRegister>();
+                c.RegisterSingleton<VfxRegister, VfxRegister>();
+                c.Register<IDataPipeline<IRegister<VfxAtLoc>, VfxAtLoc>, VfxPipeline>();
+                c.RegisterInitializer<IRegister<VfxAtLoc>>(x =>
+                {
+                    var pipeline = c.GetInstance<IDataPipeline<IRegister<VfxAtLoc>, VfxAtLoc>>();
                     pipeline.Run(x);
                 });
             });

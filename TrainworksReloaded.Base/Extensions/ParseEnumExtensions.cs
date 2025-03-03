@@ -9,6 +9,7 @@ using static CardStatistics;
 using static CharacterTriggerData;
 using static CharacterUI;
 using static MetagameSaveData;
+using static VfxAtLoc;
 
 namespace TrainworksReloaded.Base.Extensions
 {
@@ -621,6 +622,101 @@ namespace TrainworksReloaded.Base.Extensions
                 "savagery" => TitanAffinity.Savagery,
                 "dominion" => TitanAffinity.Dominion,
                 _ => null, // Invalid input
+            };
+        }
+
+        public static CardTriggerType? ParseCardTriggerType(this IConfigurationSection section)
+        {
+            var val = section.Value;
+            if (string.IsNullOrEmpty(val))
+            {
+                return null;
+            }
+
+            val = val.ToLower();
+
+            return val switch
+            {
+                "on_cast" => CardTriggerType.OnCast,
+                "on_kill" => CardTriggerType.OnKill,
+                "on_discard" => CardTriggerType.OnDiscard,
+                "on_monster_death" => CardTriggerType.OnMonsterDeath,
+                "on_any_monster_death_on_floor" => CardTriggerType.OnAnyMonsterDeathOnFloor,
+                "on_any_hero_death_on_floor" => CardTriggerType.OnAnyHeroDeathOnFloor,
+                "on_healed" => CardTriggerType.OnHealed,
+                "on_player_damage_taken" => CardTriggerType.OnPlayerDamageTaken,
+                "on_any_unit_death_on_floor" => CardTriggerType.OnAnyUnitDeathOnFloor,
+                "on_treasure" => CardTriggerType.OnTreasure,
+                "on_unplayed_negative" => CardTriggerType.OnUnplayedNegative,
+                "on_feed" => CardTriggerType.OnFeed,
+                "on_exhausted" => CardTriggerType.OnExhausted,
+                "on_unplayed_positive" => CardTriggerType.OnUnplayedPositive,
+                _ => null,
+            };
+        }
+
+        public static PersistenceMode? ParsePersistenceMode(this IConfigurationSection section)
+        {
+            var val = section.Value;
+            if (string.IsNullOrEmpty(val))
+            {
+                return null;
+            }
+
+            val = val.ToLower();
+
+            return val switch
+            {
+                "single_run" => PersistenceMode.SingleRun,
+                "single_battle" => PersistenceMode.SingleBattle,
+                _ => null,
+            };
+        }
+
+        public static VfxAtLoc.Location? ParseLocation(this IConfigurationSection section)
+        {
+            var val = section.Value;
+            if (string.IsNullOrEmpty(val))
+            {
+                return null;
+            }
+
+            val = val.ToLower();
+
+            return val switch
+            {
+                "none" => VfxAtLoc.Location.None,
+                "room_center" => VfxAtLoc.Location.RoomCenter,
+                "character_top" => VfxAtLoc.Location.CharacterTop,
+                "character_center" => VfxAtLoc.Location.CharacterCenter,
+                "character_bottom" => VfxAtLoc.Location.CharacterBottom,
+                "character_side_fwd_center" => VfxAtLoc.Location.CharacterSideFwdCenter,
+                "character_side_fwd_bottom" => VfxAtLoc.Location.CharacterSideFwdBottom,
+                "character_side_back_center" => VfxAtLoc.Location.CharacterSideBackCenter,
+                "character_side_back_bottom" => VfxAtLoc.Location.CharacterSideBackBottom,
+                "bone_status_effect_slot1" => VfxAtLoc.Location.BoneStatusEffectSlot1,
+                "bone_status_effect_slot2" => VfxAtLoc.Location.BoneStatusEffectSlot2,
+                "bone_status_effect_slot3" => VfxAtLoc.Location.BoneStatusEffectSlot3,
+                "bone_status_effect_slot4" => VfxAtLoc.Location.BoneStatusEffectSlot4,
+                _ => null,
+            };
+        }
+
+        public static Facing? ParseFacing(this IConfigurationSection section)
+        {
+            var val = section.Value;
+            if (string.IsNullOrEmpty(val))
+            {
+                return null;
+            }
+
+            val = val.ToLower();
+
+            return val switch
+            {
+                "none" => Facing.None,
+                "forward" => Facing.Forward,
+                _ => null,
             };
         }
     }

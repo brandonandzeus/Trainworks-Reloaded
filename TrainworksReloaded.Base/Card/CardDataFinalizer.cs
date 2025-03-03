@@ -21,6 +21,9 @@ namespace TrainworksReloaded.Base.Card
         private readonly IRegister<CardTraitData> traitRegister;
         private readonly IRegister<CardEffectData> effectRegister;
         private readonly IRegister<AssetReferenceGameObject> assetReferenceRegister;
+        private readonly IRegister<CardUpgradeData> upgradeRegister;
+        private readonly IRegister<CardTriggerEffectData> triggerEffectRegister;
+        private readonly IRegister<CharacterTriggerData> triggerDataRegister;
         private readonly FallbackDataProvider fallbackDataProvider;
 
         public CardDataFinalizer(
@@ -31,6 +34,9 @@ namespace TrainworksReloaded.Base.Card
             IRegister<CardTraitData> traitRegister,
             IRegister<CardEffectData> effectRegister,
             IRegister<AssetReferenceGameObject> assetReferenceRegister,
+            IRegister<CardUpgradeData> upgradeRegister,
+            IRegister<CardTriggerEffectData> triggerEffectRegister,
+            IRegister<CharacterTriggerData> triggerDataRegister,
             FallbackDataProvider fallbackDataProvider
         )
         {
@@ -41,6 +47,9 @@ namespace TrainworksReloaded.Base.Card
             this.traitRegister = traitRegister;
             this.effectRegister = effectRegister;
             this.assetReferenceRegister = assetReferenceRegister;
+            this.upgradeRegister = upgradeRegister;
+            this.triggerEffectRegister = triggerEffectRegister;
+            this.triggerDataRegister = triggerDataRegister;
             this.fallbackDataProvider = fallbackDataProvider;
         }
 
@@ -216,6 +225,32 @@ namespace TrainworksReloaded.Base.Card
 
             if (cardEffectDatas.Count != 0)
                 AccessTools.Field(typeof(CardData), "effects").SetValue(data, cardEffectDatas);
+
+            var initialUpgrades = new List<CardUpgradeData>();
+            var initialUpgradesConfig = configuration.GetSection("initial_upgrades").GetChildren();
+            foreach (var upgradeConfig in initialUpgradesConfig)
+            {
+                if (upgradeConfig == null)
+                {
+                    continue;
+                }
+                var idConfig = upgradeConfig.GetSection("id").Value;
+                if (idConfig == null)
+                {
+                    continue;
+                }
+
+                var id = idConfig.ToId(key, "Upgrade");
+                if (upgradeRegister.TryLookupId(id, out var card, out var _))
+                {
+                    initialUpgrades.Add(card);
+                }
+            }
+
+            if (initialUpgrades.Count != 0)
+                AccessTools
+                    .Field(typeof(CardData), "startingUpgrades")
+                    .SetValue(data, initialUpgrades);
 
             AccessTools
                 .Field(typeof(CardData), "fallbackData")
