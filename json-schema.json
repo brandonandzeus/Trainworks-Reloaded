@@ -489,6 +489,26 @@
           "cost": {
             "type": "integer"
           },
+          "pools": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "JunkPoolT1",
+                "JunkPoolT2",
+                "JunkPoolT3",
+                "RoomAndEquipmentMerchant_EquipmentPool",
+                "RoomAndEquipmentMerchant_RoomPool",
+                "VengefulShardOnlyPool",
+                "DantesCandleOnlyPool",
+                "MegaPool",
+                "LevelableUnits",
+                "UnitsAllBanner",
+                "TrainStewardOnly"
+              ]
+            }
+          },
           "type": {
             "$ref": "#/definitions/card_type"
           },
@@ -1181,11 +1201,107 @@
           "name": {
             "type": "string"
           },
+          "target_subtype": {
+            "type": "string"
+          },
+          "param_str": {
+            "type": "string"
+          },
+          "param_subtypes": {
+            "type": "string"
+          },
+          "status_effect_multipler": {
+            "type": "string"
+          },
+          "supress_pyre_room_focus": {
+            "type": "boolean"
+          },
+          "target_ignore_bosses": {
+            "type": "boolean"
+          },
+          "filter_on_main_subclass": {
+            "type": "boolean"
+          },
+          "copy_modifiers": {
+            "type": "boolean"
+          },
+          "show_pyre_notification": {
+            "type": "boolean"
+          },
+          "ignore_temporary_modifiers": {
+            "type": "boolean"
+          },
+          "should_test": {
+            "type": "boolean"
+          },
+          "cancel_subsequent_effects_on_failure": {
+            "type": "boolean"
+          },
+          "fail_to_cast_on_failure": {
+            "type": "boolean"
+          },
+          "skip_subsequent_previews": {
+            "type": "boolean"
+          },
+          "use_int_range": {
+            "type": "boolean"
+          },
+          "param_bool_2": {
+            "type": "boolean"
+          },
+          "param_bool": {
+            "type": "boolean"
+          },
+          "use_status_effect_multiplier": {
+            "type": "boolean"
+          },
+          "use_health_missing_multipler": {
+            "type": "boolean"
+          },
+          "use_magic_power_multipler": {
+            "type": "boolean"
+          },
+          "param_int": {
+            "type": "integer"
+          },
+          "param_int_2": {
+            "type": "integer"
+          },
+          "param_int_3": {
+            "type": "integer"
+          },
+          "param_min_int": {
+            "type": "integer"
+          },
+          "param_max_int": {
+            "type": "integer"
+          },
+          "status_effect_filters": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "target_mode": {
             "$ref": "#/definitions/target_mode"
           },
+          "target_mode_health_filter": {
+            "$ref": "#/definitions/health_filter"
+          },
+          "target_team": {
+            "$ref": "#/definitions/team"
+          },
           "target_card_type": {
             "$ref": "#/definitions/card_type_target"
+          },
+          "target_selection_mode": {
+            "$ref": "#/definitions/card_selection_mode"
+          },
+          "anim_to_play": {
+            "$ref": "#/definitions/anim"
+          },
+          "param_trigger": {
+            "$ref": "#/definitions/character_trigger"
           },
           "param_character_data": {
             "type": "string"
@@ -1429,7 +1545,7 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id"],
+        "required": [ "id" ],
         "properties": {
           "id": {
             "type": "string"

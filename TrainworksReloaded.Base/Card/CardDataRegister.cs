@@ -29,6 +29,7 @@ namespace TrainworksReloaded.Base.Card
                 }
             });
             CustomCardPool = ScriptableObject.CreateInstance<CardPool>();
+            CustomCardPool.name = "ModdedPool";
             CardPoolBacking =
                 (ReorderableArray<CardData>)
                     AccessTools.Field(typeof(CardPool), "cardDataList").GetValue(CustomCardPool);

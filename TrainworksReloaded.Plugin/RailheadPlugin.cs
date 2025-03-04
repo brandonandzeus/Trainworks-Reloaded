@@ -141,6 +141,11 @@ namespace TrainworksReloaded.Plugin
                     typeof(CacheDataPipelineDecorator<,>)
                 );
 
+                c.RegisterDecorator<
+                    IDataPipeline<IRegister<CardData>, CardData>,
+                    PoolingCardDataPipelineDecorator
+                >();
+
                 //Register Assets
                 c.Register<FallbackDataProvider, FallbackDataProvider>();
                 c.RegisterSingleton<IRegister<GameObject>, GameObjectRegister>();
@@ -193,6 +198,7 @@ namespace TrainworksReloaded.Plugin
                     var pipeline = c.GetInstance<IDataPipeline<IRegister<CardData>, CardData>>();
                     pipeline.Run(x);
                 });
+                c.RegisterSingleton<CardPoolDelegator>();
 
                 //Register Character Data
                 c.RegisterSingleton<IRegister<CharacterData>, CharacterDataRegister>(); //a place to register and access custom card data
