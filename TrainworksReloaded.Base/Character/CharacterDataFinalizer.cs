@@ -19,6 +19,7 @@ namespace TrainworksReloaded.Base.Character
         private readonly ICache<IDefinition<CharacterData>> cache;
         private readonly IRegister<AssetReferenceGameObject> assetReferenceRegister;
         private readonly IRegister<CharacterTriggerData> triggerRegister;
+        private readonly IRegister<VfxAtLoc> vfxRegister;
         private readonly FallbackDataProvider dataProvider;
 
         public CharacterDataFinalizer(
@@ -26,6 +27,7 @@ namespace TrainworksReloaded.Base.Character
             ICache<IDefinition<CharacterData>> cache,
             IRegister<AssetReferenceGameObject> assetReferenceRegister,
             IRegister<CharacterTriggerData> triggerRegister,
+            IRegister<VfxAtLoc> vfxRegister,
             FallbackDataProvider dataProvider
         )
         {
@@ -33,6 +35,7 @@ namespace TrainworksReloaded.Base.Character
             this.cache = cache;
             this.assetReferenceRegister = assetReferenceRegister;
             this.triggerRegister = triggerRegister;
+            this.vfxRegister = vfxRegister;
             this.dataProvider = dataProvider;
         }
 
@@ -101,6 +104,67 @@ namespace TrainworksReloaded.Base.Character
                 }
             }
             AccessTools.Field(typeof(CharacterData), "triggers").SetValue(data, triggerDatas);
+
+            var projectilePrefab = configuration.GetSection("projectile_vfx").ParseString() ?? "";
+            if (
+                vfxRegister.TryLookupId(
+                    projectilePrefab.ToId(key, "Vfx"),
+                    out var projectile_vfx,
+                    out var _
+                )
+            )
+            {
+                AccessTools
+                    .Field(typeof(CharacterData), "projectilePrefab")
+                    .SetValue(data, projectile_vfx);
+            }
+
+            var attackVFX = configuration.GetSection("attack_vfx").ParseString() ?? "";
+            if (vfxRegister.TryLookupId(attackVFX.ToId(key, "Vfx"), out var attack_vfx, out var _))
+            {
+                AccessTools.Field(typeof(CharacterData), "attackVFX").SetValue(data, attack_vfx);
+            }
+
+            var impactVFX = configuration.GetSection("impact_vfx").ParseString() ?? "";
+            if (vfxRegister.TryLookupId(impactVFX.ToId(key, "Vfx"), out var impact_vfx, out var _))
+            {
+                AccessTools.Field(typeof(CharacterData), "impactVFX").SetValue(data, impact_vfx);
+            }
+
+            var deathVFX = configuration.GetSection("death_vfx").ParseString() ?? "";
+            if (vfxRegister.TryLookupId(deathVFX.ToId(key, "Vfx"), out var death_vfx, out var _))
+            {
+                AccessTools.Field(typeof(CharacterData), "deathVFX").SetValue(data, death_vfx);
+            }
+
+            var bossSpellCastVFX = configuration.GetSection("boss_cast_vfx").ParseString() ?? "";
+            if (
+                vfxRegister.TryLookupId(
+                    bossSpellCastVFX.ToId(key, "Vfx"),
+                    out var boss_cast_vfx,
+                    out var _
+                )
+            )
+            {
+                AccessTools
+                    .Field(typeof(CharacterData), "bossSpellCastVFX")
+                    .SetValue(data, boss_cast_vfx);
+            }
+
+            var bossRoomSpellCastVFX =
+                configuration.GetSection("boss_room_cast_vfx").ParseString() ?? "";
+            if (
+                vfxRegister.TryLookupId(
+                    bossRoomSpellCastVFX.ToId(key, "Vfx"),
+                    out var boss_room_cast_vfx,
+                    out var _
+                )
+            )
+            {
+                AccessTools
+                    .Field(typeof(CharacterData), "bossRoomSpellCastVFX")
+                    .SetValue(data, boss_room_cast_vfx);
+            }
 
             //status effects
             var status_effects = new List<StatusEffectStackData>();

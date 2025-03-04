@@ -351,6 +351,20 @@ namespace TrainworksReloaded.Base.Effect
                     configuration.GetSection("param_trigger").ParseTrigger() ?? paramTrigger
                 );
 
+            //string[]
+            var paramStatusEffects = configuration
+                .GetSection("param_status_effects")
+                .GetChildren()
+                .Select(xs => new StatusEffectStackData()
+                {
+                    statusId = xs.GetSection("status").ParseString() ?? "",
+                    count = xs.GetSection("count").ParseInt() ?? 0,
+                })
+                .ToList();
+            AccessTools
+                .Field(typeof(CardEffectData), "paramStatusEffects")
+                .SetValue(data, paramStatusEffects.ToArray());
+
             service.Register(name, data);
             return new CardEffectDefinition(key, data, configuration);
         }

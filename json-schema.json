@@ -1305,6 +1305,20 @@
           },
           "param_character_data": {
             "type": "string"
+          },
+          "param_status_effects": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "count": {
+                  "type": "integer"
+                }
+              }
+            }
           }
         }
       }
