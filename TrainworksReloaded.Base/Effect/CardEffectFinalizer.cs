@@ -11,14 +11,17 @@ namespace TrainworksReloaded.Base.Effect
     public class CardEffectFinalizer : IDataFinalizer
     {
         private readonly IRegister<CharacterData> characterDataRegister;
+        private readonly IRegister<CardUpgradeData> cardUpgradeRegister;
         private readonly ICache<IDefinition<CardEffectData>> cache;
 
         public CardEffectFinalizer(
             IRegister<CharacterData> characterDataRegister,
+            IRegister<CardUpgradeData> cardUpgradeRegister,
             ICache<IDefinition<CardEffectData>> cache
         )
         {
             this.characterDataRegister = characterDataRegister;
+            this.cardUpgradeRegister = cardUpgradeRegister;
             this.cache = cache;
         }
 
@@ -90,6 +93,22 @@ namespace TrainworksReloaded.Base.Effect
             AccessTools
                 .Field(typeof(CardEffectData), "paramCharacterDataPool")
                 .SetValue(data, characterDataPool);
+
+            //upgrades
+            var upgradeConfig = configuration.GetSection("param_upgrade").Value;
+            if (
+                upgradeConfig != null
+                && cardUpgradeRegister.TryLookupName(
+                    upgradeConfig.ToId(key, TemplateConstants.Upgrade),
+                    out var upgradeData,
+                    out var _
+                )
+            )
+            {
+                AccessTools
+                    .Field(typeof(CardEffectData), "paramCardUpgradeData")
+                    .SetValue(data, upgradeData);
+            }
         }
     }
 }

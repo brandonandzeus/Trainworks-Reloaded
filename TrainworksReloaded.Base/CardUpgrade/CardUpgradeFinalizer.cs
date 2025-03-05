@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using HarmonyLib;
 using TrainworksReloaded.Base.Character;
+using TrainworksReloaded.Base.Effect;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 
@@ -13,16 +14,19 @@ namespace TrainworksReloaded.Base.CardUpgrade
         private readonly IModLogger<CardUpgradeFinalizer> logger;
         private readonly ICache<IDefinition<CardUpgradeData>> cache;
         private readonly IRegister<CharacterTriggerData> triggerRegister;
+        private readonly IRegister<RoomModifierData> roomModifierRegister;
 
         public CardUpgradeFinalizer(
             IModLogger<CardUpgradeFinalizer> logger,
             ICache<IDefinition<CardUpgradeData>> cache,
-            IRegister<CharacterTriggerData> triggerRegister
+            IRegister<CharacterTriggerData> triggerRegister,
+            IRegister<RoomModifierData> roomModifierRegister
         )
         {
             this.logger = logger;
             this.cache = cache;
             this.triggerRegister = triggerRegister;
+            this.roomModifierRegister = roomModifierRegister;
         }
 
         public void FinalizeData()
@@ -67,6 +71,34 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 AccessTools
                     .Field(typeof(CardUpgradeData), "triggerUpgrades")
                     .SetValue(data, triggerUpgrades);
+
+            //handle roomModifiers
+            var roomModifierUpgrades = new List<RoomModifierData>();
+            var roomModifierUpgradesConfig = configuration
+                .GetSection("room_modifier_upgrades")
+                .GetChildren();
+            foreach (var roomModifier in roomModifierUpgradesConfig)
+            {
+                if (roomModifier == null)
+                {
+                    continue;
+                }
+                var idConfig = roomModifier.GetSection("id").Value;
+                if (idConfig == null)
+                {
+                    continue;
+                }
+                var id = idConfig.ToId(key, "RoomModifier");
+                if (roomModifierRegister.TryLookupId(id, out var card, out var _))
+                {
+                    roomModifierUpgrades.Add(card);
+                }
+            }
+
+            if (roomModifierUpgrades.Count != 0)
+                AccessTools
+                    .Field(typeof(CardUpgradeData), "roomModifierUpgrades")
+                    .SetValue(data, roomModifierUpgrades);
 
             //status effects
             var status_effects = new List<StatusEffectStackData>();

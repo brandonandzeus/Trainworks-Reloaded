@@ -1,0 +1,37 @@
+name: "Bug Report"
+description: "Report a bug in the project"
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: "## Please fill out the relevant sections below."
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: "Actual Behavior"
+      description: "Describe what happened."
+      placeholder: "Example: When I submitted this json, this thing happened."
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: "Expected Behavior"
+      description: "Describe what you expected to happen."
+      placeholder: "Example: It should've done this."
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: "Reproduction Steps"
+      description: "Provide the steps to reproduce the issue."
+      placeholder: |
+        1. Run this
+        3. Observe the error
+    validations:
+      required: true

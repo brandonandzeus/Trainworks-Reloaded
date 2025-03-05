@@ -82,7 +82,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 return null;
             }
 
-            var name = key.GetId("Upgrade", id);
+            var name = key.GetId(TemplateConstants.Upgrade, id);
             var titleKey = $"CardUpgrade_titleKey-{name}";
             var descriptionKey = $"CardUpgrade_descriptionKey-{name}";
             var notificationKey = $"CardUpgrade_notificationKey-{name}";

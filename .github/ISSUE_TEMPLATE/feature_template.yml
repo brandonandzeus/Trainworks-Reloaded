@@ -1,0 +1,38 @@
+name: "Feature Request"
+description: "Suggest a new feature or enhancement"
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: "## Please fill out the relevant sections below."
+
+  - type: textarea
+    id: what
+    attributes:
+      label: "What"
+      description: "Briefly describe the feature or functionality you want."
+      placeholder: "Example: Add dark mode support."
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: "Why"
+      description: "Explain why this feature is needed. Provide context on the problem it solves or the use case it enables."
+      placeholder: "Example: Dark mode reduces eye strain and improves usability in low-light conditions."
+    validations:
+      required: true
+
+  - type: textarea
+    id: how
+    attributes:
+      label: "How"
+      description: "Suggest a possible way to implement this feature. A good proposal makes it easier to consider and implement."
+      placeholder: |
+        Example:
+        - Use CSS variables to toggle between light and dark themes.
+        - Provide a user setting to switch modes.
+    validations:
+      required: false

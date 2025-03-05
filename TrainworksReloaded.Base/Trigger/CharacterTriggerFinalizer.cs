@@ -44,7 +44,7 @@ namespace TrainworksReloaded.Base.Trigger
 
             logger.Log(
                 Core.Interfaces.LogLevel.Info,
-                $"Finalizing Card {key.GetId("CTrigger", definition.Id)}... "
+                $"Finalizing Trigger {key.GetId("CTrigger", definition.Id)}... "
             );
 
             //handle effects cards
@@ -62,13 +62,17 @@ namespace TrainworksReloaded.Base.Trigger
 
                 if (
                     effectRegister.TryLookupId(
-                        effectData.ToId(key, "Effect"),
-                        out var card,
+                        effectData.ToId(key, TemplateConstants.Effect),
+                        out var effect,
                         out var _
                     )
                 )
                 {
-                    effectDatas.Add(card);
+                    logger.Log(
+                        Core.Interfaces.LogLevel.Info,
+                        $"Adding Effect {effect.GetEffectStateName()}"
+                    );
+                    effectDatas.Add(effect);
                 }
             }
             AccessTools.Field(typeof(CharacterTriggerData), "effects").SetValue(data, effectDatas);

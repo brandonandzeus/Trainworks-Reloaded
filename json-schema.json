@@ -459,6 +459,85 @@
         "none",
         "forward"
       ]
+    },
+    "subtype": {
+      "type": "string",
+      "enum": [
+        "SubtypesData_Acolyte_c65a2ea6",
+        "SubtypesData_Angel",
+        "SubtypesData_Angel_9c1e5839-5579-4889-8aae-3238f06edc0e",
+        "SubtypesData_Animus_c0f95969-ae86-4477-9458-57bb235d965b",
+        "SubtypesData_Assistant",
+        "SubtypesData_Automaton",
+        "SubtypesData_BannerUnit",
+        "SubtypesData_Barrel_a1296a90-1ffd-4c65-9e0c-d219b0931754",
+        "SubtypesData_Box",
+        "SubtypesData_Champion_83f21cbe-9d9b-4566-a2c3-ca559ab8ff34",
+        "SubtypesData_Cultist",
+        "SubtypesData_Cultist_8a3bb2b5-8c56-4c86-bb08-85b95c488f23",
+        "SubtypesData_Dante",
+        "SubtypesData_Defunct",
+        "SubtypesData_Demon_fcebd195-f262-4d7a-ac9f-01ffa2007a12",
+        "SubtypesData_Dog",
+        "SubtypesData_Dragon",
+        "SubtypesData_Egg",
+        "SubtypesData_Fae",
+        "SubtypesData_Forager",
+        "SubtypesData_FunGuy",
+        "SubtypesData_Golem_2d79cb56-4041-4d63-b7bf-8d2185923eda",
+        "SubtypesData_Graft",
+        "SubtypesData_Heph",
+        "SubtypesData_Horde",
+        "SubtypesData_Host",
+        "SubtypesData_Hymnist",
+        "SubtypesData_Imp_0f9b989f-15b5-4b16-8378-5d8ed8691e7c",
+        "SubtypesData_Mage",
+        "SubtypesData_Monstrosity",
+        "SubtypesData_None",
+        "SubtypesData_ReplicatorEvent",
+        "SubtypesData_Selene",
+        "SubtypesData_Shroom",
+        "SubtypesData_Silent",
+        "SubtypesData_Siren_727cf19f-3b27-4ad2-92ab-3552449e52da",
+        "SubtypesData_Smolder",
+        "SubtypesData_Snack",
+        "SubtypesData_Spell_7927038f-8beb-40bb-9eff-8b6081c3aeb9",
+        "SubtypesData_Tomb",
+        "SubtypesData_Topsider",
+        "SubtypesData_Totem_7c4e7151-d042-49e2-9700-29e7c760b691",
+        "SubtypesData_TrainMachines",
+        "SubtypesData_TrainSteward",
+        "SubtypesData_Warden_191c4528-6efd-47b0-bdf8-9838047532cc",
+        "SubtypesData_Waxer_3446e5ee-216e-4cc2-b027-d77dee269c15",
+        "SubtypesData_Whelp",
+        "SubtypesData_Wickless_517faf2f-8836-42d3-b84d-75a99b7dc735",
+        "SubtypesData_Witch_eadb3cce-94b3-42ed-9385-c1d20172e861",
+        "SubtypesData_Wurm"
+      ]
+    },
+    "tooltip_design": {
+      "type": "string",
+      "enum": [
+        "default",
+        "lore_herzal",
+        "boss",
+        "default_wide",
+        "positive",
+        "negative",
+        "persistent",
+        "trigger",
+        "keyword",
+        "lore_malicka",
+        "lore_heph",
+        "default_mega_wide",
+        "state_modifier",
+        "title",
+        "equipment",
+        "ability",
+        "tip",
+        "boss_title",
+        "relic_title"
+      ]
     }
   },
   "properties": {
@@ -966,7 +1045,7 @@
           "subtypes": {
             "type": "array",
             "items": {
-              "type": "string"
+              "$ref": "#/definitions/subtype"
             }
           },
           "remove_triggers_on_relentless": {
@@ -1202,13 +1281,13 @@
             "type": "string"
           },
           "target_subtype": {
-            "type": "string"
+            "$ref": "#/definitions/subtype"
           },
           "param_str": {
             "type": "string"
           },
           "param_subtypes": {
-            "type": "string"
+            "$ref": "#/definitions/subtype"
           },
           "status_effect_multipler": {
             "type": "string"
@@ -1304,6 +1383,9 @@
             "$ref": "#/definitions/character_trigger"
           },
           "param_character_data": {
+            "type": "string"
+          },
+          "param_upgrade": {
             "type": "string"
           },
           "param_status_effects": {
@@ -1550,6 +1632,121 @@
             "type": "string"
           },
           "persistent_vfx": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "room_modifiers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [ "id" ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "names": {
+            "$ref": "#/definitions/parse_term"
+          },
+          "descriptions": {
+            "$ref": "#/definitions/parse_term"
+          },
+          "play_descriptions": {
+            "$ref": "#/definitions/parse_term"
+          },
+          "use_name_as_description": {
+            "type": "boolean"
+          },
+          "sprite": {
+            "type": "string"
+          },
+          "param_int": {
+            "type": "integer"
+          },
+          "param_int_2": {
+            "type": "integer"
+          },
+          "param_trigger": {
+            "$ref": "#/definitions/character_trigger"
+          },
+          "param_subtype": {
+            "$ref": "#/definitions/subtype"
+          },
+          "param_card_upgrade": {
+            "type": "string"
+          },
+          "param_card": {
+            "type": "string"
+          },
+          "effects": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "param_status_effects": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "count": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "extra_title_tooltips": {
+            "$ref": "#/definitions/parse_term"
+          },
+          "extra_body_tooltips": {
+            "$ref": "#/definitions/parse_term"
+          },
+          "additional_tooltips": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "titles": {
+                  "$ref": "#/definitions/parse_term"
+                },
+                "descriptions": {
+                  "$ref": "#/definitions/parse_term"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "is_status": {
+                  "type": "boolean"
+                },
+                "is_trigger": {
+                  "type": "boolean"
+                },
+                "character_trigger": {
+                  "$ref": "#/definitions/character_trigger"
+                },
+                "allow_secondary": {
+                  "type": "boolean"
+                },
+                "hide_in_train_room": {
+                  "type": "boolean"
+                },
+                "style": {
+                  "#ref": "#/definitions/tooltip_design"
+                }
+              }
+            }
+          },
+          "trigered_vfx": {
             "type": "string"
           }
         }

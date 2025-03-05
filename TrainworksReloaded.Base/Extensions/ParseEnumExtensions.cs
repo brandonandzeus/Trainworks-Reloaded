@@ -9,6 +9,7 @@ using static CardStatistics;
 using static CharacterTriggerData;
 using static CharacterUI;
 using static MetagameSaveData;
+using static TooltipDesigner;
 using static VfxAtLoc;
 
 namespace TrainworksReloaded.Base.Extensions
@@ -716,6 +717,41 @@ namespace TrainworksReloaded.Base.Extensions
             {
                 "none" => Facing.None,
                 "forward" => Facing.Forward,
+                _ => null,
+            };
+        }
+
+        public static TooltipDesignType? ParseTooltipDesignType(this IConfigurationSection section)
+        {
+            var val = section.Value;
+            if (string.IsNullOrEmpty(val))
+            {
+                return null;
+            }
+
+            val = val.ToLower();
+
+            return val switch
+            {
+                "default" => TooltipDesignType.Default,
+                "lore_herzal" => TooltipDesignType.LoreHerzal,
+                "boss" => TooltipDesignType.Boss,
+                "default_wide" => TooltipDesignType.DefaultWide,
+                "positive" => TooltipDesignType.Positive,
+                "negative" => TooltipDesignType.Negative,
+                "persistent" => TooltipDesignType.Persistent,
+                "trigger" => TooltipDesignType.Trigger,
+                "keyword" => TooltipDesignType.Keyword,
+                "lore_malicka" => TooltipDesignType.LoreMalicka,
+                "lore_heph" => TooltipDesignType.LoreHeph,
+                "default_mega_wide" => TooltipDesignType.DefaultMegaWide,
+                "state_modifier" => TooltipDesignType.StateModifier,
+                "title" => TooltipDesignType.Title,
+                "equipment" => TooltipDesignType.Equipment,
+                "ability" => TooltipDesignType.Ability,
+                "tip" => TooltipDesignType.Tip,
+                "boss_title" => TooltipDesignType.BossTitle,
+                "relic_title" => TooltipDesignType.RelicTitle,
                 _ => null,
             };
         }

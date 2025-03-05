@@ -13,6 +13,7 @@ using TrainworksReloaded.Base.Class;
 using TrainworksReloaded.Base.Effect;
 using TrainworksReloaded.Base.Localization;
 using TrainworksReloaded.Base.Prefab;
+using TrainworksReloaded.Base.Room;
 using TrainworksReloaded.Base.Trait;
 using TrainworksReloaded.Base.Trigger;
 using TrainworksReloaded.Core;
@@ -113,6 +114,7 @@ namespace TrainworksReloaded.Plugin
                         typeof(CharacterTriggerFinalizer),
                         typeof(CardTriggerEffectFinalizer),
                         typeof(VfxFinalizer),
+                        typeof(RoomModifierFinalizer),
                     ]
                 );
 
@@ -281,6 +283,21 @@ namespace TrainworksReloaded.Plugin
                 {
                     var pipeline = c.GetInstance<
                         IDataPipeline<IRegister<CardTraitData>, CardTraitData>
+                    >();
+                    pipeline.Run(x);
+                });
+
+                //Register Room Modifier Data
+                c.RegisterSingleton<IRegister<RoomModifierData>, RoomModifierRegister>();
+                c.RegisterSingleton<RoomModifierRegister, RoomModifierRegister>();
+                c.Register<
+                    IDataPipeline<IRegister<RoomModifierData>, RoomModifierData>,
+                    RoomModifierPipeline
+                >();
+                c.RegisterInitializer<IRegister<RoomModifierData>>(x =>
+                {
+                    var pipeline = c.GetInstance<
+                        IDataPipeline<IRegister<RoomModifierData>, RoomModifierData>
                     >();
                     pipeline.Run(x);
                 });
