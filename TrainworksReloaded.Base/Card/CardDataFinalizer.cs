@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using HarmonyLib;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Base.Prefab;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
-using UnityEngine;
 using UnityEngine.AddressableAssets;
 
 namespace TrainworksReloaded.Base.Card
@@ -24,6 +21,7 @@ namespace TrainworksReloaded.Base.Card
         private readonly IRegister<CardUpgradeData> upgradeRegister;
         private readonly IRegister<CardTriggerEffectData> triggerEffectRegister;
         private readonly IRegister<CharacterTriggerData> triggerDataRegister;
+        private readonly IRegister<VfxAtLoc> vfxRegister;
         private readonly FallbackDataProvider fallbackDataProvider;
 
         public CardDataFinalizer(
@@ -37,6 +35,7 @@ namespace TrainworksReloaded.Base.Card
             IRegister<CardUpgradeData> upgradeRegister,
             IRegister<CardTriggerEffectData> triggerEffectRegister,
             IRegister<CharacterTriggerData> triggerDataRegister,
+            IRegister<VfxAtLoc> vfxRegister,
             FallbackDataProvider fallbackDataProvider
         )
         {
@@ -50,6 +49,7 @@ namespace TrainworksReloaded.Base.Card
             this.upgradeRegister = upgradeRegister;
             this.triggerEffectRegister = triggerEffectRegister;
             this.triggerDataRegister = triggerDataRegister;
+            this.vfxRegister = vfxRegister;
             this.fallbackDataProvider = fallbackDataProvider;
         }
 
@@ -80,7 +80,7 @@ namespace TrainworksReloaded.Base.Card
             if (
                 classfield != null
                 && classRegister.TryLookupName(
-                    classfield.ToId(key, "Class"),
+                    classfield.ToId(key, TemplateConstants.Class),
                     out var lookup,
                     out var _
                 )
@@ -103,7 +103,7 @@ namespace TrainworksReloaded.Base.Card
                 }
                 if (
                     cardRegister.TryLookupName(
-                        ConfigCard.ToId(key, "Card"),
+                        ConfigCard.ToId(key, TemplateConstants.Card),
                         out var card,
                         out var _
                     )
@@ -131,7 +131,7 @@ namespace TrainworksReloaded.Base.Card
 
                 if (
                     cardRegister.TryLookupName(
-                        ConfigCard.ToId(key, "Card"),
+                        ConfigCard.ToId(key, TemplateConstants.Card),
                         out var card,
                         out var _
                     )
@@ -149,7 +149,7 @@ namespace TrainworksReloaded.Base.Card
             if (
                 MasteryCardInfo != null
                 && cardRegister.TryLookupName(
-                    MasteryCardInfo.ToId(key, "Card"),
+                    MasteryCardInfo.ToId(key, TemplateConstants.Card),
                     out var MasteryCard,
                     out var _
                 )
@@ -194,7 +194,7 @@ namespace TrainworksReloaded.Base.Card
                     continue;
                 }
 
-                var id = idConfig.ToId(key, "Trait");
+                var id = idConfig.ToId(key, TemplateConstants.Trait);
                 if (traitRegister.TryLookupId(id, out var card, out var _))
                 {
                     cardTraitDatas.Add(card);
@@ -216,7 +216,7 @@ namespace TrainworksReloaded.Base.Card
                 {
                     continue;
                 }
-                var id = idConfig.ToId(key, "Effect");
+                var id = idConfig.ToId(key, TemplateConstants.Effect);
                 if (effectRegister.TryLookupId(id, out var card, out var _))
                 {
                     cardEffectDatas.Add(card);
@@ -240,7 +240,7 @@ namespace TrainworksReloaded.Base.Card
                     continue;
                 }
 
-                var id = idConfig.ToId(key, "Upgrade");
+                var id = idConfig.ToId(key, TemplateConstants.Upgrade);
                 if (upgradeRegister.TryLookupId(id, out var card, out var _))
                 {
                     initialUpgrades.Add(card);
@@ -251,6 +251,64 @@ namespace TrainworksReloaded.Base.Card
                 AccessTools
                     .Field(typeof(CardData), "startingUpgrades")
                     .SetValue(data, initialUpgrades);
+
+            var triggers = new List<CardTriggerEffectData>();
+            var triggersConfig = configuration.GetSection("triggers").GetChildren();
+            foreach (var configTrigger in triggersConfig)
+            {
+                if (configTrigger == null)
+                {
+                    continue;
+                }
+                var idConfig = configTrigger.GetSection("id").Value;
+                if (idConfig == null)
+                {
+                    continue;
+                }
+                var id = idConfig.ToId(key, TemplateConstants.Trigger);
+                if (triggerEffectRegister.TryLookupId(id, out var card, out var _))
+                {
+                    triggers.Add(card);
+                }
+            }
+            if (triggers.Count != 0)
+                AccessTools.Field(typeof(CardData), "triggers").SetValue(data, triggers);
+
+            var effectTriggers = new List<CharacterTriggerData>();
+            var effectTriggersConfig = configuration.GetSection("effect_triggers").GetChildren();
+            foreach (var configTrigger in cardEffectDatasConfig)
+            {
+                if (configTrigger == null)
+                {
+                    continue;
+                }
+                var idConfig = configTrigger.GetSection("id").Value;
+                if (idConfig == null)
+                {
+                    continue;
+                }
+                var id = idConfig.ToId(key, TemplateConstants.CharacterTrigger);
+                if (triggerDataRegister.TryLookupId(id, out var card, out var _))
+                {
+                    effectTriggers.Add(card);
+                }
+            }
+            if (effectTriggers.Count != 0)
+                AccessTools
+                    .Field(typeof(CardData), "effectTriggers")
+                    .SetValue(data, effectTriggers);
+
+            var offCooldownVFX = configuration.GetSection("vfx").ParseString() ?? "";
+            if (
+                vfxRegister.TryLookupId(
+                    offCooldownVFX.ToId(key, TemplateConstants.Vfx),
+                    out var vfx,
+                    out var _
+                )
+            )
+            {
+                AccessTools.Field(typeof(CardData), "offCooldownVFX").SetValue(data, vfx);
+            }
 
             AccessTools
                 .Field(typeof(CardData), "fallbackData")

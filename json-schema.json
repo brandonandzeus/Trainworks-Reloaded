@@ -538,6 +538,58 @@
         "boss_title",
         "relic_title"
       ]
+    },
+    "compare_operator": {
+      "type": "string",
+      "enum": [
+        "and",
+        "or"
+      ]
+    },
+    "status_effect": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "count": {
+          "type": "integer"
+        }
+      }
+    },
+    "card_target_mode_flag": {
+      "type": "string",
+      "enum": [
+        "all",
+        "single",
+        "targetless",
+        "other",
+        "none"
+      ]
+    },
+    "card_target_mode": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/card_target_mode_flag"
+      }
+    },
+    "upgrade_disabled": {
+      "type": "string",
+      "enum": [
+        "none",
+        "card_type",
+        "no_slots",
+        "not_eligible",
+        "animation_active",
+        "no_status"
+      ]
+    },
+    "vec2": {
+      "type": "object",
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" }
+      }
     }
   },
   "properties": {
@@ -1009,17 +1061,7 @@
           "starting_status_effects": {
             "type": "array",
             "items": {
-              "required": [
-                "id"
-              ],
-              "properties": {
-                "id": {
-                  "type": "string"
-                },
-                "count": {
-                  "type": "integer"
-                }
-              }
+              "$ref": "#/definitions/status_effect"
             }
           },
           "status_effect_immunities": {
@@ -1544,7 +1586,7 @@
                 "id"
               ],
               "properties": {
-                "id": {
+                "status": {
                   "type": "string"
                 },
                 "count": {
@@ -1748,6 +1790,206 @@
           },
           "trigered_vfx": {
             "type": "string"
+          }
+        }
+      }
+    },
+    "upgrade_masks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/definitions/card_type"
+          },
+          "exclude_non_attacking": {
+            "type": "boolean"
+          },
+          "required_rarities_operator": {
+            "$ref": "#/definitions/compare_operator"
+          },
+          "required_rarities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/rarity"
+            }
+          },
+          "excluded_rarities_operator": {
+            "$ref": "#/definitions/compare_operator"
+          },
+          "excluded_rarities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/rarity"
+            }
+          },
+          "additional_card_types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/card_type"
+            }
+          },
+          "required_subtypes_operator": {
+            "$ref": "#/definitions/compare_operator"
+          },
+          "required_subtypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/subtype"
+            }
+          },
+          "excluded_subtypes_operator": {
+            "$ref": "#/definitions/compare_operator"
+          },
+          "excluded_subtypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/subtype"
+            }
+          },
+          "required_status_operator": {
+            "$ref": "#/definitions/compare_operator"
+          },
+          "required_status": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/status_effect"
+            }
+          },
+          "excluded_status_operator": {
+            "$ref": "#/definitions/compare_operator"
+          },
+          "excluded_status": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/status_effect"
+            }
+          },
+          "required_traits_operator": {
+            "$ref": "#/definitions/compare_operator"
+          },
+          "required_traits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "excluded_traits_operatorr": {
+            "$ref": "#/definitions/compare_operator"
+          },
+          "excluded_traits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "required_effects_operator": {
+            "$ref": "#/definitions/compare_operator"
+          },
+          "required_effects": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "excluded_effects_operatorr": {
+            "$ref": "#/definitions/compare_operator"
+          },
+          "excluded_effects": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "required_class_operator": {
+            "$ref": "#/definitions/compare_operator"
+          },
+          "required_class": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "excluded_class_operatorr": {
+            "$ref": "#/definitions/compare_operator"
+          },
+          "excluded_class": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allowed_pools": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "disallowed_pools": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "required_sizes": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "excluded_sizes": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "required_upgrade_operator": {
+            "$ref": "#/definitions/compare_operator"
+          },
+          "required_upgrade": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "excluded_upgrade_operatorr": {
+            "$ref": "#/definitions/compare_operator"
+          },
+          "excluded_upgrade": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cost_range": {
+            "$ref": "#/definitions/vec2"
+          },
+          "require_x_cost": {
+            "type": "boolean"
+          },
+          "exclude_x_cost": {
+            "type": "boolean"
+          },
+          "card_target_mode": {
+            "$ref": "#/definitions/card_target_mode"
+          },
+          "disabled_reason": {
+            "$ref": "#/definitions/upgrade_disabled"
+          },
+          "exclude_ability": {
+            "type": "boolean"
+          },
+          "exclude_graft": {
+            "type": "boolean"
+          },
+          "exclude_upgrades": {
+            "type": "boolean"
+          },
+          "exclude_no_upgrades": {
+            "type": "boolean"
           }
         }
       }

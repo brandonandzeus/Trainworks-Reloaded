@@ -313,6 +313,16 @@ namespace TrainworksReloaded.Base.Character
                     configuration.GetSection("attack_damage").ParseInt() ?? attackDamage
                 );
 
+            var equipmentLimit = checkOverride
+                ? (int)AccessTools.Field(typeof(CharacterData), "equipmentLimit").GetValue(data)
+                : 1;
+            AccessTools
+                .Field(typeof(CharacterData), "equipmentLimit")
+                .SetValue(
+                    data,
+                    configuration.GetSection("equip_limit").ParseInt() ?? equipmentLimit
+                );
+
             //attack phase
             var validBossAttackPhase = checkOverride
                 ? (BossState.AttackPhase)
@@ -388,10 +398,7 @@ namespace TrainworksReloaded.Base.Character
             }
 
             foreach (
-                var config in configuration
-                    .GetSection("status_effect_immunities")
-                    .GetChildren()
-                    .ToList()
+                var config in configuration.GetSection("status_effect_immunities").GetChildren()
             )
             {
                 var str = config.ParseString();
@@ -401,6 +408,61 @@ namespace TrainworksReloaded.Base.Character
             AccessTools
                 .Field(typeof(CharacterData), "statusEffectImmunities")
                 .SetValue(data, statusEffectImmunitiesList.ToArray());
+
+            //status
+            var startingStatusEffects = new List<StatusEffectStackData>();
+            if (!checkOverride)
+            {
+                var startingStatusEffects2 = (StatusEffectStackData[])
+                    AccessTools
+                        .Field(typeof(CharacterData), "startingStatusEffects")
+                        .GetValue(data);
+                if (startingStatusEffects2 != null)
+                    startingStatusEffects.AddRange(startingStatusEffects2);
+            }
+            startingStatusEffects.AddRange(
+                configuration
+                    .GetSection("starting_status_effects")
+                    .GetChildren()
+                    .Select(xs => new StatusEffectStackData()
+                    {
+                        statusId = xs.GetSection("status").ParseString() ?? "",
+                        count = xs.GetSection("count").ParseInt() ?? 0,
+                    })
+            );
+            AccessTools
+                .Field(typeof(CharacterData), "startingStatusEffects")
+                .SetValue(data, startingStatusEffects.ToArray());
+
+            //endless baseline stats
+
+            var endlessBaselineStats = checkOverride
+                ? (EndlessBaselineStats)
+                    AccessTools.Field(typeof(CharacterData), "endlessBaselineStats").GetValue(data)
+                : new EndlessBaselineStats();
+            var endlessHealth = configuration
+                .GetSection("endless_stats")
+                .GetSection("health")
+                .ParseInt();
+            if (endlessHealth != null)
+            {
+                AccessTools
+                    .Field(typeof(EndlessBaselineStats), "endlessHealth")
+                    .SetValue(data, endlessHealth);
+            }
+            var endlessAttack = configuration
+                .GetSection("endless_stats")
+                .GetSection("attack")
+                .ParseInt();
+            if (endlessHealth != null)
+            {
+                AccessTools
+                    .Field(typeof(EndlessBaselineStats), "endlessAttack")
+                    .SetValue(data, endlessAttack);
+            }
+            AccessTools
+                .Field(typeof(CharacterData), "endlessBaselineStats")
+                .SetValue(data, endlessBaselineStats);
 
             //register before filling in data using
             if (!checkOverride)

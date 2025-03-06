@@ -5,6 +5,8 @@ using HarmonyLib;
 using TrainworksReloaded.Base.Character;
 using TrainworksReloaded.Base.Effect;
 using TrainworksReloaded.Base.Extensions;
+using TrainworksReloaded.Base.Prefab;
+using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 
 namespace TrainworksReloaded.Base.CardUpgrade
@@ -15,18 +17,30 @@ namespace TrainworksReloaded.Base.CardUpgrade
         private readonly ICache<IDefinition<CardUpgradeData>> cache;
         private readonly IRegister<CharacterTriggerData> triggerRegister;
         private readonly IRegister<RoomModifierData> roomModifierRegister;
+        private readonly IRegister<CardTraitData> traitRegister;
+        private readonly IRegister<CardTriggerEffectData> cardTriggerRegister;
+        private readonly IRegister<CardUpgradeData> upgradeRegister;
+        private readonly IRegister<VfxAtLoc> vfxRegister;
 
         public CardUpgradeFinalizer(
             IModLogger<CardUpgradeFinalizer> logger,
             ICache<IDefinition<CardUpgradeData>> cache,
             IRegister<CharacterTriggerData> triggerRegister,
-            IRegister<RoomModifierData> roomModifierRegister
+            IRegister<RoomModifierData> roomModifierRegister,
+            IRegister<CardTraitData> traitRegister,
+            IRegister<CardTriggerEffectData> cardTriggerRegister,
+            IRegister<CardUpgradeData> upgradeRegister,
+            IRegister<VfxAtLoc> vfxRegister
         )
         {
             this.logger = logger;
             this.cache = cache;
             this.triggerRegister = triggerRegister;
             this.roomModifierRegister = roomModifierRegister;
+            this.traitRegister = traitRegister;
+            this.cardTriggerRegister = cardTriggerRegister;
+            this.upgradeRegister = upgradeRegister;
+            this.vfxRegister = vfxRegister;
         }
 
         public void FinalizeData()
@@ -46,6 +60,32 @@ namespace TrainworksReloaded.Base.CardUpgrade
 
             logger.Log(Core.Interfaces.LogLevel.Info, $"Finalizing Upgrade {data.name}... ");
 
+            //handle traits
+            var traitDataUpgrades = new List<CardTraitData>();
+            var traitDataUpgradesConfig = configuration.GetSection("trait_upgrades").GetChildren();
+            foreach (var traitDataUpgrade in traitDataUpgradesConfig)
+            {
+                if (traitDataUpgrade == null)
+                {
+                    continue;
+                }
+                var idConfig = traitDataUpgrade.GetSection("id").Value;
+                if (idConfig == null)
+                {
+                    continue;
+                }
+
+                var id = idConfig.ToId(key, TemplateConstants.Trait);
+                if (traitRegister.TryLookupId(id, out var card, out var _))
+                {
+                    traitDataUpgrades.Add(card);
+                }
+            }
+            if (traitDataUpgrades.Count != 0)
+                AccessTools
+                    .Field(typeof(CardUpgradeData), "traitDataUpgrades")
+                    .SetValue(data, traitDataUpgrades);
+
             //handle triggers
             var triggerUpgrades = new List<CharacterTriggerData>();
             var triggerUpgradesConfig = configuration.GetSection("trigger_upgrades").GetChildren();
@@ -61,7 +101,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
                     continue;
                 }
 
-                var id = idConfig.ToId(key, "CTrigger");
+                var id = idConfig.ToId(key, TemplateConstants.CharacterTrigger);
                 if (triggerRegister.TryLookupId(id, out var card, out var _))
                 {
                     triggerUpgrades.Add(card);
@@ -71,6 +111,34 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 AccessTools
                     .Field(typeof(CardUpgradeData), "triggerUpgrades")
                     .SetValue(data, triggerUpgrades);
+
+            //handle card triggers
+            var cardTriggerUpgrades = new List<CardTriggerEffectData>();
+            var cardTriggerUpgradesConfig = configuration
+                .GetSection("card_trigger_upgrades")
+                .GetChildren();
+            foreach (var cardTriggerUpdate in cardTriggerUpgradesConfig)
+            {
+                if (cardTriggerUpdate == null)
+                {
+                    continue;
+                }
+                var idConfig = cardTriggerUpdate.GetSection("id").Value;
+                if (idConfig == null)
+                {
+                    continue;
+                }
+
+                var id = idConfig.ToId(key, TemplateConstants.Trigger);
+                if (cardTriggerRegister.TryLookupId(id, out var card, out var _))
+                {
+                    cardTriggerUpgrades.Add(card);
+                }
+            }
+            if (cardTriggerUpgrades.Count != 0)
+                AccessTools
+                    .Field(typeof(CardUpgradeData), "cardTriggerUpgrades")
+                    .SetValue(data, cardTriggerUpgrades);
 
             //handle roomModifiers
             var roomModifierUpgrades = new List<RoomModifierData>();
@@ -88,7 +156,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 {
                     continue;
                 }
-                var id = idConfig.ToId(key, "RoomModifier");
+                var id = idConfig.ToId(key, TemplateConstants.RoomModifier);
                 if (roomModifierRegister.TryLookupId(id, out var card, out var _))
                 {
                     roomModifierUpgrades.Add(card);
@@ -100,23 +168,73 @@ namespace TrainworksReloaded.Base.CardUpgrade
                     .Field(typeof(CardUpgradeData), "roomModifierUpgrades")
                     .SetValue(data, roomModifierUpgrades);
 
-            //status effects
-            var status_effects = new List<StatusEffectStackData>();
-            AccessTools
-                .Field(typeof(CardUpgradeData), "statusEffectUpgrades")
-                .SetValue(data, status_effects);
+            //handle roomModifiers
+            var upgradesToRemove = new List<CardUpgradeData>();
+            var upgradesToRemoveConfig = configuration.GetSection("remove_upgrades").GetChildren();
+            foreach (var removeUpgrade in upgradesToRemoveConfig)
+            {
+                if (removeUpgrade == null)
+                {
+                    continue;
+                }
+                var idConfig = removeUpgrade.GetSection("id").Value;
+                if (idConfig == null)
+                {
+                    continue;
+                }
+                var id = idConfig.ToId(key, TemplateConstants.Upgrade);
+                if (upgradeRegister.TryLookupId(id, out var card, out var _))
+                {
+                    upgradesToRemove.Add(card);
+                }
+            }
 
-            //remove trait
-            var removeTraitUpgrades = new List<string>();
-            AccessTools
-                .Field(typeof(CardUpgradeData), "removeTraitUpgrades")
-                .SetValue(data, removeTraitUpgrades);
+            if (upgradesToRemove.Count != 0)
+                AccessTools
+                    .Field(typeof(CardUpgradeData), "upgradesToRemove")
+                    .SetValue(data, upgradesToRemove);
 
-            //trait data
-            var traitDataUpgrades = new List<CardTraitData>();
-            AccessTools
-                .Field(typeof(CardUpgradeData), "traitDataUpgrades")
-                .SetValue(data, traitDataUpgrades);
+            var appliedVFX = configuration.GetSection("attack_vfx").ParseString() ?? "";
+            if (
+                vfxRegister.TryLookupId(
+                    appliedVFX.ToId(key, TemplateConstants.Vfx),
+                    out var applied_vfx,
+                    out var _
+                )
+            )
+            {
+                AccessTools
+                    .Field(typeof(CardUpgradeData), "appliedVFX")
+                    .SetValue(data, applied_vfx);
+            }
+
+            var removedVFX = configuration.GetSection("attack_vfx").ParseString() ?? "";
+            if (
+                vfxRegister.TryLookupId(
+                    removedVFX.ToId(key, TemplateConstants.Vfx),
+                    out var removed_vfx,
+                    out var _
+                )
+            )
+            {
+                AccessTools
+                    .Field(typeof(CardUpgradeData), "removedVFX")
+                    .SetValue(data, removed_vfx);
+            }
+
+            var persistentVFX = configuration.GetSection("attack_vfx").ParseString() ?? "";
+            if (
+                vfxRegister.TryLookupId(
+                    persistentVFX.ToId(key, TemplateConstants.Vfx),
+                    out var persistent_vfx,
+                    out var _
+                )
+            )
+            {
+                AccessTools
+                    .Field(typeof(CardUpgradeData), "persistentVFX")
+                    .SetValue(data, persistent_vfx);
+            }
         }
     }
 }

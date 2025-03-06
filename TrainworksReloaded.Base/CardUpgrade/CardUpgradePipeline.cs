@@ -313,8 +313,22 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 {
                     continue;
                 }
-                removeTraitUpgrades.Add(val);
+                removeTraitUpgrades.Add(val.ToId(key, TemplateConstants.Trait);
             }
+
+            //status
+            var statusEffectUpgrades = configuration
+                .GetSection("status_effect_upgrades")
+                .GetChildren()
+                .Select(xs => new StatusEffectStackData()
+                {
+                    statusId = xs.GetSection("status").ParseString() ?? "",
+                    count = xs.GetSection("count").ParseInt() ?? 0,
+                })
+                .ToList();
+            AccessTools
+                .Field(typeof(CardEffectData), "statusEffectUpgrades")
+                .SetValue(data, statusEffectUpgrades);
 
             if (!checkOverride)
                 service.Register(name, data);
