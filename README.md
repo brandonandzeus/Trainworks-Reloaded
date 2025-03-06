@@ -5,7 +5,7 @@ Modding Framework for Monster Train 2
 
 (Note: Trainsworks Reloaded is Built as a BepInEx 5 mod. Install version 5, not 6.)
 
-1. (Install BepInEx into Monster Train 2)[https://docs.bepinex.dev/articles/user_guide/installation/index.html]
+1. [Install BepInEx into Monster Train 2](https://docs.bepinex.dev/articles/user_guide/installation/index.html)
 2. Install our latest plugin and unzip it into the BepInEx plugins folder.
 3. Install other mods similarly.
 
