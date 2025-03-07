@@ -62,12 +62,7 @@ namespace TrainworksReloaded.Base.Trigger
                 }
                 triggerData.cardTriggerEffect = effect;
 
-                var buffEffect = configuration.GetSection("buff_effect").Value;
-                if (buffEffect == null)
-                {
-                    continue;
-                }
-                triggerData.buffEffectType = buffEffect;
+                triggerData.buffEffectType = configuration.GetSection("buff_effect").Value;
 
                 var paramUpgrade = configuration.GetSection("param_upgrade").Value;
                 if (
