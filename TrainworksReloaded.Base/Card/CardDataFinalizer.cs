@@ -226,6 +226,28 @@ namespace TrainworksReloaded.Base.Card
             if (cardEffectDatas.Count != 0)
                 AccessTools.Field(typeof(CardData), "effects").SetValue(data, cardEffectDatas);
 
+            var cardTriggers = new List<CardTriggerEffectData>();
+            var cardTriggerEffectDataConfig = configuration.GetSection("triggers").GetChildren();
+            foreach (var configTrigger in cardTriggerEffectDataConfig)
+            {
+                if (configTrigger == null)
+                    continue;
+                
+                var idConfig = configTrigger.GetSection("id").Value;
+                if (idConfig == null)
+                {
+                    continue;
+                }
+                var id = idConfig.ToId(key, "Trigger");
+                if (triggerEffectRegister.TryLookupId(id, out var card, out var _))
+                {
+                    cardTriggers.Add(card);
+                }
+            }
+
+            if (cardTriggers.Count != 0)
+                AccessTools.Field(typeof(CardData), "triggers").SetValue(data, cardTriggers);
+
             var initialUpgrades = new List<CardUpgradeData>();
             var initialUpgradesConfig = configuration.GetSection("initial_upgrades").GetChildren();
             foreach (var upgradeConfig in initialUpgradesConfig)

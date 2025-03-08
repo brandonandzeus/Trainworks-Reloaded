@@ -45,7 +45,7 @@ namespace TrainworksReloaded.Base.Trigger
         )
         {
             var processList = new List<CardTriggerEffectDefinition>();
-            foreach (var child in pluginConfig.GetSection("character_triggers").GetChildren())
+            foreach (var child in pluginConfig.GetSection("card_triggers").GetChildren())
             {
                 var data = LoadTriggerConfiguration(service, key, child);
                 if (data != null)
@@ -68,7 +68,7 @@ namespace TrainworksReloaded.Base.Trigger
                 return null;
             }
             var name = key.GetId("Trigger", id);
-            var descriptionKey = $"CharacterTriggerData_descriptionKey-{name}";
+            var descriptionKey = $"CardTriggerEffectData_descriptionKey-{name}";
 
             var data = new CardTriggerEffectData();
 
