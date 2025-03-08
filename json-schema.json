@@ -1095,7 +1095,7 @@
           "trigger_effects": {
             "type": "array",
             "required": [
-              "trigger_effect",
+              "trigger_effect"
             ],
             "items": {
               "persistence": {
