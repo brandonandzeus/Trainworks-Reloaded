@@ -1396,6 +1396,9 @@
           "param_max_int": {
             "type": "integer"
           },
+          "param_multipler": {
+            "type": "integer"
+          },
           "status_effect_filters": {
             "type": "array",
             "items": {

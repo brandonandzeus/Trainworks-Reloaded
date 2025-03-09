@@ -138,6 +138,21 @@ namespace TrainworksReloaded.Plugin
                     c => !c.Handled
                 );
 
+                c.RegisterConditional(
+                    typeof(IInstanceGenerator<>),
+                    typeof(ScriptableObjectInstanceGenerator<>),
+                    Lifestyle.Transient,
+                    c =>
+                        typeof(ScriptableObject).IsAssignableFrom(
+                            c.ServiceType.GetGenericArguments()[0]
+                        )
+                );
+                c.RegisterConditional(
+                    typeof(IInstanceGenerator<>),
+                    typeof(InstanceGenerator<>),
+                    c => !c.Handled
+                );
+
                 c.RegisterDecorator(
                     typeof(IDataPipeline<,>),
                     typeof(CacheDataPipelineDecorator<,>)
