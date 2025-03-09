@@ -313,7 +313,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 {
                     continue;
                 }
-                removeTraitUpgrades.Add(val.ToId(key, TemplateConstants.Trait);
+                removeTraitUpgrades.Add(val.ToId(key, TemplateConstants.Trait));
             }
 
             //status
