@@ -68,7 +68,7 @@ namespace TrainworksReloaded.Base.Trigger
                 return null;
             }
             var name = key.GetId("Trigger", id);
-            var descriptionKey = $"CharacterTriggerData_descriptionKey-{name}";
+            var descriptionKey = $"CardTriggerEffectData_descriptionKey-{name}";
 
             var data = new CardTriggerEffectData();
 
