@@ -260,7 +260,8 @@ namespace TrainworksReloaded.Test
                     new Dictionary<string, string?>
                     {
                         { "id", "fire_starter" },
-                        { "names:en", "Fire Starter" },
+                        { "override", "true" },
+                        { "names:english", "Fire Starter" },
                     }
                 )
                 .Build();
