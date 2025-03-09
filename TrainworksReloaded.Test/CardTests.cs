@@ -264,17 +264,7 @@ namespace TrainworksReloaded.Test
             var pipeline = Container.GetInstance<CardDataPipeline>();
 
             // Act
-            pipeline
-                .GetType()
-                .GetMethod(
-                    "LoadCardConfiguration",
-                    System.Reflection.BindingFlags.NonPublic
-                        | System.Reflection.BindingFlags.Instance
-                )!
-                .Invoke(
-                    pipeline,
-                    new object[] { mockCardRegister.Object, "test_plugin", mockConfig }
-                );
+            pipeline.LoadCardConfiguration(mockCardRegister.Object, "test_plugin", mockConfig);
 
             // Assert
             Assert.Contains(
