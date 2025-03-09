@@ -30,7 +30,7 @@ namespace TrainworksReloaded.Test
             configuration.SetBasePath(basePath!);
             configuration.AddJsonFile("examples/cards/fire_starter.json");
             var definition = new PluginDefinition(configuration.Build());
-            atlas.PluginDefinitions.Add("MyMod", definition);
+            atlas.PluginDefinitions.Add("test_plugin", definition);
             Container.RegisterInstance<PluginAtlas>(atlas);
 
             //Guid
@@ -114,11 +114,6 @@ namespace TrainworksReloaded.Test
             Container.Register<CardDataPipeline>();
         }
 
-        public static void Construct()
-        {
-            return;
-        }
-
         public void Dispose() { }
 
         [Fact]
@@ -135,26 +130,28 @@ namespace TrainworksReloaded.Test
             Assert.NotEmpty(results);
             var cardData = results[0];
 
-            Assert.Equal("fire_starter", cardData.Id);
-            Assert.Equal("Fire Starter", cardData.Data.name);
+            Assert.Equal("FireStarter", cardData.Id);
+            Assert.Equal("test_plugin-Card-FireStarter", cardData.Data.name);
 
             // Check localization terms
-            Assert.True(TermDictionary.ContainsKey("CardData_nameKey-fire_starter"));
-            Assert.Equal("Fire Starter", TermDictionary["CardData_nameKey-fire_starter"].English);
-
-            Assert.True(TermDictionary.ContainsKey("CardData_descriptionKey-fire_starter"));
+            Assert.True(
+                TermDictionary.ContainsKey("CardData_nameKey-test_plugin-Card-FireStarter")
+            );
             Assert.Equal(
-                "Starts fires",
-                TermDictionary["CardData_descriptionKey-fire_starter"].English
+                "Firestarter",
+                TermDictionary["CardData_nameKey-test_plugin-Card-FireStarter"].English
+            );
+
+            Assert.True(
+                TermDictionary.ContainsKey("CardData_descriptionKey-test_plugin-Card-FireStarter")
+            );
+            Assert.Equal(
+                "Deal [effect0.power] damage then apply [pyregel] [effect1.status0.power].",
+                TermDictionary["CardData_descriptionKey-test_plugin-Card-FireStarter"].English
             );
 
             // Verify logger captured messages
-            Assert.Contains(
-                LoggedMessages,
-                log =>
-                    log.Level == LogLevel.Info
-                    && log.Message.ToString()!.Contains("Overriding Card")
-            );
+            Assert.DoesNotContain(LoggedMessages, log => log.Level == LogLevel.Error);
         }
 
         [Fact]
@@ -166,7 +163,7 @@ namespace TrainworksReloaded.Test
                 .AddInMemoryCollection(
                     new Dictionary<string, string?>
                     {
-                        { "cards:0:names:en", "Unnamed Card" }, // Missing "id"
+                        { "cards:0:names:english", "Unnamed Card" }, // Missing "id"
                     }
                 )
                 .Build();
@@ -193,8 +190,8 @@ namespace TrainworksReloaded.Test
                     new Dictionary<string, string?>
                     {
                         { "id", "fire_starter" },
-                        { "names:en", "Fire Starter" },
-                        { "descriptions:en", "Starts fires" },
+                        { "names:english", "Fire Starter" },
+                        { "descriptions:english", "Starts fires" },
                         { "cost", "3" },
                     }
                 )
@@ -204,17 +201,11 @@ namespace TrainworksReloaded.Test
             var mockCardRegister = new Mock<IRegister<CardData>>();
 
             // Act
-            var result = pipeline
-                .GetType()
-                .GetMethod(
-                    "LoadCardConfiguration",
-                    System.Reflection.BindingFlags.NonPublic
-                        | System.Reflection.BindingFlags.Instance
-                )!
-                .Invoke(
-                    pipeline,
-                    new object[] { mockCardRegister.Object, "test_plugin", mockConfig }
-                );
+            var result = pipeline.LoadCardConfiguration(
+                mockCardRegister.Object,
+                "test_plugin",
+                mockConfig
+            );
 
             // Assert
             Assert.NotNull(result);
@@ -227,8 +218,12 @@ namespace TrainworksReloaded.Test
             );
 
             // Verify localization term registration
-            Assert.True(TermDictionary.ContainsKey("CardData_nameKey-fire_starter"));
-            Assert.True(TermDictionary.ContainsKey("CardData_descriptionKey-fire_starter"));
+            Assert.True(
+                TermDictionary.ContainsKey("CardData_nameKey-test_plugin-Card-fire_starter")
+            );
+            Assert.True(
+                TermDictionary.ContainsKey("CardData_descriptionKey-test_plugin-Card-fire_starter")
+            );
         }
 
         [Fact]

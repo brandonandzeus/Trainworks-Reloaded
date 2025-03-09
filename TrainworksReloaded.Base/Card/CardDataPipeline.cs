@@ -56,7 +56,7 @@ namespace TrainworksReloaded.Base.Card
         /// <param name="key"></param>
         /// <param name="pluginConfig"></param>
         /// <returns></returns>
-        private List<CardDataDefinition> LoadCards(
+        public List<CardDataDefinition> LoadCards(
             IRegister<CardData> service,
             string key,
             IConfiguration pluginConfig
@@ -74,7 +74,7 @@ namespace TrainworksReloaded.Base.Card
             return processList;
         }
 
-        private CardDataDefinition? LoadCardConfiguration(
+        public CardDataDefinition? LoadCardConfiguration(
             IRegister<CardData> service,
             string key,
             IConfiguration configuration
