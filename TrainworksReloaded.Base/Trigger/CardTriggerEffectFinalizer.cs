@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using HarmonyLib;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Core.Extensions;
@@ -30,12 +31,12 @@ namespace TrainworksReloaded.Base.Trigger
         {
             foreach (var definition in cache.GetCacheItems())
             {
-                FinalizeTriger(definition);
+                FinalizeTrigger(definition);
             }
             cache.Clear();
         }
 
-        private void FinalizeTriger(IDefinition<CardTriggerEffectData> definition)
+        private void FinalizeTrigger(IDefinition<CardTriggerEffectData> definition)
         {
             var configuration = definition.Configuration;
             var key = definition.Key;
@@ -52,24 +53,20 @@ namespace TrainworksReloaded.Base.Trigger
                 var triggerData = new CardTriggerData();
 
                 triggerData.persistenceMode =
-                    configuration.GetSection("persistence").ParsePersistenceMode()
+                    triggerEffect.GetSection("persistence").ParsePersistenceMode()
                     ?? PersistenceMode.SingleRun;
-                triggerData.paramInt = configuration.GetSection("param_int").ParseInt() ?? 0;
-                var effect = configuration.GetSection("trigger_effect").Value;
+                triggerData.paramInt = triggerEffect.GetSection("param_int").ParseInt() ?? 0;
+                var effect = triggerEffect.GetSection("trigger_effect").Value;
                 if (effect == null)
                 {
                     continue;
                 }
                 triggerData.cardTriggerEffect = effect;
 
-                var buffEffect = configuration.GetSection("buff_effect").Value;
-                if (buffEffect == null)
-                {
-                    continue;
-                }
-                triggerData.buffEffectType = buffEffect;
+                var buffEffectType = "";
+                triggerData.buffEffectType = triggerEffect.GetSection("buff_effect").Value ?? buffEffectType;
 
-                var paramUpgrade = configuration.GetSection("param_upgrade").Value;
+                var paramUpgrade = triggerEffect.GetSection("param_upgrade").Value;
                 if (
                     paramUpgrade != null
                     && upgradeRegister.TryLookupId(
@@ -81,7 +78,6 @@ namespace TrainworksReloaded.Base.Trigger
                 {
                     triggerData.paramUpgrade = lookup;
                 }
-
                 triggers.Add(triggerData);
             }
 

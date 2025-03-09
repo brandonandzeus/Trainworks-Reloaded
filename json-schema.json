@@ -1216,8 +1216,7 @@
           "trigger_effects": {
             "type": "array",
             "required": [
-              "trigger_effect",
-              "buff_effect"
+              "trigger_effect"
             ],
             "items": {
               "persistence": {
@@ -1225,11 +1224,11 @@
               },
               "trigger_effect": {
                 "type": "string",
-                "description": "Reference to ICardTriggerEffect to be triggered"
+                "description": "Reference to ICardTriggerEffect to be played when triggered."
               },
               "buff_effect": {
                 "type": "string",
-                "description": "Reference to ICardEffect to be buffed"
+                "description": "Required param only for CardTriggerBuffEffect, this references which CardEffect in Card.effects is the target of the \"buff\" the param_int of that card effect will be modified with the value given in this CardTrigger. This also resets the CardEffect at the end of battle (THe card must have only 1 effect)."
               },
               "param_int": {
                 "type": "number"
