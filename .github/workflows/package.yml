@@ -32,15 +32,20 @@ jobs:
           [[ "$BRANCH_NAME" == "main" ]] && PACKAGE_PREFIX="preview"
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
           echo "PACKAGE_PREFIX=$PACKAGE_PREFIX" >> $GITHUB_ENV
-
+          
       - name: Set VERSION Variable
         run: |
-          if [[ "$GITHUB_REF" == refs/tags/* && "$GITHUB_EVENT_NAME" == "release" && ($GITHUB_EVENT_ACTION == "published" || $GITHUB_EVENT_ACTION == "prereleased") ]]; then
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
             TAG_NAME=${GITHUB_REF#refs/tags/}
-            echo "VERSION=$TAG_NAME" >> $GITHUB_ENV
+            if [[ "$GITHUB_EVENT_NAME" == "release" && "$GITHUB_EVENT_ACTION" == "prereleased" ]]; then
+              echo "VERSION=${TAG_NAME}-preview.${{ github.run_number }}" >> $GITHUB_ENV
+            else
+              echo "VERSION=$TAG_NAME" >> $GITHUB_ENV
+            fi
           else
-            echo "VERSION=${{ env.base_version }}-${PACKAGE_PREFIX}.${{ github.run_number }}" >> $GITHUB_ENV
+            echo "VERSION=${{ env.base_version }}-preview.${{ github.run_number }}" >> $GITHUB_ENV
           fi
+
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4

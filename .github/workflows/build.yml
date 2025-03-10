@@ -2,7 +2,10 @@ name: Release Build
 
 on:
   release:
-    types: [created]
+    types:
+      - published
+      - prereleased
+
 
 permissions:
     packages: write
@@ -51,13 +54,12 @@ jobs:
         uses: bruceadams/get-release@v1.3.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+          
       - name: Upload Plugin to Existing GitHub Release
-        uses: actions/upload-release-asset@v1.0.2
+        uses: softprops/action-gh-release@v2
         with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./TrainworksReloaded.Plugin.zip
-          asset_name: TrainworksReloaded.Plugin.zip
-          asset_content_type: application/zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          files: ./TrainworksReloaded.Plugin.zip
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: ${{ github.ref }}
+          overwrite: true  # Optional: Allows replacing existing assets with the same name
+          fail_on_unmatched_files: true  # Ensures errors are caught if the file is missing
