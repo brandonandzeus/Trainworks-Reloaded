@@ -18,7 +18,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <None Include="..\json-schema.json" Pack="true" PackagePath="build/schema/" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\json-schema.json" Pack="true" PackagePath="contentFiles/any/any/schema/json-schema.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
