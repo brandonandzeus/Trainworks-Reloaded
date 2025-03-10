@@ -5,6 +5,7 @@ using I2.Loc;
 using Microsoft.Extensions.Configuration;
 using ShinyShoe.Logging;
 using SimpleInjector;
+using System.Reflection;
 using TrainworksReloaded.Base;
 using TrainworksReloaded.Base.Card;
 using TrainworksReloaded.Base.CardUpgrade;
@@ -75,6 +76,8 @@ namespace TrainworksReloaded.Plugin
                 Log.AddProvider(new ModLogger<Plugin>(Logger));
             }
 
+            ITypeProvider gameAssembly = new AssemblyTypeProvider(typeof(CardData).Assembly);
+
             //everything rail head
             //var builder = Railhead.GetBuilder();
             //builder.Configure(
@@ -100,6 +103,8 @@ namespace TrainworksReloaded.Plugin
                 //Register hooking into games dependency injection system
                 c.RegisterInstance(client);
 
+                c.RegisterInstance(gameAssembly);
+
                 c.RegisterSingleton<IGuidProvider, DeterministicGuidGenerator>();
 
                 c.Register<Finalizer, Finalizer>();
@@ -124,6 +129,8 @@ namespace TrainworksReloaded.Plugin
                     CustomLocalizationTermRegistry,
                     CustomLocalizationTermRegistry
                 >();
+
+                c.RegisterSingleton<ITypeResolver, TypeResolver>();
 
                 c.RegisterConditional(
                     typeof(ICache<>),

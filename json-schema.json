@@ -1312,14 +1312,19 @@
       "uniqueItems": true,
       "items": {
         "required": [
-          "id"
+          "id", "name"
         ],
         "properties": {
           "id": {
             "type": "string"
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "The EffectStateName, this should be the name of a Class inheriting from CardEffectBase. Trainworks will search your mod for the class, then the base game."
+          },
+          "mod_reference": {
+            "type": "string",
+            "description": "Mod GUID to search for a custom effect. If not specified then your Mod's assembly is searched."
           },
           "target_subtype": {
             "$ref": "#/definitions/subtype"
@@ -1492,14 +1497,19 @@
       "uniqueItems": true,
       "items": {
         "required": [
-          "id"
+          "id", "name"
         ],
         "properties": {
           "id": {
             "type": "string"
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "The TraitStateName, this should be the name of a Class inheriting from CardTraitState. Trainworks will search your mod for the class, then the base game."
+          },
+          "mod_reference": {
+            "type": "string",
+            "description": "Mod GUID to search for a custom trait. If not specified then your Mod's assembly is searched."
           },
           "track_type": {
             "type": "string"

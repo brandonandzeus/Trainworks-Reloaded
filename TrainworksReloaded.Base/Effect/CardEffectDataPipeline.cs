@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
 using Microsoft.Extensions.Configuration;
@@ -13,10 +14,14 @@ namespace TrainworksReloaded.Base.Effect
     public class CardEffectDataPipeline : IDataPipeline<IRegister<CardEffectData>, CardEffectData>
     {
         private readonly PluginAtlas atlas;
+        private readonly ITypeResolver typeResolver;
+        private readonly Type CardEffectBaseClass = typeof(CardEffectBase);
 
-        public CardEffectDataPipeline(PluginAtlas atlas)
+
+        public CardEffectDataPipeline(PluginAtlas atlas, ITypeResolver typeResolver)
         {
             this.atlas = atlas;
+            this.typeResolver = typeResolver;
         }
 
         public List<IDefinition<CardEffectData>> Run(IRegister<CardEffectData> service)
@@ -61,12 +66,26 @@ namespace TrainworksReloaded.Base.Effect
             var name = key.GetId("Effect", id);
             var data = new CardEffectData();
 
-            //strings
-            var effectStateName = "";
-            AccessTools
-                .Field(typeof(CardEffectData), "effectStateName")
-                .SetValue(data, configuration.GetSection("name").ParseString() ?? effectStateName);
+            // EffectClass
+            var effectStateName = configuration.GetSection("name").Value;
+            var modReference = configuration.GetSection("mod_reference").Value ?? key;
+            if (effectStateName == null)
+                return null;
 
+            if (
+                typeResolver.TryResolveType(effectStateName, modReference, out Type? effectStateType, out bool? baseGameType) &&
+                CardEffectBaseClass.IsAssignableFrom(effectStateType)
+            )
+            {
+                string fullyQualifiedName = (bool)baseGameType ? effectStateName : effectStateType.AssemblyQualifiedName;
+                AccessTools.Field(typeof(CardEffectData), "effectStateName").SetValue(data, fullyQualifiedName);
+            }
+            else
+            {
+                return null;
+            }
+
+            //strings
             var targetCharacterSubtype = "";
             AccessTools
                 .Field(typeof(CardEffectData), "targetCharacterSubtype")
