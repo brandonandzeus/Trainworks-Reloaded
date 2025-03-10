@@ -21,18 +21,21 @@ namespace TrainworksReloaded.Base.Card
         private readonly IModLogger<CardDataPipeline> logger;
         private readonly IRegister<LocalizationTerm> termRegister;
         private readonly IGuidProvider guidProvider;
+        private readonly IInstanceGenerator<CardData> generator;
 
         public CardDataPipeline(
             PluginAtlas atlas,
             IModLogger<CardDataPipeline> logger,
             IRegister<LocalizationTerm> termRegister,
-            IGuidProvider guidProvider
+            IGuidProvider guidProvider,
+            IInstanceGenerator<CardData> generator
         )
         {
             this.atlas = atlas;
             this.logger = logger;
             this.termRegister = termRegister;
             this.guidProvider = guidProvider;
+            this.generator = generator;
         }
 
         public List<IDefinition<CardData>> Run(IRegister<CardData> service)
@@ -53,7 +56,7 @@ namespace TrainworksReloaded.Base.Card
         /// <param name="key"></param>
         /// <param name="pluginConfig"></param>
         /// <returns></returns>
-        private List<CardDataDefinition> LoadCards(
+        public List<CardDataDefinition> LoadCards(
             IRegister<CardData> service,
             string key,
             IConfiguration pluginConfig
@@ -71,7 +74,7 @@ namespace TrainworksReloaded.Base.Card
             return processList;
         }
 
-        private CardDataDefinition? LoadCardConfiguration(
+        public CardDataDefinition? LoadCardConfiguration(
             IRegister<CardData> service,
             string key,
             IConfiguration configuration
@@ -98,7 +101,7 @@ namespace TrainworksReloaded.Base.Card
             }
             else
             {
-                data = ScriptableObject.CreateInstance<CardData>();
+                data = generator.CreateInstance();
                 data.name = name;
                 guid = guidProvider.GetGuidDeterministic(name).ToString();
             }

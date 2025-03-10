@@ -1,0 +1,69 @@
+{
+  "cards": [
+    {
+      "id": "FireStarter",
+      "ability": false,
+      "artist": "Luke Banke",
+      "cost": 1,
+      "cost_type": "default",
+      "initial_cooldown": 0,
+      "type": "spell",
+      "cooldown": 0,
+      "targets_room": true,
+      "targetless": false,
+      "rarity": "common",
+      "dlc": "none",
+      "names": {
+        "english": "Firestarter"
+      },
+      "descriptions": {
+        "english": "Deal [effect0.power] damage then apply [pyregel] [effect1.status0.power]."
+      },
+      "effects": [
+        {
+          "id": "@FireStarterDamage"
+        },
+        {
+          "id": "@FireStarterPyregel"
+        }
+      ],
+      "class": "ClassPyreborne",
+      "target_assist": "front_enemy",
+      "unlock_level": 0,
+      "lore_tooltips": [
+        {
+          "english": "An incendiary mixture developed by the Pyreborne to add a little spark to battle."
+        }
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "id": "FireStarterDamage",
+      "target_mode": "drop_target_character",
+      "target_mode_health_filter": "both",
+      "target_team": "both",
+      "target_subtype": "SubtypesData_None",
+      "target_card_type": "spell",
+      "param_int": 1,
+      "should_test": true,
+      "param_multipler": 1
+    },
+    {
+      "id": "FireStarterPyregel",
+      "target_mode": "last_targeted_characters",
+      "target_mode_health_filter": "both",
+      "target_team": "both",
+      "target_subtype": "SubtypesData_None",
+      "target_card_type": "spell",
+      "should_test": true,
+      "param_multipler": 1,
+      "param_status_effects": [
+        {
+          "status": "pyregel",
+          "count": 2
+        }
+      ]
+    }
+  ]
+}
