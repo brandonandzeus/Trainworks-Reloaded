@@ -41,7 +41,7 @@ namespace TrainworksReloaded.Core.Impl
             type = null;
             baseGameType = false;
             bool found = false;
-            if (modReference != null && modGuidToAssembly.TryGetValue(modReference, out assembly))
+            if (modGuidToAssembly.TryGetValue(modReference, out assembly))
             {
                 found = assembly.TryLookupType(effectClass, out type);
             }
