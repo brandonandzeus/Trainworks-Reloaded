@@ -34,7 +34,7 @@ namespace TrainworksReloaded.Base.Effect
             return processList;
         }
 
-        private List<CardEffectDefinition> LoadEffects(
+        public List<CardEffectDefinition> LoadEffects(
             IRegister<CardEffectData> service,
             string key,
             IConfiguration pluginConfig
@@ -52,7 +52,7 @@ namespace TrainworksReloaded.Base.Effect
             return processList;
         }
 
-        private CardEffectDefinition? LoadEffectConfiguration(
+        public CardEffectDefinition? LoadEffectConfiguration(
             IRegister<CardEffectData> service,
             string key,
             IConfiguration configuration
