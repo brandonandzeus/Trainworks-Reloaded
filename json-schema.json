@@ -1584,9 +1584,6 @@
           "status_effect_upgrades": {
             "type": "array",
             "items": {
-              "required": [
-                "id"
-              ],
               "properties": {
                 "status": {
                   "type": "string"
