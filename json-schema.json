@@ -74,6 +74,15 @@
         "unplayable"
       ]
     },
+    "display_category": {
+      "type": "string",
+      "enum": [
+        "positive",
+        "negative",
+        "persistent",
+        "ability"
+      ]
+    },
     "rarity": {
       "type": "string",
       "enum": [
@@ -208,6 +217,43 @@
         "num_specific_cards_in_deck",
         "any_status_effect_stacks_added",
         "any_status_effect_stacks_removed"
+      ]
+    },
+    "trigger_stage": {
+      "type": "string",
+      "enum": [
+        "none",
+        "on_combat_turn_inert",
+        "on_pre_movement",
+        "on_pre_attacked",
+        "on_attacked",
+        "on_pre_attacking",
+        "on_post_combat_regen",
+        "on_post_combat_poison",
+        "on_ambush",
+        "on_relentless",
+        "on_multistrike",
+        "on_attract_damage",
+        "on_combat_turn_dazed",
+        "on_post_room_combat",
+        "on_attack_target_mode_requested",
+        "on_monster_team_turn_begin",
+        "on_death",
+        "on_post_attacking",
+        "on_pre_character_trigger",
+        "on_pre_attacked_spell_shield",
+        "on_pre_attacked_damage_shield",
+        "on_combat_turn_spark",
+        "on_pre_attacked_armor",
+        "on_pre_attacked_fragile",
+        "on_pre_eaten",
+        "on_post_eaten",
+        "on_almost_post_room_combat",
+        "on_healed",
+        "on_pre_flat_damage_increase",
+        "on_hit",
+        "on_post_spawn",
+        "on_pre_attacked_life_link"
       ]
     },
     "card_type_target": {
@@ -433,6 +479,13 @@
       "enum": [
         "single_run",
         "single_battle"
+      ]
+    },
+    "vfx_display_type": {
+      "type": "string",
+      "enum": [
+        "default",
+        "last_stack"
       ]
     },
     "vfx_location": {
@@ -1803,6 +1856,163 @@
           "trigered_vfx": {
             "type": "string"
           }
+        }
+      }
+    },
+    "status_effects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The StatusID of the status effect, must match StatusID of the StatusEffectState class, and must be a unique string."
+          },
+          "name": {
+            "type": "string",
+            "description": "Class name associated with this status effect. Must be the name of a class inheriting from StatusEffectState."
+          },
+          "card_text": {
+            "#ref": "#/definitions/parse_term",
+            "description": "Used when the status effect is nonstackable. The text that displays when applied on a card."
+          },
+          "stack_card_text": {
+            "#ref": "#/definitions/parse_term",
+            "description": "Used when the status effect is stackable. The text that displays when applied on a card."
+          },
+          "card_tooltip": {
+            "#ref": "#/definitions/parse_term",
+            "description": "Tooltip text describing the status effect when mousing over a card."
+          },
+          "character_tooltip": {
+            "#ref": "#/definitions/parse_term",
+            "description": "Tooltip text describing the status effect when mousing over a character."
+          },
+          "notification": {
+            "#ref": "#/definitions/parse_term",
+            "description": "Notification text."
+          },
+          "applied_sfx": {
+            "type": "string"
+          },
+          "triggered_sfx": {
+            "type": "string"
+          },
+          "display_category": {
+            "#ref": "#/definitions/display_category"
+          },
+          "vfx_display_type": {
+            "#ref": "#/definitions/vfx_display_type"
+          },
+          "added_vfx": {
+            "type": "string"
+          },
+          "more_added_vfx": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "persistent_vfx": {
+            "type": "string"
+          },
+          "more_persistent_vfx": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "triggered_vfx": {
+            "type": "string"
+          },
+          "more_triggered_vfx": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "removed_vfx": {
+            "type": "string"
+          },
+          "more_removed_vfx": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "affected_vfx": {
+            "type": "string"
+          },
+          "trigger_stage": {
+            "#ref": "#/definitions/trigger_stage"
+          },
+          "additional_trigger_stages": {
+            "type": "array",
+            "items": {
+              "#ref": "#/definitions/trigger_stage"
+            }
+          },
+          "hidden": {
+            "type": "string"
+          },
+          "remove_stack_at_end_of_turn": {
+            "type": "boolean"
+          },
+          "remove_at_end_of_turn": {
+            "type": "boolean"
+          },
+          "remove_when_triggered": {
+            "type": "boolean"
+          },
+          "remove_when_triggered_after_card_played": {
+            "type": "boolean"
+          },
+          "remove_at_end_of_turn_when_triggered": {
+            "type": "boolean"
+          },
+          "is_stackable": {
+            "type": "boolean"
+          },
+          "is_propagatable": {
+            "type": "boolean"
+          },
+          "scales_in_endless": {
+            "type": "boolean"
+          },
+          "exclude_hero_propagation": {
+            "type": "boolean"
+          },
+          "exlude_monster_propagation": {
+            "type": "boolean"
+          },
+          "show_stack_count": {
+            "type": "boolean"
+          },
+          "show_notifications_on_removal": {
+            "type": "boolean"
+          },
+          "show_on_pyre_heart": {
+            "type": "boolean"
+          },
+          "param_str": {
+            "type": "string"
+          },
+          "param_int": {
+            "type": "integer"
+          },
+          "param_secondary_int": {
+            "type": "integer"
+          },
+          "param_float": {
+            "type": "number"
+          },
+          "allow_secondary_tooltip_placement": {
+            "type": "boolean"
+          },
+          "allow_secondary_ui_placement": {
+            "type": "boolean"
+          }
+
         }
       }
     },
