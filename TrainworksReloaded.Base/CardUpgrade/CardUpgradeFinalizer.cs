@@ -61,6 +61,15 @@ namespace TrainworksReloaded.Base.CardUpgrade
             logger.Log(Core.Interfaces.LogLevel.Info, $"Finalizing Upgrade {data.name}... ");
 
             //handle traits
+            //traits do not default properly, if null, set to empty
+            var traitDataUpgradesVal =
+                (List<CardTraitData>)
+                    AccessTools.Field(typeof(CardUpgradeData), "traitDataUpgrades").GetValue(data);
+            if (traitDataUpgradesVal == null)
+                AccessTools
+                    .Field(typeof(CardUpgradeData), "traitDataUpgrades")
+                    .SetValue(data, new List<CardTraitData>());
+
             var traitDataUpgrades = new List<CardTraitData>();
             var traitDataUpgradesConfig = configuration.GetSection("trait_upgrades").GetChildren();
             foreach (var traitDataUpgrade in traitDataUpgradesConfig)

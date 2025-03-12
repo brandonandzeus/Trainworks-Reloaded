@@ -448,7 +448,7 @@ namespace TrainworksReloaded.Base.Character
             {
                 AccessTools
                     .Field(typeof(EndlessBaselineStats), "endlessHealth")
-                    .SetValue(data, endlessHealth);
+                    .SetValue(endlessBaselineStats, endlessHealth);
             }
             var endlessAttack = configuration
                 .GetSection("endless_stats")
@@ -458,7 +458,7 @@ namespace TrainworksReloaded.Base.Character
             {
                 AccessTools
                     .Field(typeof(EndlessBaselineStats), "endlessAttack")
-                    .SetValue(data, endlessAttack);
+                    .SetValue(endlessBaselineStats, endlessAttack);
             }
             AccessTools
                 .Field(typeof(CharacterData), "endlessBaselineStats")
