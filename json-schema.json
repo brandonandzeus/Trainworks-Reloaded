@@ -1863,6 +1863,7 @@
       "type": "array",
       "items": {
         "type": "object",
+        "required": ["id", "name"],
         "properties": {
           "id": {
             "type": "string",
@@ -1871,6 +1872,9 @@
           "name": {
             "type": "string",
             "description": "Class name associated with this status effect. Must be the name of a class inheriting from StatusEffectState."
+          },
+          "icon": {
+            "type": "string"
           },
           "card_text": {
             "#ref": "#/definitions/parse_term",
@@ -2012,7 +2016,6 @@
           "allow_secondary_ui_placement": {
             "type": "boolean"
           }
-
         }
       }
     },
