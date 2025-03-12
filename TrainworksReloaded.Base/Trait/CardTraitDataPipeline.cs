@@ -4,6 +4,7 @@ using HarmonyLib;
 using Microsoft.Extensions.Configuration;
 using SimpleInjector;
 using TrainworksReloaded.Base.Extensions;
+using TrainworksReloaded.Base.Util;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
@@ -14,14 +15,12 @@ namespace TrainworksReloaded.Base.Trait
     {
         private readonly PluginAtlas atlas;
         private readonly IModLogger<CardTraitDataPipeline> logger;
-        private readonly ITypeResolver typeResolver;
         private readonly Type CardTraitBaseClass = typeof(CardTraitState);
 
-        public CardTraitDataPipeline(PluginAtlas atlas, IModLogger<CardTraitDataPipeline> logger, ITypeResolver typeResolver)
+        public CardTraitDataPipeline(PluginAtlas atlas, IModLogger<CardTraitDataPipeline> logger)
         {
             this.atlas = atlas;
             this.logger = logger;
-            this.typeResolver = typeResolver;
         }
 
         public List<IDefinition<CardTraitData>> Run(IRegister<CardTraitData> service)
@@ -68,22 +67,16 @@ namespace TrainworksReloaded.Base.Trait
 
             // TraitState
             var traitStateName = configuration.GetSection("name").Value;
-            var modReference = configuration.GetSection("mod_refernece").Value ?? key;
             if (traitStateName == null)
                 return null;
 
-            if (
-                typeResolver.TryResolveType(traitStateName, modReference, out Type? traitStateType, out bool? baseGameType) &&
-                CardTraitBaseClass.IsAssignableFrom(traitStateType)
-            )
-            {
-                string fullyQualifiedName = (bool)baseGameType ? traitStateName : traitStateType.AssemblyQualifiedName;
-                AccessTools.Field(typeof(CardEffectData), "traitStateName").SetValue(data, fullyQualifiedName);
-            }
-            else
+            var modReference = configuration.GetSection("mod_reference").Value ?? key;
+            var assembly = atlas.PluginAssemblies[modReference];
+            if (!EffectClassUtils.GetFullyQualifiedName(traitStateName, assembly, CardTraitBaseClass, out string? fullyQualifiedName))
             {
                 return null;
             }
+            AccessTools.Field(typeof(CardEffectData), "traitStateName").SetValue(data, fullyQualifiedName);
 
             var paramTrackedValue = CardStatistics.TrackedValueType.SubtypeInDeck;
             AccessTools

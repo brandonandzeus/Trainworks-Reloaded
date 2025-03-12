@@ -76,8 +76,6 @@ namespace TrainworksReloaded.Plugin
                 Log.AddProvider(new ModLogger<Plugin>(Logger));
             }
 
-            ITypeProvider gameAssembly = new AssemblyTypeProvider(typeof(CardData).Assembly);
-
             //everything rail head
             //var builder = Railhead.GetBuilder();
             //builder.Configure(
@@ -103,8 +101,6 @@ namespace TrainworksReloaded.Plugin
                 //Register hooking into games dependency injection system
                 c.RegisterInstance(client);
 
-                c.RegisterInstance(gameAssembly);
-
                 c.RegisterSingleton<IGuidProvider, DeterministicGuidGenerator>();
 
                 c.Register<Finalizer, Finalizer>();
@@ -129,8 +125,6 @@ namespace TrainworksReloaded.Plugin
                     CustomLocalizationTermRegistry,
                     CustomLocalizationTermRegistry
                 >();
-
-                c.RegisterSingleton<ITypeResolver, TypeResolver>();
 
                 c.RegisterConditional(
                     typeof(ICache<>),

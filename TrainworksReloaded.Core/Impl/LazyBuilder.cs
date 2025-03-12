@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using SimpleInjector;
+using System.Reflection;
 using TrainworksReloaded.Core.Interfaces;
 
 namespace TrainworksReloaded.Core.Impl
@@ -30,7 +31,6 @@ namespace TrainworksReloaded.Core.Impl
         {
             //build atlas from configuration
             var atlas = new PluginAtlas();
-            var assemblies = new Dictionary<String, ITypeProvider>();
             foreach (var key in configActions.Keys)
             {
                 var configuration = new ConfigurationBuilder();
@@ -41,9 +41,9 @@ namespace TrainworksReloaded.Core.Impl
                         action.Method.DeclaringType.Assembly.Location
                     );
                     directory.Add(basePath);
-                    if (!assemblies.ContainsKey(key))
+                    if (!atlas.PluginAssemblies.ContainsKey(key))
                     {
-                        assemblies.Add(key, new AssemblyTypeProvider(action.Method.DeclaringType.Assembly));
+                        atlas.PluginAssemblies.Add(key, action.Method.DeclaringType.Assembly);
                     }
                     configuration.SetBasePath(basePath);
                     action(configuration);
@@ -53,7 +53,6 @@ namespace TrainworksReloaded.Core.Impl
                 atlas.PluginDefinitions.Add(key, definition);
             }
             container.RegisterInstance<PluginAtlas>(atlas);
-            container.RegisterInstance<IDictionary<String, ITypeProvider>>(assemblies);
 
             foreach (var action in containerActions)
             {
