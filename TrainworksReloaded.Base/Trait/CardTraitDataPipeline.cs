@@ -4,7 +4,6 @@ using HarmonyLib;
 using Microsoft.Extensions.Configuration;
 using SimpleInjector;
 using TrainworksReloaded.Base.Extensions;
-using TrainworksReloaded.Base.Util;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
@@ -15,7 +14,6 @@ namespace TrainworksReloaded.Base.Trait
     {
         private readonly PluginAtlas atlas;
         private readonly IModLogger<CardTraitDataPipeline> logger;
-        private readonly Type CardTraitBaseClass = typeof(CardTraitState);
 
         public CardTraitDataPipeline(PluginAtlas atlas, IModLogger<CardTraitDataPipeline> logger)
         {
@@ -71,12 +69,19 @@ namespace TrainworksReloaded.Base.Trait
                 return null;
 
             var modReference = configuration.GetSection("mod_reference").Value ?? key;
-            var assembly = atlas.PluginAssemblies[modReference];
-            if (!EffectClassUtils.GetFullyQualifiedName(traitStateName, assembly, CardTraitBaseClass, out string? fullyQualifiedName))
+            var assembly = atlas.PluginDefinitions.GetValueOrDefault(modReference)?.Assembly;
+            if (
+                !traitStateName.GetFullyQualifiedName<CardTraitState>(
+                    assembly,
+                    out string? fullyQualifiedName
+                )
+            )
             {
                 return null;
             }
-            AccessTools.Field(typeof(CardEffectData), "traitStateName").SetValue(data, fullyQualifiedName);
+            AccessTools
+                .Field(typeof(CardTraitData), "traitStateName")
+                .SetValue(data, fullyQualifiedName);
 
             var paramTrackedValue = CardStatistics.TrackedValueType.SubtypeInDeck;
             AccessTools

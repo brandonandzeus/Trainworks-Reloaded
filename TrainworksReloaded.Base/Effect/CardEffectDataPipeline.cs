@@ -5,7 +5,6 @@ using HarmonyLib;
 using Microsoft.Extensions.Configuration;
 using SimpleInjector;
 using TrainworksReloaded.Base.Extensions;
-using TrainworksReloaded.Base.Util;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
@@ -15,7 +14,6 @@ namespace TrainworksReloaded.Base.Effect
     public class CardEffectDataPipeline : IDataPipeline<IRegister<CardEffectData>, CardEffectData>
     {
         private readonly PluginAtlas atlas;
-        private readonly Type CardEffectBaseClass = typeof(CardEffectBase);
 
         public CardEffectDataPipeline(PluginAtlas atlas)
         {
@@ -70,12 +68,19 @@ namespace TrainworksReloaded.Base.Effect
                 return null;
 
             var modReference = configuration.GetSection("mod_reference").Value ?? key;
-            var assembly = atlas.PluginAssemblies[modReference];
-            if (!EffectClassUtils.GetFullyQualifiedName(effectStateName, assembly, CardEffectBaseClass, out string? fullyQualifiedName))
+            var assembly = atlas.PluginDefinitions.GetValueOrDefault(modReference)?.Assembly;
+            if (
+                !effectStateName.GetFullyQualifiedName<CardEffectBase>(
+                    assembly,
+                    out string? fullyQualifiedName
+                )
+            )
             {
                 return null;
             }
-            AccessTools.Field(typeof(CardEffectData), "effectStateName").SetValue(data, fullyQualifiedName);
+            AccessTools
+                .Field(typeof(CardEffectData), "effectStateName")
+                .SetValue(data, fullyQualifiedName);
 
             //strings
             var targetCharacterSubtype = "";
