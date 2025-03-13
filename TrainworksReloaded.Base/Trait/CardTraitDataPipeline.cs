@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using HarmonyLib;
 using Microsoft.Extensions.Configuration;
 using SimpleInjector;
@@ -62,11 +63,25 @@ namespace TrainworksReloaded.Base.Trait
             var name = key.GetId("Trait", id);
             var data = new CardTraitData();
 
-            //handle one-to-one values
-            var traitStateName = "";
+            // TraitState
+            var traitStateName = configuration.GetSection("name").Value;
+            if (traitStateName == null)
+                return null;
+
+            var modReference = configuration.GetSection("mod_reference").Value ?? key;
+            var assembly = atlas.PluginDefinitions.GetValueOrDefault(modReference)?.Assembly;
+            if (
+                !traitStateName.GetFullyQualifiedName<CardTraitState>(
+                    assembly,
+                    out string? fullyQualifiedName
+                )
+            )
+            {
+                return null;
+            }
             AccessTools
                 .Field(typeof(CardTraitData), "traitStateName")
-                .SetValue(data, configuration.GetSection("name").ParseString() ?? traitStateName);
+                .SetValue(data, fullyQualifiedName);
 
             var paramTrackedValue = CardStatistics.TrackedValueType.SubtypeInDeck;
             AccessTools

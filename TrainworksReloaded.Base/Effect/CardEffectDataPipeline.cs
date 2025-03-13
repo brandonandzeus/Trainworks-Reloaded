@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
 using Microsoft.Extensions.Configuration;
@@ -29,7 +30,7 @@ namespace TrainworksReloaded.Base.Effect
             return processList;
         }
 
-        private List<CardEffectDefinition> LoadEffects(
+        public List<CardEffectDefinition> LoadEffects(
             IRegister<CardEffectData> service,
             string key,
             IConfiguration pluginConfig
@@ -47,7 +48,7 @@ namespace TrainworksReloaded.Base.Effect
             return processList;
         }
 
-        private CardEffectDefinition? LoadEffectConfiguration(
+        public CardEffectDefinition? LoadEffectConfiguration(
             IRegister<CardEffectData> service,
             string key,
             IConfiguration configuration
@@ -61,12 +62,27 @@ namespace TrainworksReloaded.Base.Effect
             var name = key.GetId("Effect", id);
             var data = new CardEffectData();
 
-            //strings
-            var effectStateName = "";
+            // EffectClass
+            var effectStateName = configuration.GetSection("name").Value;
+            if (effectStateName == null)
+                return null;
+
+            var modReference = configuration.GetSection("mod_reference").Value ?? key;
+            var assembly = atlas.PluginDefinitions.GetValueOrDefault(modReference)?.Assembly;
+            if (
+                !effectStateName.GetFullyQualifiedName<CardEffectBase>(
+                    assembly,
+                    out string? fullyQualifiedName
+                )
+            )
+            {
+                return null;
+            }
             AccessTools
                 .Field(typeof(CardEffectData), "effectStateName")
-                .SetValue(data, configuration.GetSection("name").ParseString() ?? effectStateName);
+                .SetValue(data, fullyQualifiedName);
 
+            //strings
             var targetCharacterSubtype = "";
             AccessTools
                 .Field(typeof(CardEffectData), "targetCharacterSubtype")

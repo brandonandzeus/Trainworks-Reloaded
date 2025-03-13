@@ -1,4 +1,6 @@
-﻿namespace TrainworksReloaded.Core.Impl
+﻿using System.Reflection;
+
+namespace TrainworksReloaded.Core.Impl
 {
     public class PluginAtlas
     {

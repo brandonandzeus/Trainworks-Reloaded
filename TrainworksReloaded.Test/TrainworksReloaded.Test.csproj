@@ -37,12 +37,11 @@
   
   <ItemGroup>
     <!-- microsoft.extensions.configuration does not release a 2.1 variation -->
-    <Content Include="$(UserProfile)\.nuget\packages\unityengine.modules\2022.3.54\lib\netstandard2.0\*.dll"
-             Exclude="$(UserProfile)\.nuget\packages\unityengine.modules\2022.3.54\lib\netstandard2.0\UnityEngine.CoreModule.dll">
+    <Content Include="$(UserProfile)\.nuget\packages\unityengine.modules\2022.3.54\lib\netstandard2.0\*.dll" Exclude="$(UserProfile)\.nuget\packages\unityengine.modules\2022.3.54\lib\netstandard2.0\UnityEngine.CoreModule.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties examples_4cards_4jsconfig1_1json__JsonSchema="..\..\..\json-schema.json" /></VisualStudio></ProjectExtensions>
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
   
 </Project>

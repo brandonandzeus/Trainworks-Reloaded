@@ -5,6 +5,7 @@ using I2.Loc;
 using Microsoft.Extensions.Configuration;
 using ShinyShoe.Logging;
 using SimpleInjector;
+using System.Reflection;
 using TrainworksReloaded.Base;
 using TrainworksReloaded.Base.Card;
 using TrainworksReloaded.Base.CardUpgrade;
