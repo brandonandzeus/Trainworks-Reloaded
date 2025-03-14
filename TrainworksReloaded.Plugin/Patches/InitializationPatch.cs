@@ -14,9 +14,12 @@ namespace TrainworksReloaded.Plugin.Patches
     {
         public static void Postfix(AssetLoadingData ____assetLoadingData)
         {
+            //We inject data into AssetLoading Manager.
             var container = Railend.GetContainer();
             var register = container.GetInstance<CardDataRegister>();
-            var delegator = container.GetInstance<CardPoolDelegator>();
+
+            //add data to the existing main pools
+            var delegator = container.GetInstance<VanillaCardPoolDelegator>();
             foreach (
                 var cardpool in ____assetLoadingData.CardPoolsAll.Union(
                     ____assetLoadingData.CardPoolsAlwaysLoad
@@ -35,7 +38,8 @@ namespace TrainworksReloaded.Plugin.Patches
                     }
                 }
             }
-            delegator.CardPoolToData.Clear();
+            delegator.CardPoolToData.Clear(); //save memory
+            //we add custom card pool so that the card data is loaded, even if it doesn't exist in any pool.
             ____assetLoadingData.CardPoolsAll.Add(register.CustomCardPool);
 
             var classRegister = container.GetInstance<ClassDataRegister>();
@@ -46,9 +50,11 @@ namespace TrainworksReloaded.Plugin.Patches
                         .GetValue(____assetLoadingData.BalanceData);
             classDatas.AddRange(classRegister.Values);
 
+            //Load localization at this time
             var localization = container.GetInstance<CustomLocalizationTermRegistry>();
             localization.LoadData();
 
+            //Run finalization steps to populate data that required all other data to be loaded first
             var finalizer = container.GetInstance<Finalizer>();
             finalizer.FinalizeData();
         }

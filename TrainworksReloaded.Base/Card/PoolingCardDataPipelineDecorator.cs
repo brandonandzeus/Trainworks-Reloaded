@@ -7,11 +7,11 @@ namespace TrainworksReloaded.Base.Card
     public class PoolingCardDataPipelineDecorator : IDataPipeline<IRegister<CardData>, CardData>
     {
         private readonly IDataPipeline<IRegister<CardData>, CardData> decoratee;
-        private readonly CardPoolDelegator delegator;
+        private readonly VanillaCardPoolDelegator delegator;
 
         public PoolingCardDataPipelineDecorator(
             IDataPipeline<IRegister<CardData>, CardData> decoratee,
-            CardPoolDelegator delegator
+            VanillaCardPoolDelegator delegator
         )
         {
             this.decoratee = decoratee;

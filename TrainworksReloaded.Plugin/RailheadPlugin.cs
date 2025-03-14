@@ -1,11 +1,11 @@
-﻿using BepInEx;
+﻿using System.Reflection;
+using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
 using I2.Loc;
 using Microsoft.Extensions.Configuration;
 using ShinyShoe.Logging;
 using SimpleInjector;
-using System.Reflection;
 using TrainworksReloaded.Base;
 using TrainworksReloaded.Base.Card;
 using TrainworksReloaded.Base.CardUpgrade;
@@ -14,6 +14,7 @@ using TrainworksReloaded.Base.Class;
 using TrainworksReloaded.Base.Effect;
 using TrainworksReloaded.Base.Localization;
 using TrainworksReloaded.Base.Prefab;
+using TrainworksReloaded.Base.Reward;
 using TrainworksReloaded.Base.Room;
 using TrainworksReloaded.Base.Trait;
 using TrainworksReloaded.Base.Trigger;
@@ -116,6 +117,8 @@ namespace TrainworksReloaded.Plugin
                         typeof(CardTriggerEffectFinalizer),
                         typeof(VfxFinalizer),
                         typeof(RoomModifierFinalizer),
+                        typeof(RewardDataFinalizer),
+                        typeof(CardPoolFinalizer),
                     ]
                 );
 
@@ -158,11 +161,6 @@ namespace TrainworksReloaded.Plugin
                     typeof(IDataPipeline<,>),
                     typeof(CacheDataPipelineDecorator<,>)
                 );
-
-                c.RegisterDecorator<
-                    IDataPipeline<IRegister<CardData>, CardData>,
-                    PoolingCardDataPipelineDecorator
-                >();
 
                 //Register Assets
                 c.Register<FallbackDataProvider, FallbackDataProvider>();
@@ -216,7 +214,21 @@ namespace TrainworksReloaded.Plugin
                     var pipeline = c.GetInstance<IDataPipeline<IRegister<CardData>, CardData>>();
                     pipeline.Run(x);
                 });
-                c.RegisterSingleton<CardPoolDelegator>();
+                c.RegisterSingleton<VanillaCardPoolDelegator>();
+                c.RegisterDecorator<
+                    IDataPipeline<IRegister<CardData>, CardData>,
+                    PoolingCardDataPipelineDecorator
+                >();
+
+                //register Card Pool
+                c.RegisterSingleton<IRegister<CardPool>, CardpoolRegister>(); //a place to register and access custom card data
+                c.RegisterSingleton<CardpoolRegister, CardpoolRegister>();
+                c.Register<IDataPipeline<IRegister<CardPool>, CardPool>, CardPoolPipeline>(); //a data pipeline to run as soon as register is needed
+                c.RegisterInitializer<IRegister<CardPool>>(x =>
+                {
+                    var pipeline = c.GetInstance<IDataPipeline<IRegister<CardPool>, CardPool>>();
+                    pipeline.Run(x);
+                });
 
                 //Register Character Data
                 c.RegisterSingleton<IRegister<CharacterData>, CharacterDataRegister>(); //a place to register and access custom card data
@@ -302,6 +314,24 @@ namespace TrainworksReloaded.Plugin
                     >();
                     pipeline.Run(x);
                 });
+
+                //Register Reward Data
+                c.RegisterSingleton<IRegister<RewardData>, RewardDataRegister>();
+                c.RegisterSingleton<RewardDataRegister, RewardDataRegister>();
+                c.Register<IDataPipeline<IRegister<RewardData>, RewardData>, RewardDataPipeline>();
+                c.RegisterInitializer<IRegister<RewardData>>(x =>
+                {
+                    var pipeline = c.GetInstance<
+                        IDataPipeline<IRegister<RewardData>, RewardData>
+                    >();
+                    pipeline.Run(x);
+                });
+                c.Collection.Register<IFactory<RewardData>>([typeof(CardPoolRewardDataFactory)]);
+                c.RegisterDecorator(
+                    typeof(IDataFinalizer),
+                    typeof(CardPoolRewardDataFinalizer),
+                    xs => xs.ImplementationType == typeof(RewardDataFinalizer)
+                );
 
                 //Register Room Modifier Data
                 c.RegisterSingleton<IRegister<RoomModifierData>, RoomModifierRegister>();

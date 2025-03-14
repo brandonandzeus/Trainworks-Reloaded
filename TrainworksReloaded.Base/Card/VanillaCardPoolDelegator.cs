@@ -6,7 +6,7 @@ using TrainworksReloaded.Core.Interfaces;
 
 namespace TrainworksReloaded.Base.Card
 {
-    public class CardPoolDelegator
+    public class VanillaCardPoolDelegator
     {
         public Dictionary<string, List<CardData>> CardPoolToData = [];
     }
