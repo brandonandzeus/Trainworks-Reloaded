@@ -298,9 +298,8 @@ namespace TrainworksReloaded.Base.CardUpgrade
             //List<String>
             var removeTraitUpgrades =
                 (List<string>)
-                    AccessTools
-                        .Field(typeof(CardUpgradeData), "removeTraitUpgrades")
-                        .GetValue(data);
+                    AccessTools.Field(typeof(CardUpgradeData), "removeTraitUpgrades").GetValue(data)
+                ?? [];
             var upgrades = configuration.GetSection("remove_trait_upgrades").GetChildren();
             if (upgrades.Count() > 0)
             {
@@ -315,6 +314,9 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 }
                 removeTraitUpgrades.Add(val.ToId(key, TemplateConstants.Trait));
             }
+            AccessTools
+                .Field(typeof(CardUpgradeData), "removeTraitUpgrades")
+                .SetValue(data, removeTraitUpgrades);
 
             //status
             var statusEffectUpgrades = configuration
@@ -327,7 +329,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 })
                 .ToList();
             AccessTools
-                .Field(typeof(CardEffectData), "statusEffectUpgrades")
+                .Field(typeof(CardUpgradeData), "statusEffectUpgrades")
                 .SetValue(data, statusEffectUpgrades);
 
             if (!checkOverride)

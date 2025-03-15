@@ -6,6 +6,5 @@ namespace TrainworksReloaded.Core.Impl
     {
         public Dictionary<string, PluginDefinition> PluginDefinitions { get; set; } =
             new Dictionary<string, PluginDefinition>();
-        public Dictionary<string, Assembly> PluginAssemblies { get; set; } = [];
     }
 }
