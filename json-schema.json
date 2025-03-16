@@ -1,19 +1,25 @@
 {
   "$schema": "https://json-schema.org/draft-07/schema#",
   "definitions": {
-    "reward_type":{
+    "game_object_type": {
       "type": "string",
-      "enum": ["cardpool"]
+      "enum": [ "card_art", "map_node_icon" ]
     },
-    "reward_filter":{
+    "reward_type": {
       "type": "string",
-      "enum": ["none", "only_endless", "not_endless", "only_if_allied_champ"]
+      "enum": [ "cardpool" ]
+    },
+    "reward_filter": {
+      "type": "string",
+      "enum": [ "none", "only_endless", "not_endless", "only_if_allied_champ" ]
     },
     "map_skip_settings": {
       "type": "string",
       "enum": [
+        "none",
         "always",
-        "if_full_health"
+        "if_full_health",
+        "both"
       ]
     },
     "anim": {
@@ -1279,19 +1285,19 @@
         }
       }
     },
-    "card_pools":{
+    "card_pools": {
       "type": "array",
       "uniqueItems": true,
       "items": {
-        "required": ["id"],
+        "required": [ "id" ],
         "properties": {
           "id": {
             "type": "string"
           },
-          "cards":{
-            "type":"array",
+          "cards": {
+            "type": "array",
             "properties": {
-              "id":{
+              "id": {
                 "type": "string",
                 "description": "Card Data Reference"
               }
@@ -1518,10 +1524,76 @@
             "type": "string"
           },
           "type": {
-            "type": "string"
-          },
-          "sprite": {
-            "type": "string"
+            "#ref": "#/definitions/game_object_type"
+          }
+        },
+        "dependencies": {
+          "type": {
+            "oneOf": [
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "card_art"
+                    ]
+                  },
+                  "extensions": {
+                    "type": "object",
+                    "properties": {
+                      "card_art": {
+                        "type": "object",
+                        "properties": {
+                          "sprite": {
+                            "type": "string",
+                            "description": "Sprite Reference"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "map_node_icon"
+                    ]
+                  },
+                  "extensions": {
+                    "type": "object",
+                    "properties": {
+                      "map_node_icon": {
+                        "type": "object",
+                        "properties": {
+                          "enabled_sprite": {
+                            "type": "string",
+                            "description": "Sprite Reference"
+                          },
+                          "visited_sprite_enabled": {
+                            "type": "string",
+                            "description": "Sprite Reference"
+                          },
+                          "visited_sprite_disabled": {
+                            "type": "string",
+                            "description": "Sprite Reference"
+                          },
+                          "disabled_sprite": {
+                            "type": "string",
+                            "description": "Sprite Reference"
+                          },
+                          "frozen_sprite": {
+                            "type": "string",
+                            "description": "Sprite Reference"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+
+              }
+            ]
           }
         }
       }
@@ -1737,53 +1809,53 @@
         }
       }
     },
-    "rewards":{
-      "type":"array",
+    "rewards": {
+      "type": "array",
       "items": {
-        "required": ["id"],
+        "required": [ "id" ],
         "properties": {
-          "id":{
+          "id": {
             "type": "string"
           },
-          "type":{
+          "type": {
             "#ref": "#/definitions/reward_type"
           },
-          "sprite":{
+          "sprite": {
             "type": "string",
             "description": "Sprite Reference"
           },
-          "titles":{
-            "#ref":"#/definitions/parse_term"
+          "titles": {
+            "#ref": "#/definitions/parse_term"
           },
-          "descriptions":{
-            "#ref":"#/definitions/parse_term"
+          "descriptions": {
+            "#ref": "#/definitions/parse_term"
           },
-          "is_story_reward":{
-            "type":"boolean"
+          "is_story_reward": {
+            "type": "boolean"
           },
-          "collect_cue":{
+          "collect_cue": {
             "type": "string"
           },
-          "costs":{
-            "type":"array",
+          "costs": {
+            "type": "array",
             "items": {
               "type": "integer"
             }
           },
-          "show_in_event":{
-            "type":"boolean"
+          "show_in_event": {
+            "type": "boolean"
           },
-          "show_animation_in_event":{
-            "type":"boolean"
+          "show_animation_in_event": {
+            "type": "boolean"
           },
-          "show_cancel":{
-            "type":"boolean"
+          "show_cancel": {
+            "type": "boolean"
           },
-          "filter":{
-            "#ref":"#/definitions/reward_filter"
+          "filter": {
+            "#ref": "#/definitions/reward_filter"
           },
-          "endless_mode_unique":{
-            "type":"boolean"
+          "endless_mode_unique": {
+            "type": "boolean"
           }
         },
         "dependencies": {
@@ -1803,16 +1875,16 @@
                         "cardpool": {
                           "type": "object",
                           "properties": {
-                            "cardpool":{
+                            "cardpool": {
                               "type": "string",
                               "description": "Card Pool Reference"
                             },
-                            "cost_overrides":{
-                              "type":"array",
+                            "cost_overrides": {
+                              "type": "array",
                               "items": {
                                 "properties": {
                                   "rarity": {
-                                    "#ref":"#/definitions/rarity"
+                                    "#ref": "#/definitions/rarity"
                                   },
                                   "costs": {
                                     "type": "array",

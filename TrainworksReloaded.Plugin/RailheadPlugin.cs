@@ -13,6 +13,7 @@ using TrainworksReloaded.Base.Character;
 using TrainworksReloaded.Base.Class;
 using TrainworksReloaded.Base.Effect;
 using TrainworksReloaded.Base.Localization;
+using TrainworksReloaded.Base.Map;
 using TrainworksReloaded.Base.Prefab;
 using TrainworksReloaded.Base.Reward;
 using TrainworksReloaded.Base.Room;
@@ -117,6 +118,7 @@ namespace TrainworksReloaded.Plugin
                         typeof(CardTriggerEffectFinalizer),
                         typeof(VfxFinalizer),
                         typeof(RoomModifierFinalizer),
+                        typeof(MapNodeFinalizer),
                         typeof(RewardDataFinalizer),
                         typeof(CardPoolFinalizer),
                     ]
@@ -192,7 +194,11 @@ namespace TrainworksReloaded.Plugin
                 >(); //a data pipeline to run as soon as register is needed
                 c.RegisterDecorator<
                     IDataPipeline<IRegister<GameObject>, GameObject>,
-                    GameObjectCardArtSetup
+                    GameObjectCardArtDecorator
+                >();
+                c.RegisterDecorator<
+                    IDataPipeline<IRegister<GameObject>, GameObject>,
+                    GameObjectMapIconDecorator
                 >();
 
                 //Register Sprite
@@ -300,6 +306,28 @@ namespace TrainworksReloaded.Plugin
                     pipeline.Run(x);
                 });
 
+                //Register Map Data
+                c.RegisterSingleton<IRegister<MapNodeData>, MapNodeRegister>();
+                c.RegisterSingleton<MapNodeRegister, MapNodeRegister>();
+                c.Register<IDataPipeline<IRegister<MapNodeData>, MapNodeData>, MapNodePipeline>();
+                c.RegisterInitializer<IRegister<MapNodeData>>(x =>
+                {
+                    var pipeline = c.GetInstance<
+                        IDataPipeline<IRegister<MapNodeData>, MapNodeData>
+                    >();
+                    pipeline.Run(x);
+                });
+                c.Collection.Register<IFactory<MapNodeData>>([typeof(RewardNodeDataFactory)]);
+                c.RegisterDecorator<
+                    IDataPipeline<IRegister<MapNodeData>, MapNodeData>,
+                    RewardNodeDataPipelineDecorator
+                >();
+                c.RegisterDecorator(
+                    typeof(IDataFinalizer),
+                    typeof(RewardNodeDataFinalizerDecorator),
+                    xs => xs.ImplementationType == typeof(MapNodeFinalizer)
+                );
+
                 //Register Trait Data
                 c.RegisterSingleton<IRegister<CardTraitData>, CardTraitDataRegister>();
                 c.RegisterSingleton<CardTraitDataRegister, CardTraitDataRegister>();
@@ -329,7 +357,7 @@ namespace TrainworksReloaded.Plugin
                 c.Collection.Register<IFactory<RewardData>>([typeof(CardPoolRewardDataFactory)]);
                 c.RegisterDecorator(
                     typeof(IDataFinalizer),
-                    typeof(CardPoolRewardDataFinalizer),
+                    typeof(CardPoolRewardDataFinalizerDecorator),
                     xs => xs.ImplementationType == typeof(RewardDataFinalizer)
                 );
 

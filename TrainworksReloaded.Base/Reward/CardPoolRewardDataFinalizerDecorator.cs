@@ -11,24 +11,24 @@ using UnityEngine;
 
 namespace TrainworksReloaded.Base.Reward
 {
-    public class CardPoolRewardDataFinalizer : IDataFinalizer
+    public class CardPoolRewardDataFinalizerDecorator : IDataFinalizer
     {
-        private readonly IModLogger<CardPoolRewardDataFinalizer> logger;
+        private readonly IModLogger<CardPoolRewardDataFinalizerDecorator> logger;
         private readonly ICache<IDefinition<RewardData>> cache;
         private readonly IRegister<CardPool> cardPoolRegister;
-        private readonly IDataFinalizer dataFinalizer;
+        private readonly IDataFinalizer decoratee;
 
-        public CardPoolRewardDataFinalizer(
-            IModLogger<CardPoolRewardDataFinalizer> logger,
+        public CardPoolRewardDataFinalizerDecorator(
+            IModLogger<CardPoolRewardDataFinalizerDecorator> logger,
             ICache<IDefinition<RewardData>> cache,
             IRegister<CardPool> cardPoolRegister,
-            IDataFinalizer dataFinalizer
+            IDataFinalizer decoratee
         )
         {
             this.logger = logger;
             this.cache = cache;
             this.cardPoolRegister = cardPoolRegister;
-            this.dataFinalizer = dataFinalizer;
+            this.decoratee = decoratee;
         }
 
         public void FinalizeData()
@@ -37,7 +37,7 @@ namespace TrainworksReloaded.Base.Reward
             {
                 FinalizeRewardData(definition);
             }
-            dataFinalizer.FinalizeData();
+            decoratee.FinalizeData();
             cache.Clear();
         }
 
