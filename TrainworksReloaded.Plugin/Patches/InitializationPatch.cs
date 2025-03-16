@@ -1,9 +1,11 @@
 ﻿using System.Linq;
+using System.Xml.Linq;
 using HarmonyLib;
 using Malee;
 using TrainworksReloaded.Base.Card;
 using TrainworksReloaded.Base.Class;
 using TrainworksReloaded.Base.Localization;
+using TrainworksReloaded.Base.Map;
 using TrainworksReloaded.Core;
 using TrainworksReloaded.Core.Impl;
 
@@ -49,6 +51,62 @@ namespace TrainworksReloaded.Plugin.Patches
                         .Field(typeof(BalanceData), "classDatas")
                         .GetValue(____assetLoadingData.BalanceData);
             classDatas.AddRange(classRegister.Values);
+
+            //handle map data
+            var mapDelegator = container.GetInstance<MapNodeDelegator>();
+            var runDataDictionary = new Dictionary<string, RunData>
+            {
+                { "primary", ____assetLoadingData.BalanceData.GetRunData(false, false) },
+                { "first_time", ____assetLoadingData.BalanceData.GetRunData(true, false) },
+                { "endless", ____assetLoadingData.BalanceData.GetRunData(false, true) },
+            };
+
+            foreach (var kvp in runDataDictionary)
+            {
+                var runDataKey = kvp.Key;
+                var bucketLists =
+                    (ReorderableArray<MapNodeBucketList>)
+                        AccessTools
+                            .Field(typeof(RunData), "mapNodeBucketLists")
+                            .GetValue(kvp.Value);
+
+                if (bucketLists == null)
+                    continue;
+
+                foreach (var bucketList in bucketLists)
+                {
+                    foreach (var bucket in bucketList.BucketList)
+                    {
+                        var bucketId = (string)
+                            AccessTools
+                                .Field(typeof(MapNodeBucketContainer), "id")
+                                .GetValue(bucket);
+
+                        if (
+                            mapDelegator.MapBucketToData.TryGetValue(
+                                new MapNodeKey(runDataKey, bucketId),
+                                out var values
+                            )
+                        )
+                        {
+                            var bucketDataList =
+                                (ReorderableArray<MapNodeBucketData>)
+                                    AccessTools
+                                        .Field(
+                                            typeof(MapNodeBucketContainer),
+                                            "mapNodeBucketContainerList"
+                                        )
+                                        .GetValue(bucket);
+
+                            foreach (var bucketData in bucketDataList)
+                            {
+                                bucketData.MapNodes.AddRange(values);
+                            }
+                        }
+                    }
+                }
+            }
+            mapDelegator.MapBucketToData.Clear();
 
             //Load localization at this time
             var localization = container.GetInstance<CustomLocalizationTermRegistry>();

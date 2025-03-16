@@ -18,16 +18,19 @@ namespace TrainworksReloaded.Base.Map
         private readonly PluginAtlas atlas;
         private readonly IRegister<LocalizationTerm> termRegister;
         private readonly Dictionary<String, IFactory<MapNodeData>> generators;
+        private readonly IGuidProvider guidProvider;
 
         public MapNodePipeline(
             PluginAtlas atlas,
             IEnumerable<IFactory<MapNodeData>> generators,
-            IRegister<LocalizationTerm> termRegister
+            IRegister<LocalizationTerm> termRegister,
+            IGuidProvider guidProvider
         )
         {
             this.atlas = atlas;
             this.termRegister = termRegister;
             this.generators = generators.ToDictionary(xs => xs.FactoryKey);
+            this.guidProvider = guidProvider;
         }
 
         public List<IDefinition<MapNodeData>> Run(IRegister<MapNodeData> service)
@@ -80,6 +83,10 @@ namespace TrainworksReloaded.Base.Map
 
             var name = key.GetId(TemplateConstants.MapNode, id);
             data.name = name;
+
+            //handle id
+            var guid = guidProvider.GetGuidDeterministic(name).ToString();
+            AccessTools.Field(typeof(MapNodeData), "id").SetValue(data, guid);
 
             var titleKey = $"MapNode_titleKey-{name}";
             var descriptionKey = $"MapNode_descriptionKey-{name}";

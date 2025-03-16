@@ -5,6 +5,35 @@
       "type": "string",
       "enum": [ "card_art", "map_node_icon" ]
     },
+    "run_type": {
+      "type": "string",
+      "enum": [ "endless", "primary", "first_time" ]
+    },
+    "bucket": {
+      "type": "string",
+      "enum": [
+        "First Champion Upgrade - Level 1",
+        "Second Champion Upgrade - Level 4",
+        "Third Champion Upgrade - Level 6",
+        "Starter Blessing - Level 1",
+        "Merchant Ring 2",
+        "Merchant Ring 3",
+        "Merchant - Rings 6 and 7",
+        "Merchant - Rings 4 and 5",
+        "Merchant - Level 7 Artifact Guaranteed",
+        "Event - Level 3",
+        "Rewards Ring 7",
+        "Rewards Ring 6 Heal or Coin",
+        "Rewards Heal or Coin at 5",
+        "Rewards Rings 5 and 6",
+        "Rewards Rings 4",
+        "Rewards Rings 3",
+        "Rewards Ring 3 Heal or Coin",
+        "Merchant Ring 1",
+        "Banners Ring 1",
+        "Rewards Ring 2"
+      ]
+    },
     "reward_type": {
       "type": "string",
       "enum": [ "cardpool" ]
@@ -1658,6 +1687,26 @@
           },
           "type": {
             "#ref": "#/definitions/map_node_type"
+          },
+          "map_pools": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Random Map Data Reference"
+            }
+          },
+          "buckets": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "bucket": {
+                  "#ref": "#/definitions/bucket"
+                },
+                "run_type": {
+                  "#ref": "#/definitions/run_type"
+                }
+              }
+            }
           },
           "map_icon": {
             "type": "string",

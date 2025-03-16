@@ -41,7 +41,8 @@ namespace TrainworksReloaded.Base.Prefab
             var spriteVal = definition
                 .Configuration.GetSection("extensions")
                 .GetSection("card_art")
-                .ParseString();
+                .GetSection("sprite")
+                .Value;
             if (spriteVal == null)
                 return;
 

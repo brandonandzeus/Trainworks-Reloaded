@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 using HarmonyLib;
+using Malee;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Base.Room;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
 
-namespace TrainworksReloaded.Base.Reward
+namespace TrainworksReloaded.Base.Map
 {
     public class MapNodeFinalizer : IDataFinalizer
     {
@@ -115,6 +116,29 @@ namespace TrainworksReloaded.Base.Reward
                 }
             }
             AccessTools.Field(typeof(MapNodeData), "ignoreIfNodesPresent").SetValue(data, mapNodes);
+
+            foreach (var config in configuration.GetSection("map_pools").GetChildren())
+            {
+                var mapNode = config.ParseString();
+                if (
+                    mapNode != null
+                    && mapNodeRegister.TryLookupName(
+                        mapNode.ToId(key, TemplateConstants.MapNode),
+                        out var mapLookup,
+                        out var _
+                    )
+                    && mapLookup is RandomMapDataContainer mapContainer
+                )
+                {
+                    var mapData =
+                        (ReorderableArray<MapNodeData>)
+                            AccessTools
+                                .Field(typeof(RandomMapDataContainer), "mapNodeDataList")
+                                .GetValue(mapContainer);
+                    if (mapData != null)
+                        mapData.Add(data);
+                }
+            }
         }
     }
 }

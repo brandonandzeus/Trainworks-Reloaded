@@ -52,8 +52,17 @@ namespace TrainworksReloaded.Base.Prefab
             var mapNodeIcon = gameObject.AddComponent<MapNodeIcon>();
             var raycastTarget = gameObject.AddComponent<Graphic2DInvisRaycastTarget>();
 
+            rectTransform.sizeDelta = new Vector2(120, 120);
+
             var artRoot = new GameObject { name = "Art root" };
+            var artRectTransform = artRoot.AddComponent<RectTransform>();
             artRoot.transform.SetParent(gameObject.transform);
+            artRectTransform.sizeDelta = new Vector2(210, 210);
+            artRectTransform.anchoredPosition = new Vector2(0, 15.2500f);
+
+            var fxRoot = new GameObject { name = "Fx Root" };
+            fxRoot.transform.SetParent(gameObject.transform);
+            AccessTools.Field(typeof(MapNodeIcon), "enabledFxRoot").SetValue(mapNodeIcon, fxRoot);
 
             var selectedIndicator = new GameObject { name = "Selected Indicator" };
             selectedIndicator.transform.SetParent(gameObject.transform);

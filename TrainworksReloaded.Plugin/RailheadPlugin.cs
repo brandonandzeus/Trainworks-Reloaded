@@ -317,16 +317,24 @@ namespace TrainworksReloaded.Plugin
                     >();
                     pipeline.Run(x);
                 });
-                c.Collection.Register<IFactory<MapNodeData>>([typeof(RewardNodeDataFactory)]);
+                c.Collection.Register<IFactory<MapNodeData>>(
+                    [typeof(RewardNodeDataFactory)],
+                    Lifestyle.Singleton
+                );
                 c.RegisterDecorator<
                     IDataPipeline<IRegister<MapNodeData>, MapNodeData>,
                     RewardNodeDataPipelineDecorator
+                >();
+                c.RegisterDecorator<
+                    IDataPipeline<IRegister<MapNodeData>, MapNodeData>,
+                    BucketMapNodePipelineDecorator
                 >();
                 c.RegisterDecorator(
                     typeof(IDataFinalizer),
                     typeof(RewardNodeDataFinalizerDecorator),
                     xs => xs.ImplementationType == typeof(MapNodeFinalizer)
                 );
+                c.RegisterSingleton<MapNodeDelegator>();
 
                 //Register Trait Data
                 c.RegisterSingleton<IRegister<CardTraitData>, CardTraitDataRegister>();
@@ -354,7 +362,10 @@ namespace TrainworksReloaded.Plugin
                     >();
                     pipeline.Run(x);
                 });
-                c.Collection.Register<IFactory<RewardData>>([typeof(CardPoolRewardDataFactory)]);
+                c.Collection.Register<IFactory<RewardData>>(
+                    [typeof(CardPoolRewardDataFactory)],
+                    Lifestyle.Singleton
+                );
                 c.RegisterDecorator(
                     typeof(IDataFinalizer),
                     typeof(CardPoolRewardDataFinalizerDecorator),
