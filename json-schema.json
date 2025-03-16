@@ -1545,6 +1545,24 @@
         }
       }
     },
+    "atlas_icons": {
+      "type": "array",
+      "items": {
+        "required": [
+          "id",
+          "path"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "If this references a status effect icon or trigger icon, the ID must exactly match with the ID in the sprites section."
+          },
+          "path": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "traits": {
       "type": "array",
       "uniqueItems": true,
@@ -1860,36 +1878,37 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "name"],
+        "required": ["id", "class_name"],
         "properties": {
           "id": {
             "type": "string",
             "description": "The StatusID of the status effect, must match StatusID of the StatusEffectState class, and must be a unique string."
           },
-          "name": {
+          "class_name": {
             "type": "string",
-            "description": "Class name associated with this status effect. Must be the name of a class inheriting from StatusEffectState."
+            "description": "Class name associated with this status effect. Must be the name of a class in your Plugin inheriting from StatusEffectState."
           },
           "icon": {
-            "type": "string"
+            "type": "string",
+            "description": "From section sprites, must reference the id of a sprite sized 24x24 that has a transparent background and white. For display in tooltips an atlas_sprite must be given (with the same ID) a black and white image of the same size."
           },
-          "card_text": {
+          "names": {
             "#ref": "#/definitions/parse_term",
             "description": "Used when the status effect is nonstackable. The text that displays when applied on a card."
           },
-          "stack_card_text": {
+          "stackable_names": {
             "#ref": "#/definitions/parse_term",
             "description": "Used when the status effect is stackable. The text that displays when applied on a card."
           },
-          "card_tooltip": {
+          "card_tooltips": {
             "#ref": "#/definitions/parse_term",
             "description": "Tooltip text describing the status effect when mousing over a card."
           },
-          "character_tooltip": {
+          "character_tooltips": {
             "#ref": "#/definitions/parse_term",
             "description": "Tooltip text describing the status effect when mousing over a character."
           },
-          "notification": {
+          "notifications": {
             "#ref": "#/definitions/parse_term",
             "description": "Notification text."
           },
