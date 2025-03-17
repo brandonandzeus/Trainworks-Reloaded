@@ -13,6 +13,6 @@ namespace TrainworksReloaded.Base.StatusEffects
         public StatusEffectData Data { get; set; } = data;
         public IConfiguration Configuration { get; set; } = configuration;
         public string Id { get; set; } = "";
-        public bool IsModded { get; set; } = true;
+        public bool IsModded => true;
     }
 }

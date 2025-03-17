@@ -52,7 +52,6 @@ namespace TrainworksReloaded.Base.StatusEffects
                 if (effect.GetStatusId() == name)
                 {
                     lookup = effect;
-                    IsModded = true;
                     return true;
                 }
             }

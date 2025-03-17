@@ -15,7 +15,7 @@ namespace TrainworksReloaded.Base.Prefab
 
         public void Register(string key, Texture2D item)
         {
-            logger.Log(LogLevel.Info, $"Register Texture2D ({key})");
+            logger.Log(LogLevel.Info, $"Register Icon ({key})");
             this.Add(key, item);
         }
 
@@ -42,7 +42,6 @@ namespace TrainworksReloaded.Base.Prefab
                 if (icon.name == name)
                 {
                     lookup = icon;
-                    IsModded = true;
                     return true;
                 }
             }

@@ -61,6 +61,7 @@ namespace TrainworksReloaded.Base.StatusEffects
             }
 
             var data = new StatusEffectData();
+            // Don't change the statusId it must match exactly with the StatusEffectState class.
             AccessTools.Field(typeof(StatusEffectData), "statusId").SetValue(data, statusId);
 
             var statusEffectStateName = configuration.GetSection("class_name").Value;
@@ -71,14 +72,14 @@ namespace TrainworksReloaded.Base.StatusEffects
             var assembly = atlas.PluginDefinitions[key].Assembly;
             if (!statusEffectStateName.GetFullyQualifiedName<StatusEffectState>(
                 assembly,
-                out string? fullyQualifiedName
-            ))
+                out string? fullyQualifiedName)
+            )
             {
                 return null;
             }
             AccessTools.Field(typeof(StatusEffectData), "statusEffectStateName").SetValue(data, fullyQualifiedName);
 
-            // The localization keys per status are generated based on the statusId.
+            // The localization keys per status are generated based a based on a base key name.
             var base_key = "StatusEffect_" + statusId;
 
             var localizationNameTerm = configuration.GetSection("names").ParseLocalizationTerm();
@@ -258,7 +259,10 @@ namespace TrainworksReloaded.Base.StatusEffects
 
             var name = key.GetId("StatusEffect", statusId);
             service.Register(name, data);
-            return new StatusEffectDataDefinition(key, data, configuration);
+            return new StatusEffectDataDefinition(key, data, configuration)
+            {
+                Id = statusId,
+            };
         }
     }
 }

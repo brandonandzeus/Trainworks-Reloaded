@@ -33,8 +33,8 @@ namespace TrainworksReloaded.Base.Prefab
                         continue;
                     }
                     // These need to share the same naming scheme as the sprites in the sprites section.
-                    // StatusEffectManager uses the StatusEffectData Icon's name to Query the TMP_SpriteAsset
-                    // for an icon with the exact same name.
+                    // StatusEffectManager uses the StatusEffectData/CharacterTrigger's Icon's sprite name to
+                    // query the TMP_SpriteAsset for an icon with the exact same name.
                     // A sprite with ID will be used for StatusEffectData.Icon then an Atlas Icon needs to be 
                     // registered with the same ID for use in Tooltips.
                     var name = key.GetId("Sprite", id);
@@ -57,7 +57,6 @@ namespace TrainworksReloaded.Base.Prefab
                         var definition = new AtlasIconDefinition(key, texture2d, config)
                         {
                             Id = id,
-                            IsModded = true,
                         };
                         definitions.Add(definition);
                         break;
