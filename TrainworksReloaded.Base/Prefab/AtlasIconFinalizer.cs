@@ -1,13 +1,17 @@
-﻿using System;
+﻿using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Xml.Schema;
 using TMPro;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.TextCore;
+using static UnityEngine.GraphicsBuffer;
 
 namespace TrainworksReloaded.Base.Prefab
 {
@@ -18,7 +22,6 @@ namespace TrainworksReloaded.Base.Prefab
     {
         private readonly ICache<IDefinition<Texture2D>> cache = cache;
         private readonly IRegister<Texture2D> iconRegister = iconRegister;
-        private const int MAX_TEXTURE_SIZE = 480;
 
         public void FinalizeData()
         {
@@ -29,44 +32,62 @@ namespace TrainworksReloaded.Base.Prefab
             }
             cache.Clear();
 
-            var SpriteAtlas = new Texture2D(MAX_TEXTURE_SIZE, MAX_TEXTURE_SIZE);
+            // This code is a copy from TMP_SpriteAsset.UpgradeSpriteAsset.
+            // That function has a bug in that the SpriteCharacters created all point to the same SpriteGlyph.
+            // That's due to that code failing to set the proper glphyIndex. 
 
-            Rect[] rects = SpriteAtlas.PackTextures([.. textures], 0);
-
+            // Basic setup, Create a Sprite Atlas.
+            //
+            // Padding to ensure that the edges of the other images aren't picked up.
+            // The base game uses a gap of 6 pixels.
+            var atlas = new Texture2D(2,2);
+            var rects = atlas.PackTextures(textures.ToArray(), padding: 6);
             var spriteAsset = ScriptableObject.CreateInstance<TMP_SpriteAsset>();
             spriteAsset.name = "Trainworks Sprite Atlas";
-            spriteAsset.spriteSheet = SpriteAtlas;
+            spriteAsset.hashCode = TMP_TextUtilities.GetSimpleHashCode(spriteAsset.name);
+            spriteAsset.spriteSheet = atlas;
+            spriteAsset.spriteInfoList = [];
             spriteAsset.material = new Material(Shader.Find("TextMeshPro/Sprite"))
             {
-                mainTexture = SpriteAtlas
+                mainTexture = atlas
             };
-            spriteAsset.spriteInfoList = [];
 
+            // Create the SpriteCharacters and SpriteGlyphs.
+            var spriteGlyphTable = spriteAsset.spriteGlyphTable;
+            var spriteCharacterTable = spriteAsset.spriteCharacterTable;
+            // GlyphMetrics are constant, all icons are this size, if a texture is bigger then it will be resized to fit automatically.
+            // BearingY is a hardcoded value to get the icons to align properly with the text.
+            var metrics = new GlyphMetrics(width: 24, height: 24, bearingX: 0, bearingY: 20, advance: 24);
             for (int j = 0; j < rects.Length; j++)
             {
                 var texture = textures[j];
                 var rect = rects[j];
-
-                TMP_Sprite sprite = new()
-                {
-                    x = rect.x * SpriteAtlas.width,
-                    y = rect.y * SpriteAtlas.height
-                };
-                sprite.sprite = Sprite.Create(SpriteAtlas, new Rect(sprite.x, sprite.y, texture.width, texture.height), new Vector2(0.5f, 0.5f), 128f);
+                int x = (int)(rect.x * atlas.width);
+                int y = (int)(rect.y * atlas.height);
+                var sprite = Sprite.Create(atlas, new Rect(x, y, texture.width, texture.height), new Vector2(0.5f, 0.5f), 128f);
                 sprite.name = texture.name;
-                sprite.unicode = 0;
-                sprite.width = texture.width;
-                sprite.height = texture.height;
-                sprite.xOffset = 0;
-                sprite.yOffset = 20; // Hardcoded constant to line up with the rest of the text.
-                sprite.xAdvance = texture.width;
-                sprite.scale = 1;
-
-                spriteAsset.spriteInfoList.Add(sprite);
+                TMP_SpriteGlyph tMP_SpriteGlyph = new()
+                {
+                    index = (uint)j,
+                    sprite = sprite,
+                    metrics = metrics,
+                    glyphRect = new GlyphRect(x, y, texture.width, texture.height),
+                    scale = 1f,
+                    atlasIndex = 0
+                };
+                spriteGlyphTable.Add(tMP_SpriteGlyph);
+                TMP_SpriteCharacter tMP_SpriteCharacter = new()
+                {
+                    glyph = tMP_SpriteGlyph,
+                    glyphIndex = (uint)j,
+                    unicode = 65534u, // special constant for sprites.
+                    name = sprite.name,
+                    scale = 1
+                };
+                spriteCharacterTable.Add(tMP_SpriteCharacter);
             }
 
             spriteAsset.UpdateLookupTables();
-
             TMP_Settings.defaultSpriteAsset.fallbackSpriteAssets.Add(spriteAsset);
         }
     }

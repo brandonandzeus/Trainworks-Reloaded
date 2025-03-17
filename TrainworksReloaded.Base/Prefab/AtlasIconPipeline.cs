@@ -36,7 +36,7 @@ namespace TrainworksReloaded.Base.Prefab
                     // StatusEffectManager uses the StatusEffectData Icon's name to Query the TMP_SpriteAsset
                     // for an icon with the exact same name.
                     // A sprite with ID will be used for StatusEffectData.Icon then an Atlas Icon needs to be 
-                    // registerd with the same ID for use in Tooltips.
+                    // registered with the same ID for use in Tooltips.
                     var name = key.GetId("Sprite", id);
 
                     foreach (var directory in pluginDefinition.Value.AssetDirectories)
