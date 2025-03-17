@@ -1,13 +1,28 @@
 {
   "$schema": "https://json-schema.org/draft-07/schema#",
   "definitions": {
-    "game_object_type": {
+    "anim": {
       "type": "string",
-      "enum": [ "card_art", "map_node_icon" ]
+      "enum": [
+        "none",
+        "idle",
+        "attack",
+        "hit_react",
+        "idle_relentless",
+        "attack_spell",
+        "death",
+        "talk",
+        "hover"
+      ]
     },
-    "run_type": {
+    "attack_phase": {
       "type": "string",
-      "enum": [ "endless", "primary", "first_time" ]
+      "enum": [
+        "none",
+        "casting",
+        "relentless",
+        "both"
+      ]
     },
     "bucket": {
       "type": "string",
@@ -32,46 +47,6 @@
         "Merchant Ring 1",
         "Banners Ring 1",
         "Rewards Ring 2"
-      ]
-    },
-    "reward_type": {
-      "type": "string",
-      "enum": [ "cardpool" ]
-    },
-    "reward_filter": {
-      "type": "string",
-      "enum": [ "none", "only_endless", "not_endless", "only_if_allied_champ" ]
-    },
-    "map_skip_settings": {
-      "type": "string",
-      "enum": [
-        "none",
-        "always",
-        "if_full_health",
-        "both"
-      ]
-    },
-    "anim": {
-      "type": "string",
-      "enum": [
-        "none",
-        "idle",
-        "attack",
-        "hit_react",
-        "idle_relentless",
-        "attack_spell",
-        "death",
-        "talk",
-        "hover"
-      ]
-    },
-    "attack_phase": {
-      "type": "string",
-      "enum": [
-        "none",
-        "casting",
-        "relentless",
-        "both"
       ]
     },
     "card_selection_mode": {
@@ -276,6 +251,13 @@
         "previous_turn"
       ]
     },
+    "game_object_type": {
+      "type": "string",
+      "enum": [
+        "card_art",
+        "map_node_icon"
+      ]
+    },
     "health_filter": {
       "type": "string",
       "enum": [
@@ -292,6 +274,15 @@
         "story_event"
       ],
       "type": "string"
+    },
+    "map_skip_settings": {
+      "type": "string",
+      "enum": [
+        "none",
+        "always",
+        "if_full_health",
+        "both"
+      ]
     },
     "parse_term": {
       "type": "object",
@@ -359,6 +350,29 @@
         "starter",
         "rare",
         "champion"
+      ]
+    },
+    "reward_filter": {
+      "type": "string",
+      "enum": [
+        "none",
+        "only_endless",
+        "not_endless",
+        "only_if_allied_champ"
+      ]
+    },
+    "reward_type": {
+      "type": "string",
+      "enum": [
+        "cardpool"
+      ]
+    },
+    "run_type": {
+      "type": "string",
+      "enum": [
+        "endless",
+        "primary",
+        "first_time"
       ]
     },
     "stack_mode": {
@@ -655,6 +669,83 @@
   },
   "description": "",
   "properties": {
+    "card_pools": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "cards": {
+            "items": {
+              "type": "string",
+              "description": "Card Data Reference"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      }
+    },
+    "card_triggers": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "properties": {
+          "descriptions": {
+            "$ref": "#/definitions/parse_term"
+          },
+          "effects": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "trigger": {
+            "$ref": "#/definitions/card_trigger"
+          },
+          "trigger_effects": {
+            "items": {
+              "buff_effect": {
+                "type": "string",
+                "description": "Required param only for CardTriggerBuffEffect, this references which CardEffect in Card.effects is the target of the \"buff\" the param_int of that card effect will be modified with the value given in this CardTrigger. This also resets the CardEffect at the end of battle (THe card must have only 1 effect)."
+              },
+              "param_int": {
+                "type": "number"
+              },
+              "param_upgrade": {
+                "type": "string"
+              },
+              "persistence": {
+                "$ref": "#/definitions/persistence"
+              },
+              "trigger_effect": {
+                "type": "string",
+                "description": "Reference to ICardTriggerEffect to be played when triggered."
+              }
+            },
+            "required": [
+              "trigger_effect"
+            ],
+            "type": "array"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      }
+    },
     "cards": {
       "type": "array",
       "uniqueItems": true,
@@ -663,84 +754,41 @@
           "id"
         ],
         "properties": {
-          "id": {
-            "type": "string",
-            "minLength": 1
-          },
-          "override": {
-            "type": "boolean"
-          },
-          "names": {
-            "$ref": "#/definitions/parse_term"
-          },
-          "descriptions": {
-            "$ref": "#/definitions/parse_term"
-          },
-          "card_art_reference": {
-            "type": "string"
-          },
-          "cost": {
-            "type": "integer"
-          },
-          "pools": {
-            "type": "array",
-            "uniqueItems": true,
-            "items": {
-              "type": "string",
-              "enum": [
-                "JunkPoolT1",
-                "JunkPoolT2",
-                "JunkPoolT3",
-                "RoomAndEquipmentMerchant_EquipmentPool",
-                "RoomAndEquipmentMerchant_RoomPool",
-                "VengefulShardOnlyPool",
-                "DantesCandleOnlyPool",
-                "MegaPool",
-                "LevelableUnits",
-                "UnitsAllBanner",
-                "TrainStewardOnly"
-              ]
-            }
-          },
-          "type": {
-            "$ref": "#/definitions/card_type"
-          },
-          "cost_type": {
-            "$ref": "#/definitions/cost_type"
-          },
-          "rarity": {
-            "$ref": "#/definitions/rarity"
-          },
-          "class": {
-            "type": "string"
-          },
-          "unlock_level": {
-            "type": "integer"
-          },
           "ability": {
             "type": "boolean"
           },
           "ability_effects_other_floors": {
             "type": "boolean"
           },
+          "artist": {
+            "type": "string"
+          },
+          "card_art_reference": {
+            "type": "string"
+          },
+          "class": {
+            "type": "string"
+          },
           "cooldown": {
             "type": "integer"
           },
-          "initial_cooldown": {
+          "cost": {
             "type": "integer"
           },
-          "targets_room": {
+          "cost_type": {
+            "$ref": "#/definitions/cost_type"
+          },
+          "count_for_mastery": {
             "type": "boolean"
           },
-          "targetless": {
-            "type": "boolean"
+          "descriptions": {
+            "$ref": "#/definitions/parse_term"
           },
           "dlc": {
             "$ref": "#/definitions/dlc"
           },
-          "traits": {
+          "effect_triggers": {
             "type": "array",
-            "uniqueItems": true,
             "items": {
               "required": [
                 "id"
@@ -766,31 +814,15 @@
               }
             }
           },
-          "triggers": {
-            "type": "array",
-            "items": {
-              "required": [
-                "id"
-              ],
-              "properties": {
-                "id": {
-                  "type": "string"
-                }
-              }
-            }
+          "hide_in_logbook": {
+            "type": "boolean"
           },
-          "effect_triggers": {
-            "type": "array",
-            "items": {
-              "required": [
-                "id"
-              ],
-              "properties": {
-                "id": {
-                  "type": "string"
-                }
-              }
-            }
+          "id": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "initial_cooldown": {
+            "type": "integer"
           },
           "initial_upgrades": {
             "type": "array",
@@ -804,6 +836,50 @@
                 }
               }
             }
+          },
+          "lore_tooltips": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/definitions/parse_term",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "mastery_card": {
+            "type": "string"
+          },
+          "names": {
+            "$ref": "#/definitions/parse_term"
+          },
+          "override": {
+            "type": "boolean"
+          },
+          "pools": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "JunkPoolT1",
+                "JunkPoolT2",
+                "JunkPoolT3",
+                "RoomAndEquipmentMerchant_EquipmentPool",
+                "RoomAndEquipmentMerchant_RoomPool",
+                "VengefulShardOnlyPool",
+                "DantesCandleOnlyPool",
+                "MegaPool",
+                "LevelableUnits",
+                "UnitsAllBanner",
+                "TrainStewardOnly"
+              ]
+            }
+          },
+          "rarity": {
+            "$ref": "#/definitions/rarity"
           },
           "shared_discovery_cards": {
             "type": "array",
@@ -831,17 +907,22 @@
               }
             }
           },
-          "count_for_mastery": {
+          "target_assist": {
+            "$ref": "#/definitions/target_assist"
+          },
+          "targetless": {
             "type": "boolean"
           },
-          "hide_in_logbook": {
+          "targets_room": {
             "type": "boolean"
           },
-          "lore_tooltips": {
+          "traits": {
             "type": "array",
             "uniqueItems": true,
             "items": {
-              "$ref": "#/definitions/parse_term",
+              "required": [
+                "id"
+              ],
               "properties": {
                 "id": {
                   "type": "string"
@@ -849,16 +930,310 @@
               }
             }
           },
-          "target_assist": {
-            "$ref": "#/definitions/target_assist"
+          "triggers": {
+            "type": "array",
+            "items": {
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
           },
-          "artist": {
-            "type": "string"
+          "type": {
+            "$ref": "#/definitions/card_type"
+          },
+          "unlock_level": {
+            "type": "integer"
           },
           "vfx": {
             "type": "string"
+          }
+        }
+      }
+    },
+    "character_triggers": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "allow_tooltips_when_hidden": {
+            "type": "boolean"
           },
-          "mastery_card": {
+          "descriptions": {
+            "$ref": "#/definitions/parse_term"
+          },
+          "display_hint_text": {
+            "type": "boolean"
+          },
+          "effects": {
+            "type": "array",
+            "items": {
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "hide_tooltip": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "string"
+          },
+          "only_trigger_if_equipped": {
+            "type": "boolean"
+          },
+          "show_text_on_trigger_success_only": {
+            "type": "boolean"
+          },
+          "suppress_notifications": {
+            "type": "boolean"
+          },
+          "text_on_trigger": {
+            "$ref": "#/definitions/parse_term"
+          },
+          "trigger": {
+            "$ref": "#/definitions/character_trigger"
+          },
+          "trigger_once": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "characters": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "ability": {
+            "type": "string"
+          },
+          "animator": {
+            "type": "string"
+          },
+          "ascends_train_automatically": {
+            "type": "boolean"
+          },
+          "attack_damage": {
+            "type": "integer"
+          },
+          "attack_teleports_to_defender": {
+            "type": "boolean"
+          },
+          "attack_vfx": {
+            "type": "string"
+          },
+          "block_size_increase": {
+            "type": "boolean"
+          },
+          "boss_action_groups": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "repeats": {
+                  "type": "integer"
+                },
+                "actions": {
+                  "type": "array",
+                  "items": {
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "tooltip": {
+                        "$ref": "#/definitions/parse_term"
+                      },
+                      "team": {
+                        "$ref": "#/definitions/team"
+                      },
+                      "effects": {
+                        "type": "array",
+                        "items": {
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "boss_cast_vfx": {
+            "type": "string"
+          },
+          "boss_room_cast_vfx": {
+            "type": "string"
+          },
+          "can_attack": {
+            "type": "boolean"
+          },
+          "can_be_healed": {
+            "type": "boolean"
+          },
+          "can_equip_only_grafted": {
+            "type": "boolean"
+          },
+          "character_art": {
+            "type": "string"
+          },
+          "character_chatter_data": {
+            "type": "string"
+          },
+          "character_lore_tooltips": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "character_sound_data": {
+            "type": "string"
+          },
+          "chosen_variant": {
+            "type": "boolean"
+          },
+          "death_slides_backwards": {
+            "type": "boolean"
+          },
+          "death_type": {
+            "type": "string"
+          },
+          "death_vfx": {
+            "type": "string"
+          },
+          "disable_in_daily_challenges": {
+            "type": "boolean"
+          },
+          "endless_stats": {
+            "type": "object",
+            "properties": {
+              "health": {
+                "type": "integer"
+              },
+              "attack": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "health",
+              "attack"
+            ]
+          },
+          "enemy_relic_data": {
+            "type": "string"
+          },
+          "equip_limit": {
+            "type": "integer"
+          },
+          "grafted_equipment": {
+            "type": "string"
+          },
+          "health": {
+            "type": "integer"
+          },
+          "hide_in_logbook": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "string"
+          },
+          "impact_vfx": {
+            "type": "string"
+          },
+          "is_mini_boss": {
+            "type": "boolean"
+          },
+          "is_outer_train_boss": {
+            "type": "boolean"
+          },
+          "is_pyre": {
+            "type": "boolean"
+          },
+          "loops_between_floors": {
+            "type": "boolean"
+          },
+          "names": {
+            "$ref": "#/definitions/parse_term"
+          },
+          "projectile_vfx": {
+            "type": "string"
+          },
+          "pyre_heart_data": {
+            "type": "string"
+          },
+          "remove_triggers_on_relentless": {
+            "type": "boolean"
+          },
+          "room_modifiers": {
+            "type": "array",
+            "items": {
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "size": {
+            "type": "integer"
+          },
+          "starting_status_effects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/status_effect"
+            }
+          },
+          "status_effect_immunities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "subtypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/subtype"
+            }
+          },
+          "titan_affinity": {
+            "$ref": "#/definitions/titan_affinity"
+          },
+          "triggers": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "valid_attack_phase": {
             "type": "string"
           }
         }
@@ -872,60 +1247,8 @@
           "id"
         ],
         "properties": {
-          "id": {
-            "type": "string"
-          },
-          "titles": {
-            "$ref": "#/definitions/parse_term"
-          },
-          "descriptions": {
-            "$ref": "#/definitions/parse_term"
-          },
-          "subclass_descriptions": {
-            "$ref": "#/definitions/parse_term"
-          },
-          "icons": {
-            "type": "object",
-            "properties": {
-              "small": {
-                "type": "string"
-              },
-              "medium": {
-                "type": "string"
-              },
-              "large": {
-                "type": "string"
-              },
-              "silhouette": {
-                "type": "string"
-              }
-            }
-          },
           "card_style": {
             "$ref": "#/definitions/card_style"
-          },
-          "ui_color": {
-            "$ref": "#/definitions/color"
-          },
-          "ui_color_dark": {
-            "$ref": "#/definitions/color"
-          },
-          "ui_gradient": {
-            "type": "array",
-            "uniqueItems": true,
-            "items": {
-              "required": [
-                "time"
-              ],
-              "properties": {
-                "time": {
-                  "type": "number"
-                },
-                "color": {
-                  "$ref": "#/definitions/color"
-                }
-              }
-            }
           },
           "champions": {
             "type": "array",
@@ -977,17 +1300,49 @@
               }
             }
           },
-          "sfx_cue": {
-            "type": "string"
+          "class_preview_texts": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/definitions/parse_term",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
           },
-          "starter_upgrade": {
-            "type": "string"
+          "descriptions": {
+            "$ref": "#/definitions/parse_term"
           },
           "enhancer_pool": {
             "type": "string"
           },
+          "icons": {
+            "type": "object",
+            "properties": {
+              "small": {
+                "type": "string"
+              },
+              "medium": {
+                "type": "string"
+              },
+              "large": {
+                "type": "string"
+              },
+              "silhouette": {
+                "type": "string"
+              }
+            }
+          },
+          "id": {
+            "type": "string"
+          },
           "is_crew": {
             "type": "boolean"
+          },
+          "sfx_cue": {
+            "type": "string"
           },
           "starter_relics": {
             "type": "array",
@@ -998,6 +1353,38 @@
               "properties": {
                 "id": {
                   "type": "string"
+                }
+              }
+            }
+          },
+          "starter_upgrade": {
+            "type": "string"
+          },
+          "subclass_descriptions": {
+            "$ref": "#/definitions/parse_term"
+          },
+          "titles": {
+            "$ref": "#/definitions/parse_term"
+          },
+          "ui_color": {
+            "$ref": "#/definitions/color"
+          },
+          "ui_color_dark": {
+            "$ref": "#/definitions/color"
+          },
+          "ui_gradient": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "required": [
+                "time"
+              ],
+              "properties": {
+                "time": {
+                  "type": "number"
+                },
+                "color": {
+                  "$ref": "#/definitions/color"
                 }
               }
             }
@@ -1015,377 +1402,6 @@
                 "type": "integer"
               }
             }
-          },
-          "class_preview_texts": {
-            "type": "array",
-            "uniqueItems": true,
-            "items": {
-              "$ref": "#/definitions/parse_term",
-              "properties": {
-                "id": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "characters": {
-      "type": "array",
-      "uniqueItems": true,
-      "items": {
-        "required": [
-          "id"
-        ],
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "names": {
-            "$ref": "#/definitions/parse_term"
-          },
-          "character_art": {
-            "type": "string"
-          },
-          "hide_in_logbook": {
-            "type": "boolean"
-          },
-          "size": {
-            "type": "integer"
-          },
-          "block_size_increase": {
-            "type": "boolean"
-          },
-          "health": {
-            "type": "integer"
-          },
-          "can_be_healed": {
-            "type": "boolean"
-          },
-          "is_outer_train_boss": {
-            "type": "boolean"
-          },
-          "valid_attack_phase": {
-            "type": "string"
-          },
-          "is_mini_boss": {
-            "type": "boolean"
-          },
-          "death_type": {
-            "type": "string"
-          },
-          "can_attack": {
-            "type": "boolean"
-          },
-          "ascends_train_automatically": {
-            "type": "boolean"
-          },
-          "loops_between_floors": {
-            "type": "boolean"
-          },
-          "attack_damage": {
-            "type": "integer"
-          },
-          "animator": {
-            "type": "string"
-          },
-          "attack_teleports_to_defender": {
-            "type": "boolean"
-          },
-          "death_slides_backwards": {
-            "type": "boolean"
-          },
-          "chosen_variant": {
-            "type": "boolean"
-          },
-          "projectile_vfx": {
-            "type": "string"
-          },
-          "attack_vfx": {
-            "type": "string"
-          },
-          "impact_vfx": {
-            "type": "string"
-          },
-          "death_vfx": {
-            "type": "string"
-          },
-          "titan_affinity": {
-            "$ref": "#/definitions/titan_affinity"
-          },
-          "boss_cast_vfx": {
-            "type": "string"
-          },
-          "boss_room_cast_vfx": {
-            "type": "string"
-          },
-          "starting_status_effects": {
-            "type": "array",
-            "items": {
-              "$ref": "#/definitions/status_effect"
-            }
-          },
-          "status_effect_immunities": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "triggers": {
-            "type": "array",
-            "uniqueItems": true,
-            "items": {
-              "required": [
-                "id"
-              ],
-              "properties": {
-                "id": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "subtypes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/definitions/subtype"
-            }
-          },
-          "remove_triggers_on_relentless": {
-            "type": "boolean"
-          },
-          "boss_action_groups": {
-            "type": "array",
-            "items": {
-              "properties": {
-                "repeats": {
-                  "type": "integer"
-                },
-                "actions": {
-                  "type": "array",
-                  "items": {
-                    "properties": {
-                      "name": {
-                        "type": "string"
-                      },
-                      "tooltip": {
-                        "$ref": "#/definitions/parse_term"
-                      },
-                      "team": {
-                        "$ref": "#/definitions/team"
-                      },
-                      "effects": {
-                        "type": "array",
-                        "items": {
-                          "properties": {
-                            "id": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "character_sound_data": {
-            "type": "string"
-          },
-          "character_chatter_data": {
-            "type": "string"
-          },
-          "enemy_relic_data": {
-            "type": "string"
-          },
-          "character_lore_tooltips": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "room_modifiers": {
-            "type": "array",
-            "items": {
-              "required": [
-                "id"
-              ],
-              "properties": {
-                "id": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "ability": {
-            "type": "string"
-          },
-          "is_pyre": {
-            "type": "boolean"
-          },
-          "disable_in_daily_challenges": {
-            "type": "boolean"
-          },
-          "pyre_heart_data": {
-            "type": "string"
-          },
-          "equip_limit": {
-            "type": "integer"
-          },
-          "grafted_equipment": {
-            "type": "string"
-          },
-          "can_equip_only_grafted": {
-            "type": "boolean"
-          },
-          "endless_stats": {
-            "type": "object",
-            "properties": {
-              "health": {
-                "type": "integer"
-              },
-              "attack": {
-                "type": "integer"
-              }
-            },
-            "required": [
-              "health",
-              "attack"
-            ]
-          }
-        }
-      }
-    },
-    "card_triggers": {
-      "type": "array",
-      "uniqueItems": true,
-      "items": {
-        "required": [
-          "id"
-        ],
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "trigger": {
-            "$ref": "#/definitions/card_trigger"
-          },
-          "descriptions": {
-            "$ref": "#/definitions/parse_term"
-          },
-          "trigger_effects": {
-            "type": "array",
-            "required": [
-              "trigger_effect"
-            ],
-            "items": {
-              "persistence": {
-                "$ref": "#/definitions/persistence"
-              },
-              "trigger_effect": {
-                "type": "string",
-                "description": "Reference to ICardTriggerEffect to be played when triggered."
-              },
-              "buff_effect": {
-                "type": "string",
-                "description": "Required param only for CardTriggerBuffEffect, this references which CardEffect in Card.effects is the target of the \"buff\" the param_int of that card effect will be modified with the value given in this CardTrigger. This also resets the CardEffect at the end of battle (THe card must have only 1 effect)."
-              },
-              "param_int": {
-                "type": "number"
-              },
-              "param_upgrade": {
-                "type": "string"
-              }
-            }
-          },
-          "effects": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "card_pools": {
-      "type": "array",
-      "uniqueItems": true,
-      "items": {
-        "required": [ "id" ],
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "cards": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "description": "Card Data Reference"
-            }
-          }
-        }
-      }
-    },
-    "character_triggers": {
-      "type": "array",
-      "uniqueItems": true,
-      "items": {
-        "required": [
-          "id"
-        ],
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "trigger": {
-            "$ref": "#/definitions/character_trigger"
-          },
-          "descriptions": {
-            "$ref": "#/definitions/parse_term"
-          },
-          "text_on_trigger": {
-            "$ref": "#/definitions/parse_term"
-          },
-          "show_text_on_trigger_success_only": {
-            "type": "boolean"
-          },
-          "display_hint_text": {
-            "type": "boolean"
-          },
-          "hide_tooltip": {
-            "type": "boolean"
-          },
-          "allow_tooltips_when_hidden": {
-            "type": "boolean"
-          },
-          "suppress_notifications": {
-            "type": "boolean"
-          },
-          "trigger_once": {
-            "type": "boolean"
-          },
-          "only_trigger_if_equipped": {
-            "type": "boolean"
-          },
-          "effects": {
-            "type": "array",
-            "items": {
-              "required": [
-                "id"
-              ],
-              "properties": {
-                "id": {
-                  "type": "string"
-                }
-              }
-            }
           }
         }
       }
@@ -1399,76 +1415,43 @@
           "name"
         ],
         "properties": {
-          "id": {
-            "type": "string"
+          "anim_to_play": {
+            "$ref": "#/definitions/anim"
           },
-          "name": {
-            "type": "string",
-            "description": "The EffectStateName, this should be the name of a Class inheriting from CardEffectBase. Trainworks will search your mod for the class, then the base game."
-          },
-          "mod_reference": {
-            "type": "string",
-            "description": "Mod GUID to search for a custom effect. If not specified then your Mod's assembly is searched."
-          },
-          "target_subtype": {
-            "$ref": "#/definitions/subtype"
-          },
-          "param_str": {
-            "type": "string"
-          },
-          "param_subtypes": {
-            "$ref": "#/definitions/subtype"
-          },
-          "status_effect_multipler": {
-            "type": "string"
-          },
-          "supress_pyre_room_focus": {
-            "type": "boolean"
-          },
-          "target_ignore_bosses": {
-            "type": "boolean"
-          },
-          "filter_on_main_subclass": {
+          "cancel_subsequent_effects_on_failure": {
             "type": "boolean"
           },
           "copy_modifiers": {
             "type": "boolean"
           },
-          "show_pyre_notification": {
+          "fail_to_cast_on_failure": {
             "type": "boolean"
+          },
+          "filter_on_main_subclass": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "string"
           },
           "ignore_temporary_modifiers": {
             "type": "boolean"
           },
-          "should_test": {
-            "type": "boolean"
+          "mod_reference": {
+            "type": "string",
+            "description": "Mod GUID to search for a custom effect. If not specified then your Mod's assembly is searched."
           },
-          "cancel_subsequent_effects_on_failure": {
-            "type": "boolean"
+          "name": {
+            "type": "string",
+            "description": "The EffectStateName, this should be the name of a Class inheriting from CardEffectBase. Trainworks will search your mod for the class, then the base game."
           },
-          "fail_to_cast_on_failure": {
-            "type": "boolean"
-          },
-          "skip_subsequent_previews": {
-            "type": "boolean"
-          },
-          "use_int_range": {
+          "param_bool": {
             "type": "boolean"
           },
           "param_bool_2": {
             "type": "boolean"
           },
-          "param_bool": {
-            "type": "boolean"
-          },
-          "use_status_effect_multiplier": {
-            "type": "boolean"
-          },
-          "use_health_missing_multipler": {
-            "type": "boolean"
-          },
-          "use_magic_power_multipler": {
-            "type": "boolean"
+          "param_character_data": {
+            "type": "string"
           },
           "param_int": {
             "type": "integer"
@@ -1479,47 +1462,14 @@
           "param_int_3": {
             "type": "integer"
           },
-          "param_min_int": {
+          "param_max_int": {
             "type": "integer"
           },
-          "param_max_int": {
+          "param_min_int": {
             "type": "integer"
           },
           "param_multipler": {
             "type": "integer"
-          },
-          "status_effect_filters": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "target_mode": {
-            "$ref": "#/definitions/target_mode"
-          },
-          "target_mode_health_filter": {
-            "$ref": "#/definitions/health_filter"
-          },
-          "target_team": {
-            "$ref": "#/definitions/team"
-          },
-          "target_card_type": {
-            "$ref": "#/definitions/card_type_target"
-          },
-          "target_selection_mode": {
-            "$ref": "#/definitions/card_selection_mode"
-          },
-          "anim_to_play": {
-            "$ref": "#/definitions/anim"
-          },
-          "param_trigger": {
-            "$ref": "#/definitions/character_trigger"
-          },
-          "param_character_data": {
-            "type": "string"
-          },
-          "param_upgrade": {
-            "type": "string"
           },
           "param_status_effects": {
             "type": "array",
@@ -1534,6 +1484,72 @@
                 }
               }
             }
+          },
+          "param_str": {
+            "type": "string"
+          },
+          "param_subtypes": {
+            "$ref": "#/definitions/subtype"
+          },
+          "param_trigger": {
+            "$ref": "#/definitions/character_trigger"
+          },
+          "param_upgrade": {
+            "type": "string"
+          },
+          "should_test": {
+            "type": "boolean"
+          },
+          "show_pyre_notification": {
+            "type": "boolean"
+          },
+          "skip_subsequent_previews": {
+            "type": "boolean"
+          },
+          "status_effect_filters": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status_effect_multipler": {
+            "type": "string"
+          },
+          "supress_pyre_room_focus": {
+            "type": "boolean"
+          },
+          "target_card_type": {
+            "$ref": "#/definitions/card_type_target"
+          },
+          "target_ignore_bosses": {
+            "type": "boolean"
+          },
+          "target_mode": {
+            "$ref": "#/definitions/target_mode"
+          },
+          "target_mode_health_filter": {
+            "$ref": "#/definitions/health_filter"
+          },
+          "target_selection_mode": {
+            "$ref": "#/definitions/card_selection_mode"
+          },
+          "target_subtype": {
+            "$ref": "#/definitions/subtype"
+          },
+          "target_team": {
+            "$ref": "#/definitions/team"
+          },
+          "use_health_missing_multipler": {
+            "type": "boolean"
+          },
+          "use_int_range": {
+            "type": "boolean"
+          },
+          "use_magic_power_multipler": {
+            "type": "boolean"
+          },
+          "use_status_effect_multiplier": {
+            "type": "boolean"
           }
         }
       }
@@ -1559,11 +1575,6 @@
             "oneOf": [
               {
                 "properties": {
-                  "type": {
-                    "enum": [
-                      "card_art"
-                    ]
-                  },
                   "extensions": {
                     "type": "object",
                     "properties": {
@@ -1577,6 +1588,11 @@
                         }
                       }
                     }
+                  },
+                  "type": {
+                    "enum": [
+                      "card_art"
+                    ]
                   }
                 }
               },
@@ -1593,11 +1609,15 @@
                       "map_node_icon": {
                         "type": "object",
                         "properties": {
+                          "disabled_sprite": {
+                            "type": "string",
+                            "description": "Sprite Reference"
+                          },
                           "enabled_sprite": {
                             "type": "string",
                             "description": "Sprite Reference"
                           },
-                          "visited_sprite_enabled": {
+                          "frozen_sprite": {
                             "type": "string",
                             "description": "Sprite Reference"
                           },
@@ -1605,11 +1625,7 @@
                             "type": "string",
                             "description": "Sprite Reference"
                           },
-                          "disabled_sprite": {
-                            "type": "string",
-                            "description": "Sprite Reference"
-                          },
-                          "frozen_sprite": {
+                          "visited_sprite_enabled": {
                             "type": "string",
                             "description": "Sprite Reference"
                           }
@@ -1618,55 +1634,8 @@
                     }
                   }
                 }
-
               }
             ]
-          }
-        }
-      }
-    },
-    "sprites": {
-      "type": "array",
-      "items": {
-        "required": [
-          "id",
-          "path"
-        ],
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "path": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "traits": {
-      "type": "array",
-      "uniqueItems": true,
-      "items": {
-        "required": [
-          "id",
-          "name"
-        ],
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string",
-            "description": "The TraitStateName, this should be the name of a Class inheriting from CardTraitState. Trainworks will search your mod for the class, then the base game."
-          },
-          "mod_reference": {
-            "type": "string",
-            "description": "Mod GUID to search for a custom trait. If not specified then your Mod's assembly is searched."
-          },
-          "track_type": {
-            "type": "string"
-          },
-          "param_int": {
-            "type": "integer"
           }
         }
       }
@@ -1680,19 +1649,6 @@
           "type"
         ],
         "properties": {
-          "id": {
-            "type": "string"
-          },
-          "type": {
-            "#ref": "#/definitions/map_node_type"
-          },
-          "map_pools": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "description": "Random Map Data Reference"
-            }
-          },
           "buckets": {
             "type": "array",
             "items": {
@@ -1706,13 +1662,14 @@
               }
             }
           },
-          "map_icon": {
-            "type": "string",
-            "description": "Sprite Reference"
+          "descriptions": {
+            "#ref": "#/definitions/parse_term"
           },
-          "minimap_icon": {
-            "type": "string",
-            "description": "Sprite Reference"
+          "dlc": {
+            "#ref": "#/definitions/dlc"
+          },
+          "id": {
+            "type": "string"
           },
           "ignore_if_present": {
             "type": "array",
@@ -1721,34 +1678,46 @@
               "description": "Map Node Reference"
             }
           },
-          "dlc": {
-            "#ref": "#/definitions/dlc"
-          },
           "is_banner": {
             "type": "boolean"
           },
-          "titles": {
-            "#ref": "#/definitions/parse_term"
+          "map_icon": {
+            "type": "string",
+            "description": "Sprite Reference"
           },
-          "descriptions": {
-            "#ref": "#/definitions/parse_term"
+          "map_pools": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Random Map Data Reference"
+            }
           },
-          "use_hp_tooltip": {
-            "type": "boolean"
+          "minimap_icon": {
+            "type": "string",
+            "description": "Sprite Reference"
           },
           "node_selection_cue": {
             "type": "string",
             "description": "Cue Reference"
           },
-          "updated_map_icon_on_click": {
-            "type": "boolean"
+          "prefab": {
+            "type": "string",
+            "description": "GameObject Reference, should be imported as Map Node Icon."
           },
           "skip_settings": {
             "#ref": "#/definitions/map_skip_settings"
           },
-          "prefab": {
-            "type": "string",
-            "description": "GameObject Reference, should be imported as Map Node Icon."
+          "titles": {
+            "#ref": "#/definitions/parse_term"
+          },
+          "type": {
+            "#ref": "#/definitions/map_node_type"
+          },
+          "updated_map_icon_on_click": {
+            "type": "boolean"
+          },
+          "use_hp_tooltip": {
+            "type": "boolean"
           }
         },
         "dependencies": {
@@ -1766,7 +1735,6 @@
                     "items": {
                       "properties": {
                         "merchant": {
-                          "type": "object",
                           "description": "Merchant Map Node (WIP)",
                           "properties": {
                             "currency": {
@@ -1780,7 +1748,8 @@
                               "type": "array",
                               "description": "Reward Data Reference, should be imported as Merchant Reward Data"
                             }
-                          }
+                          },
+                          "type": "object"
                         }
                       }
                     }
@@ -1859,27 +1828,10 @@
     "rewards": {
       "type": "array",
       "items": {
-        "required": [ "id" ],
+        "required": [
+          "id"
+        ],
         "properties": {
-          "id": {
-            "type": "string"
-          },
-          "type": {
-            "#ref": "#/definitions/reward_type"
-          },
-          "sprite": {
-            "type": "string",
-            "description": "Sprite Reference"
-          },
-          "titles": {
-            "#ref": "#/definitions/parse_term"
-          },
-          "descriptions": {
-            "#ref": "#/definitions/parse_term"
-          },
-          "is_story_reward": {
-            "type": "boolean"
-          },
           "collect_cue": {
             "type": "string"
           },
@@ -1889,7 +1841,19 @@
               "type": "integer"
             }
           },
-          "show_in_event": {
+          "descriptions": {
+            "#ref": "#/definitions/parse_term"
+          },
+          "endless_mode_unique": {
+            "type": "boolean"
+          },
+          "filter": {
+            "#ref": "#/definitions/reward_filter"
+          },
+          "id": {
+            "type": "string"
+          },
+          "is_story_reward": {
             "type": "boolean"
           },
           "show_animation_in_event": {
@@ -1898,11 +1862,18 @@
           "show_cancel": {
             "type": "boolean"
           },
-          "filter": {
-            "#ref": "#/definitions/reward_filter"
-          },
-          "endless_mode_unique": {
+          "show_in_event": {
             "type": "boolean"
+          },
+          "sprite": {
+            "type": "string",
+            "description": "Sprite Reference"
+          },
+          "titles": {
+            "#ref": "#/definitions/parse_term"
+          },
+          "type": {
+            "#ref": "#/definitions/reward_type"
           }
         },
         "dependencies": {
@@ -1954,174 +1925,6 @@
         }
       }
     },
-    "upgrades": {
-      "type": "array",
-      "uniqueItems": true,
-      "items": {
-        "required": [
-          "id"
-        ],
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "override": {
-            "type": "boolean"
-          },
-          "titles": {
-            "$ref": "#/definitions/parse_term"
-          },
-          "descriptions": {
-            "$ref": "#/definitions/parse_term"
-          },
-          "notifications": {
-            "$ref": "#/definitions/parse_term"
-          },
-          "icon": {
-            "type": "string"
-          },
-          "allow_secondary_tooltip_placement": {
-            "type": "boolean"
-          },
-          "hide_icon_on_card": {
-            "type": "boolean"
-          },
-          "use_upgrade_hightlight_tags": {
-            "type": "boolean"
-          },
-          "show_description_on_cards": {
-            "type": "boolean"
-          },
-          "is_unique": {
-            "type": "boolean"
-          },
-          "bonus_damage": {
-            "type": "integer"
-          },
-          "bonus_hp": {
-            "type": "integer"
-          },
-          "cost_reduction": {
-            "type": "integer"
-          },
-          "x_cost_reduction": {
-            "type": "integer"
-          },
-          "bonus_heal": {
-            "type": "integer"
-          },
-          "bonus_size": {
-            "type": "integer"
-          },
-          "restrict_to_room_capacity": {
-            "type": "boolean"
-          },
-          "bonus_equipment": {
-            "type": "integer"
-          },
-          "ability_upgrade": {
-            "type": "string"
-          },
-          "does_not_replace_ability": {
-            "type": "boolean"
-          },
-          "status_effect_upgrades": {
-            "type": "array",
-            "items": {
-              "properties": {
-                "status": {
-                  "type": "string"
-                },
-                "count": {
-                  "type": "integer"
-                }
-              }
-            }
-          },
-          "trait_upgrades": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "remove_trait_upgrades": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "trigger_upgrades": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "card_trigger_upgrades": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "room_modifier_upgrades": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "filters": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "remove_upgrades": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "applied_vfx": {
-            "type": "string"
-          },
-          "remove_vfx": {
-            "type": "string"
-          },
-          "persistent_vfx": {
-            "type": "string"
-          }
-        }
-      }
-    },
     "room_modifiers": {
       "type": "array",
       "items": {
@@ -2130,75 +1933,6 @@
           "id"
         ],
         "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "names": {
-            "$ref": "#/definitions/parse_term"
-          },
-          "descriptions": {
-            "$ref": "#/definitions/parse_term"
-          },
-          "play_descriptions": {
-            "$ref": "#/definitions/parse_term"
-          },
-          "use_name_as_description": {
-            "type": "boolean"
-          },
-          "sprite": {
-            "type": "string"
-          },
-          "param_int": {
-            "type": "integer"
-          },
-          "param_int_2": {
-            "type": "integer"
-          },
-          "param_trigger": {
-            "$ref": "#/definitions/character_trigger"
-          },
-          "param_subtype": {
-            "$ref": "#/definitions/subtype"
-          },
-          "param_card_upgrade": {
-            "type": "string"
-          },
-          "param_card": {
-            "type": "string"
-          },
-          "effects": {
-            "type": "array",
-            "items": {
-              "properties": {
-                "id": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "param_status_effects": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "status": {
-                  "type": "string"
-                },
-                "count": {
-                  "type": "integer"
-                }
-              }
-            }
-          },
-          "extra_title_tooltips": {
-            "$ref": "#/definitions/parse_term"
-          },
-          "extra_body_tooltips": {
-            "$ref": "#/definitions/parse_term"
-          },
           "additional_tooltips": {
             "type": "array",
             "items": {
@@ -2233,7 +1967,122 @@
               }
             }
           },
+          "descriptions": {
+            "$ref": "#/definitions/parse_term"
+          },
+          "effects": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "extra_body_tooltips": {
+            "$ref": "#/definitions/parse_term"
+          },
+          "extra_title_tooltips": {
+            "$ref": "#/definitions/parse_term"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "names": {
+            "$ref": "#/definitions/parse_term"
+          },
+          "param_card": {
+            "type": "string"
+          },
+          "param_card_upgrade": {
+            "type": "string"
+          },
+          "param_int": {
+            "type": "integer"
+          },
+          "param_int_2": {
+            "type": "integer"
+          },
+          "param_status_effects": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "count": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "param_subtype": {
+            "$ref": "#/definitions/subtype"
+          },
+          "param_trigger": {
+            "$ref": "#/definitions/character_trigger"
+          },
+          "play_descriptions": {
+            "$ref": "#/definitions/parse_term"
+          },
+          "sprite": {
+            "type": "string"
+          },
           "trigered_vfx": {
+            "type": "string"
+          },
+          "use_name_as_description": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "sprites": {
+      "type": "array",
+      "items": {
+        "required": [
+          "id",
+          "path"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "traits": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "mod_reference": {
+            "type": "string",
+            "description": "Mod GUID to search for a custom trait. If not specified then your Mod's assembly is searched."
+          },
+          "name": {
+            "type": "string",
+            "description": "The TraitStateName, this should be the name of a Class inheriting from CardTraitState. Trainworks will search your mod for the class, then the base game."
+          },
+          "param_int": {
+            "type": "integer"
+          },
+          "track_type": {
             "type": "string"
           }
         }
@@ -2244,127 +2093,10 @@
       "items": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string"
-          },
-          "type": {
-            "$ref": "#/definitions/card_type"
-          },
-          "exclude_non_attacking": {
-            "type": "boolean"
-          },
-          "required_rarities_operator": {
-            "$ref": "#/definitions/compare_operator"
-          },
-          "required_rarities": {
-            "type": "array",
-            "items": {
-              "$ref": "#/definitions/rarity"
-            }
-          },
-          "excluded_rarities_operator": {
-            "$ref": "#/definitions/compare_operator"
-          },
-          "excluded_rarities": {
-            "type": "array",
-            "items": {
-              "$ref": "#/definitions/rarity"
-            }
-          },
           "additional_card_types": {
             "type": "array",
             "items": {
               "$ref": "#/definitions/card_type"
-            }
-          },
-          "required_subtypes_operator": {
-            "$ref": "#/definitions/compare_operator"
-          },
-          "required_subtypes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/definitions/subtype"
-            }
-          },
-          "excluded_subtypes_operator": {
-            "$ref": "#/definitions/compare_operator"
-          },
-          "excluded_subtypes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/definitions/subtype"
-            }
-          },
-          "required_status_operator": {
-            "$ref": "#/definitions/compare_operator"
-          },
-          "required_status": {
-            "type": "array",
-            "items": {
-              "$ref": "#/definitions/status_effect"
-            }
-          },
-          "excluded_status_operator": {
-            "$ref": "#/definitions/compare_operator"
-          },
-          "excluded_status": {
-            "type": "array",
-            "items": {
-              "$ref": "#/definitions/status_effect"
-            }
-          },
-          "required_traits_operator": {
-            "$ref": "#/definitions/compare_operator"
-          },
-          "required_traits": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "excluded_traits_operatorr": {
-            "$ref": "#/definitions/compare_operator"
-          },
-          "excluded_traits": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "required_effects_operator": {
-            "$ref": "#/definitions/compare_operator"
-          },
-          "required_effects": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "excluded_effects_operatorr": {
-            "$ref": "#/definitions/compare_operator"
-          },
-          "excluded_effects": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "required_class_operator": {
-            "$ref": "#/definitions/compare_operator"
-          },
-          "required_class": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "excluded_class_operatorr": {
-            "$ref": "#/definitions/compare_operator"
-          },
-          "excluded_class": {
-            "type": "array",
-            "items": {
-              "type": "string"
             }
           },
           "allowed_pools": {
@@ -2373,17 +2105,65 @@
               "type": "string"
             }
           },
+          "card_target_mode": {
+            "$ref": "#/definitions/card_target_mode"
+          },
+          "cost_range": {
+            "$ref": "#/definitions/vec2"
+          },
+          "disabled_reason": {
+            "$ref": "#/definitions/upgrade_disabled"
+          },
           "disallowed_pools": {
             "type": "array",
             "items": {
               "type": "string"
             }
           },
-          "required_sizes": {
+          "exclude_ability": {
+            "type": "boolean"
+          },
+          "exclude_graft": {
+            "type": "boolean"
+          },
+          "exclude_no_upgrades": {
+            "type": "boolean"
+          },
+          "exclude_non_attacking": {
+            "type": "boolean"
+          },
+          "exclude_upgrades": {
+            "type": "boolean"
+          },
+          "exclude_x_cost": {
+            "type": "boolean"
+          },
+          "excluded_class": {
             "type": "array",
             "items": {
-              "type": "integer"
+              "type": "string"
             }
+          },
+          "excluded_class_operatorr": {
+            "$ref": "#/definitions/compare_operator"
+          },
+          "excluded_effects": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "excluded_effects_operatorr": {
+            "$ref": "#/definitions/compare_operator"
+          },
+          "excluded_rarities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/rarity"
+            }
+          },
+          "excluded_rarities_operator": {
+            "$ref": "#/definitions/compare_operator"
           },
           "excluded_sizes": {
             "type": "array",
@@ -2391,16 +2171,31 @@
               "type": "integer"
             }
           },
-          "required_upgrade_operator": {
+          "excluded_status": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/status_effect"
+            }
+          },
+          "excluded_status_operator": {
             "$ref": "#/definitions/compare_operator"
           },
-          "required_upgrade": {
+          "excluded_subtypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/subtype"
+            }
+          },
+          "excluded_subtypes_operator": {
+            "$ref": "#/definitions/compare_operator"
+          },
+          "excluded_traits": {
             "type": "array",
             "items": {
               "type": "string"
             }
           },
-          "excluded_upgrade_operatorr": {
+          "excluded_traits_operatorr": {
             "$ref": "#/definitions/compare_operator"
           },
           "excluded_upgrade": {
@@ -2409,32 +2204,254 @@
               "type": "string"
             }
           },
-          "cost_range": {
-            "$ref": "#/definitions/vec2"
+          "excluded_upgrade_operatorr": {
+            "$ref": "#/definitions/compare_operator"
+          },
+          "id": {
+            "type": "string"
           },
           "require_x_cost": {
             "type": "boolean"
           },
-          "exclude_x_cost": {
+          "required_class": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "required_class_operator": {
+            "$ref": "#/definitions/compare_operator"
+          },
+          "required_effects": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "required_effects_operator": {
+            "$ref": "#/definitions/compare_operator"
+          },
+          "required_rarities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/rarity"
+            }
+          },
+          "required_rarities_operator": {
+            "$ref": "#/definitions/compare_operator"
+          },
+          "required_sizes": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "required_status": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/status_effect"
+            }
+          },
+          "required_status_operator": {
+            "$ref": "#/definitions/compare_operator"
+          },
+          "required_subtypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/subtype"
+            }
+          },
+          "required_subtypes_operator": {
+            "$ref": "#/definitions/compare_operator"
+          },
+          "required_traits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "required_traits_operator": {
+            "$ref": "#/definitions/compare_operator"
+          },
+          "required_upgrade": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "required_upgrade_operator": {
+            "$ref": "#/definitions/compare_operator"
+          },
+          "type": {
+            "$ref": "#/definitions/card_type"
+          }
+        }
+      }
+    },
+    "upgrades": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "ability_upgrade": {
+            "type": "string"
+          },
+          "allow_secondary_tooltip_placement": {
             "type": "boolean"
           },
-          "card_target_mode": {
-            "$ref": "#/definitions/card_target_mode"
+          "applied_vfx": {
+            "type": "string"
           },
-          "disabled_reason": {
-            "$ref": "#/definitions/upgrade_disabled"
+          "bonus_damage": {
+            "type": "integer"
           },
-          "exclude_ability": {
+          "bonus_equipment": {
+            "type": "integer"
+          },
+          "bonus_heal": {
+            "type": "integer"
+          },
+          "bonus_hp": {
+            "type": "integer"
+          },
+          "bonus_size": {
+            "type": "integer"
+          },
+          "card_trigger_upgrades": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "cost_reduction": {
+            "type": "integer"
+          },
+          "descriptions": {
+            "$ref": "#/definitions/parse_term"
+          },
+          "does_not_replace_ability": {
             "type": "boolean"
           },
-          "exclude_graft": {
+          "filters": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "hide_icon_on_card": {
             "type": "boolean"
           },
-          "exclude_upgrades": {
+          "icon": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "is_unique": {
             "type": "boolean"
           },
-          "exclude_no_upgrades": {
+          "notifications": {
+            "$ref": "#/definitions/parse_term"
+          },
+          "override": {
             "type": "boolean"
+          },
+          "persistent_vfx": {
+            "type": "string"
+          },
+          "remove_trait_upgrades": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "remove_upgrades": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "remove_vfx": {
+            "type": "string"
+          },
+          "restrict_to_room_capacity": {
+            "type": "boolean"
+          },
+          "room_modifier_upgrades": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "show_description_on_cards": {
+            "type": "boolean"
+          },
+          "status_effect_upgrades": {
+            "type": "array",
+            "items": {
+              "properties": {
+                "status": {
+                  "type": "string"
+                },
+                "count": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "titles": {
+            "$ref": "#/definitions/parse_term"
+          },
+          "trait_upgrades": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "trigger_upgrades": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "use_upgrade_hightlight_tags": {
+            "type": "boolean"
+          },
+          "x_cost_reduction": {
+            "type": "integer"
           }
         }
       }
@@ -2447,8 +2464,14 @@
           "id"
         ],
         "properties": {
+          "facing": {
+            "$ref": "#/definitions/vfx_facing"
+          },
           "id": {
             "type": "string"
+          },
+          "spawn_location": {
+            "$ref": "#/definitions/vfx_location"
           },
           "vfx_left": {
             "type": "string",
@@ -2457,12 +2480,6 @@
           "vfx_right": {
             "type": "string",
             "description": "Reference to GameObject Asset"
-          },
-          "spawn_location": {
-            "$ref": "#/definitions/vfx_location"
-          },
-          "facing": {
-            "$ref": "#/definitions/vfx_facing"
           }
         }
       }
