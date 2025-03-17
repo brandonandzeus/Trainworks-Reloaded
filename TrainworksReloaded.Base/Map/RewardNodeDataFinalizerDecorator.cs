@@ -75,7 +75,7 @@ namespace TrainworksReloaded.Base.Map
             var required_class = configuration.GetSection("required_class").ParseString();
             if (
                 required_class != null
-                && classDataRegister.TryLookupId(
+                && classDataRegister.TryLookupName(
                     required_class.ToId(key, TemplateConstants.Class),
                     out var classData,
                     out var _

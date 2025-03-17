@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text;
 using HarmonyLib;
 using TrainworksReloaded.Base.Extensions;
+using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 
 namespace TrainworksReloaded.Base.Card
@@ -51,14 +52,14 @@ namespace TrainworksReloaded.Base.Card
                 {
                     continue;
                 }
-                var idConfig = configData.GetSection("id").Value;
+                var idConfig = configData.ParseString();
                 if (idConfig == null)
                 {
                     continue;
                 }
 
                 var id = idConfig.ToId(key, TemplateConstants.Card);
-                if (cardRegister.TryLookupId(id, out var card, out var _))
+                if (cardRegister.TryLookupName(id, out var card, out var _))
                 {
                     cardDatas.Add(card);
                 }

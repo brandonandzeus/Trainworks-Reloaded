@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using HarmonyLib;
 using ShinyShoe;
@@ -65,7 +66,24 @@ namespace TrainworksReloaded.Base.Prefab
             AccessTools.Field(typeof(MapNodeIcon), "enabledFxRoot").SetValue(mapNodeIcon, fxRoot);
 
             var selectedIndicator = new GameObject { name = "Selected Indicator" };
+            var selectedTransform = selectedIndicator.AddComponent<RectTransform>();
+            var selectedCanvasRenderer = selectedIndicator.AddComponent<CanvasRenderer>();
+            var selectedAspectRatioFilter = selectedIndicator.AddComponent<AspectRatioFitter>();
+            selectedAspectRatioFilter.aspectMode = AspectRatioFitter.AspectMode.WidthControlsHeight;
+            selectedAspectRatioFilter.aspectRatio = 1.1f;
+            selectedTransform.sizeDelta = new Vector2(136.0000f, 123.6364f);
+            selectedTransform.anchoredPosition = new Vector2(-1.5f, -16f);
             selectedIndicator.transform.SetParent(gameObject.transform);
+
+            var selectedImage = selectedIndicator.AddComponent<Image>();
+            selectedImage.sprite = Resources
+                .FindObjectsOfTypeAll<Image>()
+                .FirstOrDefault(xs =>
+                {
+                    Console.WriteLine(xs.name);
+                    return xs.name == "Selected indicator";
+                })
+                ?.sprite;
 
             AccessTools
                 .Field(typeof(MapNodeIcon), "selectedIndicator")
@@ -76,6 +94,15 @@ namespace TrainworksReloaded.Base.Prefab
             if (enabled_icon != null)
             {
                 enabled_icon.transform.SetParent(artRoot.transform);
+                var rect = enabled_icon.GetComponent<RectTransform>();
+                if (rect != null)
+                {
+                    rect.anchorMin = Vector2.zero; // Bottom-left corner
+                    rect.anchorMax = Vector2.one; // Top-right corner
+                    rect.offsetMin = Vector2.zero; // Zero out offsets
+                    rect.offsetMax = Vector2.zero;
+                    rect.pivot = new Vector2(0.5f, 0.5f); // Center pivot
+                }
 
                 AccessTools
                     .Field(typeof(MapNodeIcon), "iconSprite_Enabled")
@@ -89,6 +116,15 @@ namespace TrainworksReloaded.Base.Prefab
             if (visited_sprite_enabled_icon != null)
             {
                 visited_sprite_enabled_icon.transform.SetParent(artRoot.transform);
+                var rect = visited_sprite_enabled_icon.GetComponent<RectTransform>();
+                if (rect != null)
+                {
+                    rect.anchorMin = Vector2.zero; // Bottom-left corner
+                    rect.anchorMax = Vector2.one; // Top-right corner
+                    rect.offsetMin = Vector2.zero; // Zero out offsets
+                    rect.offsetMax = Vector2.zero;
+                    rect.pivot = new Vector2(0.5f, 0.5f); // Center pivot
+                }
 
                 AccessTools
                     .Field(typeof(MapNodeIcon), "iconSprite_Visited_Enabled")
@@ -105,6 +141,15 @@ namespace TrainworksReloaded.Base.Prefab
             if (visited_sprite_disabled_icon != null)
             {
                 visited_sprite_disabled_icon.transform.SetParent(artRoot.transform);
+                var rect = visited_sprite_disabled_icon.GetComponent<RectTransform>();
+                if (rect != null)
+                {
+                    rect.anchorMin = Vector2.zero; // Bottom-left corner
+                    rect.anchorMax = Vector2.one; // Top-right corner
+                    rect.offsetMin = Vector2.zero; // Zero out offsets
+                    rect.offsetMax = Vector2.zero;
+                    rect.pivot = new Vector2(0.5f, 0.5f); // Center pivot
+                }
 
                 AccessTools
                     .Field(typeof(MapNodeIcon), "iconSprite_Visited_Disabled")
@@ -116,6 +161,15 @@ namespace TrainworksReloaded.Base.Prefab
             if (disabled_sprite_icon != null)
             {
                 disabled_sprite_icon.transform.SetParent(artRoot.transform);
+                var rect = disabled_sprite_icon.GetComponent<RectTransform>();
+                if (rect != null)
+                {
+                    rect.anchorMin = Vector2.zero; // Bottom-left corner
+                    rect.anchorMax = Vector2.one; // Top-right corner
+                    rect.offsetMin = Vector2.zero; // Zero out offsets
+                    rect.offsetMax = Vector2.zero;
+                    rect.pivot = new Vector2(0.5f, 0.5f); // Center pivot
+                }
 
                 AccessTools
                     .Field(typeof(MapNodeIcon), "iconSprite_Visited_Enabled")
@@ -128,6 +182,15 @@ namespace TrainworksReloaded.Base.Prefab
             {
                 frozen_sprite_icon.transform.SetParent(artRoot.transform);
                 var animator = frozen_sprite_icon.GetComponent<Animator>();
+                var rect = frozen_sprite_icon.GetComponent<RectTransform>();
+                if (rect != null)
+                {
+                    rect.anchorMin = Vector2.zero; // Bottom-left corner
+                    rect.anchorMax = Vector2.one; // Top-right corner
+                    rect.offsetMin = Vector2.zero; // Zero out offsets
+                    rect.offsetMax = Vector2.zero;
+                    rect.pivot = new Vector2(0.5f, 0.5f); // Center pivot
+                }
 
                 AccessTools
                     .Field(typeof(MapNodeIcon), "frozenAnimator")
@@ -155,12 +218,6 @@ namespace TrainworksReloaded.Base.Prefab
 
             var iconSprite = new GameObject { name = $"IconSprite_{spriteStr}" };
             var rectTransform = iconSprite.AddComponent<RectTransform>();
-
-            rectTransform.anchorMin = Vector2.zero; // Bottom-left corner
-            rectTransform.anchorMax = Vector2.one; // Top-right corner
-            rectTransform.offsetMin = Vector2.zero; // Zero out offsets
-            rectTransform.offsetMax = Vector2.zero;
-            rectTransform.pivot = new Vector2(0.5f, 0.5f); // Center pivot
 
             var canvasRenderer = iconSprite.AddComponent<CanvasRenderer>();
 

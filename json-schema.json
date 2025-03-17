@@ -1325,11 +1325,9 @@
           },
           "cards": {
             "type": "array",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "Card Data Reference"
-              }
+            "items": {
+              "type": "string",
+              "description": "Card Data Reference"
             }
           }
         }

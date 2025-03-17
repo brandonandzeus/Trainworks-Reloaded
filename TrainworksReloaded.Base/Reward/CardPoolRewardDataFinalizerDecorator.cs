@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using HarmonyLib;
+using Microsoft.Extensions.Configuration;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Base.Prefab;
 using TrainworksReloaded.Core.Extensions;
@@ -54,18 +55,19 @@ namespace TrainworksReloaded.Base.Reward
             if (data1 is not CardPoolRewardData data)
                 return;
 
+            var configuration = configuration1
+                .GetSection("extensions")
+                .GetChildren()
+                .Where(xs => xs.GetSection("cardpool").Exists())
+                .Select(xs => xs.GetSection("cardpool"))
+                .First();
+            if (configuration == null)
+                return;
+
             logger.Log(
                 Core.Interfaces.LogLevel.Info,
                 $"Finalizing Card Pool Reward Data {definition.Id.ToId(key, TemplateConstants.RewardData)}... "
             );
-
-            var configuration = configuration1
-                .GetSection("extensions")
-                .GetChildren()
-                .Select(xs => xs.GetSection("cardpool"))
-                .First(xs => xs.GetSection("cardpool").Value != null);
-            if (configuration == null)
-                return;
 
             //cardpool
             var cardpool = configuration.GetSection("cardpool").ParseString();

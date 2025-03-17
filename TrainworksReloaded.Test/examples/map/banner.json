@@ -1,0 +1,83 @@
+{
+  "$schema": "../../../json-schema.json",
+  "map_nodes": [
+    {
+      "id": "MyNode",
+      "type": "reward",
+      "map_icon": "@IconSmall",
+      "minimap_icon": "@IconSmall",
+      "prefab": "@MapIcon",
+      "titles": {
+        "english": "My Banner"
+      },
+      "descriptions": {
+        "english": "Get a Unit"
+      },
+      "buckets": [
+        {
+          "run_type": "primary",
+          "bucket": "Banners Ring 1"
+        }
+      ],
+      "map_pools": [
+        "RandomChosenMainClassUnit",
+        "RandomChosenSubClassUnit"
+      ],
+      "extensions": [
+        {
+          "reward": {
+            "rewards": [
+              {
+                "id": "@Reward"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "card_pools": [
+    {
+      "id": "CardPool",
+      "cards": []
+    }
+  ],
+  "rewards": [
+    {
+      "id": "Reward",
+      "type": "cardpool",
+      "extensions": [
+        {
+          "cardpool": {
+            "cardpool": "@CardPool"
+          }
+        }
+      ]
+    }
+  ],
+  "game_objects": [
+    {
+      "id": "MapIcon",
+      "type": "map_node_icon",
+      "extensions": {
+        "map_node_icon": {
+          "disabled_sprite": "@Banner",
+          "enabled_sprite": "@Banner",
+          "frozen_sprite": "@Banner",
+          "visited_sprite_disabled": "@Banner",
+          "visited_sprite_enabled": "@Banner"
+        }
+      }
+    }
+  ],
+  "sprites": [
+    {
+      "id": "Banner",
+      "path": "textures/Banner.png"
+    },
+    {
+      "id": "IconSmall",
+      "path": "textures/IconSmall.png"
+    }
+  ]
+}
