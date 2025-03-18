@@ -1770,7 +1770,8 @@
             "type": "string"
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "The RoomStateModifierClassName, this should be the name of a class inheriting from RoomStateModifierBase. Trainworks will search your mod for the class, then the base game."
           },
           "mod_reference": {
             "type": "string",
