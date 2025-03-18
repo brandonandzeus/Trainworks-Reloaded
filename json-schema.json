@@ -1764,13 +1764,17 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": [ "id" ],
+        "required": [ "id", "name" ],
         "properties": {
           "id": {
             "type": "string"
           },
           "name": {
             "type": "string"
+          },
+          "mod_reference": {
+            "type": "string",
+            "description": "Mod GUID to search for a custom room modifier. If not specified then your Mod's assembly is searched."
           },
           "names": {
             "$ref": "#/definitions/parse_term"
@@ -1883,7 +1887,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "The StatusID of the status effect, must match StatusID of the StatusEffectState class, and must be a unique string."
+            "description": "The statusID of your status effect, this needs to be a lowercase and unique string. In your StatusEffectState subclass the statusId must be set to {modguid}-statuseffect-{id} as a lowercase string."
           },
           "class_name": {
             "type": "string",

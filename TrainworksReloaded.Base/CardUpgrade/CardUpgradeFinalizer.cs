@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using HarmonyLib;
 using TrainworksReloaded.Base.Character;
@@ -21,6 +22,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
         private readonly IRegister<CardTriggerEffectData> cardTriggerRegister;
         private readonly IRegister<CardUpgradeData> upgradeRegister;
         private readonly IRegister<VfxAtLoc> vfxRegister;
+        private readonly IRegister<StatusEffectData> statusRegister;
 
         public CardUpgradeFinalizer(
             IModLogger<CardUpgradeFinalizer> logger,
@@ -30,7 +32,8 @@ namespace TrainworksReloaded.Base.CardUpgrade
             IRegister<CardTraitData> traitRegister,
             IRegister<CardTriggerEffectData> cardTriggerRegister,
             IRegister<CardUpgradeData> upgradeRegister,
-            IRegister<VfxAtLoc> vfxRegister
+            IRegister<VfxAtLoc> vfxRegister,
+            IRegister<StatusEffectData> statusRegister
         )
         {
             this.logger = logger;
@@ -41,6 +44,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
             this.cardTriggerRegister = cardTriggerRegister;
             this.upgradeRegister = upgradeRegister;
             this.vfxRegister = vfxRegister;
+            this.statusRegister = statusRegister;
         }
 
         public void FinalizeData()
@@ -177,7 +181,33 @@ namespace TrainworksReloaded.Base.CardUpgrade
                     .Field(typeof(CardUpgradeData), "roomModifierUpgrades")
                     .SetValue(data, roomModifierUpgrades);
 
-            //handle roomModifiers
+            //status
+            var statusEffectUpgrades = new List<StatusEffectStackData>();
+            var statusEffectUpgradesConfig = configuration.GetSection("status_effect_upgrades").GetChildren();
+            foreach (var child in statusEffectUpgradesConfig)
+            {
+                var idConfig = child?.GetSection("status").Value;
+                if (idConfig == null)
+                    continue;
+                var statusEffectId = idConfig.ToId(key, TemplateConstants.StatusEffect);
+                string statusId = idConfig;
+                // Make sure the status effect exists. If using @ notation.
+                // else it is a vanilla status effect.
+                if (statusRegister.TryLookupId(statusEffectId, out var statusEffectData, out var _))
+                {
+                    statusId = statusEffectData.GetStatusId();
+                }
+                statusEffectUpgrades.Add(new StatusEffectStackData()
+                {
+                    statusId = statusId,
+                    count = child?.GetSection("count").ParseInt() ?? 0,
+                });
+            }
+            AccessTools
+                .Field(typeof(CardUpgradeData), "statusEffectUpgrades")
+                .SetValue(data, statusEffectUpgrades);
+
+            //handle upgrades to remove
             var upgradesToRemove = new List<CardUpgradeData>();
             var upgradesToRemoveConfig = configuration.GetSection("remove_upgrades").GetChildren();
             foreach (var removeUpgrade in upgradesToRemoveConfig)

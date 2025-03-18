@@ -220,6 +220,21 @@ namespace TrainworksReloaded.Plugin
                     pipeline.Run(x);
                 });
 
+                //Register Status Effect Data
+                c.RegisterSingleton<IRegister<StatusEffectData>, StatusEffectDataRegister>();
+                c.RegisterSingleton<StatusEffectDataRegister, StatusEffectDataRegister>();
+                c.Register<
+                    IDataPipeline<IRegister<StatusEffectData>, StatusEffectData>,
+                    StatusEffectDataPipeline
+                >();
+                c.RegisterInitializer<IRegister<StatusEffectData>>(x =>
+                {
+                    var pipeline = c.GetInstance<
+                        IDataPipeline<IRegister<StatusEffectData>, StatusEffectData>
+                    >();
+                    pipeline.Run(x);
+                });
+
                 //Register Card Data
                 c.RegisterSingleton<IRegister<CardData>, CardDataRegister>(); //a place to register and access custom card data
                 c.RegisterSingleton<CardDataRegister, CardDataRegister>();
@@ -327,21 +342,6 @@ namespace TrainworksReloaded.Plugin
                 {
                     var pipeline = c.GetInstance<
                         IDataPipeline<IRegister<RoomModifierData>, RoomModifierData>
-                    >();
-                    pipeline.Run(x);
-                });
-
-                //Register Status Effect Data
-                c.RegisterSingleton<IRegister<StatusEffectData>, StatusEffectDataRegister>();
-                c.RegisterSingleton<StatusEffectDataRegister, StatusEffectDataRegister>();
-                c.Register<
-                    IDataPipeline<IRegister<StatusEffectData>, StatusEffectData>,
-                    StatusEffectDataPipeline
-                >();
-                c.RegisterInitializer<IRegister<StatusEffectData>>(x =>
-                {
-                    var pipeline = c.GetInstance<
-                        IDataPipeline<IRegister<StatusEffectData>, StatusEffectData>
                     >();
                     pipeline.Run(x);
                 });

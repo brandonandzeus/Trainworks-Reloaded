@@ -24,8 +24,7 @@ namespace TrainworksReloaded.Base.StatusEffects
         {
             logger.Log(LogLevel.Info, $"Register Status Effect ({key})");
             StatusEffectManager.Instance.GetAllStatusEffectsData().GetStatusEffectData().Add(item);
-            var baseKey = "StatusEffect_" + item.GetStatusId();
-            StatusEffectManager.StatusIdToLocalizationExpression.Add(item.GetStatusId(), baseKey);
+            StatusEffectManager.StatusIdToLocalizationExpression.Add(item.GetStatusId(), "StatusEffect_" + item.GetStatusId());
             Add(key, item);
         }
 

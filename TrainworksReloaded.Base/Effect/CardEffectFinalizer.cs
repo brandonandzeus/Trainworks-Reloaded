@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using HarmonyLib;
 using TrainworksReloaded.Base.Extensions;
+using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 
 namespace TrainworksReloaded.Base.Effect
@@ -12,16 +13,19 @@ namespace TrainworksReloaded.Base.Effect
     {
         private readonly IRegister<CharacterData> characterDataRegister;
         private readonly IRegister<CardUpgradeData> cardUpgradeRegister;
+        private readonly IRegister<StatusEffectData> statusRegister;
         private readonly ICache<IDefinition<CardEffectData>> cache;
 
         public CardEffectFinalizer(
             IRegister<CharacterData> characterDataRegister,
             IRegister<CardUpgradeData> cardUpgradeRegister,
+            IRegister<StatusEffectData> statusRegister,
             ICache<IDefinition<CardEffectData>> cache
         )
         {
             this.characterDataRegister = characterDataRegister;
             this.cardUpgradeRegister = cardUpgradeRegister;
+            this.statusRegister = statusRegister;
             this.cache = cache;
         }
 
@@ -109,6 +113,63 @@ namespace TrainworksReloaded.Base.Effect
                     .Field(typeof(CardEffectData), "paramCardUpgradeData")
                     .SetValue(data, upgradeData);
             }
+
+            // Status effects.
+            var statusEffectStackMultiplier = configuration.GetSection("status_effect_multipler").ParseString() ?? "";
+            if (!statusEffectStackMultiplier.IsNullOrEmpty())
+            {
+                var statusEffectId = statusEffectStackMultiplier.ToId(key, TemplateConstants.StatusEffect);
+                if (statusRegister.TryLookupId(statusEffectId, out var statusEffectData, out var _))
+                {
+                    statusEffectStackMultiplier = statusEffectData.GetStatusId();
+                }
+            }
+            AccessTools
+                .Field(typeof(CardEffectData), "statusEffectStackMultiplier")
+                .SetValue(data, statusEffectStackMultiplier);
+
+
+            //string[]
+            var targetModeStatusEffectsFilterConfig = configuration.GetSection("status_effect_filters").GetChildren();
+            List<String> targetModeStatusEffectsFilter = [];
+            foreach (var child in targetModeStatusEffectsFilterConfig)
+            {
+                var idConfig = child?.GetSection("status").Value;
+                if (idConfig == null)
+                    continue;
+                var statusEffectId = idConfig.ToId(key, TemplateConstants.StatusEffect);
+                string statusId = idConfig;
+                if (statusRegister.TryLookupId(statusEffectId, out var statusEffectData, out var _))
+                {
+                    statusId = statusEffectData.GetStatusId();
+                }
+                targetModeStatusEffectsFilter.Add(statusId);
+            }
+            AccessTools
+                .Field(typeof(CardEffectData), "targetModeStatusEffectsFilter")
+                .SetValue(data, targetModeStatusEffectsFilter.ToArray());
+
+            List<StatusEffectStackData> paramStatusEffects = [];
+            foreach (var child in configuration.GetSection("param_status_effects").GetChildren())
+            {
+                var idConfig = child?.GetSection("status").Value;
+                if (idConfig == null)
+                    continue;
+                var statusEffectId = idConfig.ToId(key, TemplateConstants.StatusEffect);
+                string statusId = idConfig;
+                if (statusRegister.TryLookupId(statusEffectId, out var statusEffectData, out var _))
+                {
+                    statusId = statusEffectData.GetStatusId();
+                }
+                paramStatusEffects.Add(new StatusEffectStackData()
+                {
+                    statusId = statusId,
+                    count = child?.GetSection("count").ParseInt() ?? 0,
+                });
+            }
+            AccessTools
+                .Field(typeof(CardEffectData), "paramStatusEffects")
+                .SetValue(data, paramStatusEffects.ToArray());
         }
     }
 }

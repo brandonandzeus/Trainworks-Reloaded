@@ -54,14 +54,15 @@ namespace TrainworksReloaded.Base.StatusEffects
 
         private StatusEffectDataDefinition? LoadEffectConfiguration(IRegister<StatusEffectData> service, string key, IConfiguration configuration)
         {
-            var statusId = configuration.GetSection("id").ParseString();
-            if (statusId == null)
+            var id = configuration.GetSection("id").ParseString();
+            if (id == null)
             {
                 return null;
             }
+            var internalID = key.GetId(TemplateConstants.StatusEffect, id);
+            var statusId = internalID.ToLowerInvariant();
 
             var data = new StatusEffectData();
-            // Don't change the statusId it must match exactly with the StatusEffectState class.
             AccessTools.Field(typeof(StatusEffectData), "statusId").SetValue(data, statusId);
 
             var statusEffectStateName = configuration.GetSection("class_name").Value;
@@ -80,45 +81,40 @@ namespace TrainworksReloaded.Base.StatusEffects
             AccessTools.Field(typeof(StatusEffectData), "statusEffectStateName").SetValue(data, fullyQualifiedName);
 
             // The localization keys per status are generated based a based on a base key name.
-            var base_key = "StatusEffect_" + statusId;
+            var baseKey = "StatusEffect_" + statusId;
 
             var localizationNameTerm = configuration.GetSection("names").ParseLocalizationTerm();
             if (localizationNameTerm != null)
             {
-                var card_text_key = base_key + "_CardText";
-                localizationNameTerm.Key = card_text_key;
+                localizationNameTerm.Key = baseKey + "_CardText";
                 termRegister.Register(localizationNameTerm.Key, localizationNameTerm);
             }
 
             var localizationStackNameTerm = configuration.GetSection("stackable_names").ParseLocalizationTerm();
             if (localizationStackNameTerm != null)
             {
-                var stack_card_text_key = base_key + "_Stack_CardText";
-                localizationStackNameTerm.Key = stack_card_text_key;
+                localizationStackNameTerm.Key = baseKey + "_Stack_CardText";
                 termRegister.Register(localizationStackNameTerm.Key, localizationStackNameTerm);
             }
 
             var localizationCardTooltipTerm = configuration.GetSection("card_tooltips").ParseLocalizationTerm();
             if (localizationCardTooltipTerm != null)
             {
-                var card_tooltip_key = base_key + "_CardTooltipText";
-                localizationCardTooltipTerm.Key = card_tooltip_key;
+                localizationCardTooltipTerm.Key = baseKey + "_CardTooltipText";
                 termRegister.Register(localizationCardTooltipTerm.Key, localizationCardTooltipTerm);
             }
 
             var localizationCharacterTooltipTerm = configuration.GetSection("character_tooltips").ParseLocalizationTerm();
             if (localizationCharacterTooltipTerm != null)
             {
-                var character_tooltip_key = base_key + "_CharacterTooltipText";
-                localizationCharacterTooltipTerm.Key = character_tooltip_key;
+                localizationCharacterTooltipTerm.Key = baseKey + "_CharacterTooltipText";
                 termRegister.Register(localizationCharacterTooltipTerm.Key, localizationCharacterTooltipTerm);
             }
 
             var localizationNotificationTerm = configuration.GetSection("notifications").ParseLocalizationTerm();
             if (localizationNotificationTerm != null)
             {
-                var notification_key = base_key + "_NotificationText";
-                localizationNotificationTerm.Key = notification_key;
+                localizationNotificationTerm.Key = baseKey + "_NotificationText";
                 termRegister.Register(localizationNotificationTerm.Key, localizationNotificationTerm);
             }
             
@@ -257,8 +253,7 @@ namespace TrainworksReloaded.Base.StatusEffects
                 .Field(typeof(StatusEffectData), "allowSecondaryUIPlacement")
                 .SetValue(data, configuration.GetSection("allow_secondary_ui_placement").ParseBool() ?? allowSecondaryUIPlacement);
 
-            var name = key.GetId("StatusEffect", statusId);
-            service.Register(name, data);
+            service.Register(internalID, data);
             return new StatusEffectDataDefinition(key, data, configuration)
             {
                 Id = statusId,
