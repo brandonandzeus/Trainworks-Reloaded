@@ -17,9 +17,9 @@ using TrainworksReloaded.Base.Map;
 using TrainworksReloaded.Base.Prefab;
 using TrainworksReloaded.Base.Reward;
 using TrainworksReloaded.Base.Room;
+using TrainworksReloaded.Base.StatusEffects;
 using TrainworksReloaded.Base.Trait;
 using TrainworksReloaded.Base.Trigger;
-using TrainworksReloaded.Base.StatusEffects;
 using TrainworksReloaded.Core;
 using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
@@ -120,7 +120,7 @@ namespace TrainworksReloaded.Plugin
                         typeof(VfxFinalizer),
                         typeof(AtlasIconFinalizer),
                         typeof(RoomModifierFinalizer),
-                        typeof(StatusEffectDataFinalizer)
+                        typeof(StatusEffectDataFinalizer),
                         typeof(MapNodeFinalizer),
                         typeof(RewardDataFinalizer),
                         typeof(CardPoolFinalizer),
