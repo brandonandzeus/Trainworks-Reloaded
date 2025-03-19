@@ -20,6 +20,7 @@ namespace TrainworksReloaded.Base.Character
         private readonly IRegister<AssetReferenceGameObject> assetReferenceRegister;
         private readonly IRegister<CharacterTriggerData> triggerRegister;
         private readonly IRegister<VfxAtLoc> vfxRegister;
+        private readonly IRegister<StatusEffectData> statusRegister;
         private readonly FallbackDataProvider dataProvider;
 
         public CharacterDataFinalizer(
@@ -28,6 +29,7 @@ namespace TrainworksReloaded.Base.Character
             IRegister<AssetReferenceGameObject> assetReferenceRegister,
             IRegister<CharacterTriggerData> triggerRegister,
             IRegister<VfxAtLoc> vfxRegister,
+            IRegister<StatusEffectData> statusRegister,
             FallbackDataProvider dataProvider
         )
         {
@@ -36,6 +38,7 @@ namespace TrainworksReloaded.Base.Character
             this.assetReferenceRegister = assetReferenceRegister;
             this.triggerRegister = triggerRegister;
             this.vfxRegister = vfxRegister;
+            this.statusRegister = statusRegister;
             this.dataProvider = dataProvider;
         }
 
@@ -166,11 +169,69 @@ namespace TrainworksReloaded.Base.Character
                     .SetValue(data, boss_room_cast_vfx);
             }
 
-            //status effects
-            var status_effects = new List<StatusEffectStackData>();
+            var checkOverride = configuration.GetSection("override").ParseBool() ?? false;
+            //status effect immunities
+            var statusEffectImmunities = (string[])
+                AccessTools.Field(typeof(CharacterData), "statusEffectImmunities").GetValue(data) ?? [];
+            var statusEffectImmunitiesList = statusEffectImmunities.ToList();
+
+            if (checkOverride)
+            {
+                statusEffectImmunitiesList.Clear();
+            }
+            
+            foreach (
+                var config in configuration.GetSection("status_effect_immunities").GetChildren()
+            )
+            {
+                var id = config.ParseString();
+                if (id == null)
+                {
+                    continue;
+                }
+                var statusEffectId = id.ToId(key, TemplateConstants.StatusEffect);
+                string statusId = id;
+                if (statusRegister.TryLookupId(statusEffectId, out var statusEffectData, out var _))
+                {
+                    statusId = statusEffectData.GetStatusId();
+                }
+                statusEffectImmunitiesList.Add(statusId);
+            }
+            AccessTools
+                .Field(typeof(CharacterData), "statusEffectImmunities")
+                .SetValue(data, statusEffectImmunitiesList.ToArray());
+
+            //status
+            var startingStatusEffects = new List<StatusEffectStackData>();
+            if (!checkOverride)
+            {
+                var startingStatusEffects2 = (StatusEffectStackData[])
+                    AccessTools
+                        .Field(typeof(CharacterData), "startingStatusEffects")
+                        .GetValue(data);
+                if (startingStatusEffects2 != null)
+                    startingStatusEffects.AddRange(startingStatusEffects2);
+            }
+            foreach (var child in configuration.GetSection("starting_status_effects").GetChildren())
+            {
+                var idConfig = child?.GetSection("status").Value;
+                if (idConfig == null)
+                    continue;
+                var statusEffectId = idConfig.ToId(key, TemplateConstants.StatusEffect);
+                string statusId = idConfig;
+                if (statusRegister.TryLookupId(statusEffectId, out var statusEffectData, out var _))
+                {
+                    statusId = statusEffectData.GetStatusId();
+                }
+                startingStatusEffects.Add(new StatusEffectStackData()
+                {
+                    statusId = statusId,
+                    count = child?.GetSection("count").ParseInt() ?? 0,
+                });
+            }
             AccessTools
                 .Field(typeof(CharacterData), "startingStatusEffects")
-                .SetValue(data, status_effects.ToArray());
+                .SetValue(data, startingStatusEffects.ToArray());
 
             AccessTools
                 .Field(typeof(CharacterData), "fallbackData")

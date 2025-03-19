@@ -318,20 +318,6 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 .Field(typeof(CardUpgradeData), "removeTraitUpgrades")
                 .SetValue(data, removeTraitUpgrades);
 
-            //status
-            var statusEffectUpgrades = configuration
-                .GetSection("status_effect_upgrades")
-                .GetChildren()
-                .Select(xs => new StatusEffectStackData()
-                {
-                    statusId = xs.GetSection("status").ParseString() ?? "",
-                    count = xs.GetSection("count").ParseInt() ?? 0,
-                })
-                .ToList();
-            AccessTools
-                .Field(typeof(CardUpgradeData), "statusEffectUpgrades")
-                .SetValue(data, statusEffectUpgrades);
-
             if (!checkOverride)
                 service.Register(name, data);
             return new CardUpgradeDefinition(key, data, configuration, checkOverride);

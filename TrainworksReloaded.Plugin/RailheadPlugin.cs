@@ -19,6 +19,7 @@ using TrainworksReloaded.Base.Reward;
 using TrainworksReloaded.Base.Room;
 using TrainworksReloaded.Base.Trait;
 using TrainworksReloaded.Base.Trigger;
+using TrainworksReloaded.Base.StatusEffects;
 using TrainworksReloaded.Core;
 using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
@@ -117,7 +118,9 @@ namespace TrainworksReloaded.Plugin
                         typeof(CharacterTriggerFinalizer),
                         typeof(CardTriggerEffectFinalizer),
                         typeof(VfxFinalizer),
+                        typeof(AtlasIconFinalizer),
                         typeof(RoomModifierFinalizer),
+                        typeof(StatusEffectDataFinalizer)
                         typeof(MapNodeFinalizer),
                         typeof(RewardDataFinalizer),
                         typeof(CardPoolFinalizer),
@@ -208,6 +211,31 @@ namespace TrainworksReloaded.Plugin
                 c.RegisterInitializer<IRegister<Sprite>>(x =>
                 {
                     var pipeline = c.GetInstance<IDataPipeline<IRegister<Sprite>, Sprite>>();
+                    pipeline.Run(x);
+                });
+
+                //Register Icons
+                c.RegisterSingleton<IRegister<Texture2D>, AtlasIconRegister>();
+                c.RegisterSingleton<AtlasIconRegister, AtlasIconRegister>();
+                c.Register<IDataPipeline<IRegister<Texture2D>, Texture2D>, AtlasIconPipeline>();
+                c.RegisterInitializer<IRegister<Texture2D>>(x =>
+                {
+                    var pipeline = c.GetInstance<IDataPipeline<IRegister<Texture2D>, Texture2D>>();
+                    pipeline.Run(x);
+                });
+
+                //Register Status Effect Data
+                c.RegisterSingleton<IRegister<StatusEffectData>, StatusEffectDataRegister>();
+                c.RegisterSingleton<StatusEffectDataRegister, StatusEffectDataRegister>();
+                c.Register<
+                    IDataPipeline<IRegister<StatusEffectData>, StatusEffectData>,
+                    StatusEffectDataPipeline
+                >();
+                c.RegisterInitializer<IRegister<StatusEffectData>>(x =>
+                {
+                    var pipeline = c.GetInstance<
+                        IDataPipeline<IRegister<StatusEffectData>, StatusEffectData>
+                    >();
                     pipeline.Run(x);
                 });
 

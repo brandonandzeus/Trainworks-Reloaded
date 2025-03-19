@@ -20,5 +20,6 @@ namespace TrainworksReloaded.Base
         public const string MapNode = "MapNode";
         public const string Sprite = "Sprite";
         public const string GameObject = "GameObject";
+        public const string StatusEffect = "StatusEffect";
     }
 }
