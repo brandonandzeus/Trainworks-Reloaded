@@ -17,6 +17,7 @@ namespace TrainworksReloaded.Base.Prefab
     {
         private readonly IDataPipeline<IRegister<GameObject>, GameObject> decoratee;
         private readonly IRegister<Sprite> spriteRegister;
+        private readonly Lazy<Sprite?> indicatorSprite;
 
         public GameObjectMapIconDecorator(
             IDataPipeline<IRegister<GameObject>, GameObject> decoratee,
@@ -25,6 +26,17 @@ namespace TrainworksReloaded.Base.Prefab
         {
             this.decoratee = decoratee;
             this.spriteRegister = spriteRenderer;
+            indicatorSprite = new Lazy<Sprite?>(
+                () =>
+                    Resources
+                        .FindObjectsOfTypeAll<Image>()
+                        .FirstOrDefault(xs =>
+                        {
+                            Console.WriteLine(xs.name);
+                            return xs.name == "Selected indicator";
+                        })
+                        ?.sprite
+            );
         }
 
         public List<IDefinition<GameObject>> Run(IRegister<GameObject> service)
@@ -76,15 +88,7 @@ namespace TrainworksReloaded.Base.Prefab
             selectedIndicator.transform.SetParent(gameObject.transform);
 
             var selectedImage = selectedIndicator.AddComponent<Image>();
-            selectedImage.sprite = Resources
-                .FindObjectsOfTypeAll<Image>()
-                .FirstOrDefault(xs =>
-                {
-                    Console.WriteLine(xs.name);
-                    return xs.name == "Selected indicator";
-                })
-                ?.sprite;
-
+            selectedImage.sprite = indicatorSprite.Value;
             AccessTools
                 .Field(typeof(MapNodeIcon), "selectedIndicator")
                 .SetValue(mapNodeIcon, selectedIndicator);
