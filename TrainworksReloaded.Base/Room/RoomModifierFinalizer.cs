@@ -19,6 +19,7 @@ namespace TrainworksReloaded.Base.Room
         private readonly IRegister<CardUpgradeData> upgradeDataRegister;
         private readonly IRegister<CardEffectData> cardEffectDataRegister;
         private readonly IRegister<VfxAtLoc> vfxRegister;
+        private readonly IRegister<StatusEffectData> statusRegister;
 
         public RoomModifierFinalizer(
             IModLogger<RoomModifierFinalizer> logger,
@@ -27,7 +28,8 @@ namespace TrainworksReloaded.Base.Room
             IRegister<CardData> cardDataRegister,
             IRegister<CardUpgradeData> upgradeDataRegister,
             IRegister<CardEffectData> cardEffectDataRegister,
-            IRegister<VfxAtLoc> vfxRegister
+            IRegister<VfxAtLoc> vfxRegister,
+            IRegister<StatusEffectData> statusRegister
         )
         {
             this.logger = logger;
@@ -37,23 +39,24 @@ namespace TrainworksReloaded.Base.Room
             this.upgradeDataRegister = upgradeDataRegister;
             this.cardEffectDataRegister = cardEffectDataRegister;
             this.vfxRegister = vfxRegister;
+            this.statusRegister = statusRegister;
         }
 
         public void FinalizeData()
         {
             foreach (var definition in cache.GetCacheItems())
             {
-                FinalizeRoomModifiers(definition);
+                FinalizeRoomModifier(definition);
             }
             cache.Clear();
         }
 
         /// <summary>
-        /// Finalize Card Definitions
+        /// Finalize RoomModifier Definition
         /// Handles Data to avoid lookup looks for names and ids
         /// </summary>
         /// <param name="definition"></param>
-        private void FinalizeRoomModifiers(IDefinition<RoomModifierData> definition)
+        private void FinalizeRoomModifier(IDefinition<RoomModifierData> definition)
         {
             var configuration = definition.Configuration;
             var data = definition.Data;
@@ -131,6 +134,29 @@ namespace TrainworksReloaded.Base.Room
                 AccessTools
                     .Field(typeof(RoomModifierData), "paramCardEffects")
                     .SetValue(data, cardEffectDatas);
+
+            // Status Effects
+            List<StatusEffectStackData> paramStatusEffects = [];
+            foreach (var child in configuration.GetSection("param_status_effects").GetChildren())
+            {
+                var idConfig = child?.GetSection("status").Value;
+                if (idConfig == null)
+                    continue;
+                var statusEffectId = idConfig.ToId(key, TemplateConstants.StatusEffect);
+                string statusId = idConfig;
+                if (statusRegister.TryLookupId(statusEffectId, out var statusEffectData, out var _))
+                {
+                    statusId = statusEffectData.GetStatusId();
+                }
+                paramStatusEffects.Add(new StatusEffectStackData()
+                {
+                    statusId = statusId,
+                    count = child?.GetSection("count").ParseInt() ?? 0,
+                });
+            }
+            AccessTools
+                .Field(typeof(RoomModifierData), "paramStatusEffects")
+                .SetValue(data, paramStatusEffects.ToArray());
         }
     }
 }

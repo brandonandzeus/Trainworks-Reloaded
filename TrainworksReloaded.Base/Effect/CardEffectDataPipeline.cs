@@ -105,15 +105,6 @@ namespace TrainworksReloaded.Base.Effect
                     configuration.GetSection("param_subtype").ParseString() ?? paramSubtype
                 );
 
-            var statusEffectStackMultiplier = "";
-            AccessTools
-                .Field(typeof(CardEffectData), "statusEffectStackMultiplier")
-                .SetValue(
-                    data,
-                    configuration.GetSection("status_effect_multipler").ParseString()
-                        ?? statusEffectStackMultiplier
-                );
-
             //bools
             var suppressPyreRoomFocus = false;
             AccessTools
@@ -293,18 +284,6 @@ namespace TrainworksReloaded.Base.Effect
                     configuration.GetSection("param_multiplier").ParseFloat() ?? paramMultiplier
                 );
 
-            //string[]
-            var targetModeStatusEffectsFilter = configuration
-                .GetSection("status_effect_filters")
-                .GetChildren()
-                .Select(xs => xs.Value)
-                .Where(xs => xs != null)
-                .Cast<string>()
-                .ToList();
-            AccessTools
-                .Field(typeof(CardEffectData), "targetModeStatusEffectsFilter")
-                .SetValue(data, targetModeStatusEffectsFilter.ToArray());
-
             //target mode
             var targetMode = TargetMode.Room;
             AccessTools
@@ -366,20 +345,6 @@ namespace TrainworksReloaded.Base.Effect
                     data,
                     configuration.GetSection("param_trigger").ParseTrigger() ?? paramTrigger
                 );
-
-            //string[]
-            var paramStatusEffects = configuration
-                .GetSection("param_status_effects")
-                .GetChildren()
-                .Select(xs => new StatusEffectStackData()
-                {
-                    statusId = xs.GetSection("status").ParseString() ?? "",
-                    count = xs.GetSection("count").ParseInt() ?? 0,
-                })
-                .ToList();
-            AccessTools
-                .Field(typeof(CardEffectData), "paramStatusEffects")
-                .SetValue(data, paramStatusEffects.ToArray());
 
             service.Register(name, data);
             return new CardEffectDefinition(key, data, configuration);

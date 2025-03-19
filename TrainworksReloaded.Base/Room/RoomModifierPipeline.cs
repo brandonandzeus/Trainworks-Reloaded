@@ -78,11 +78,25 @@ namespace TrainworksReloaded.Base.Room
             var data = new RoomModifierData();
 
             //handle names
-            var nameClass =
-                configuration.GetSection("name").ParseString() ?? "RoomStateBuffModifier";
+            var nameClass = configuration.GetSection("name").Value;
+            if (nameClass == null)
+                return null;
+
+            var modReference = configuration.GetSection("mod_reference").Value ?? key;
+            var assembly = atlas.PluginDefinitions.GetValueOrDefault(modReference)?.Assembly;
+            if (
+                !nameClass.GetFullyQualifiedName<RoomStateModifierBase>(
+                    assembly,
+                    out string? fullyQualifiedName
+                )
+            )
+            {
+                return null;
+            }
             AccessTools
                 .Field(typeof(RoomModifierData), "roomStateModifierClassName")
-                .SetValue(data, nameClass);
+                .SetValue(data, fullyQualifiedName);
+
             var nameTerm = configuration.GetSection("names").ParseLocalizationTerm();
             if (nameTerm != null)
             {
@@ -141,15 +155,6 @@ namespace TrainworksReloaded.Base.Room
                 extraTooltipBodyKeyTerm.Key = extraTooltipBodyKey;
                 termRegister.Register(extraTooltipBodyKey, extraTooltipBodyKeyTerm);
             }
-
-            //string
-            var roomStateModifierClassName = "";
-            AccessTools
-                .Field(typeof(RoomModifierData), "roomStateModifierClassName")
-                .SetValue(
-                    data,
-                    configuration.GetSection("name").ParseString() ?? roomStateModifierClassName
-                );
 
             var paramSubtype = "";
             AccessTools
@@ -232,19 +237,6 @@ namespace TrainworksReloaded.Base.Room
             AccessTools
                 .Field(typeof(RoomModifierData), "additionalTooltips")
                 .SetValue(data, additionalTooltips.ToArray());
-
-            var paramStatusEffects = configuration
-                .GetSection("param_status_effects")
-                .GetChildren()
-                .Select(xs => new StatusEffectStackData()
-                {
-                    statusId = xs.GetSection("status").ParseString() ?? "",
-                    count = xs.GetSection("count").ParseInt() ?? 0,
-                })
-                .ToList();
-            AccessTools
-                .Field(typeof(RoomModifierData), "paramStatusEffects")
-                .SetValue(data, paramStatusEffects.ToArray());
 
             service.Register(name, data);
             return new RoomModifierDefinition(key, data, configuration) { Id = id };

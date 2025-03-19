@@ -383,59 +383,7 @@ namespace TrainworksReloaded.Base.Character
                     subtypes.Add(str);
             }
 
-            //status effect immunities
-            var statusEffectImmunities = (string[])
-                AccessTools.Field(typeof(CharacterData), "statusEffectImmunities").GetValue(data);
-            if (statusEffectImmunities == null)
-            {
-                statusEffectImmunities = [];
-            }
-            var statusEffectImmunitiesList = statusEffectImmunities.ToList();
-
-            if (checkOverride)
-            {
-                statusEffectImmunitiesList.Clear();
-            }
-
-            foreach (
-                var config in configuration.GetSection("status_effect_immunities").GetChildren()
-            )
-            {
-                var str = config.ParseString();
-                if (str != null)
-                    statusEffectImmunitiesList.Add(str);
-            }
-            AccessTools
-                .Field(typeof(CharacterData), "statusEffectImmunities")
-                .SetValue(data, statusEffectImmunitiesList.ToArray());
-
-            //status
-            var startingStatusEffects = new List<StatusEffectStackData>();
-            if (!checkOverride)
-            {
-                var startingStatusEffects2 = (StatusEffectStackData[])
-                    AccessTools
-                        .Field(typeof(CharacterData), "startingStatusEffects")
-                        .GetValue(data);
-                if (startingStatusEffects2 != null)
-                    startingStatusEffects.AddRange(startingStatusEffects2);
-            }
-            startingStatusEffects.AddRange(
-                configuration
-                    .GetSection("starting_status_effects")
-                    .GetChildren()
-                    .Select(xs => new StatusEffectStackData()
-                    {
-                        statusId = xs.GetSection("status").ParseString() ?? "",
-                        count = xs.GetSection("count").ParseInt() ?? 0,
-                    })
-            );
-            AccessTools
-                .Field(typeof(CharacterData), "startingStatusEffects")
-                .SetValue(data, startingStatusEffects.ToArray());
-
             //endless baseline stats
-
             var endlessBaselineStats = checkOverride
                 ? (EndlessBaselineStats)
                     AccessTools.Field(typeof(CharacterData), "endlessBaselineStats").GetValue(data)
