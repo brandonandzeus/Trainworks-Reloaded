@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using HarmonyLib;
+using Malee;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
+using UnityEngine.UIElements;
 
 namespace TrainworksReloaded.Base.Card
 {
@@ -66,15 +68,14 @@ namespace TrainworksReloaded.Base.Card
             }
             if (cardDatas.Count != 0)
             {
-                Type cardPoolType = typeof(CardPool);
-                Type cardDataListType = cardPoolType.GetNestedType(
-                    "CardDataList",
-                    BindingFlags.NonPublic
-                );
-
-                var cardDataList = Activator.CreateInstance(cardDataListType);
-                AccessTools.Field(cardDataListType, "array").SetValue(cardDataList, cardDatas);
-
+                var cardDataList =
+                    (ReorderableArray<CardData>)
+                        AccessTools.Field(typeof(CardPool), "cardDataList").GetValue(data);
+                cardDataList.Clear();
+                foreach (var item in cardDatas)
+                {
+                    cardDataList.Add(item);
+                }
                 AccessTools.Field(typeof(CardPool), "cardDataList").SetValue(data, cardDataList);
             }
         }
