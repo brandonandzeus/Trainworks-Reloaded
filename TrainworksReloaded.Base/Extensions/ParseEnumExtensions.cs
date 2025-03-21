@@ -16,6 +16,43 @@ namespace TrainworksReloaded.Base.Extensions
 {
     public static class ParseEnumExtensions
     {
+        public static MapNodeData.SkipCheckSettings? ParseSkipSettings(
+            this IConfigurationSection section
+        )
+        {
+            var val = section.Value;
+            if (string.IsNullOrEmpty(val))
+            {
+                return null;
+            }
+            return val.ToLower() switch
+            {
+                "none" => 0,
+                "always" => MapNodeData.SkipCheckSettings.Always,
+                "if_full_health" => MapNodeData.SkipCheckSettings.IfFullHealth,
+                "both" => MapNodeData.SkipCheckSettings.Always
+                    | MapNodeData.SkipCheckSettings.IfFullHealth,
+                _ => null,
+            };
+        }
+
+        public static RewardData.Filter? ParseRewardFiler(this IConfigurationSection section)
+        {
+            var val = section.Value;
+            if (string.IsNullOrEmpty(val))
+            {
+                return null;
+            }
+            return val.ToLower() switch
+            {
+                "none" => RewardData.Filter.None,
+                "only_endless" => RewardData.Filter.OnlyInEndless,
+                "not_endless" => RewardData.Filter.NotInEndless,
+                "only_if_allied_champ" => RewardData.Filter.OnlyIfHasAlliedChampion,
+                _ => null,
+            };
+        }
+
         public static CardData.CostType? ParseCostType(this IConfigurationSection section)
         {
             var val = section.Value;

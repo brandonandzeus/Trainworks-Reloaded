@@ -35,3 +35,4 @@ For our mods, we recommend using github codespaces
 9. run `dotnet nuget update source --username $GITHUB_USER --password $GH_PACKAGES_TOKEN monster-train-packages --store-password-in-clear-text`
 10. run `dotnet build`
 11. you will have built your first mod, commit and save and we can do the first release.
+12. Create a Github Release

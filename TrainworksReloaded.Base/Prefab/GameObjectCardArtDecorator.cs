@@ -1,18 +1,19 @@
 ﻿using System.Collections.Generic;
 using SimpleInjector;
 using TrainworksReloaded.Base.Extensions;
+using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace TrainworksReloaded.Base.Prefab
 {
-    public class GameObjectCardArtSetup : IDataPipeline<IRegister<GameObject>, GameObject>
+    public class GameObjectCardArtDecorator : IDataPipeline<IRegister<GameObject>, GameObject>
     {
         private readonly IDataPipeline<IRegister<GameObject>, GameObject> decoratee;
         private readonly IRegister<Sprite> spriteRegister;
 
-        public GameObjectCardArtSetup(
+        public GameObjectCardArtDecorator(
             IDataPipeline<IRegister<GameObject>, GameObject> decoratee,
             IRegister<Sprite> spriteRenderer
         )
@@ -34,17 +35,20 @@ namespace TrainworksReloaded.Base.Prefab
         public void Setup(IDefinition<GameObject> definition)
         {
             var type = definition.Configuration.GetSection("type").Value;
-            var spriteVal = definition.Configuration.GetSection("sprite").Value;
-            if (type != "card_art" || spriteVal == null)
-            {
+            if (type != "card_art")
                 return;
-            }
 
-            var id = spriteVal.ToId(definition.Key, "Sprite");
-            if (!spriteRegister.TryLookupId(id, out var sprite, out _))
-            {
+            var spriteVal = definition
+                .Configuration.GetSection("extensions")
+                .GetSection("card_art")
+                .GetSection("sprite")
+                .Value;
+            if (spriteVal == null)
                 return;
-            }
+
+            var id = spriteVal.ToId(definition.Key, TemplateConstants.Sprite);
+            if (!spriteRegister.TryLookupId(id, out var sprite, out _))
+                return;
 
             var gameObject = definition.Data;
             gameObject.AddComponent<AddressableAssetPrefab>();

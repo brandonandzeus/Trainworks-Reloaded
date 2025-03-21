@@ -15,6 +15,11 @@ namespace TrainworksReloaded.Base
         public const string Trait = "Trait";
         public const string CharacterTrigger = "CTrigger";
         public const string RoomModifier = "RoomModifier";
+        public const string CardPool = "CardPool";
+        public const string RewardData = "RewardData";
+        public const string MapNode = "MapNode";
+        public const string Sprite = "Sprite";
+        public const string GameObject = "GameObject";
         public const string StatusEffect = "StatusEffect";
     }
 }
