@@ -44,11 +44,8 @@ jobs:
       - name: Restore Dependencies
         run: dotnet restore
 
-      - name: Build Solution with Versioning
-        run: dotnet build --configuration ${{ matrix.configuration }} --no-restore /p:Version=${VERSION}
-
-      - name: Build Plugin
-        run: dotnet publish TrainworksReloaded.Plugin/TrainworksReloaded.Plugin.csproj --configuration Release --output ./plugin_build /p:Version=${VERSION}
+      - name: Build Project
+        run: dotnet build --configuration ${{ matrix.configuration }} --output ./plugin_build --no-restore /p:Version=${VERSION}
 
       - name: Build Thunderstore Package
         run: |
