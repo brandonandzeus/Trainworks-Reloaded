@@ -45,7 +45,7 @@ jobs:
         run: dotnet restore
 
       - name: Build Project
-        run: dotnet build --configuration ${{ matrix.configuration }} --output ./plugin_build --no-restore /p:Version=${VERSION}
+        run: dotnet build TrainworksReloaded.Plugin/TrainworksReloaded.Plugin.csproj --configuration ${{ matrix.configuration }} --output ./plugin_build --no-restore /p:Version=${VERSION}
 
       - name: Build Thunderstore Package
         run: |
