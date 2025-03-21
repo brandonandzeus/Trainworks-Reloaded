@@ -36,3 +36,9 @@ For our mods, we recommend using github codespaces
 10. run `dotnet build`
 11. you will have built your first mod, commit and save and we can do the first release.
 12. Create a Github Release
+
+## Release Guide
+
+To make a Release for Trainworks-Reloaded, do the following:
+1. Update the thunderstore.toml version to be your release tag.
+2. Create a Git Tag with the corresponding semvar
