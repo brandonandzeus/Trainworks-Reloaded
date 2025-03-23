@@ -20,8 +20,9 @@ From there it is buildable as regular C# project through Visual Studio.
 
 ## Creating Your First Mod
 
-For our mods, we recommend using github codespaces
+Check out the Wiki for an in-depth guide: https://github.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/wiki
 
+But basically:
 1. Create a public Github Repository
 2. Go to  GitHub Settings → Developer Settings → Personal Access Tokens and generate a new token (classic) with read:packages and public_repo permissions
 3. Go settings -> Codespaces -> Secrets and create a new secret 'GH_PACKAGES_TOKEN' with that new token, assign it to that token.
