@@ -9,6 +9,10 @@ permissions:
     packages: write
     contents: write
     
+env:
+  mod_namespace: 'MT2'
+  mod_name: 'Trainworks_Reloaded'
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -25,6 +29,10 @@ jobs:
         with:
           dotnet-version: '9.0.x'  # Compatible with netstandard2.1
 
+      - name: Install Thunderstore
+        run: |
+          dotnet tool install --global tcli
+
       - name: Extract Version from Tag
         id: get_version
         run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
@@ -35,28 +43,26 @@ jobs:
       
       - name: Restore Dependencies
         run: dotnet restore
-      
-      - name: Restore Dependencies
-        run: dotnet restore
 
-      - name: Build Solution with Versioning
-        run: dotnet build --configuration ${{ matrix.configuration }} --no-restore /p:Version=${VERSION}
+      - name: Build Project
+        run: dotnet build TrainworksReloaded.Plugin/TrainworksReloaded.Plugin.csproj --configuration ${{ matrix.configuration }} --output ./plugin_build --no-restore /p:Version=${VERSION}
 
-      - name: Build Plugin
-        run: dotnet publish TrainworksReloaded.Plugin/TrainworksReloaded.Plugin.csproj --configuration Release --output ./plugin_build /p:Version=${VERSION}
+      - name: Build Thunderstore Package
+        run: |
+          tcli build
 
-      - name: Zip Plugin
-        run: zip -r TrainworksReloaded.Plugin.zip ./plugin_build
-
-      - name: Get Release ID
-        id: get_release
-        uses: bruceadams/get-release@v1.3.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-bundle
+          path: ${{ env.mod_namespace }}-${{ env.mod_name }}-${{ github.ref_name }}.zip
           
-      - name: Upload Plugin to Existing GitHub Release
+      - name: Github Release
         uses: softprops/action-gh-release@v2
         with:
-          files: TrainworksReloaded.Plugin.zip
+          files: ${{ env.mod_namespace }}-${{ env.mod_name }}-${{ github.ref_name }}.zip
           prerelease: true
           generate_release_notes: true
+
+      - name: Publish to Thunderstore
+        run: tcli publish --file "${{ env.mod_namespace }}-${{ env.mod_name }}-${{ github.ref_name }}.zip" --token ${{ secrets.TCLI_AUTH_TOKEN }}

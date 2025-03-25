@@ -20,8 +20,9 @@ From there it is buildable as regular C# project through Visual Studio.
 
 ## Creating Your First Mod
 
-For our mods, we recommend using github codespaces
+Check out the Wiki for an in-depth guide: https://github.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/wiki
 
+But basically:
 1. Create a public Github Repository
 2. Go to  GitHub Settings → Developer Settings → Personal Access Tokens and generate a new token (classic) with read:packages and public_repo permissions
 3. Go settings -> Codespaces -> Secrets and create a new secret 'GH_PACKAGES_TOKEN' with that new token, assign it to that token.
@@ -36,3 +37,9 @@ For our mods, we recommend using github codespaces
 10. run `dotnet build`
 11. you will have built your first mod, commit and save and we can do the first release.
 12. Create a Github Release
+
+## Release Guide
+
+To make a Release for Trainworks-Reloaded, do the following:
+1. Update the thunderstore.toml version to be your release tag.
+2. Create a Git Tag with the corresponding semvar

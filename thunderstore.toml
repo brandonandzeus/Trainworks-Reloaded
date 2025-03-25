@@ -3,29 +3,27 @@ schemaVersion = "0.0.1"
 
 [package]
 namespace = "MT2"
-name = "Trainworks.Reloaded"
-versionNumber = "0.0.1"
-description = "A Data Load and Injection Engine for Monster Train 2"
-websiteUrl = "https://thunderstore.io"
+name = "Trainworks_Reloaded"
+versionNumber = "0.1.3"
+description = "A Data Loader and Injection Engine for Monster Train 2"
+websiteUrl = "https://github.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded"
 containsNsfwContent = false
 [package.dependencies]
-BepInEx-BepInExPack-5.4.2100 = "5.4.2100"
+BepInEx-BepInExPack = "5.4.2100"
 
 
 [build]
 icon = "./icon.png"
-readme = "./README.md"
-outdir = "./build"
+readme = "./DESCRIPTION.md"
+outdir = "./"
 
 [[build.copy]]
-source = "./dist"
+source = "./plugin_build"
 target = ""
 
 
 [publish]
 repository = "https://thunderstore.io"
-communities = [ "mt2", ]
-[publish.categories]
-mt2 = [ "items", "skills", ]
+communities = [ "monster-train-2" ]
 
 
