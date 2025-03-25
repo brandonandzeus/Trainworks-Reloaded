@@ -20,6 +20,7 @@ namespace TrainworksReloaded.Base.Room
         private readonly IRegister<CardEffectData> cardEffectDataRegister;
         private readonly IRegister<VfxAtLoc> vfxRegister;
         private readonly IRegister<StatusEffectData> statusRegister;
+        private readonly IRegister<CharacterTriggerData.Trigger> triggerEnumRegister;
 
         public RoomModifierFinalizer(
             IModLogger<RoomModifierFinalizer> logger,
@@ -29,7 +30,8 @@ namespace TrainworksReloaded.Base.Room
             IRegister<CardUpgradeData> upgradeDataRegister,
             IRegister<CardEffectData> cardEffectDataRegister,
             IRegister<VfxAtLoc> vfxRegister,
-            IRegister<StatusEffectData> statusRegister
+            IRegister<StatusEffectData> statusRegister,
+            IRegister<CharacterTriggerData.Trigger> triggerEnumRegister
         )
         {
             this.logger = logger;
@@ -40,6 +42,8 @@ namespace TrainworksReloaded.Base.Room
             this.cardEffectDataRegister = cardEffectDataRegister;
             this.vfxRegister = vfxRegister;
             this.statusRegister = statusRegister;
+            this.triggerEnumRegister = triggerEnumRegister;
+
         }
 
         public void FinalizeData()
@@ -157,6 +161,32 @@ namespace TrainworksReloaded.Base.Room
             AccessTools
                 .Field(typeof(RoomModifierData), "paramStatusEffects")
                 .SetValue(data, paramStatusEffects.ToArray());
+
+            //trigger
+            var paramTrigger = CharacterTriggerData.Trigger.OnDeath;
+            var triggerSection = configuration.GetSection("trigger");
+            if (triggerSection.Value != null)
+            {
+                var value = triggerSection.Value;
+                if (
+                    !triggerEnumRegister.TryLookupId(
+                        value.ToId(key, TemplateConstants.CharacterTriggerEnum),
+                        out var triggerFound,
+                        out var _
+                    )
+                )
+                {
+                    paramTrigger = triggerFound;
+                }
+                else
+                {
+                    paramTrigger = triggerSection.ParseTrigger() ?? default;
+                }
+            }
+            AccessTools
+                .Field(typeof(RoomModifierData), "paramTrigger")
+                .SetValue(data, paramTrigger);
+
         }
     }
 }

@@ -12,6 +12,7 @@ using TrainworksReloaded.Base.CardUpgrade;
 using TrainworksReloaded.Base.Character;
 using TrainworksReloaded.Base.Class;
 using TrainworksReloaded.Base.Effect;
+using TrainworksReloaded.Base.Enum;
 using TrainworksReloaded.Base.Localization;
 using TrainworksReloaded.Base.Map;
 using TrainworksReloaded.Base.Prefab;
@@ -124,6 +125,8 @@ namespace TrainworksReloaded.Plugin
                         typeof(MapNodeFinalizer),
                         typeof(RewardDataFinalizer),
                         typeof(CardPoolFinalizer),
+                        typeof(CharacterTriggerTypeFinalizer),
+                        typeof(CardTriggerTypeFinalizer),
                     ]
                 );
 
@@ -221,6 +224,36 @@ namespace TrainworksReloaded.Plugin
                 c.RegisterInitializer<IRegister<Texture2D>>(x =>
                 {
                     var pipeline = c.GetInstance<IDataPipeline<IRegister<Texture2D>, Texture2D>>();
+                    pipeline.Run(x);
+                });
+
+                //Register Custom Character Triggers Types.
+                c.RegisterSingleton<IRegister<CharacterTriggerData.Trigger>, CharacterTriggerTypeRegister>();
+                c.RegisterSingleton<CharacterTriggerTypeRegister, CharacterTriggerTypeRegister>();
+                c.Register<
+                    IDataPipeline<IRegister<CharacterTriggerData.Trigger>, CharacterTriggerData.Trigger>,
+                    CharacterTriggerTypePipeline
+                >(); //a data pipeline to run as soon as register is needed
+                c.RegisterInitializer<IRegister<CharacterTriggerData.Trigger>>(x =>
+                {
+                    var pipeline = c.GetInstance<
+                        IDataPipeline<IRegister<CharacterTriggerData.Trigger>, CharacterTriggerData.Trigger>
+                    >();
+                    pipeline.Run(x);
+                });
+
+                //Register Custom Card Triggers Types.
+                c.RegisterSingleton<IRegister<CardTriggerType>, CardTriggerTypeRegister>();
+                c.RegisterSingleton<CardTriggerTypeRegister, CardTriggerTypeRegister>();
+                c.Register<
+                    IDataPipeline<IRegister<CardTriggerType>, CardTriggerType>,
+                    CardTriggerTypePipeline
+                >(); //a data pipeline to run as soon as register is needed
+                c.RegisterInitializer<IRegister<CardTriggerType>>(x =>
+                {
+                    var pipeline = c.GetInstance<
+                        IDataPipeline<IRegister<CardTriggerType>, CardTriggerType>
+                    >();
                     pipeline.Run(x);
                 });
 

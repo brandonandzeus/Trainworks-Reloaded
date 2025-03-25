@@ -337,15 +337,6 @@ namespace TrainworksReloaded.Base.Effect
                 .Field(typeof(CardEffectData), "animToPlay")
                 .SetValue(data, configuration.GetSection("anim_to_play").ParseAnim() ?? animToPlay);
 
-            //trigger
-            var paramTrigger = CharacterTriggerData.Trigger.OnDeath;
-            AccessTools
-                .Field(typeof(CardEffectData), "paramTrigger")
-                .SetValue(
-                    data,
-                    configuration.GetSection("param_trigger").ParseTrigger() ?? paramTrigger
-                );
-
             service.Register(name, data);
             return new CardEffectDefinition(key, data, configuration);
         }

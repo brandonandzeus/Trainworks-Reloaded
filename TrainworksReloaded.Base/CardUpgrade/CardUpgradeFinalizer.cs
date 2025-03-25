@@ -142,7 +142,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
                     continue;
                 }
 
-                var id = idConfig.ToId(key, TemplateConstants.Trigger);
+                var id = idConfig.ToId(key, TemplateConstants.CardTrigger);
                 if (cardTriggerRegister.TryLookupId(id, out var card, out var _))
                 {
                     cardTriggerUpgrades.Add(card);

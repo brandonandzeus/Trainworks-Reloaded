@@ -287,7 +287,7 @@ namespace TrainworksReloaded.Base.Card
                 {
                     continue;
                 }
-                var id = idConfig.ToId(key, TemplateConstants.Trigger);
+                var id = idConfig.ToId(key, TemplateConstants.CardTrigger);
                 if (triggerEffectRegister.TryLookupId(id, out var card, out var _))
                 {
                     triggers.Add(card);

@@ -94,12 +94,6 @@ namespace TrainworksReloaded.Base.Trigger
                 termRegister.Register(additionalTextOnTriggerKey, localizationTrigger);
             }
 
-            //handle trigger
-            var trigger = CharacterTriggerData.Trigger.OnDeath;
-            AccessTools
-                .Field(typeof(CharacterTriggerData), "trigger")
-                .SetValue(data, configuration.GetSection("trigger").ParseTrigger() ?? trigger);
-
             //handle bools
             var showAdditionalTriggerTextOnSuccessOnly = false;
             AccessTools
