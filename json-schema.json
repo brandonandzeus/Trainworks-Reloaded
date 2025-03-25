@@ -1133,7 +1133,7 @@
           },
           "is_state_modifier": {
             "type": "boolean",
-            "description": "Marks this CharacterTrigger as a state modifier. Example: OnDeathwish (Vanguard)"
+            "description": "Marks this CharacterTrigger as a state modifier (will make its trigger tooltip and icon blue). The intended usage is for a conditional trigger whose effect granted is conditional and can be undone when the condition no longer holds. Example: OnDeathwish (Vanguard)/OnDeathwishLost"
           },
           "name": {
             "$ref": "#/definitions/parse_term",
@@ -1145,7 +1145,7 @@
           },
           "sprite": {
             "type": "string",
-            "description": "Identifier to a sprite (Ideally sized 50x50). This sprite will appear in the UI. An Atlas icon with the same id must be provided for use in tooltips."
+            "description": "Identifier to a sprite (Ideally sized 50x50). This sprite will appear in the UI. An atlas_icon with the same id must be provided for use in tooltips."
           }
         }
       }
