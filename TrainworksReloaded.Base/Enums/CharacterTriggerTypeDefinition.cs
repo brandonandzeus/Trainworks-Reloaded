@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using TrainworksReloaded.Core.Interfaces;
 
-namespace TrainworksReloaded.Base.Enum
+namespace TrainworksReloaded.Base.Enums
 {
     public class CharacterTriggerTypeDefinition(
         string key,

@@ -9,16 +9,15 @@ using TrainworksReloaded.Base.Localization;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
-using UnityEngine.UI.Extensions;
 
-namespace TrainworksReloaded.Base.Enum
+namespace TrainworksReloaded.Base.Enums
 {
     public class CharacterTriggerTypePipeline
         : IDataPipeline<IRegister<CharacterTriggerData.Trigger>, CharacterTriggerData.Trigger>
     {
         private readonly PluginAtlas atlas;
         private readonly IRegister<LocalizationTerm> termRegister;
-        private static int NextEnumId = (from int x in System.Enum.GetValues(typeof(CharacterTriggerData.Trigger)).AsQueryable() select x).Max() + 1;
+        private static int NextEnumId = (from int x in Enum.GetValues(typeof(CharacterTriggerData.Trigger)).AsQueryable() select x).Max() + 1;
 
         public CharacterTriggerTypePipeline(PluginAtlas atlas, IRegister<LocalizationTerm> termRegister)
         {

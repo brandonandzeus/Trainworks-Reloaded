@@ -7,7 +7,7 @@ using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
 
-namespace TrainworksReloaded.Base.Enum
+namespace TrainworksReloaded.Base.Enums
 {
     public class CardTriggerTypeFinalizer : IDataFinalizer
     {

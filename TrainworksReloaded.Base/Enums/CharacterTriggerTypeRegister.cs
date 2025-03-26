@@ -5,10 +5,8 @@ using System.Text;
 using TrainworksReloaded.Base.Effect;
 using TrainworksReloaded.Base.Trigger;
 using TrainworksReloaded.Core.Interfaces;
-using static CharacterTriggerData;
-using static RimLight;
 
-namespace TrainworksReloaded.Base.Enum
+namespace TrainworksReloaded.Base.Enums
 {
     public class CharacterTriggerTypeRegister
         : Dictionary<string, CharacterTriggerData.Trigger>,

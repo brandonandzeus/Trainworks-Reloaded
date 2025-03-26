@@ -8,7 +8,7 @@ using TrainworksReloaded.Core.Interfaces;
 using static CharacterTriggerData;
 using static RimLight;
 
-namespace TrainworksReloaded.Base.Enum
+namespace TrainworksReloaded.Base.Enums
 {
     public class CardTriggerTypeRegister
         : Dictionary<string, CardTriggerType>,

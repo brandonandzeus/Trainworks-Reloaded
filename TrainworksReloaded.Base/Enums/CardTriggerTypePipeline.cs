@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TrainworksReloaded.Base.Extensions;
@@ -8,14 +9,14 @@ using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
 
-namespace TrainworksReloaded.Base.Enum
+namespace TrainworksReloaded.Base.Enums
 {
     public class CardTriggerTypePipeline
         : IDataPipeline<IRegister<CardTriggerType>, CardTriggerType>
     {
         private readonly PluginAtlas atlas;
         private readonly IRegister<LocalizationTerm> termRegister;
-        private static int NextEnumId = (from int x in System.Enum.GetValues(typeof(CardTriggerType)).AsQueryable() select x).Max() + 1;
+        private static int NextEnumId = (from int x in Enum.GetValues(typeof(CardTriggerType)).AsQueryable() select x).Max() + 1;
 
         public CardTriggerTypePipeline(PluginAtlas atlas, IRegister<LocalizationTerm> termRegister)
         {

@@ -12,7 +12,7 @@ using TrainworksReloaded.Base.CardUpgrade;
 using TrainworksReloaded.Base.Character;
 using TrainworksReloaded.Base.Class;
 using TrainworksReloaded.Base.Effect;
-using TrainworksReloaded.Base.Enum;
+using TrainworksReloaded.Base.Enums;
 using TrainworksReloaded.Base.Localization;
 using TrainworksReloaded.Base.Map;
 using TrainworksReloaded.Base.Prefab;
