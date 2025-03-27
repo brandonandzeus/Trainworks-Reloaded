@@ -82,33 +82,60 @@ namespace TrainworksReloaded.Base.CardUpgrade
             data.name = name;
 
             //Process operators.
-            AccessTools.Field(typeof(CardUpgradeMaskData), "requiredRaritiesOperator").SetValue(data, configuration.GetSection("required_rarities_operator").ParseCompareOperator("or"));
-            AccessTools.Field(typeof(CardUpgradeMaskData), "excludedRaritiesOperator").SetValue(data, configuration.GetSection("excluded_rarities_operator").ParseCompareOperator());
-            AccessTools.Field(typeof(CardUpgradeMaskData), "requiredSubtypesOperator").SetValue(data, configuration.GetSection("required_subtypes_operator").ParseCompareOperator());
-            AccessTools.Field(typeof(CardUpgradeMaskData), "excludedSubtypesOperator").SetValue(data, configuration.GetSection("excluded_subtypes_operator").ParseCompareOperator());
-            AccessTools.Field(typeof(CardUpgradeMaskData), "requiredStatusEffectsOperator").SetValue(data, configuration.GetSection("required_status_operator").ParseCompareOperator());
-            AccessTools.Field(typeof(CardUpgradeMaskData), "excludedStatusEffectsOperator").SetValue(data, configuration.GetSection("excluded_status_operator").ParseCompareOperator());
-            AccessTools.Field(typeof(CardUpgradeMaskData), "requiredCardTraitsOperator").SetValue(data, configuration.GetSection("required_traits_operator").ParseCompareOperator());
-            AccessTools.Field(typeof(CardUpgradeMaskData), "excludedCardTraitsOperator").SetValue(data, configuration.GetSection("excluded_traits_operator").ParseCompareOperator());
-            AccessTools.Field(typeof(CardUpgradeMaskData), "requiredCardEffectsOperator").SetValue(data, configuration.GetSection("required_effects_operator").ParseCompareOperator());
-            AccessTools.Field(typeof(CardUpgradeMaskData), "excludedCardEffectsOperator").SetValue(data, configuration.GetSection("excluded_effects_operator").ParseCompareOperator());
-            AccessTools.Field(typeof(CardUpgradeMaskData), "requiredLinkedClansOperator").SetValue(data, configuration.GetSection("required_class_operator").ParseCompareOperator());
-            AccessTools.Field(typeof(CardUpgradeMaskData), "excludedLinkedClansOperator").SetValue(data, configuration.GetSection("excluded_class_operator").ParseCompareOperator());
-            AccessTools.Field(typeof(CardUpgradeMaskData), "requiredCardUpgradesOperator").SetValue(data, configuration.GetSection("required_upgrade_operator").ParseCompareOperator());
-            AccessTools.Field(typeof(CardUpgradeMaskData), "excludedCardUpgradesOperator").SetValue(data, configuration.GetSection("excluded_upgrade_operator").ParseCompareOperator());
+            AccessTools.Field(typeof(CardUpgradeMaskData), "requiredRaritiesOperator")
+                .SetValue(data, configuration.GetSection("required_rarities_operator").ParseCompareOperator(defaultVal: "or"));
+            AccessTools.Field(typeof(CardUpgradeMaskData), "excludedRaritiesOperator")
+                .SetValue(data, configuration.GetSection("excluded_rarities_operator").ParseCompareOperator());
+            AccessTools.Field(typeof(CardUpgradeMaskData), "requiredSubtypesOperator")
+                .SetValue(data, configuration.GetSection("required_subtypes_operator").ParseCompareOperator());
+            AccessTools.Field(typeof(CardUpgradeMaskData), "excludedSubtypesOperator")
+                .SetValue(data, configuration.GetSection("excluded_subtypes_operator").ParseCompareOperator());
+            AccessTools.Field(typeof(CardUpgradeMaskData), "requiredStatusEffectsOperator")
+                .SetValue(data, configuration.GetSection("required_status_operator").ParseCompareOperator());
+            AccessTools.Field(typeof(CardUpgradeMaskData), "excludedStatusEffectsOperator")
+                .SetValue(data, configuration.GetSection("excluded_status_operator").ParseCompareOperator());
+            AccessTools.Field(typeof(CardUpgradeMaskData), "requiredCardTraitsOperator")
+                .SetValue(data, configuration.GetSection("required_traits_operator").ParseCompareOperator());
+            AccessTools.Field(typeof(CardUpgradeMaskData), "excludedCardTraitsOperator")
+                .SetValue(data, configuration.GetSection("excluded_traits_operator").ParseCompareOperator());
+            AccessTools.Field(typeof(CardUpgradeMaskData), "requiredCardEffectsOperator")
+                .SetValue(data, configuration.GetSection("required_effects_operator").ParseCompareOperator());
+            AccessTools.Field(typeof(CardUpgradeMaskData), "excludedCardEffectsOperator")
+                .SetValue(data, configuration.GetSection("excluded_effects_operator").ParseCompareOperator());
+            AccessTools.Field(typeof(CardUpgradeMaskData), "requiredLinkedClansOperator")
+                .SetValue(data, configuration.GetSection("required_class_operator").ParseCompareOperator());
+            AccessTools.Field(typeof(CardUpgradeMaskData), "excludedLinkedClansOperator")
+                .SetValue(data, configuration.GetSection("excluded_class_operator").ParseCompareOperator());
+            AccessTools.Field(typeof(CardUpgradeMaskData), "requiredCardUpgradesOperator")
+                .SetValue(data, configuration.GetSection("required_upgrade_operator").ParseCompareOperator());
+            AccessTools.Field(typeof(CardUpgradeMaskData), "excludedCardUpgradesOperator")
+                .SetValue(data, configuration.GetSection("excluded_upgrade_operator").ParseCompareOperator());
 
             //Process booleans
-            AccessTools.Field(typeof(CardUpgradeMaskData), "requireXCost").SetValue(data, configuration.GetSection("require_x_cost").ParseBool() ?? false);
-            AccessTools.Field(typeof(CardUpgradeMaskData), "excludeXCost").SetValue(data, configuration.GetSection("exclude_x_cost").ParseBool() ?? false);
-            AccessTools.Field(typeof(CardUpgradeMaskData), "excludeNonAttackingMonsters").SetValue(data, configuration.GetSection("exclude_non_attacking").ParseBool() ?? false);
-            AccessTools.Field(typeof(CardUpgradeMaskData), "excludeIfHasUnitAbility").SetValue(data, configuration.GetSection("exclude_if_has_ability").ParseBool() ?? false);
-            AccessTools.Field(typeof(CardUpgradeMaskData), "excludeIfHasGraftedEquipment").SetValue(data, configuration.GetSection("exclude_if_grafted").ParseBool() ?? false);
-            AccessTools.Field(typeof(CardUpgradeMaskData), "excludeIfHasAnyUpgrades").SetValue(data, configuration.GetSection("exclude_if_upgraded").ParseBool() ?? false);
-            AccessTools.Field(typeof(CardUpgradeMaskData), "excludeIfHasNoUpgrades").SetValue(data, configuration.GetSection("exclude_if_not_upgraded").ParseBool() ?? false);
+            AccessTools.Field(typeof(CardUpgradeMaskData), "requireXCost")
+                .SetValue(data, configuration.GetSection("require_x_cost").ParseBool() ?? false);
+            AccessTools.Field(typeof(CardUpgradeMaskData), "excludeXCost")
+                .SetValue(data, configuration.GetSection("exclude_x_cost").ParseBool() ?? false);
+            AccessTools.Field(typeof(CardUpgradeMaskData), "excludeNonAttackingMonsters")
+                .SetValue(data, configuration.GetSection("exclude_non_attacking").ParseBool() ?? false);
+            AccessTools.Field(typeof(CardUpgradeMaskData), "excludeIfHasUnitAbility")
+                .SetValue(data, configuration.GetSection("exclude_if_has_ability").ParseBool() ?? false);
+            AccessTools.Field(typeof(CardUpgradeMaskData), "excludeIfHasGraftedEquipment")
+                .SetValue(data, configuration.GetSection("exclude_if_grafted").ParseBool() ?? false);
+            AccessTools.Field(typeof(CardUpgradeMaskData), "excludeIfHasAnyUpgrades")
+                .SetValue(data, configuration.GetSection("exclude_if_upgraded").ParseBool() ?? false);
+            AccessTools.Field(typeof(CardUpgradeMaskData), "excludeIfHasNoUpgrades")
+                .SetValue(data, configuration.GetSection("exclude_if_not_upgraded").ParseBool() ?? false);
 
-            AccessTools.Field(typeof(CardUpgradeMaskData), "cardType").SetValue(data, configuration.GetSection("card_type").ParseCardType() ?? CardType.Invalid);
+            AccessTools.Field(typeof(CardUpgradeMaskData), "cardType")
+                .SetValue(data, configuration.GetSection("card_type").ParseCardType() ?? CardType.Invalid);
 
-            var cardTypes = configuration.GetSection("additional_card_types").GetChildren().Select(xs => xs.ParseCardType()).Where(xs => xs != null).Cast<CardType>().ToList();
+            var cardTypes = configuration
+                .GetSection("additional_card_types")
+                .GetChildren()
+                .Select(xs => xs.ParseCardType())
+                .Where(xs => xs != null)
+                .Cast<CardType>().ToList();
             AccessTools.Field(typeof(CardUpgradeMaskData), "additionalCardTypes").SetValue(data, cardTypes);
 
             CardTargetMode targetMode = CardTargetMode.All;
@@ -122,19 +149,55 @@ namespace TrainworksReloaded.Base.CardUpgrade
             }
             AccessTools.Field(typeof(CardUpgradeMaskData), "cardTargetMode").SetValue(data, targetMode);
 
-            var raritesRequired = configuration.GetSection("required_rarities").GetChildren().Select(xs => xs.ParseRarity()).Where(xs => xs != null).Cast<CollectableRarity>().ToList();
+            var raritesRequired = configuration
+                .GetSection("required_rarities")
+                .GetChildren()
+                .Select(xs => xs.ParseRarity())
+                .Where(xs => xs != null)
+                .Cast<CollectableRarity>()
+                .ToList();
             AccessTools.Field(typeof(CardUpgradeMaskData), "requiredRarities").SetValue(data, raritesRequired);
-            var raritesExcluded = configuration.GetSection("excluded_rarities").GetChildren().ToList().Select(xs => xs.ParseRarity()).Where(xs => xs != null).Cast<CollectableRarity>().ToList();
+            var raritesExcluded = configuration
+                .GetSection("excluded_rarities")
+                .GetChildren()
+                .Select(xs => xs.ParseRarity())
+                .Where(xs => xs != null)
+                .Cast<CollectableRarity>()
+                .ToList();
             AccessTools.Field(typeof(CardUpgradeMaskData), "excludedRarities").SetValue(data, raritesExcluded);
 
-            var subtypesRequired = configuration.GetSection("required_subtypes").GetChildren().ToList().Select(xs => xs.ParseString()).Where(xs => xs != null).Cast<string>().ToList();
+            var subtypesRequired = configuration
+                .GetSection("required_subtypes")
+                .GetChildren()
+                .Select(xs => xs.ParseString())
+                .Where(xs => xs != null)
+                .Cast<string>()
+                .ToList();
             AccessTools.Field(typeof(CardUpgradeMaskData), "requiredSubtypes").SetValue(data, subtypesRequired);
-            var subtypesExcluded = configuration.GetSection("excluded_subtypes").GetChildren().ToList().Select(xs => xs.ParseString()).Where(xs => xs != null).Cast<string>().ToList();
+            var subtypesExcluded = configuration
+                .GetSection("excluded_subtypes")
+                .GetChildren()
+                .Select(xs => xs.ParseString())
+                .Where(xs => xs != null)
+                .Cast<string>()
+                .ToList();
             AccessTools.Field(typeof(CardUpgradeMaskData), "excludedSubtypes").SetValue(data, subtypesExcluded);
 
-            var sizesRequired = configuration.GetSection("required_sizes").GetChildren().ToList().Select(xs => xs.ParseInt()).Where(xs => xs != null).Cast<int>().ToList();
+            var sizesRequired = configuration
+                .GetSection("required_sizes")
+                .GetChildren()
+                .Select(xs => xs.ParseInt())
+                .Where(xs => xs != null)
+                .Cast<int>()
+                .ToList();
             AccessTools.Field(typeof(CardUpgradeMaskData), "requiredSizes").SetValue(data, sizesRequired);
-            var sizesExcluded = configuration.GetSection("excluded_sizes").GetChildren().ToList().Select(xs => xs.ParseInt()).Where(xs => xs != null).Cast<int>().ToList();
+            var sizesExcluded = configuration
+                .GetSection("excluded_sizes")
+                .GetChildren()
+                .Select(xs => xs.ParseInt())
+                .Where(xs => xs != null)
+                .Cast<int>()
+                .ToList();
             AccessTools.Field(typeof(CardUpgradeMaskData), "excludedSizes").SetValue(data, sizesExcluded);
 
             var costRangeSection = configuration.GetSection("cost_range");
