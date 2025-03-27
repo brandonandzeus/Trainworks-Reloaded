@@ -15,11 +15,13 @@ namespace TrainworksReloaded.Base.Effect
         private readonly IRegister<CardUpgradeData> cardUpgradeRegister;
         private readonly IRegister<StatusEffectData> statusRegister;
         private readonly IRegister<CharacterTriggerData.Trigger> triggerEnumRegister;
+        private readonly IRegister<CardUpgradeMaskData> upgradeMaskRegister;
         private readonly ICache<IDefinition<CardEffectData>> cache;
 
         public CardEffectFinalizer(
             IRegister<CharacterData> characterDataRegister,
             IRegister<CardUpgradeData> cardUpgradeRegister,
+            IRegister<CardUpgradeMaskData> upgradeMaskRegister,
             IRegister<StatusEffectData> statusRegister,
             IRegister<CharacterTriggerData.Trigger> triggerEnumRegister,
             ICache<IDefinition<CardEffectData>> cache
@@ -29,6 +31,7 @@ namespace TrainworksReloaded.Base.Effect
             this.cardUpgradeRegister = cardUpgradeRegister;
             this.statusRegister = statusRegister;
             this.triggerEnumRegister = triggerEnumRegister;
+            this.upgradeMaskRegister = upgradeMaskRegister;
             this.cache = cache;
         }
 
@@ -198,6 +201,16 @@ namespace TrainworksReloaded.Base.Effect
             AccessTools
                 .Field(typeof(CardEffectData), "paramTrigger")
                 .SetValue(data, paramTrigger);
+
+            var filterId = configuration.GetSection("param_card_filter")?.ParseString();
+            if (filterId != null)
+            {
+                upgradeMaskRegister.TryLookupId(
+                    filterId.ToId(key, TemplateConstants.UpgradeMask), 
+                    out var lookup, 
+                    out var _);
+                AccessTools.Field(typeof(CardUpgradeData), "paramCardFilter").SetValue(data, lookup);
+            }
         }
     }
 }

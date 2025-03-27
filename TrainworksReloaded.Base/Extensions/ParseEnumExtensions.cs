@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using HarmonyLib;
+using Microsoft.Extensions.Configuration;
 using ShinyShoe;
+using System;
 using TrainworksReloaded.Base.Localization;
 using TrainworksReloaded.Core.Extensions;
 using UnityEngine;
@@ -225,6 +227,35 @@ namespace TrainworksReloaded.Base.Extensions
                 "pyreborne" => ClassCardStyle.Pyreborne,
                 _ => null,
             };
+        }
+
+        public static CardTargetMode? ParseCardTargetMode(this IConfigurationSection section)
+        {
+            var val = section.Value;
+            if (string.IsNullOrEmpty(val))
+            {
+                return null;
+            }
+            return val.ToLower() switch
+            {
+                "all" => CardTargetMode.All,
+                "single" => CardTargetMode.SingleTarget,
+                "targetless" => CardTargetMode.Targetless,
+                "other" => CardTargetMode.Other,
+                "none" => CardTargetMode.NONE,
+                _ => null,
+            };
+        }
+
+        public static object ParseCompareOperator(this IConfigurationSection section, string defaultVal = "and")
+        {
+            Type realEnumType = AccessTools.Inner(typeof(CardUpgradeMaskData), "CompareOperator");
+            var val = section.Value?.ToLower() ?? defaultVal;
+            if (!System.Enum.TryParse(realEnumType, val, ignoreCase: true, out var enumType))
+            {
+                System.Enum.TryParse(realEnumType, defaultVal, ignoreCase: true, out enumType);
+            }
+            return enumType;
         }
 
         public static TrackedValue? ParseTrackedValue(this IConfigurationSection section)
@@ -869,6 +900,26 @@ namespace TrainworksReloaded.Base.Extensions
                 "on_hit" => StatusEffectData.TriggerStage.OnHit,
                 "on_post_spawn" => StatusEffectData.TriggerStage.OnPostSpawn,
                 "on_pre_attacked_life_link" => StatusEffectData.TriggerStage.OnPreAttackedLifeLink,
+                _ => null
+            };
+        }
+
+        public static CardState.UpgradeDisabledReason? ParseUpgradeDisabledReason(this IConfigurationSection section)
+        {
+            var val = section.Value;
+            if (string.IsNullOrEmpty(val))
+            {
+                return null;
+            }
+            val = val.ToLower();
+            return val switch
+            {
+                "none" => CardState.UpgradeDisabledReason.NONE,
+                "card_type" => CardState.UpgradeDisabledReason.CardType,
+                "no_slots" => CardState.UpgradeDisabledReason.NoSlots,
+                "not_eligible" => CardState.UpgradeDisabledReason.NotEligible,
+                "animation_active" => CardState.UpgradeDisabledReason.AnimationActive,
+                "does_not_apply_status_effects" => CardState.UpgradeDisabledReason.DoesNotApplyStatusEffects,
                 _ => null
             };
         }

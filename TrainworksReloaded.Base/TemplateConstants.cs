@@ -8,6 +8,7 @@ namespace TrainworksReloaded.Base
     {
         public const string Effect = "Effect";
         public const string Upgrade = "Upgrade";
+        public const string UpgradeMask = "UpgradeMask";
         public const string Class = "Class";
         public const string Card = "Card";
         public const string Vfx = "Vfx";
