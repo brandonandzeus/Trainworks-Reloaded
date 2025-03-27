@@ -40,7 +40,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
             var processList = new List<IDefinition<CardUpgradeData>>();
             foreach (var config in atlas.PluginDefinitions)
             {
-                processList.AddRange(LoadCards(service, config.Key, config.Value.Configuration));
+                processList.AddRange(LoadUpgrades(service, config.Key, config.Value.Configuration));
             }
             return processList;
         }
@@ -52,7 +52,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
         /// <param name="key"></param>
         /// <param name="pluginConfig"></param>
         /// <returns></returns>
-        private List<CardUpgradeDefinition> LoadCards(
+        private List<CardUpgradeDefinition> LoadUpgrades(
             IRegister<CardUpgradeData> service,
             string key,
             IConfiguration pluginConfig
@@ -61,7 +61,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
             var processList = new List<CardUpgradeDefinition>();
             foreach (var child in pluginConfig.GetSection("upgrades").GetChildren())
             {
-                var data = LoadCardConfiguration(service, key, child);
+                var data = LoadUpgradeConfiguration(service, key, child);
                 if (data != null)
                 {
                     processList.Add(data);
@@ -70,7 +70,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
             return processList;
         }
 
-        private CardUpgradeDefinition? LoadCardConfiguration(
+        private CardUpgradeDefinition? LoadUpgradeConfiguration(
             IRegister<CardUpgradeData> service,
             string key,
             IConfiguration configuration

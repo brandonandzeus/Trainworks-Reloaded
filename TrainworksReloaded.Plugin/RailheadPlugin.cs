@@ -114,6 +114,7 @@ namespace TrainworksReloaded.Plugin
                         typeof(CardEffectFinalizer),
                         typeof(CardTraitDataFinalizer),
                         typeof(CardUpgradeFinalizer),
+                        typeof(CardUpgradeMaskFinalizer),
                         typeof(CharacterDataFinalizer),
                         typeof(ClassDataFinalizer),
                         typeof(CharacterTriggerFinalizer),
@@ -459,6 +460,21 @@ namespace TrainworksReloaded.Plugin
                 {
                     var pipeline = c.GetInstance<
                         IDataPipeline<IRegister<CardUpgradeData>, CardUpgradeData>
+                    >();
+                    pipeline.Run(x);
+                });
+
+                //Register Upgrade Mask Data
+                c.RegisterSingleton<IRegister<CardUpgradeMaskData>, CardUpgradeMaskRegister>();
+                c.RegisterSingleton<CardUpgradeMaskRegister, CardUpgradeMaskRegister>();
+                c.Register<
+                    IDataPipeline<IRegister<CardUpgradeMaskData>, CardUpgradeMaskData>,
+                    CardUpgradeMaskPipeline
+                >();
+                c.RegisterInitializer<IRegister<CardUpgradeMaskData>>(x =>
+                {
+                    var pipeline = c.GetInstance<
+                        IDataPipeline<IRegister<CardUpgradeMaskData>, CardUpgradeMaskData>
                     >();
                     pipeline.Run(x);
                 });

@@ -23,6 +23,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
         private readonly IRegister<CardUpgradeData> upgradeRegister;
         private readonly IRegister<VfxAtLoc> vfxRegister;
         private readonly IRegister<StatusEffectData> statusRegister;
+        private readonly IRegister<CardUpgradeMaskData> upgradeMaskRegister;
 
         public CardUpgradeFinalizer(
             IModLogger<CardUpgradeFinalizer> logger,
@@ -33,7 +34,8 @@ namespace TrainworksReloaded.Base.CardUpgrade
             IRegister<CardTriggerEffectData> cardTriggerRegister,
             IRegister<CardUpgradeData> upgradeRegister,
             IRegister<VfxAtLoc> vfxRegister,
-            IRegister<StatusEffectData> statusRegister
+            IRegister<StatusEffectData> statusRegister,
+            IRegister<CardUpgradeMaskData> upgradeMaskRegister
         )
         {
             this.logger = logger;
@@ -45,6 +47,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
             this.upgradeRegister = upgradeRegister;
             this.vfxRegister = vfxRegister;
             this.statusRegister = statusRegister;
+            this.upgradeMaskRegister = upgradeMaskRegister;
         }
 
         public void FinalizeData()
@@ -274,6 +277,22 @@ namespace TrainworksReloaded.Base.CardUpgrade
                     .Field(typeof(CardUpgradeData), "persistentVFX")
                     .SetValue(data, persistent_vfx);
             }
+
+            List<CardUpgradeMaskData> filters = [];
+            foreach (var child in configuration.GetSection("filters").GetChildren())
+            {
+                var id = child?.GetSection("id").ParseString();
+                if (id == null ||
+                    !upgradeMaskRegister.TryLookupId(
+                        id.ToId(key, TemplateConstants.UpgradeMask),
+                        out var lookup,
+                        out var _))
+                {
+                    continue;
+                }
+                filters.Add(lookup);
+            }
+            AccessTools.Field(typeof(CardUpgradeData), "filters").SetValue(data, filters);
         }
     }
 }
