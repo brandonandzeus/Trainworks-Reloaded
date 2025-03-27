@@ -12,18 +12,21 @@ namespace TrainworksReloaded.Base.Trigger
         private readonly IModLogger<CardTriggerEffectFinalizer> logger;
         private readonly IRegister<CardEffectData> effectRegister;
         private readonly IRegister<CardUpgradeData> upgradeRegister;
+        private readonly IRegister<CardTriggerType> triggerEnumRegister;
         private readonly ICache<IDefinition<CardTriggerEffectData>> cache;
 
         public CardTriggerEffectFinalizer(
             IModLogger<CardTriggerEffectFinalizer> logger,
             IRegister<CardEffectData> effectRegister,
             IRegister<CardUpgradeData> upgradeRegister,
+            IRegister<CardTriggerType> triggerEnumRegister,
             ICache<IDefinition<CardTriggerEffectData>> cache
         )
         {
             this.logger = logger;
             this.effectRegister = effectRegister;
             this.upgradeRegister = upgradeRegister;
+            this.triggerEnumRegister = triggerEnumRegister;
             this.cache = cache;
         }
 
@@ -44,8 +47,34 @@ namespace TrainworksReloaded.Base.Trigger
 
             logger.Log(
                 Core.Interfaces.LogLevel.Info,
-                $"Finalizing Card {key.GetId("Trigger", definition.Id)}... "
+                $"Finalizing Card Trigger {key.GetId(TemplateConstants.CardTrigger, definition.Id)}... "
             );
+
+            //handle trigger
+            var trigger = CardTriggerType.OnCast;
+            var triggerSection = configuration.GetSection("trigger");
+            if (triggerSection.Value != null)
+            {
+                var value = triggerSection.Value;
+                if (
+                    triggerEnumRegister.TryLookupId(
+                        value.ToId(key, TemplateConstants.CardTriggerEnum),
+                        out var triggerFound,
+                        out var _
+                    )
+                )
+                {
+                    trigger = triggerFound;
+                }
+                else
+                {
+                    trigger = triggerSection.ParseCardTriggerType() ?? default;
+                }
+            }
+            AccessTools
+                .Field(typeof(CardTriggerEffectData), "trigger")
+                .SetValue(data, trigger);
+
 
             var triggers = new List<CardTriggerData>();
             foreach (var triggerEffect in configuration.GetSection("trigger_effects").GetChildren())
@@ -80,7 +109,6 @@ namespace TrainworksReloaded.Base.Trigger
                 }
                 triggers.Add(triggerData);
             }
-
             AccessTools
                 .Field(typeof(CardTriggerEffectData), "cardTriggerEffects")
                 .SetValue(data, triggers);
@@ -92,7 +120,7 @@ namespace TrainworksReloaded.Base.Trigger
                 {
                     continue;
                 }
-                var paramEffect = configuration.GetSection("id").Value;
+                var paramEffect = effect.GetSection("id").Value;
                 if (
                     paramEffect != null
                     && effectRegister.TryLookupId(

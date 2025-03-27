@@ -85,15 +85,6 @@ namespace TrainworksReloaded.Base.Trigger
                 termRegister.Register(descriptionKey, localizationDescription);
             }
 
-            //handle trigger
-            var trigger = CardTriggerType.OnCast;
-            AccessTools
-                .Field(typeof(CardTriggerEffectData), "trigger")
-                .SetValue(
-                    data,
-                    configuration.GetSection("trigger").ParseCardTriggerType() ?? trigger
-                );
-
             service.Register(name, data);
             return new CardTriggerEffectDefinition(key, data, configuration) { Id = id };
         }

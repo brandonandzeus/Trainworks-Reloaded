@@ -818,6 +818,31 @@
         ]
       }
     },
+    "card_trigger_types": {
+      "type": "array",
+      "uniqueItems": true,
+      "required": ["id"],
+      "items": {
+        "properties": {
+          "descriptions": {
+            "$ref": "#/definitions/parse_term",
+            "description": "Tooltip body text for this CardTrigger."
+          },
+          "disallow_in_deployment": {
+            "type": "boolean",
+            "description": "Disallows the Cardtrigger from firing during the Deployment phase."
+          },
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for this CardTrigger. If this id matches a CharacterTrigger then they will be associated."
+          },
+          "names": {
+            "$ref": "#/definitions/parse_term",
+            "description": "Tooltip title text for this CardTrigger."
+          }
+        }
+      }
+    },
     "cards": {
       "type": "array",
       "uniqueItems": true,
@@ -1080,6 +1105,47 @@
           },
           "trigger_once": {
             "type": "boolean"
+          }
+        }
+      }
+    },
+    "character_trigger_types": {
+      "type": "array",
+      "uniqueItems": true,
+      "required": [ "id" ],
+      "items": {
+        "properties": {
+          "description": {
+            "$ref": "#/definitions/parse_term",
+            "description": "Tooltip body text for this CharacterTrigger."
+          },
+          "disallow_in_deployment": {
+            "type": "boolean",
+            "description": "Disallows the CharacterTrigger from firing during the Deployment phase."
+          },
+          "hidden": {
+            "type": "boolean",
+            "description": "Marks this CharacterTrigger as a hidden one, the trigger won't appear beneath a Character in battle."
+          },
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for this CharacterTrigger. To associate with a CardTrigger provide the same id."
+          },
+          "is_state_modifier": {
+            "type": "boolean",
+            "description": "Marks this CharacterTrigger as a state modifier (will make its trigger tooltip and icon blue). The intended usage is for a conditional trigger whose effect granted is conditional and can be undone when the condition no longer holds. Example: OnDeathwish (Vanguard)/OnDeathwishLost"
+          },
+          "name": {
+            "$ref": "#/definitions/parse_term",
+            "description": "Tooltip title text for this CharacterTrigger."
+          },
+          "notification": {
+            "$ref": "#/definitions/parse_term",
+            "description": "Tooltip body text for this CharacterTrigger."
+          },
+          "sprite": {
+            "type": "string",
+            "description": "Identifier to a sprite (Ideally sized 50x50). This sprite will appear in the UI. An atlas_icon with the same id must be provided for use in tooltips."
           }
         }
       }

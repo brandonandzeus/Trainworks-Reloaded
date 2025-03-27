@@ -32,7 +32,6 @@ namespace TrainworksReloaded.Base.Prefab
                         .FindObjectsOfTypeAll<Image>()
                         .FirstOrDefault(xs =>
                         {
-                            Console.WriteLine(xs.name);
                             return xs.name == "Selected indicator";
                         })
                         ?.sprite

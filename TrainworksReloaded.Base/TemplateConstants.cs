@@ -11,7 +11,7 @@ namespace TrainworksReloaded.Base
         public const string Class = "Class";
         public const string Card = "Card";
         public const string Vfx = "Vfx";
-        public const string Trigger = "Trigger";
+        public const string CardTrigger = "Trigger";
         public const string Trait = "Trait";
         public const string CharacterTrigger = "CTrigger";
         public const string RoomModifier = "RoomModifier";
@@ -21,5 +21,7 @@ namespace TrainworksReloaded.Base
         public const string Sprite = "Sprite";
         public const string GameObject = "GameObject";
         public const string StatusEffect = "StatusEffect";
+        public const string CardTriggerEnum = "TriggerEnum";
+        public const string CharacterTriggerEnum = "CTriggerEnum";
     }
 }

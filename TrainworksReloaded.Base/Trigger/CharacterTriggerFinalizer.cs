@@ -14,16 +14,19 @@ namespace TrainworksReloaded.Base.Trigger
     {
         private readonly IModLogger<CharacterTriggerFinalizer> logger;
         private readonly IRegister<CardEffectData> effectRegister;
+        private readonly IRegister<CharacterTriggerData.Trigger> triggerEnumRegister;
         private readonly ICache<IDefinition<CharacterTriggerData>> cache;
 
         public CharacterTriggerFinalizer(
             IModLogger<CharacterTriggerFinalizer> logger,
             IRegister<CardEffectData> effectRegister,
+            IRegister<CharacterTriggerData.Trigger> triggerEnumRegister,
             ICache<IDefinition<CharacterTriggerData>> cache
         )
         {
             this.logger = logger;
             this.effectRegister = effectRegister;
+            this.triggerEnumRegister = triggerEnumRegister;
             this.cache = cache;
         }
 
@@ -44,8 +47,33 @@ namespace TrainworksReloaded.Base.Trigger
 
             logger.Log(
                 Core.Interfaces.LogLevel.Info,
-                $"Finalizing Trigger {key.GetId("CTrigger", definition.Id)}... "
+                $"Finalizing Character Trigger {key.GetId(TemplateConstants.CharacterTrigger, definition.Id)}... "
             );
+
+            //handle trigger
+            var trigger = CharacterTriggerData.Trigger.OnDeath;
+            var triggerSection = configuration.GetSection("trigger");
+            if (triggerSection.Value != null)
+            {
+                var value = triggerSection.Value;
+                if (
+                    triggerEnumRegister.TryLookupId(
+                        value.ToId(key, TemplateConstants.CharacterTriggerEnum),
+                        out var triggerFound,
+                        out var _
+                    )
+                )
+                {
+                    trigger = triggerFound;
+                }
+                else
+                {
+                    trigger = triggerSection.ParseTrigger() ?? default;
+                }
+            }
+            AccessTools
+                .Field(typeof(CharacterTriggerData), "trigger")
+                .SetValue(data, trigger);
 
             //handle effects cards
             var effectDatas = new List<CardEffectData>();

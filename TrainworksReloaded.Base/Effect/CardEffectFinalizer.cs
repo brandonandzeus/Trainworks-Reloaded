@@ -14,18 +14,21 @@ namespace TrainworksReloaded.Base.Effect
         private readonly IRegister<CharacterData> characterDataRegister;
         private readonly IRegister<CardUpgradeData> cardUpgradeRegister;
         private readonly IRegister<StatusEffectData> statusRegister;
+        private readonly IRegister<CharacterTriggerData.Trigger> triggerEnumRegister;
         private readonly ICache<IDefinition<CardEffectData>> cache;
 
         public CardEffectFinalizer(
             IRegister<CharacterData> characterDataRegister,
             IRegister<CardUpgradeData> cardUpgradeRegister,
             IRegister<StatusEffectData> statusRegister,
+            IRegister<CharacterTriggerData.Trigger> triggerEnumRegister,
             ICache<IDefinition<CardEffectData>> cache
         )
         {
             this.characterDataRegister = characterDataRegister;
             this.cardUpgradeRegister = cardUpgradeRegister;
             this.statusRegister = statusRegister;
+            this.triggerEnumRegister = triggerEnumRegister;
             this.cache = cache;
         }
 
@@ -170,6 +173,31 @@ namespace TrainworksReloaded.Base.Effect
             AccessTools
                 .Field(typeof(CardEffectData), "paramStatusEffects")
                 .SetValue(data, paramStatusEffects.ToArray());
+
+            //trigger
+            var paramTrigger = CharacterTriggerData.Trigger.OnDeath;
+            var triggerSection = configuration.GetSection("trigger");
+            if (triggerSection.Value != null)
+            {
+                var value = triggerSection.Value;
+                if (
+                    !triggerEnumRegister.TryLookupId(
+                        value.ToId(key, TemplateConstants.CharacterTriggerEnum),
+                        out var triggerFound,
+                        out var _
+                    )
+                )
+                {
+                    paramTrigger = triggerFound;
+                }
+                else
+                {
+                    paramTrigger = triggerSection.ParseTrigger() ?? default;
+                }
+            }
+            AccessTools
+                .Field(typeof(CardEffectData), "paramTrigger")
+                .SetValue(data, paramTrigger);
         }
     }
 }

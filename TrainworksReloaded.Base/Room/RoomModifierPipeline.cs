@@ -184,15 +184,6 @@ namespace TrainworksReloaded.Base.Room
                 .Field(typeof(RoomModifierData), "paramInt2")
                 .SetValue(data, configuration.GetSection("param_int_2").ParseInt() ?? paramInt2);
 
-            //trigger
-            var paramTrigger = CharacterTriggerData.Trigger.OnDeath;
-            AccessTools
-                .Field(typeof(RoomModifierData), "paramTrigger")
-                .SetValue(
-                    data,
-                    configuration.GetSection("param_trigger").ParseTrigger() ?? paramTrigger
-                );
-
             var additionalTooltips = new List<AdditionalTooltipData>();
             int configCount = 0;
             foreach (var config in configuration.GetSection("additional_tooltips").GetChildren())

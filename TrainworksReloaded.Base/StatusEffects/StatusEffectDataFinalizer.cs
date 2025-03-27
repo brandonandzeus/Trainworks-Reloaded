@@ -49,7 +49,7 @@ namespace TrainworksReloaded.Base.StatusEffects
             var icon = configuration.GetSection("icon").ParseString();
             if (
                 icon != null
-                && spriteRegister.TryLookupName(
+                && spriteRegister.TryLookupId(
                     icon.ToId(key, "Sprite"),
                     out var lookup,
             out var _
