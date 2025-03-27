@@ -2398,6 +2398,7 @@
         "properties": {
           "additional_card_types": {
             "type": "array",
+            "description": "Allow additional card types to be eligible for the CardUpgrade.",
             "items": {
               "$ref": "#/definitions/card_type"
             }
@@ -2411,6 +2412,10 @@
           "card_target_mode": {
             "$ref": "#/definitions/card_target_mode"
           },
+          "card_type": {
+            "$ref": "#/definitions/card_type",
+            "description": "Primary Card type eligible for the CardUpgrade."
+          },
           "cost_range": {
             "$ref": "#/definitions/vec2"
           },
@@ -2423,20 +2428,25 @@
               "type": "string"
             }
           },
-          "exclude_ability": {
-            "type": "boolean"
+          "exclude_if_has_ability": {
+            "type": "boolean",
+            "description": "The upgrade will be excluded if the monster has a unit ability."
           },
-          "exclude_graft": {
-            "type": "boolean"
+          "exclude_if_grafted": {
+            "type": "boolean",
+            "description": "The upgrade will be excluded if the monster has grafted equipment."
           },
-          "exclude_no_upgrades": {
-            "type": "boolean"
+          "exclude_if_not_upgraded": {
+            "type": "boolean",
+            "description": "The upgrade will be excluded if the monster has not been upgraded."
           },
           "exclude_non_attacking": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "The upgrade will be excluded if the monster doesn't attack'."
           },
-          "exclude_upgrades": {
-            "type": "boolean"
+          "exclude_if_upgraded": {
+            "type": "boolean",
+            "description": "The upgrade will be excluded if the monster has been upgraded."
           },
           "exclude_x_cost": {
             "type": "boolean"
@@ -2447,16 +2457,24 @@
               "type": "string"
             }
           },
-          "excluded_class_operatorr": {
+          "excluded_class_operator": {
             "$ref": "#/definitions/compare_operator"
           },
           "excluded_effects": {
             "type": "array",
             "items": {
-              "type": "string"
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "mod_reference": {
+                  "type": "string"
+                }
+              }
             }
           },
-          "excluded_effects_operatorr": {
+          "excluded_effects_operator": {
             "$ref": "#/definitions/compare_operator"
           },
           "excluded_rarities": {
@@ -2495,10 +2513,18 @@
           "excluded_traits": {
             "type": "array",
             "items": {
-              "type": "string"
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "mod_reference": {
+                  "type": "string"
+                }
+              }
             }
           },
-          "excluded_traits_operatorr": {
+          "excluded_traits_operator": {
             "$ref": "#/definitions/compare_operator"
           },
           "excluded_upgrade": {
@@ -2507,7 +2533,7 @@
               "type": "string"
             }
           },
-          "excluded_upgrade_operatorr": {
+          "excluded_upgrade_operator": {
             "$ref": "#/definitions/compare_operator"
           },
           "id": {
@@ -2528,7 +2554,15 @@
           "required_effects": {
             "type": "array",
             "items": {
-              "type": "string"
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "mod_reference": {
+                  "type": "string"
+                }
+              }
             }
           },
           "required_effects_operator": {
@@ -2570,7 +2604,15 @@
           "required_traits": {
             "type": "array",
             "items": {
-              "type": "string"
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "mod_reference": {
+                  "type": "string"
+                }
+              }
             }
           },
           "required_traits_operator": {
@@ -2584,9 +2626,6 @@
           },
           "required_upgrade_operator": {
             "$ref": "#/definitions/compare_operator"
-          },
-          "type": {
-            "$ref": "#/definitions/card_type"
           }
         }
       }
