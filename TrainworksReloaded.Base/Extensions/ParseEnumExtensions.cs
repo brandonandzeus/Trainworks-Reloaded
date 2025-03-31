@@ -923,5 +923,22 @@ namespace TrainworksReloaded.Base.Extensions
                 _ => null
             };
         }
+
+        public static RelicData.RelicLoreTooltipStyle? ParseRelicLoreTooltipStyle(this IConfigurationSection section)
+        {
+            var val = section.Value;
+            if (string.IsNullOrEmpty(val))
+            {
+                return null;
+            }
+            val = val.ToLower();
+            return val switch
+            {
+                "herzal" => RelicData.RelicLoreTooltipStyle.Herzal,
+                "malicka" => RelicData.RelicLoreTooltipStyle.Malicka,
+                "heph" => RelicData.RelicLoreTooltipStyle.Heph,
+                _ => null
+            };
+        }
     }
 }
