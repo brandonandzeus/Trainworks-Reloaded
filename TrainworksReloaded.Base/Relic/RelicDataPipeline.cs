@@ -143,7 +143,7 @@ namespace TrainworksReloaded.Base.Relic
 
             // Handle lore tooltip style
             var loreStyle = config.GetSection("lore_style").ParseRelicLoreTooltipStyle();
-                AccessTools.Field(typeof(RelicData), "relicLoreTooltipStyle").SetValue(data, loreStyle);
+            AccessTools.Field(typeof(RelicData), "relicLoreTooltipStyle").SetValue(data, loreStyle);
 
             service.Register(name, data);
             return new RelicDataDefinition(key, data, config);
