@@ -1,0 +1,9 @@
+{
+    "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/definitions/compare_operator.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "string",
+    "enum": [
+        "and",
+        "or"
+    ]
+}

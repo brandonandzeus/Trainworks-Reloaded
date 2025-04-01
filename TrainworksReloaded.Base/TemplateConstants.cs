@@ -25,5 +25,7 @@ namespace TrainworksReloaded.Base
         public const string CardTriggerEnum = "TriggerEnum";
         public const string CharacterTriggerEnum = "CTriggerEnum";
         public const string RelicData = "RelicData";
+        public const string RelicEffectData = "RelicEffectData";
+        public const string Character = "Character";
     }
 }

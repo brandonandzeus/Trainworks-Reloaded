@@ -1,0 +1,251 @@
+{
+    "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/relic_effects.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "relic_effects": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": ["id", "name"],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Unique identifier for the relic effect"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "The RelicEffectStateName, this should be the name of a Class inheriting from RelicEffectBase"
+                    },
+                    "mod_reference": {
+                        "type": "string",
+                        "description": "Mod GUID to search for a custom relic effect. If not specified then your Mod's assembly is searched."
+                    },
+                    "tooltip_titles": {
+                        "$ref": "../../definitions/parse_term.json",
+                        "description": "Localization data for the relic effect's tooltip title"
+                    },
+                    "tooltip_body": {
+                        "$ref": "../../definitions/parse_term.json",
+                        "description": "Localization data for the relic effect's tooltip body"
+                    },
+                    "source_team": {
+                        "$ref": "../../definitions/team.json",
+                        "description": "Source team for the relic effect"
+                    },
+                    "param_int": {
+                        "type": "integer",
+                        "description": "Primary integer parameter"
+                    },
+                    "param_int_2": {
+                        "type": "integer",
+                        "description": "Secondary integer parameter"
+                    },
+                    "param_float": {
+                        "type": "number",
+                        "description": "Float parameter"
+                    },
+                    "use_int_range": {
+                        "type": "boolean",
+                        "description": "Whether to use integer range parameters"
+                    },
+                    "min_int": {
+                        "type": "integer",
+                        "description": "Minimum integer value for range"
+                    },
+                    "max_int": {
+                        "type": "integer",
+                        "description": "Maximum integer value for range"
+                    },
+                    "param_string": {
+                        "type": "string",
+                        "description": "String parameter"
+                    },
+                    "character_subtype": {
+                        "type": "string",
+                        "description": "Character subtype parameter"
+                    },
+                    "excluded_character_subtypes": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Array of excluded character subtypes"
+                    },
+                    "special_character_type": {
+                        "$ref": "../../definitions/special_character_type.json",
+                        "description": "Special character type parameter"
+                    },
+                    "param_bool": {
+                        "type": "boolean",
+                        "description": "Primary boolean parameter"
+                    },
+                    "param_bool_2": {
+                        "type": "boolean",
+                        "description": "Secondary boolean parameter"
+                    },
+                    "target_mode": {
+                        "$ref": "../../definitions/target_mode.json",
+                        "description": "Target mode for the effect"
+                    },
+                    "card_type": {
+                        "$ref": "../../definitions/card_type.json",
+                        "description": "Card type parameter"
+                    },
+                    "notification_suppressed": {
+                        "type": "boolean",
+                        "description": "Whether to suppress notifications"
+                    },
+                    "trigger_tooltips_suppressed": {
+                        "type": "boolean",
+                        "description": "Whether to suppress trigger tooltips"
+                    },
+                    "relic_scaling_count": {
+                        "type": "integer",
+                        "description": "Scaling count for the relic"
+                    },
+                    "source_card_trait": {
+                        "type": "string",
+                        "description": "Source card trait parameter"
+                    },
+                    "target_card_trait": {
+                        "type": "string",
+                        "description": "Target card trait parameter"
+                    },
+                    "rarity_ticket_type": {
+                        "$ref": "../../definitions/rarity_ticket.json",
+                        "description": "Rarity ticket type parameter"
+                    },
+                    "card_rarity_type": {
+                        "$ref": "../../definitions/rarity.json",
+                        "description": "Card rarity type parameter"
+                    },
+                    "card_triggers": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "../../definitions/card_trigger.json"
+                        },
+                        "description": "Array of card triggers"
+                    },
+                    "param_status_effects": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": ["status", "count"],
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "description": "Status effect identifier"
+                                },
+                                "count": {
+                                    "type": "integer",
+                                    "description": "Count of the status effect"
+                                }
+                            }
+                        },
+                        "description": "Array of status effects with their counts"
+                    },
+                    "param_card_effects": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": ["id"],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "Card effect identifier"
+                                }
+                            }
+                        },
+                        "description": "Array of card effects"
+                    },
+                    "param_card_pool": {
+                        "type": "string",
+                        "description": "Card pool identifier"
+                    },
+                    "param_characters": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": ["id"],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "Character identifier"
+                                }
+                            }
+                        },
+                        "description": "Array of characters"
+                    },
+                    "traits": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": ["id"],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "Trait identifier"
+                                }
+                            }
+                        },
+                        "description": "Array of traits"
+                    },
+                    "excluded_traits": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": ["id"],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "Trait identifier"
+                                }
+                            }
+                        },
+                        "description": "Array of excluded traits"
+                    },
+                    "triggers": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": ["id"],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "Trigger identifier"
+                                }
+                            }
+                        },
+                        "description": "Array of triggers"
+                    },
+                    "param_card_data": {
+                        "type": "string",
+                        "description": "Card data identifier"
+                    },
+                    "param_card_upgrade_data": {
+                        "type": "string",
+                        "description": "Card upgrade data identifier"
+                    },
+                    "param_reward": {
+                        "type": "string",
+                        "description": "Reward identifier"
+                    },
+                    "param_reward_2": {
+                        "type": "string",
+                        "description": "Secondary reward identifier"
+                    },
+                    "param_card_filter": {
+                        "type": "string",
+                        "description": "Card filter identifier"
+                    },
+                    "param_card_filter_secondary": {
+                        "type": "string",
+                        "description": "Secondary card filter identifier"
+                    }
+                }
+            },
+            "description": "Array of relic effect definitions"
+        }
+    }
+}

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using ShinyShoe;
 using System;
+using System.Linq;
 using TrainworksReloaded.Base.Localization;
 using TrainworksReloaded.Core.Extensions;
 using UnityEngine;
@@ -939,6 +940,56 @@ namespace TrainworksReloaded.Base.Extensions
                 "heph" => RelicData.RelicLoreTooltipStyle.Heph,
                 _ => null
             };
+        }
+        public static SpecialCharacterType? ParseSpecialCharacterType(this IConfigurationSection section){
+            var val = section.Value;
+            if (string.IsNullOrEmpty(val))
+            {
+                return null;
+            }
+            val = val.ToLower();
+            return val switch
+            {
+                "none" => SpecialCharacterType.None,
+                "outer_train_boss" => SpecialCharacterType.HarderOuterTrainBossCharacter,
+                "treasure_and_traitor" => SpecialCharacterType.TreasureAndTraitorCharacters,
+                _ => null
+            };
+        }
+        public static RarityTicketType? ParseRarityTicketType(this IConfigurationSection section)
+        {
+            var val = section.Value;
+            if (string.IsNullOrEmpty(val))
+            {
+                return null;
+            }
+
+            val = val.ToLower();
+            var values = val.Split('|', StringSplitOptions.RemoveEmptyEntries)
+                           .Select(v => v.Trim())
+                           .ToList();
+
+            RarityTicketType result = RarityTicketType.None;
+            foreach (var value in values)
+            {
+                RarityTicketType? flag = value switch
+                {
+                    "none" => RarityTicketType.None,
+                    "card" => RarityTicketType.Card,
+                    "enhancer" => RarityTicketType.Enhancer,
+                    "relic" => RarityTicketType.Relic,
+                    _ => null
+                };
+
+                if (flag == null)
+                {
+                    return null;
+                }
+
+                result |= flag.Value;
+            }
+
+            return result;
         }
     }
 }

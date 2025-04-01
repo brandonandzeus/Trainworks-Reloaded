@@ -1,0 +1,74 @@
+{
+    "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/relics.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "relics": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": ["id", "type"],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Unique identifier for the relic"
+                    },
+                    "type": {
+                        "type": "string",
+                        "description": "Type of relic (must match a registered relic factory key)"
+                    },
+                    "names": {
+                        "$ref": "../../definitions/parse_term.json",
+                        "description": "Localization data for the relic's name"
+                    },
+                    "descriptions": {
+                        "$ref": "../../definitions/parse_term.json",
+                        "description": "Localization data for the relic's description"
+                    },
+                    "relic_activated": {
+                        "$ref": "../../definitions/parse_term.json",
+                        "description": "Localization data for the relic's activation message"
+                    },
+                    "lore_tooltips": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "../../definitions/parse_term.json"
+                        },
+                        "description": "Array of localization data for the relic's lore tooltips"
+                    },
+                    "disallow_in_deployment": {
+                        "type": "boolean",
+                        "description": "Whether the relic is not allowed during deployment phase"
+                    },
+                    "lore_style": {
+                        "$ref": "../../definitions/lore_tooltip_style.json",
+                        "description": "Style of the relic's lore tooltip"
+                    },
+                    "icon": {
+                        "type": "string",
+                        "description": "Sprite identifier for the relic's main icon"
+                    },
+                    "icon_small": {
+                        "type": "string",
+                        "description": "Sprite identifier for the relic's small icon (used when activated)"
+                    },
+                    "relic_effects": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": ["id"],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "Identifier for the relic effect"
+                                }
+                            }
+                        },
+                        "description": "Array of relic effects associated with this relic"
+                    }
+                }
+            },
+            "description": "Array of relic definitions"
+        }
+    }
+}

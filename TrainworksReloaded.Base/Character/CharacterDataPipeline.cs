@@ -85,7 +85,7 @@ namespace TrainworksReloaded.Base.Character
                 return null;
             }
 
-            var name = key.GetId("Character", id);
+            var name = key.GetId(TemplateConstants.Character, id);
             var namekey = $"CharacterData_nameKey-{name}";
             var checkOverride = configuration.GetSection("override").ParseBool() ?? false;
 
