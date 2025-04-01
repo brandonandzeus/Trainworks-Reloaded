@@ -1,0 +1,55 @@
+{
+    "$schema": "../../../schemas/base.json",
+    "relic_effects": [{
+        "id": "RageTreadsEffectOnAscend",
+        "name": "RelicEffectAddStatusEffectOnUnitMoved",
+        "character_subtype": "SubtypesData_None",
+        "target_mode": "front_in_room",
+        "card_type": "monster",
+        "param_int": 1,
+        "param_status_effects": [{
+            "status": "buff",
+            "count": 2
+        }]
+    }],
+    "relics": [{
+        "id": "RageTreads",
+        "type": "collectable",
+        "names": {
+            "english": "Rage Treads",
+            "german": "Saugende Treppen"
+        },
+        "descriptions": {
+            "english": "Apply [effect0.status0.power] rage whenever one of your units moves.",
+            "german": "Wenn du eine Zahl eingibst, wird dir die Zahl um 1 verringert und dir 1 Energie hinzugefügt."
+        },
+        "relic_activated": {
+            "english": "Rage Treads activated!",
+            "german": "Rage Treads aktiviert!"
+        },
+        "lore_tooltips": [{
+            "english": "This relic was created as an example to demonstrate the capabilities of the modding system.",
+            "german": "Diese Reliquie wurde als Beispiel erstellt, um die Möglichkeiten des Modding-Systems zu demonstrieren."
+        }],
+        "disallow_in_deployment": false,
+        "lore_style": "herzal",
+        "relic_effects": [{
+            "id": "@RageTreadsEffectOnAscend"
+        }],
+        "extensions": {
+          "collectable": {
+            "class": "ClassPyreborne",
+            "pool": "megapool",
+            "rarity": "common",
+            "unlock_level": 0,
+            "from_story_event": false,
+            "is_boss_given": false,
+            "is_dragons_hoard": false,
+            "ignore_for_no_relic_achievement": false,
+            "required_dlc": "none",
+            "deprioritize_in_ftue_drafts": true,
+            "force_update_count_label": false
+          }
+        }
+    }]
+}

@@ -16,6 +16,7 @@ using TrainworksReloaded.Base.Enums;
 using TrainworksReloaded.Base.Localization;
 using TrainworksReloaded.Base.Map;
 using TrainworksReloaded.Base.Prefab;
+using TrainworksReloaded.Base.Relic;
 using TrainworksReloaded.Base.Reward;
 using TrainworksReloaded.Base.Room;
 using TrainworksReloaded.Base.StatusEffects;
@@ -128,6 +129,8 @@ namespace TrainworksReloaded.Plugin
                         typeof(CardPoolFinalizer),
                         typeof(CharacterTriggerTypeFinalizer),
                         typeof(CardTriggerTypeFinalizer),
+                        typeof(RelicDataFinalizer),
+                        typeof(RelicEffectDataFinalizer),
                     ]
                 );
 
@@ -433,6 +436,36 @@ namespace TrainworksReloaded.Plugin
                     typeof(CardPoolRewardDataFinalizerDecorator),
                     xs => xs.ImplementationType == typeof(RewardDataFinalizer)
                 );
+
+                //Register Relic Data
+                c.RegisterSingleton<IRegister<RelicData>, RelicDataRegister>();
+                c.RegisterSingleton<RelicDataRegister, RelicDataRegister>();
+                c.Register<IDataPipeline<IRegister<RelicData>, RelicData>, RelicDataPipeline>();
+                c.RegisterInitializer<IRegister<RelicData>>(x =>
+                {
+                    var pipeline = c.GetInstance<IDataPipeline<IRegister<RelicData>, RelicData>>();
+                    pipeline.Run(x);
+                });
+                c.Collection.Register<IFactory<RelicData>>(
+                    [typeof(CollectableRelicDataFactory)],
+                    Lifestyle.Singleton
+                );
+                c.RegisterDecorator(
+                    typeof(IDataFinalizer),
+                    typeof(CollectableRelicDataFinalizerDecorator),
+                    xs => xs.ImplementationType == typeof(RelicDataFinalizer)
+                );
+                c.RegisterSingleton<VanillaRelicPoolDelegator>();
+
+                //Register Relic Effect Data
+                c.RegisterSingleton<IRegister<RelicEffectData>, RelicEffectDataRegister>();
+                c.RegisterSingleton<RelicEffectDataRegister, RelicEffectDataRegister>();
+                c.Register<IDataPipeline<IRegister<RelicEffectData>, RelicEffectData>, RelicEffectDataPipeline>();
+                c.RegisterInitializer<IRegister<RelicEffectData>>(x =>
+                {
+                    var pipeline = c.GetInstance<IDataPipeline<IRegister<RelicEffectData>, RelicEffectData>>();
+                    pipeline.Run(x);
+                });
 
                 //Register Room Modifier Data
                 c.RegisterSingleton<IRegister<RoomModifierData>, RoomModifierRegister>();

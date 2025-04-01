@@ -9,15 +9,33 @@ namespace TrainworksReloaded.Base.Relic
     public class RelicDataRegister : Dictionary<string, RelicData>, IRegister<RelicData>
     {
         private readonly IModLogger<RelicDataRegister> logger;
+        private readonly Lazy<SaveManager> SaveManager;
 
-        public RelicDataRegister(IModLogger<RelicDataRegister> logger)
+        public RelicDataRegister(GameDataClient client, IModLogger<RelicDataRegister> logger)
         {
+            SaveManager = new Lazy<SaveManager>(() =>
+            {
+                if (client.TryGetValue(typeof(SaveManager).Name, out var details))
+                {
+                    return (SaveManager)details.Provider;
+                }
+                else
+                {
+                    return new SaveManager();
+                }
+            });
             this.logger = logger;
         }
 
         public void Register(string key, RelicData item)
         {
             logger.Log(Core.Interfaces.LogLevel.Info, $"Register Relic {key}... ");
+            var gamedata = SaveManager.Value.GetAllGameData();
+            var RelicDatas =
+                (List<CollectableRelicData>)
+                    AccessTools.Field(typeof(AllGameData), "collectableRelicDatas").GetValue(gamedata);
+            if (item is CollectableRelicData collectableRelic)
+                RelicDatas.Add(collectableRelic);
             Add(key, item);
         }
 

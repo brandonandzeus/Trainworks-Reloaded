@@ -6,6 +6,7 @@ using TrainworksReloaded.Base.Card;
 using TrainworksReloaded.Base.Class;
 using TrainworksReloaded.Base.Localization;
 using TrainworksReloaded.Base.Map;
+using TrainworksReloaded.Base.Relic;
 using TrainworksReloaded.Core;
 using TrainworksReloaded.Core.Impl;
 
@@ -43,6 +44,20 @@ namespace TrainworksReloaded.Plugin.Patches
             delegator.CardPoolToData.Clear(); //save memory
             //we add custom card pool so that the card data is loaded, even if it doesn't exist in any pool.
             ____assetLoadingData.CardPoolsAll.Add(register.CustomCardPool);
+
+            //add relic data to megapool
+            var relicDelegator = container.GetInstance<VanillaRelicPoolDelegator>();
+            if (relicDelegator.RelicPoolToData.ContainsKey("megapool"))
+            {
+                var ftueBlessingPool = (RelicPool)AccessTools.Field(typeof(BalanceData), "ftueBlessingPool").GetValue(____assetLoadingData.BalanceData);
+                var dataList =
+                    (ReorderableArray<CollectableRelicData>)
+                        AccessTools.Field(typeof(RelicPool), "relicDataList").GetValue(ftueBlessingPool);
+                foreach (var relic in relicDelegator.RelicPoolToData["megapool"])
+                {
+                    dataList.Add(relic);
+                }
+            }
 
             var classRegister = container.GetInstance<ClassDataRegister>();
             var classDatas =

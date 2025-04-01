@@ -22,15 +22,15 @@
                         "description": "Mod GUID to search for a custom relic effect. If not specified then your Mod's assembly is searched."
                     },
                     "tooltip_titles": {
-                        "$ref": "../../definitions/parse_term.json",
+                        "$ref": "../definitions/parse_term.json",
                         "description": "Localization data for the relic effect's tooltip title"
                     },
                     "tooltip_body": {
-                        "$ref": "../../definitions/parse_term.json",
+                        "$ref": "../definitions/parse_term.json",
                         "description": "Localization data for the relic effect's tooltip body"
                     },
                     "source_team": {
-                        "$ref": "../../definitions/team.json",
+                        "$ref": "../definitions/team.json",
                         "description": "Source team for the relic effect"
                     },
                     "param_int": {
@@ -73,7 +73,7 @@
                         "description": "Array of excluded character subtypes"
                     },
                     "special_character_type": {
-                        "$ref": "../../definitions/special_character_type.json",
+                        "$ref": "../definitions/special_character_type.json",
                         "description": "Special character type parameter"
                     },
                     "param_bool": {
@@ -85,11 +85,11 @@
                         "description": "Secondary boolean parameter"
                     },
                     "target_mode": {
-                        "$ref": "../../definitions/target_mode.json",
+                        "$ref": "../definitions/target_mode.json",
                         "description": "Target mode for the effect"
                     },
                     "card_type": {
-                        "$ref": "../../definitions/card_type.json",
+                        "$ref": "../definitions/card_type.json",
                         "description": "Card type parameter"
                     },
                     "notification_suppressed": {
@@ -113,17 +113,17 @@
                         "description": "Target card trait parameter"
                     },
                     "rarity_ticket_type": {
-                        "$ref": "../../definitions/rarity_ticket.json",
+                        "$ref": "../definitions/rarity_ticket.json",
                         "description": "Rarity ticket type parameter"
                     },
                     "card_rarity_type": {
-                        "$ref": "../../definitions/rarity.json",
+                        "$ref": "../definitions/rarity.json",
                         "description": "Card rarity type parameter"
                     },
                     "card_triggers": {
                         "type": "array",
                         "items": {
-                            "$ref": "../../definitions/card_trigger.json"
+                            "$ref": "../definitions/card_trigger.json"
                         },
                         "description": "Array of card triggers"
                     },
