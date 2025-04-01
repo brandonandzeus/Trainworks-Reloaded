@@ -146,7 +146,9 @@ namespace TrainworksReloaded.Base.Relic
             AccessTools.Field(typeof(RelicData), "relicLoreTooltipStyle").SetValue(data, loreStyle);
 
             service.Register(name, data);
-            return new RelicDataDefinition(key, data, config);
+            return new RelicDataDefinition(key, data, config){
+                Id = relicId
+            };
         }
     }
 }

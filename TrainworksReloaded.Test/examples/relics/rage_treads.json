@@ -36,20 +36,20 @@
         "relic_effects": [{
             "id": "@RageTreadsEffectOnAscend"
         }],
-        "extensions": {
-          "collectable": {
-            "class": "ClassPyreborne",
-            "pool": "megapool",
-            "rarity": "common",
-            "unlock_level": 0,
-            "from_story_event": false,
-            "is_boss_given": false,
-            "is_dragons_hoard": false,
-            "ignore_for_no_relic_achievement": false,
-            "required_dlc": "none",
-            "deprioritize_in_ftue_drafts": true,
-            "force_update_count_label": false
-          }
-        }
+        "extensions": [{
+            "collectable": {
+                "class": "ClassPyreborne",
+                "pool": "megapool",
+                "rarity": "common",
+                "unlock_level": 0,
+                "from_story_event": false,
+                "is_boss_given": false,
+                "is_dragons_hoard": false,
+                "ignore_for_no_relic_achievement": false,
+                "required_dlc": "none",
+                "deprioritize_in_ftue_drafts": true,
+                "force_update_count_label": false
+            }
+        }]
     }]
 }

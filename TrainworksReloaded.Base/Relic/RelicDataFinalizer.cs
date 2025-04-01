@@ -42,11 +42,8 @@ namespace TrainworksReloaded.Base.Relic
             var data = definition.Data;
             var key = definition.Key;
 
-            logger.Log(
-                Core.Interfaces.LogLevel.Info,
-                $"Finalizing Relic Data {definition.Id.ToId(key, TemplateConstants.RelicData)}... "
-            );
-
+            logger.Log(Core.Interfaces.LogLevel.Info, $"Finalizing Relic {data.name}... ");
+            
             // Handle relic sprite
             var iconSprite = configuration.GetSection("icon").ParseString();
             if (
@@ -86,7 +83,7 @@ namespace TrainworksReloaded.Base.Relic
                     relicEffects.Add(relicEffectLookup);
                 }
             }
-            AccessTools.Field(typeof(RelicData), "relicEffects").SetValue(data, relicEffects);
+            AccessTools.Field(typeof(RelicData), "effects").SetValue(data, relicEffects);
         }
     }
 } 

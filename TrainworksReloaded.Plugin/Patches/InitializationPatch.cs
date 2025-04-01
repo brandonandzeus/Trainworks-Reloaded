@@ -49,15 +49,18 @@ namespace TrainworksReloaded.Plugin.Patches
             var relicDelegator = container.GetInstance<VanillaRelicPoolDelegator>();
             if (relicDelegator.RelicPoolToData.ContainsKey("megapool"))
             {
-                var ftueBlessingPool = (RelicPool)AccessTools.Field(typeof(BalanceData), "ftueBlessingPool").GetValue(____assetLoadingData.BalanceData);
+                var ftueBlessingPool = ____assetLoadingData.BalanceData.GetFtueBlessingPool();
                 var dataList =
                     (ReorderableArray<CollectableRelicData>)
-                        AccessTools.Field(typeof(RelicPool), "relicDataList").GetValue(ftueBlessingPool);
+                        AccessTools
+                            .Field(typeof(RelicPool), "relicDataList")
+                            .GetValue(ftueBlessingPool);
                 foreach (var relic in relicDelegator.RelicPoolToData["megapool"])
                 {
                     dataList.Add(relic);
                 }
             }
+            relicDelegator.RelicPoolToData.Clear();
 
             var classRegister = container.GetInstance<ClassDataRegister>();
             var classDatas =

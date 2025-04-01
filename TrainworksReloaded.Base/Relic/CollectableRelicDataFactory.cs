@@ -10,7 +10,7 @@ namespace TrainworksReloaded.Base.Relic
 
         public RelicData? GetValue()
         {
-            return new CollectableRelicData();
+            return ScriptableObject.CreateInstance<CollectableRelicData>();
         }
     }
 } 

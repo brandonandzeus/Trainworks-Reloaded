@@ -45,7 +45,7 @@ namespace TrainworksReloaded.Base.Relic
 
         private void FinalizeRelicData(IDefinition<RelicData> definition)
         {
-            var configuration = definition.Configuration;
+            var config = definition.Configuration;
             var data = definition.Data;
             var key = definition.Key;
             var relicId = definition.Id.ToId(key, TemplateConstants.RelicData);
@@ -53,14 +53,24 @@ namespace TrainworksReloaded.Base.Relic
             if (data is not CollectableRelicData collectableRelic)
                 return;
 
+            var configuration = config
+                .GetSection("extensions")
+                .GetChildren()
+                .Where(xs => xs.GetSection("collectable").Exists())
+                .Select(xs => xs.GetSection("collectable"))
+                .FirstOrDefault();
+            if (configuration == null)
+                return;
+
             logger.Log(
                 Core.Interfaces.LogLevel.Info,
                 $"Finalizing Collectable Relic Data {relicId}... "
             );
 
+
             // Handle linked class
             var linkedClassId = configuration.GetSection("class").ParseString();
-            if (linkedClassId != null && classRegister.TryLookupId(linkedClassId.ToId(key, TemplateConstants.Class), out var linkedClass, out var _))
+            if (linkedClassId != null && classRegister.TryLookupName(linkedClassId.ToId(key, TemplateConstants.Class), out var linkedClass, out var _))
             {
                 AccessTools.Field(typeof(CollectableRelicData), "linkedClass").SetValue(collectableRelic, linkedClass);
             }

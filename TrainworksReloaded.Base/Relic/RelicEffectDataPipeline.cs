@@ -246,7 +246,9 @@ namespace TrainworksReloaded.Base.Relic
             // AccessTools.Field(typeof(RelicEffectData), "appliedVfx").SetValue(data, vfxId);
 
             service.Register(name, data);
-            return new RelicEffectDataDefinition(key, data, config);
+            return new RelicEffectDataDefinition(key, data, config){
+                Id = effectId
+            };
         }
     }
 }
