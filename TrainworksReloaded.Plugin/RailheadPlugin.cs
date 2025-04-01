@@ -451,6 +451,10 @@ namespace TrainworksReloaded.Plugin
                     Lifestyle.Singleton
                 );
                 c.RegisterDecorator(
+                    typeof(IDataPipeline<IRegister<RelicData>, RelicData>),
+                    typeof(CollectableRelicDataPipelineDecorator)
+                );
+                c.RegisterDecorator(
                     typeof(IDataFinalizer),
                     typeof(CollectableRelicDataFinalizerDecorator),
                     xs => xs.ImplementationType == typeof(RelicDataFinalizer)
