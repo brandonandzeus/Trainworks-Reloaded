@@ -97,7 +97,7 @@ namespace TrainworksReloaded.Base.Trait
                 .Field(typeof(CardTraitData), "paramCardType")
                 .SetValue(
                     data,
-                    configuration.GetSection("track_type").ParseCardTypeTarget() ?? paramCardType
+                    configuration.GetSection("card_type").ParseCardTypeTarget() ?? paramCardType
                 );
 
             var paramEntryDuration = CardStatistics.EntryDuration.ThisTurn;
