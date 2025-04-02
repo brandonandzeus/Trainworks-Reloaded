@@ -16,6 +16,7 @@ using TrainworksReloaded.Base.Enums;
 using TrainworksReloaded.Base.Localization;
 using TrainworksReloaded.Base.Map;
 using TrainworksReloaded.Base.Prefab;
+using TrainworksReloaded.Base.Relic;
 using TrainworksReloaded.Base.Reward;
 using TrainworksReloaded.Base.Room;
 using TrainworksReloaded.Base.StatusEffects;
@@ -35,6 +36,8 @@ namespace TrainworksReloaded.Plugin
         internal static new ManualLogSource Logger = new("TrainworksReloaded");
 
         internal static Lazy<Container> Container = new(() => Railend.GetContainer());
+
+        internal static Lazy<GameDataClient> Client = new(() => new GameDataClient());
 
         public void Awake()
         {
@@ -70,7 +73,7 @@ namespace TrainworksReloaded.Plugin
             }
 
             // Setup Game Client
-            var client = new GameDataClient();
+            var client = Client.Value;
             DepInjector.AddClient(client);
 
             // Plugin startup logic
@@ -128,6 +131,8 @@ namespace TrainworksReloaded.Plugin
                         typeof(CardPoolFinalizer),
                         typeof(CharacterTriggerTypeFinalizer),
                         typeof(CardTriggerTypeFinalizer),
+                        typeof(RelicDataFinalizer),
+                        typeof(RelicEffectDataFinalizer),
                     ]
                 );
 
@@ -229,16 +234,25 @@ namespace TrainworksReloaded.Plugin
                 });
 
                 //Register Custom Character Triggers Types.
-                c.RegisterSingleton<IRegister<CharacterTriggerData.Trigger>, CharacterTriggerTypeRegister>();
+                c.RegisterSingleton<
+                    IRegister<CharacterTriggerData.Trigger>,
+                    CharacterTriggerTypeRegister
+                >();
                 c.RegisterSingleton<CharacterTriggerTypeRegister, CharacterTriggerTypeRegister>();
                 c.Register<
-                    IDataPipeline<IRegister<CharacterTriggerData.Trigger>, CharacterTriggerData.Trigger>,
+                    IDataPipeline<
+                        IRegister<CharacterTriggerData.Trigger>,
+                        CharacterTriggerData.Trigger
+                    >,
                     CharacterTriggerTypePipeline
                 >(); //a data pipeline to run as soon as register is needed
                 c.RegisterInitializer<IRegister<CharacterTriggerData.Trigger>>(x =>
                 {
                     var pipeline = c.GetInstance<
-                        IDataPipeline<IRegister<CharacterTriggerData.Trigger>, CharacterTriggerData.Trigger>
+                        IDataPipeline<
+                            IRegister<CharacterTriggerData.Trigger>,
+                            CharacterTriggerData.Trigger
+                        >
                     >();
                     pipeline.Run(x);
                 });
@@ -433,6 +447,45 @@ namespace TrainworksReloaded.Plugin
                     typeof(CardPoolRewardDataFinalizerDecorator),
                     xs => xs.ImplementationType == typeof(RewardDataFinalizer)
                 );
+
+                //Register Relic Data
+                c.RegisterSingleton<IRegister<RelicData>, RelicDataRegister>();
+                c.RegisterSingleton<RelicDataRegister, RelicDataRegister>();
+                c.Register<IDataPipeline<IRegister<RelicData>, RelicData>, RelicDataPipeline>();
+                c.RegisterInitializer<IRegister<RelicData>>(x =>
+                {
+                    var pipeline = c.GetInstance<IDataPipeline<IRegister<RelicData>, RelicData>>();
+                    pipeline.Run(x);
+                });
+                c.Collection.Register<IFactory<RelicData>>(
+                    [typeof(CollectableRelicDataFactory)],
+                    Lifestyle.Singleton
+                );
+                c.RegisterDecorator(
+                    typeof(IDataPipeline<IRegister<RelicData>, RelicData>),
+                    typeof(CollectableRelicDataPipelineDecorator)
+                );
+                c.RegisterDecorator(
+                    typeof(IDataFinalizer),
+                    typeof(CollectableRelicDataFinalizerDecorator),
+                    xs => xs.ImplementationType == typeof(RelicDataFinalizer)
+                );
+                c.RegisterSingleton<VanillaRelicPoolDelegator>();
+
+                //Register Relic Effect Data
+                c.RegisterSingleton<IRegister<RelicEffectData>, RelicEffectDataRegister>();
+                c.RegisterSingleton<RelicEffectDataRegister, RelicEffectDataRegister>();
+                c.Register<
+                    IDataPipeline<IRegister<RelicEffectData>, RelicEffectData>,
+                    RelicEffectDataPipeline
+                >();
+                c.RegisterInitializer<IRegister<RelicEffectData>>(x =>
+                {
+                    var pipeline = c.GetInstance<
+                        IDataPipeline<IRegister<RelicEffectData>, RelicEffectData>
+                    >();
+                    pipeline.Run(x);
+                });
 
                 //Register Room Modifier Data
                 c.RegisterSingleton<IRegister<RoomModifierData>, RoomModifierRegister>();

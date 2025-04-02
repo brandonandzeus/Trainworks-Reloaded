@@ -6,8 +6,10 @@ using TrainworksReloaded.Base.Card;
 using TrainworksReloaded.Base.Class;
 using TrainworksReloaded.Base.Localization;
 using TrainworksReloaded.Base.Map;
+using TrainworksReloaded.Base.Relic;
 using TrainworksReloaded.Core;
 using TrainworksReloaded.Core.Impl;
+using TrainworksReloaded.Core.Interfaces;
 
 namespace TrainworksReloaded.Plugin.Patches
 {
@@ -16,12 +18,15 @@ namespace TrainworksReloaded.Plugin.Patches
     {
         public static void Postfix(AssetLoadingData ____assetLoadingData)
         {
-            //We inject data into AssetLoading Manager.
             var container = Railend.GetContainer();
             var register = container.GetInstance<CardDataRegister>();
+            var logger = container.GetInstance<IModLogger<InitializationPatch>>();
+
+            logger.Log(LogLevel.Info, "Starting TrainworksReloaded initialization...");
 
             //add data to the existing main pools
             var delegator = container.GetInstance<VanillaCardPoolDelegator>();
+            logger.Log(LogLevel.Info, "Processing card pools...");
             foreach (
                 var cardpool in ____assetLoadingData.CardPoolsAll.Union(
                     ____assetLoadingData.CardPoolsAlwaysLoad
@@ -38,11 +43,33 @@ namespace TrainworksReloaded.Plugin.Patches
                     {
                         dataList.Add(card);
                     }
+                    logger.Log(LogLevel.Debug, $"Added {cardsToAdd.Count} cards to pool: {cardpool.name}");
                 }
             }
             delegator.CardPoolToData.Clear(); //save memory
             //we add custom card pool so that the card data is loaded, even if it doesn't exist in any pool.
             ____assetLoadingData.CardPoolsAll.Add(register.CustomCardPool);
+            logger.Log(LogLevel.Info, "Card pool processing complete");
+
+            //add relic data to megapool
+            var relicDelegator = container.GetInstance<VanillaRelicPoolDelegator>();
+            if (relicDelegator.RelicPoolToData.ContainsKey("megapool"))
+            {
+                logger.Log(LogLevel.Info, "Processing relic pools...");
+                var ftueBlessingPool = ____assetLoadingData.BalanceData.GetFtueBlessingPool();
+                var dataList =
+                    (ReorderableArray<CollectableRelicData>)
+                        AccessTools
+                            .Field(typeof(RelicPool), "relicDataList")
+                            .GetValue(ftueBlessingPool);
+                foreach (var relic in relicDelegator.RelicPoolToData["megapool"])
+                {
+                    dataList.Add(relic);
+                }
+                logger.Log(LogLevel.Debug, $"Added {relicDelegator.RelicPoolToData["megapool"].Count} relics to megapool");
+            }
+            relicDelegator.RelicPoolToData.Clear();
+            logger.Log(LogLevel.Info, "Relic pool processing complete");
 
             var classRegister = container.GetInstance<ClassDataRegister>();
             var classDatas =
@@ -51,8 +78,10 @@ namespace TrainworksReloaded.Plugin.Patches
                         .Field(typeof(BalanceData), "classDatas")
                         .GetValue(____assetLoadingData.BalanceData);
             classDatas.AddRange(classRegister.Values);
+            logger.Log(LogLevel.Info, $"Added {classRegister.Values.Count} custom classes");
 
             //handle map data
+            logger.Log(LogLevel.Info, "Processing map data...");
             var mapDelegator = container.GetInstance<MapNodeDelegator>();
             var runDataDictionary = new Dictionary<string, RunData>
             {
@@ -102,19 +131,25 @@ namespace TrainworksReloaded.Plugin.Patches
                             {
                                 bucketData.MapNodes.AddRange(values);
                             }
+                            logger.Log(LogLevel.Debug, $"Added {values.Count} map nodes to bucket: {bucketId} in {runDataKey}");
                         }
                     }
                 }
             }
             mapDelegator.MapBucketToData.Clear();
+            logger.Log(LogLevel.Info, "Map data processing complete");
 
             //Load localization at this time
+            logger.Log(LogLevel.Info, "Loading localization data...");
             var localization = container.GetInstance<CustomLocalizationTermRegistry>();
             localization.LoadData();
+            logger.Log(LogLevel.Info, "Localization data loaded");
 
             //Run finalization steps to populate data that required all other data to be loaded first
+            logger.Log(LogLevel.Info, "Running finalization steps...");
             var finalizer = container.GetInstance<Finalizer>();
             finalizer.FinalizeData();
+            logger.Log(LogLevel.Info, "TrainworksReloaded initialization complete!");
         }
     }
 }

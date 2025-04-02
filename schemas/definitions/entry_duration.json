@@ -1,0 +1,10 @@
+{
+    "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/definitions/entry_duration.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "string",
+    "enum": [
+        "this_turn",
+        "this_battle",
+        "previous_turn"
+    ]
+}

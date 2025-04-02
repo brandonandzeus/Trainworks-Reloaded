@@ -1,0 +1,7 @@
+{
+    "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/definitions/rarity_ticket.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "string",
+    "pattern": "^(none|card|enhancer|relic)(\\|(card|enhancer|relic))*$",
+    "description": "A string containing one or more rarity ticket types separated by |. Valid values are: none, card, enhancer, relic"
+}

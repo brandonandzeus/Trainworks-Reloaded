@@ -16,9 +16,5 @@
   <ItemGroup>
     <ProjectReference Include="..\TrainworksReloaded.Core\TrainworksReloaded.Core.csproj" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <None Include="..\json-schema.json" Pack="true" PackagePath="contentFiles/any/any/schema/json-schema.json" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
 
 </Project>

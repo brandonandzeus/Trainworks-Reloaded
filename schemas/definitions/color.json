@@ -1,0 +1,19 @@
+{
+    "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/definitions/color.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "r": {
+            "type": "number"
+        },
+        "g": {
+            "type": "number"
+        },
+        "b": {
+            "type": "number"
+        },
+        "a": {
+            "type": "number"
+        }
+    }
+}
