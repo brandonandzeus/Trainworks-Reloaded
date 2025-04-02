@@ -1,0 +1,35 @@
+{
+    "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/card_trigger_types.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "properties": {
+        "card_trigger_types": {
+            "type": "array",
+            "uniqueItems": true,
+            "description": "A collection of trigger type definitions that specify how card triggers should behave and be displayed in the UI.",
+            "items": {
+                "properties": {
+                    "descriptions": {
+                        "$ref": "../definitions/parse_term.json",
+                        "description": "Localized text descriptions for this trigger type's tooltip body."
+                    },
+                    "disallow_in_deployment": {
+                        "type": "boolean",
+                        "description": "Disallows the Cardtrigger from firing during the Deployment phase."
+                    },
+                    "id": {
+                        "type": "string",
+                        "description": "Unique identifier for this CardTrigger. If this id matches a CharacterTrigger then they will be associated."
+                    },
+                    "names": {
+                        "$ref": "../definitions/parse_term.json",
+                        "description": "Localized text for this trigger type's tooltip title."
+                    }
+                },
+                "required": [
+                    "id"
+                ],
+                "description": "A card trigger type definition that specifies how a trigger should be displayed and behave in the game."
+            }
+        }
+    }
+}

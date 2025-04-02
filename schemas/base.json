@@ -7,6 +7,66 @@
         },
         "relic_effects": {
             "$ref": "schemas/relic_effects.json#/properties/relic_effects"
+        },
+        "atlas_icons": {
+            "$ref": "schemas/atlas_icons.json#/properties/atlas_icons"
+        },
+        "card_pools": {
+            "$ref": "schemas/card_pools.json#/properties/card_pools"
+        },
+        "card_triggers": {
+            "$ref": "schemas/card_triggers.json#/properties/card_triggers"
+        },
+        "card_trigger_types": {
+            "$ref": "schemas/card_trigger_types.json#/properties/card_trigger_types"
+        },
+        "cards": {
+            "$ref": "schemas/cards.json#/properties/cards"
+        },
+        "character_triggers": {
+            "$ref": "schemas/character_triggers.json#/properties/character_triggers"
+        },
+        "character_trigger_types": {
+            "$ref": "schemas/character_trigger_types.json#/properties/character_trigger_types"
+        },
+        "characters": {
+            "$ref": "schemas/characters.json#/properties/characters"
+        },
+        "classes": {
+            "$ref": "schemas/classes.json#/properties/classes"
+        },
+        "effects": {
+            "$ref": "schemas/effects.json#/properties/effects"
+        },
+        "game_objects": {
+            "$ref": "schemas/game_objects.json#/properties/game_objects"
+        },
+        "map_nodes": {
+            "$ref": "schemas/map_nodes.json#/properties/map_nodes"
+        },
+        "rewards": {
+            "$ref": "schemas/rewards.json#/properties/rewards"
+        },
+        "room_modifiers": {
+            "$ref": "schemas/room_modifiers.json#/properties/room_modifiers"
+        },
+        "sprites": {
+            "$ref": "schemas/sprites.json#/properties/sprites"
+        },
+        "status_effects": {
+            "$ref": "schemas/status_effects.json#/properties/status_effects"
+        },
+        "traits": {
+            "$ref": "schemas/traits.json#/properties/traits"
+        },
+        "upgrade_masks": {
+            "$ref": "schemas/upgrade_masks.json#/properties/upgrade_masks"
+        },
+        "upgrades": {
+            "$ref": "schemas/upgrades.json#/properties/upgrades"
+        },
+        "vfxs": {
+            "$ref": "schemas/vfxs.json#/properties/vfxs"
         }
     }
 }

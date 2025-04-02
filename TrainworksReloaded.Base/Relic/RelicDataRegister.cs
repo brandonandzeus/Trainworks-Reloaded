@@ -30,12 +30,14 @@ namespace TrainworksReloaded.Base.Relic
         public void Register(string key, RelicData item)
         {
             logger.Log(Core.Interfaces.LogLevel.Info, $"Register Relic {key}... ");
-            var gamedata = SaveManager.Value.GetAllGameData();
-            var RelicDatas =
-                (List<CollectableRelicData>)
-                    AccessTools.Field(typeof(AllGameData), "collectableRelicDatas").GetValue(gamedata);
             if (item is CollectableRelicData collectableRelic)
+            {
+                var gamedata = SaveManager.Value.GetAllGameData();
+                var RelicDatas =
+                    (List<CollectableRelicData>)
+                        AccessTools.Field(typeof(AllGameData), "collectableRelicDatas").GetValue(gamedata);
                 RelicDatas.Add(collectableRelic);
+            }
             Add(key, item);
         }
 

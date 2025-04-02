@@ -1,0 +1,40 @@
+{
+    "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/traits.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "properties": {
+        "traits": {
+            "type": "array",
+            "uniqueItems": true,
+            "description": "A collection of all card traits in the game, defining their properties and behaviors.",
+            "items": {
+                "required": [
+                    "id",
+                    "name"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "Unique identifier for this trait."
+                    },
+                    "mod_reference": {
+                        "type": "string",
+                        "description": "Mod GUID to search for a custom trait. If not specified then your Mod's assembly is searched."
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "The TraitStateName, this should be the name of a Class inheriting from CardTraitState. Trainworks will search your mod for the class, then the base game."
+                    },
+                    "param_int": {
+                        "type": "integer",
+                        "description": "Integer parameter for the trait."
+                    },
+                    "track_type": {
+                        "type": "string",
+                        "description": "Type of tracking for the trait."
+                    }
+                },
+                "description": "A trait definition that specifies the properties and behaviors of a trait that can be applied to cards."
+            }
+        }
+    }
+}
