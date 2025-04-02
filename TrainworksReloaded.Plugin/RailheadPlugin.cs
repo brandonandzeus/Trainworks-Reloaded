@@ -37,6 +37,8 @@ namespace TrainworksReloaded.Plugin
 
         internal static Lazy<Container> Container = new(() => Railend.GetContainer());
 
+        internal static Lazy<GameDataClient> Client = new(() => new GameDataClient());
+
         public void Awake()
         {
             //Pregame Actions
@@ -71,7 +73,7 @@ namespace TrainworksReloaded.Plugin
             }
 
             // Setup Game Client
-            var client = new GameDataClient();
+            var client = Client.Value;
             DepInjector.AddClient(client);
 
             // Plugin startup logic
@@ -232,16 +234,25 @@ namespace TrainworksReloaded.Plugin
                 });
 
                 //Register Custom Character Triggers Types.
-                c.RegisterSingleton<IRegister<CharacterTriggerData.Trigger>, CharacterTriggerTypeRegister>();
+                c.RegisterSingleton<
+                    IRegister<CharacterTriggerData.Trigger>,
+                    CharacterTriggerTypeRegister
+                >();
                 c.RegisterSingleton<CharacterTriggerTypeRegister, CharacterTriggerTypeRegister>();
                 c.Register<
-                    IDataPipeline<IRegister<CharacterTriggerData.Trigger>, CharacterTriggerData.Trigger>,
+                    IDataPipeline<
+                        IRegister<CharacterTriggerData.Trigger>,
+                        CharacterTriggerData.Trigger
+                    >,
                     CharacterTriggerTypePipeline
                 >(); //a data pipeline to run as soon as register is needed
                 c.RegisterInitializer<IRegister<CharacterTriggerData.Trigger>>(x =>
                 {
                     var pipeline = c.GetInstance<
-                        IDataPipeline<IRegister<CharacterTriggerData.Trigger>, CharacterTriggerData.Trigger>
+                        IDataPipeline<
+                            IRegister<CharacterTriggerData.Trigger>,
+                            CharacterTriggerData.Trigger
+                        >
                     >();
                     pipeline.Run(x);
                 });
@@ -464,10 +475,15 @@ namespace TrainworksReloaded.Plugin
                 //Register Relic Effect Data
                 c.RegisterSingleton<IRegister<RelicEffectData>, RelicEffectDataRegister>();
                 c.RegisterSingleton<RelicEffectDataRegister, RelicEffectDataRegister>();
-                c.Register<IDataPipeline<IRegister<RelicEffectData>, RelicEffectData>, RelicEffectDataPipeline>();
+                c.Register<
+                    IDataPipeline<IRegister<RelicEffectData>, RelicEffectData>,
+                    RelicEffectDataPipeline
+                >();
                 c.RegisterInitializer<IRegister<RelicEffectData>>(x =>
                 {
-                    var pipeline = c.GetInstance<IDataPipeline<IRegister<RelicEffectData>, RelicEffectData>>();
+                    var pipeline = c.GetInstance<
+                        IDataPipeline<IRegister<RelicEffectData>, RelicEffectData>
+                    >();
                     pipeline.Run(x);
                 });
 

@@ -18,18 +18,22 @@ namespace TrainworksReloaded.Base.Relic
         private readonly IModLogger<RelicDataPipeline> _logger;
         private readonly IRegister<LocalizationTerm> _localizationRegister;
         private readonly Dictionary<String, IFactory<RelicData>> generators;
+        private readonly IGuidProvider _guidProvider;
+
 
         public RelicDataPipeline(
             PluginAtlas atlas,
             IModLogger<RelicDataPipeline> logger,
             IRegister<LocalizationTerm> localizationRegister,
-            IEnumerable<IFactory<RelicData>> generators
+            IEnumerable<IFactory<RelicData>> generators,
+            IGuidProvider guidProvider
         )
         {
             _atlas = atlas;
             _logger = logger;
             _localizationRegister = localizationRegister;
             this.generators = generators.ToDictionary(xs => xs.FactoryKey);
+            _guidProvider = guidProvider;
         }
 
         public List<IDefinition<RelicData>> Run(IRegister<RelicData> register)
@@ -83,6 +87,8 @@ namespace TrainworksReloaded.Base.Relic
             if (data == null)
                 return null;
             data.name = name;
+            var guid = _guidProvider.GetGuidDeterministic(name);
+            AccessTools.Field(typeof(RelicData), "id").SetValue(data, guid);
 
             // Create localization keys
             var nameKey = $"RelicData_titleKey-{name}";

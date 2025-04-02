@@ -239,7 +239,14 @@ namespace TrainworksReloaded.Base.Relic
                 AccessTools.Field(typeof(RelicEffectData), "cardTriggers").SetValue(data, cardTriggers);
             }
 
-
+            //handle relic effect conditions
+            var relicEffectConditions = new List<RelicEffectCondition>();
+            var relicEffectConditionsConfig = config.GetSection("relic_effect_conditions").GetChildren();
+            foreach (var relicEffectConditionConfig in relicEffectConditionsConfig)
+            {
+                //TODO: implement relic effect conditions
+            }
+            AccessTools.Field(typeof(RelicEffectData), "effectConditions").SetValue(data, relicEffectConditions);
 
             // Handle VFX
             // var vfxId = config.GetSection("applied_vfx").ParseString() ?? "";
