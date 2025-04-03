@@ -45,7 +45,7 @@
                         "description": "Mod GUID to search for a custom effect. If not specified then your Mod's assembly is searched."
                     },
                     "name": {
-                        "type": "string",
+                        "$ref": "../definitions/card_effect.json",
                         "description": "The EffectStateName, this should be the name of a Class inheriting from CardEffectBase. Trainworks will search your mod for the class, then the base game."
                     },
                     "param_bool": {
