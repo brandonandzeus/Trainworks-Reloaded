@@ -88,7 +88,7 @@ namespace TrainworksReloaded.Base.Relic
                 return null;
             data.name = name;
             var guid = _guidProvider.GetGuidDeterministic(name);
-            AccessTools.Field(typeof(RelicData), "id").SetValue(data, guid);
+            AccessTools.Field(typeof(RelicData), "id").SetValue(data, guid.ToString());
 
             // Create localization keys
             var nameKey = $"RelicData_titleKey-{name}";
