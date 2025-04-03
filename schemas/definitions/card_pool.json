@@ -1,0 +1,19 @@
+{
+    "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/definitions/card_pool.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "string",
+    "enum": [
+        "JunkPoolT1",
+        "JunkPoolT2",
+        "JunkPoolT3",
+        "RoomAndEquipmentMerchant_EquipmentPool",
+        "RoomAndEquipmentMerchant_RoomPool",
+        "VengefulShardOnlyPool",
+        "DantesCandleOnlyPool",
+        "MegaPool",
+        "LevelableUnits",
+        "UnitsAllBanner",
+        "TrainStewardOnly"
+    ],
+    "description": "A predefined set of card pools that determine where cards can appear in the game."
+}

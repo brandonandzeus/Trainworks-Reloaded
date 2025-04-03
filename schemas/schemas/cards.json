@@ -1,0 +1,245 @@
+{
+    "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/cards.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "properties": {
+        "cards": {
+            "type": "array",
+            "uniqueItems": true,
+            "description": "A collection of all cards in the game, defining their properties, effects, and behaviors.",
+            "items": {
+                "properties": {
+                    "ability": {
+                        "type": "boolean",
+                        "description": "Whether this card represents a unit ability."
+                    },
+                    "ability_effects_other_floors": {
+                        "type": "boolean",
+                        "description": "Whether this card's ability effects can affect units on other floors."
+                    },
+                    "artist": {
+                        "type": "string",
+                        "description": "The artist who created the card art."
+                    },
+                    "card_art_reference": {
+                        "type": "string",
+                        "description": "Reference to the card's artwork asset."
+                    },
+                    "class": {
+                        "type": "string",
+                        "description": "The class this card belongs to."
+                    },
+                    "cooldown": {
+                        "type": "integer",
+                        "description": "Number of turns before this card can be used again."
+                    },
+                    "cost": {
+                        "type": "integer",
+                        "description": "Energy cost to play this card."
+                    },
+                    "cost_type": {
+                        "$ref": "../definitions/cost_type.json",
+                        "description": "The type of cost this card uses."
+                    },
+                    "count_for_mastery": {
+                        "type": "boolean",
+                        "description": "Whether this card counts towards class mastery."
+                    },
+                    "descriptions": {
+                        "$ref": "../definitions/parse_term.json",
+                        "description": "Localized text descriptions for this card."
+                    },
+                    "dlc": {
+                        "$ref": "../definitions/dlc.json",
+                        "description": "The DLC this card belongs to."
+                    },
+                    "effect_triggers": {
+                        "type": "array",
+                        "description": "List of triggers that activate when this card's effects are used.",
+                        "items": {
+                            "required": [
+                                "id"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "Reference to a trigger's unique identifier."
+                                }
+                            }
+                        }
+                    },
+                    "effects": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "description": "List of effects this card has when played.",
+                        "items": {
+                            "required": [
+                                "id"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "Reference to an effect's unique identifier."
+                                }
+                            }
+                        }
+                    },
+                    "hide_in_logbook": {
+                        "type": "boolean",
+                        "description": "Whether this card should be hidden in the logbook."
+                    },
+                    "id": {
+                        "minLength": 1,
+                        "type": "string",
+                        "description": "Unique identifier for this card."
+                    },
+                    "initial_cooldown": {
+                        "type": "integer",
+                        "description": "Initial cooldown value when the card is first added to the deck."
+                    },
+                    "initial_upgrades": {
+                        "type": "array",
+                        "description": "List of upgrades that are applied when the card is first added to the deck.",
+                        "items": {
+                            "required": [
+                                "id"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "Reference to an upgrade's unique identifier."
+                                }
+                            }
+                        }
+                    },
+                    "lore_tooltips": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "description": "List of lore tooltips that appear when hovering over this card.",
+                        "items": {
+                            "$ref": "../definitions/parse_term.json",
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "Unique identifier for this lore tooltip."
+                                }
+                            }
+                        }
+                    },
+                    "mastery_card": {
+                        "type": "string",
+                        "description": "Reference to the mastery version of this card."
+                    },
+                    "names": {
+                        "$ref": "../definitions/parse_term.json",
+                        "description": "Localized text for this card's name."
+                    },
+                    "override": {
+                        "type": "boolean",
+                        "description": "Whether this card overrides an existing card with the same ID."
+                    },
+                    "pools": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "description": "List of card pools this card can appear in.",
+                        "items": {
+                            "$ref": "../definitions/card_pool.json"
+                        }
+                    },
+                    "rarity": {
+                        "$ref": "../definitions/rarity.json",
+                        "description": "The rarity of this card."
+                    },
+                    "shared_discovery_cards": {
+                        "type": "array",
+                        "description": "List of cards that are discovered together with this card.",
+                        "items": {
+                            "required": [
+                                "id"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "Reference to a card's unique identifier."
+                                }
+                            }
+                        }
+                    },
+                    "shared_mastery_cards": {
+                        "type": "array",
+                        "description": "List of cards that share mastery progress with this card.",
+                        "items": {
+                            "required": [
+                                "id"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "Reference to a card's unique identifier."
+                                }
+                            }
+                        }
+                    },
+                    "target_assist": {
+                        "$ref": "../definitions/target_assist.json",
+                        "description": "Assistance for targeting this card's effects."
+                    },
+                    "targetless": {
+                        "type": "boolean",
+                        "description": "Whether this card requires a target."
+                    },
+                    "targets_room": {
+                        "type": "boolean",
+                        "description": "Whether this card targets an entire room."
+                    },
+                    "traits": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "description": "List of traits this card has.",
+                        "items": {
+                            "required": [
+                                "id"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "Reference to a trait's unique identifier."
+                                }
+                            }
+                        }
+                    },
+                    "triggers": {
+                        "type": "array",
+                        "description": "List of triggers this card has.",
+                        "items": {
+                            "required": [
+                                "id"
+                            ],
+                            "properties": {
+                                "id": {
+                                    "type": "string",
+                                    "description": "Reference to a trigger's unique identifier."
+                                }
+                            }
+                        }
+                    },
+                    "type": {
+                        "$ref": "../definitions/card_type.json",
+                        "description": "The type of card this is."
+                    },
+                    "unlock_level": {
+                        "type": "integer",
+                        "description": "The level at which this card becomes available."
+                    },
+                    "vfx": {
+                        "type": "string",
+                        "description": "Visual effect played when this card is used."
+                    }
+                },
+                "required": [
+                    "id"
+                ],
+                "description": "A card definition that specifies all properties and behaviors of a card in the game."
+            }
+        }
+    }
+}

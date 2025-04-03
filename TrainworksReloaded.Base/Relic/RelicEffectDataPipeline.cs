@@ -244,7 +244,7 @@ namespace TrainworksReloaded.Base.Relic
             var relicEffectConditionsConfig = config.GetSection("relic_effect_conditions").GetChildren();
             foreach (var relicEffectConditionConfig in relicEffectConditionsConfig)
             {
-                //TODO: implement relic effect conditions
+                // TODO: implement relic effect conditions
             }
             AccessTools.Field(typeof(RelicEffectData), "effectConditions").SetValue(data, relicEffectConditions);
 

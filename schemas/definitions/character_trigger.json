@@ -65,6 +65,7 @@
         "on_troop_removed",
         "on_train_room_loop",
         "on_status_effect_changed",
-        "on_attacking_before_damage"
+        "on_attacking_before_damage",
+        null
     ]
 }

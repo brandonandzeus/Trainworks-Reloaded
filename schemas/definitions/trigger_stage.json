@@ -34,6 +34,7 @@
         "on_pre_flat_damage_increase",
         "on_hit",
         "on_post_spawn",
-        "on_pre_attacked_life_link"
+        "on_pre_attacked_life_link",
+        null
     ]
 }

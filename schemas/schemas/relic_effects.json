@@ -14,7 +14,7 @@
                         "description": "Unique identifier for the relic effect"
                     },
                     "name": {
-                        "type": "string",
+                        "$ref": "../definitions/relic_effect.json",
                         "description": "The RelicEffectStateName, this should be the name of a Class inheriting from RelicEffectBase"
                     },
                     "mod_reference": {
