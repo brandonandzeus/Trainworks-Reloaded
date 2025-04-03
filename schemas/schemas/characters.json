@@ -128,7 +128,7 @@
                         "description": "Whether this character slides backward when dying."
                     },
                     "death_type": {
-                        "type": "string",
+                        "$ref": "../definitions/death_type.json",
                         "description": "Type of death animation to play."
                     },
                     "death_vfx": {
