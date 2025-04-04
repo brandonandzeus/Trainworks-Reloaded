@@ -991,5 +991,23 @@ namespace TrainworksReloaded.Base.Extensions
 
             return result;
         }
+
+        public static RunState.ClassType? ParseClassType(this IConfigurationSection section)
+        {
+            var val = section.Value;
+            if (string.IsNullOrEmpty(val))
+            {
+                return null;
+            }
+            val = val.ToLower();
+            return val switch
+            {
+                "none" => RunState.ClassType.None,
+                "main" => RunState.ClassType.MainClass,
+                "subclass" => RunState.ClassType.SubClass,
+                "nonclass" => RunState.ClassType.NonClass,
+                _ => null
+            };
+        }
     }
 }
