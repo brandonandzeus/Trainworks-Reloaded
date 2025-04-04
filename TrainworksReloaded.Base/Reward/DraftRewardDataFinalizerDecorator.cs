@@ -176,6 +176,16 @@ namespace TrainworksReloaded.Base.Reward
             AccessTools
                 .Field(typeof(DraftRewardData), "relicRarityTicketValues")
                 .SetValue(draftData, relicRarityTicketValues);
+
+            // Set GrantableRewardData fields
+            var isServiceMerchantReward = draftConfiguration.GetSection("is_service_merchant_reward").ParseBool() ?? false;
+            AccessTools.Field(typeof(GrantableRewardData), "_isServiceMerchantReward").SetValue(draftData, isServiceMerchantReward);
+
+            var merchantServiceIndex = draftConfiguration.GetSection("merchant_service_index").ParseInt() ?? 0;
+            AccessTools.Field(typeof(GrantableRewardData), "_merchantServiceIndex").SetValue(draftData, merchantServiceIndex);
+
+            var applyTrialDataModifiers = draftConfiguration.GetSection("apply_trial_data_modifiers").ParseBool() ?? false;
+            AccessTools.Field(typeof(GrantableRewardData), "_applyTrialDataModifiers").SetValue(draftData, applyTrialDataModifiers);
         }
     }
 }

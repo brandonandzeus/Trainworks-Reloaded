@@ -1000,14 +1000,27 @@ namespace TrainworksReloaded.Base.Extensions
                 return null;
             }
             val = val.ToLower();
-            return val switch
+            var values = val.Split('|', StringSplitOptions.RemoveEmptyEntries)
+                           .Select(v => v.Trim())
+                           .ToList();
+            var result = RunState.ClassType.None;
+            foreach (var value in values)
             {
-                "none" => RunState.ClassType.None,
-                "main" => RunState.ClassType.MainClass,
-                "subclass" => RunState.ClassType.SubClass,
-                "nonclass" => RunState.ClassType.NonClass,
-                _ => null
-            };
+                RunState.ClassType? classType = value switch
+                {
+                    "none" => RunState.ClassType.None,
+                    "main" => RunState.ClassType.MainClass,
+                    "subclass" => RunState.ClassType.SubClass,
+                    "nonclass" => RunState.ClassType.NonClass,
+                    _ => null
+                };
+                if (classType == null)
+                {
+                    return null;
+                }
+                result |= classType.Value;
+            }
+            return result;
         }
     }
 }

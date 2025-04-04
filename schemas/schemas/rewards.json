@@ -208,6 +208,20 @@
                                                             "items": {
                                                                 "$ref": "../definitions/rarity_ticket.json"
                                                             }
+                                                        },
+                                                        "is_service_merchant_reward": {
+                                                            "type": "boolean",
+                                                            "description": "Whether this is a service merchant reward."
+                                                        },
+                                                        "merchant_service_index": {
+                                                            "type": "integer",
+                                                            "description": "Index of the merchant service for this reward.",
+                                                            "minimum": 0,
+                                                            "maximum": 3
+                                                        },
+                                                        "apply_trial_data_modifiers": {
+                                                            "type": "boolean",
+                                                            "description": "Whether to apply trial data modifiers to this reward."
                                                         }
                                                     },
                                                     "required": [
