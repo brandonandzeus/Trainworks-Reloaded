@@ -3,6 +3,12 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "string",
     "description": "The name of a class that inherits from CardEffectBase. Must be either one of the predefined effect types or a custom effect class from a mod that follows the same naming pattern.",
+    "examples": [
+        "CardEffectAddBattleCard",
+        "@MyModEffect",
+        "CardEffectDamage",
+        "CardEffectHeal"
+    ],
     "anyOf": [{
             "type": "string",
             "pattern": "^@.*$"

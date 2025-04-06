@@ -85,7 +85,7 @@ namespace TrainworksReloaded.Base.Character
 
             //handle ability
             var ability = configuration.GetSection("ability").ParseString() ?? "";
-            if (!ability.IsNullOrEmpty() && cardRegister.TryLookupId(ability.ToId(key, TemplateConstants.Card), out var abilityCard, out var _))
+            if (!ability.IsNullOrEmpty() && cardRegister.TryLookupName(ability.ToId(key, TemplateConstants.Card), out var abilityCard, out var _))
             {
                 AccessTools.Field(typeof(CharacterData), "ability").SetValue(data, abilityCard);
             }
