@@ -24,6 +24,7 @@ namespace TrainworksReloaded.Base.Extensions
             [NotNullWhen(true)] out string? fullyQualifiedName
         )
         {
+            className = className.Replace("@", "");
             Type? foundType = null;
             bool baseGameType = false;
             fullyQualifiedName = null;

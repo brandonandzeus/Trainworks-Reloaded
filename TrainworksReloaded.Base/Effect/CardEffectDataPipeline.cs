@@ -14,10 +14,12 @@ namespace TrainworksReloaded.Base.Effect
     public class CardEffectDataPipeline : IDataPipeline<IRegister<CardEffectData>, CardEffectData>
     {
         private readonly PluginAtlas atlas;
+        private readonly IModLogger<CardEffectDataPipeline> logger;
 
-        public CardEffectDataPipeline(PluginAtlas atlas)
+        public CardEffectDataPipeline(PluginAtlas atlas, IModLogger<CardEffectDataPipeline> logger)
         {
             this.atlas = atlas;
+            this.logger = logger;
         }
 
         public List<IDefinition<CardEffectData>> Run(IRegister<CardEffectData> service)
@@ -76,6 +78,7 @@ namespace TrainworksReloaded.Base.Effect
                 )
             )
             {
+                logger.Log(LogLevel.Error, $"Failed to load effect state name {effectStateName} in {name} with mod reference {modReference}");
                 return null;
             }
             AccessTools
