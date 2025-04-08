@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using StateMechanic;
 using HarmonyLib;
+using Microsoft.Extensions.Configuration;
 
 namespace TrainworksReloaded.Base.Prefab
 {
@@ -90,66 +91,106 @@ namespace TrainworksReloaded.Base.Prefab
                 {
                     if (field.IsLiteral)
                         continue;
-                        
+
                     field.SetValue(newComponent, field.GetValue(component));
                 }
             }
             GameObject.Destroy(characterPrefab);
 
             var character_scale = original.transform.Find("CharacterScale");
-            if (character_scale == null){
+            if (character_scale == null)
+            {
                 logger.Log(LogLevel.Error, $"Failed to find CharacterScale component on prefab for {definition.Key}");
                 return;
             }
 
             var characterUIObject = character_scale.Find("CharacterUI");
-            if (characterUIObject == null){
+            if (characterUIObject == null)
+            {
                 logger.Log(LogLevel.Error, $"Failed to find CharacterUI component on prefab for {definition.Key}");
                 return;
             }
 
             var quad_default = characterUIObject.Find("Quad_Default");
-            if (quad_default == null){
+            if (quad_default == null)
+            {
                 logger.Log(LogLevel.Error, $"Failed to find Quad_Default component on prefab for {definition.Key}");
                 return;
             }
 
             var meshRenderer = quad_default.GetComponent<MeshRenderer>();
-            if (meshRenderer == null){
+            if (meshRenderer == null)
+            {
                 logger.Log(LogLevel.Error, $"Failed to find MeshRenderer component on Quad_Default for {definition.Key}");
                 return;
             }
+
+            // Get shader configuration from character_art section
+            var shaderConfig = characterConfig.GetSection("shader");
+            var shaderName = shaderConfig?.GetSection("name")?.Value ?? "Shiny Shoe/Character Shader";
             
-            // var characterShader = Shader.Find("Standard");
-            var characterShader = Shader.Find("Shiny Shoe/Character Shader");
-            if (characterShader == null){
-                logger.Log(LogLevel.Error, $"Failed to find Shiny Shoe/Character shader for {definition.Key}");
+            var characterShader = Shader.Find(shaderName);
+            if (characterShader == null)
+            {
+                logger.Log(LogLevel.Error, $"Failed to find shader {shaderName} for {definition.Key}");
                 return;
             }
 
             var material = new Material(characterShader);
-            material.SetColor("_Color", new Color(1, 1, 1, 1));
-            material.SetColor("_Tint", new Color(1, 1, 1, 1));
+
+            // Helper function to create Color from config section
+            Color GetColorFromSection(IConfigurationSection? section)
+            {
+                if (section == null) return new Color(1, 1, 1, 1);
+                return new Color(
+                    section.GetSection("r").ParseFloat() ?? 1f,
+                    section.GetSection("g").ParseFloat() ?? 1f,
+                    section.GetSection("b").ParseFloat() ?? 1f,
+                    section.GetSection("a").ParseFloat() ?? 1f
+                );
+            }
+
+            // Apply color properties if they exist on the material
+            void TrySetMaterialColor(string propertyName, Color color)
+            {
+                if (material.HasProperty(propertyName))
+                {
+                    material.SetColor(propertyName, color);
+                }
+            }
+
+            // Handle color configuration
+            var colorConfig = shaderConfig?.GetSection("color");
+            if (colorConfig != null)
+            {
+                TrySetMaterialColor("_Color", GetColorFromSection(colorConfig.GetSection("color")));
+                TrySetMaterialColor("_Tint", GetColorFromSection(colorConfig.GetSection("tint")));
+            }
+            else
+            {
+                var defaultColor = new Color(1, 1, 1, 1);
+                TrySetMaterialColor("_Color", defaultColor);
+                TrySetMaterialColor("_Tint", defaultColor);
+            }
+
             meshRenderer.material = material;
 
+            // Get required components
             var spriteRenderer = characterUIObject.GetComponent<SpriteRenderer>();
-            if (spriteRenderer == null){
-                logger.Log(LogLevel.Error, $"Failed to find SpriteRenderer component on CharacterUI for {definition.Key}");
-                return;
-            }
-
             var character_state = original.GetComponent<CharacterState>();
-            if (character_state == null){
-                logger.Log(LogLevel.Error, $"Failed to find CharacterState component on prefab for {definition.Key}");
-                return;
-            }
-
-
             var characterUI = characterUIObject.GetComponent<CharacterUI>();
-            if (characterUI == null){
-                logger.Log(LogLevel.Error, $"Failed to find CharacterUI component on prefab for {definition.Key}");
+
+            // Validate required components
+            if (spriteRenderer == null || character_state == null || characterUI == null)
+            {
+                logger.Log(LogLevel.Error, $"Missing required components on prefab for {definition.Key}");
                 return;
             }
+
+            spriteRenderer.sprite = sprite;
+            spriteRenderer.enabled = true;
+            AccessTools.Field(typeof(CharacterState), "sprite").SetValue(character_state, sprite);
+            AccessTools.Field(typeof(CharacterState), "charUI").SetValue(character_state, characterUI);
 
             // Get transform adjustments from configuration
             var transformConfig = characterConfig.GetSection("transform");
@@ -159,7 +200,7 @@ namespace TrainworksReloaded.Base.Prefab
                 var positionX = transformConfig.GetSection("position").GetSection("x").ParseFloat();
                 var positionY = transformConfig.GetSection("position").GetSection("y").ParseFloat();
                 var positionZ = transformConfig.GetSection("position").GetSection("z").ParseFloat();
-                
+
                 if (positionX.HasValue || positionY.HasValue || positionZ.HasValue)
                 {
                     var currentPos = characterUIObject.transform.localPosition;
@@ -174,7 +215,7 @@ namespace TrainworksReloaded.Base.Prefab
                 var scaleX = transformConfig.GetSection("scale").GetSection("x").ParseFloat();
                 var scaleY = transformConfig.GetSection("scale").GetSection("y").ParseFloat();
                 var scaleZ = transformConfig.GetSection("scale").GetSection("z").ParseFloat();
-                
+
                 if (scaleX.HasValue || scaleY.HasValue || scaleZ.HasValue)
                 {
                     var currentScale = characterUIObject.transform.localScale;
@@ -185,11 +226,6 @@ namespace TrainworksReloaded.Base.Prefab
                     );
                 }
             }
-
-            spriteRenderer.sprite = sprite;
-            spriteRenderer.enabled = true;
-            AccessTools.Field(typeof(CharacterState), "sprite").SetValue(character_state, sprite);
-            AccessTools.Field(typeof(CharacterState), "charUI").SetValue(character_state, characterUI);
         }
     }
 }
