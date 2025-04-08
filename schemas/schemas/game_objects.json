@@ -49,6 +49,31 @@
                             },
                             {
                                 "properties": {
+                                    "extensions": {
+                                        "type": "object",
+                                        "description": "Extensions for character art game objects.",
+                                        "properties": {
+                                            "character_art": {
+                                                "type": "object",
+                                                "description": "Character art specific properties.",
+                                                "properties": {
+                                                    "sprite": {
+                                                        "type": "string",
+                                                        "description": "Reference to the character art sprite."
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "type": {
+                                        "enum": [
+                                            "character_art"
+                                        ]
+                                    }
+                                }
+                            },
+                            {
+                                "properties": {
                                     "type": {
                                         "enum": [
                                             "map_node_icon"
