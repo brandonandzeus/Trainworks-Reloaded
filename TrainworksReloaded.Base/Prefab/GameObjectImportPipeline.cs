@@ -40,7 +40,6 @@ namespace TrainworksReloaded.Base.Prefab
 
                     // Set to inactive to prevent it from being visible in the scene
                     var gameObject = new GameObject { name = name, layer = 0 };
-                    gameObject.SetActive(false);
                     GameObject.DontDestroyOnLoad(gameObject);
 
                     service.Register(name, gameObject);

@@ -115,7 +115,7 @@ namespace TrainworksReloaded.Base.Prefab
 
             logger.Log(LogLevel.Info, $"Providing for {location.InternalId}");
             var obj = this[location.InternalId];
-            obj.SetActive(true);
+            // obj.SetActive(true);
             if (obj is TObject @object)
             {
 
