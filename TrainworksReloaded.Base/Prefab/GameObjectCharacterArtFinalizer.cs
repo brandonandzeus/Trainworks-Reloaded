@@ -71,9 +71,11 @@ namespace TrainworksReloaded.Base.Prefab
 
             foreach (var component in original.GetComponents<Component>())
             {
+                if (component is Transform) continue;
                 GameObject.Destroy(component);
             }
             original.transform.DestroyAllChildren();
+            original.layer = 0;
             int childCount = characterPrefab.transform.childCount;
             for (int i = childCount - 1; i >= 0; i--)
             {
@@ -127,7 +129,7 @@ namespace TrainworksReloaded.Base.Prefab
 
             // Get shader configuration from character_art section
             var shaderConfig = characterConfig.GetSection("shader");
-            var shaderName = shaderConfig?.GetSection("name")?.Value ?? "Shiny Shoe/Character Shader";
+            var shaderName = shaderConfig?.GetSection("name")?.Value ?? "Shader Graphs/CharacterShader2.0 Graph";
             
             var characterShader = Shader.Find(shaderName);
             if (characterShader == null)
