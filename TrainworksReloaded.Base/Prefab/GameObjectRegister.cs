@@ -33,7 +33,7 @@ namespace TrainworksReloaded.Base.Prefab
         {
             hiddenRoot = new GameObject { name = "Prefabs" };
             GameObject.DontDestroyOnLoad(hiddenRoot);
-            hiddenRoot.transform.position = new Vector3(10000, 10000, 10000);
+            hiddenRoot.transform.position = new Vector3(10000, 10000, 0);
             this.logger = logger;
         }
 
