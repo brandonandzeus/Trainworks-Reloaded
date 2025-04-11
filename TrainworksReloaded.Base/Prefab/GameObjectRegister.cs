@@ -16,6 +16,12 @@ using static RimLight;
 
 namespace TrainworksReloaded.Base.Prefab
 {
+
+    public class TransformOnStart : MonoBehaviour{
+        void Start(){
+            this.transform.position = new Vector3(10000, 10000, 0);
+        }
+    }
     /// <summary>
     /// Provide Game Object Prefabs
     /// </summary>
@@ -27,13 +33,14 @@ namespace TrainworksReloaded.Base.Prefab
     {
         private string? m_ProviderId;
         private readonly IModLogger<GameObjectRegister> logger;
-        private readonly GameObject hiddenRoot;
+        public readonly GameObject hiddenRoot;
 
         public GameObjectRegister(IModLogger<GameObjectRegister> logger)
         {
             hiddenRoot = new GameObject { name = "Prefabs" };
             GameObject.DontDestroyOnLoad(hiddenRoot);
-            hiddenRoot.transform.position = new Vector3(10000, 10000, 0);
+            hiddenRoot.AddComponent<TransformOnStart>();
+            // hiddenRoot.transform.localScale = new Vector3(0.000001f, 0.000001f, 0.000001f);
             this.logger = logger;
         }
 
@@ -151,7 +158,7 @@ namespace TrainworksReloaded.Base.Prefab
             logger.Log(LogLevel.Info, $"Register GameObject ({key}) -- ({hash})");
             item.name = key;
             HashToObjectMap.Add(hash, (key, item));
-            item.transform.SetParent(hiddenRoot.transform);
+            item.transform.SetParent(hiddenRoot.transform, false);
             this.Add(key, item);
         }
 
