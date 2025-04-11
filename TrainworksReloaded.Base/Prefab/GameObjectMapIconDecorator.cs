@@ -59,6 +59,7 @@ namespace TrainworksReloaded.Base.Prefab
                 .GetSection("map_node_icon");
 
             var gameObject = definition.Data;
+            gameObject.SetActive(true);
             var rectTransform = gameObject.AddComponent<RectTransform>();
             var canvasRenderer = gameObject.AddComponent<CanvasRenderer>();
             var mapNodeIcon = gameObject.AddComponent<MapNodeIcon>();

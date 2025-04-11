@@ -5,6 +5,7 @@ using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 
@@ -13,7 +14,6 @@ namespace TrainworksReloaded.Base.Prefab
     public class GameObjectImportPipeline : IDataPipeline<IRegister<GameObject>, GameObject>
     {
         private readonly PluginAtlas atlas;
-
         public GameObjectImportPipeline(PluginAtlas atlas)
         {
             this.atlas = atlas;
@@ -38,7 +38,8 @@ namespace TrainworksReloaded.Base.Prefab
                     }
                     var name = key.GetId("GameObject", id);
 
-                    var gameObject = new GameObject { name = name, layer = 5 };
+                    // Set to inactive to prevent it from being visible in the scene
+                    var gameObject = new GameObject { name = name, layer = 0 };
                     GameObject.DontDestroyOnLoad(gameObject);
 
                     service.Register(name, gameObject);

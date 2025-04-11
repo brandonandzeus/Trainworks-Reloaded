@@ -133,6 +133,7 @@ namespace TrainworksReloaded.Plugin
                         typeof(CardTriggerTypeFinalizer),
                         typeof(RelicDataFinalizer),
                         typeof(RelicEffectDataFinalizer),
+                        typeof(GameObjectFinalizer),
                     ]
                 );
 
@@ -212,6 +213,11 @@ namespace TrainworksReloaded.Plugin
                     IDataPipeline<IRegister<GameObject>, GameObject>,
                     GameObjectMapIconDecorator
                 >();
+                c.RegisterDecorator(
+                    typeof(IDataFinalizer),
+                    typeof(GameObjectCharacterArtFinalizer),
+                    xs => xs.ImplementationType == typeof(GameObjectFinalizer)
+                );
 
                 //Register Sprite
                 c.RegisterSingleton<IRegister<Sprite>, SpriteRegister>();

@@ -47,7 +47,7 @@ namespace TrainworksReloaded.Base.Prefab
                             continue;
                         }
                         var data = File.ReadAllBytes(fullpath);
-                        var texture2d = new Texture2D(2, 2);
+                        var texture2d = new Texture2D(2, 2, TextureFormat.RGBA32, false);
                         if (!texture2d.LoadImage(data))
                         {
                             continue;

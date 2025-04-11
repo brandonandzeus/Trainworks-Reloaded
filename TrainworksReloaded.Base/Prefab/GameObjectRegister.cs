@@ -16,6 +16,15 @@ using static RimLight;
 
 namespace TrainworksReloaded.Base.Prefab
 {
+
+    public class TransformOnStart : MonoBehaviour{
+        void Start(){
+            this.transform.position = new Vector3(10000, 10000, 0);
+        }
+    }
+    /// <summary>
+    /// Provide Game Object Prefabs
+    /// </summary>
     public class GameObjectRegister
         : Dictionary<string, GameObject>,
             IRegister<GameObject>,
@@ -24,9 +33,14 @@ namespace TrainworksReloaded.Base.Prefab
     {
         private string? m_ProviderId;
         private readonly IModLogger<GameObjectRegister> logger;
+        public readonly GameObject hiddenRoot;
 
         public GameObjectRegister(IModLogger<GameObjectRegister> logger)
         {
+            hiddenRoot = new GameObject { name = "Prefabs" };
+            GameObject.DontDestroyOnLoad(hiddenRoot);
+            hiddenRoot.AddComponent<TransformOnStart>();
+            // hiddenRoot.transform.localScale = new Vector3(0.000001f, 0.000001f, 0.000001f);
             this.logger = logger;
         }
 
@@ -107,8 +121,11 @@ namespace TrainworksReloaded.Base.Prefab
             }
 
             logger.Log(LogLevel.Info, $"Providing for {location.InternalId}");
-            if (this[location.InternalId] is TObject @object)
+            var obj = this[location.InternalId];
+            // obj.SetActive(true);
+            if (obj is TObject @object)
             {
+
                 return new CompletedOperation<TObject>().Start(
                     location,
                     location.InternalId,
@@ -141,6 +158,7 @@ namespace TrainworksReloaded.Base.Prefab
             logger.Log(LogLevel.Info, $"Register GameObject ({key}) -- ({hash})");
             item.name = key;
             HashToObjectMap.Add(hash, (key, item));
+            item.transform.SetParent(hiddenRoot.transform, false);
             this.Add(key, item);
         }
 

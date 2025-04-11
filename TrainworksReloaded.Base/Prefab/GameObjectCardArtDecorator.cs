@@ -51,6 +51,7 @@ namespace TrainworksReloaded.Base.Prefab
                 return;
 
             var gameObject = definition.Data;
+            gameObject.layer = 5;
             gameObject.AddComponent<AddressableAssetPrefab>();
             gameObject.AddComponent<RectTransform>();
 

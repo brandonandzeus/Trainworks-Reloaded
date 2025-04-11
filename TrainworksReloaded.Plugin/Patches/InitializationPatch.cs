@@ -10,6 +10,8 @@ using TrainworksReloaded.Base.Relic;
 using TrainworksReloaded.Core;
 using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
+using TrainworksReloaded.Base.Prefab;
+using UnityEngine;
 
 namespace TrainworksReloaded.Plugin.Patches
 {
@@ -19,6 +21,8 @@ namespace TrainworksReloaded.Plugin.Patches
         public static void Postfix(AssetLoadingData ____assetLoadingData)
         {
             var container = Railend.GetContainer();
+            // var gameObjectRegister = container.GetInstance<GameObjectRegister>();
+            // gameObjectRegister.hiddenRoot.transform.position = new Vector3(10000, 10000, 0);
             var register = container.GetInstance<CardDataRegister>();
             var logger = container.GetInstance<IModLogger<InitializationPatch>>();
 
