@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using HarmonyLib;
+using TrainworksReloaded.Base.Card;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
@@ -16,6 +17,7 @@ namespace TrainworksReloaded.Base.Effect
         private readonly IRegister<StatusEffectData> statusRegister;
         private readonly IRegister<CharacterTriggerData.Trigger> triggerEnumRegister;
         private readonly IRegister<CardUpgradeMaskData> upgradeMaskRegister;
+        private readonly IRegister<CardPool> cardPoolRegister;
         private readonly ICache<IDefinition<CardEffectData>> cache;
 
         public CardEffectFinalizer(
@@ -24,6 +26,7 @@ namespace TrainworksReloaded.Base.Effect
             IRegister<CardUpgradeMaskData> upgradeMaskRegister,
             IRegister<StatusEffectData> statusRegister,
             IRegister<CharacterTriggerData.Trigger> triggerEnumRegister,
+            IRegister<CardPool> cardPoolRegister,
             ICache<IDefinition<CardEffectData>> cache
         )
         {
@@ -32,6 +35,7 @@ namespace TrainworksReloaded.Base.Effect
             this.statusRegister = statusRegister;
             this.triggerEnumRegister = triggerEnumRegister;
             this.upgradeMaskRegister = upgradeMaskRegister;
+            this.cardPoolRegister = cardPoolRegister;
             this.cache = cache;
         }
 
@@ -209,7 +213,18 @@ namespace TrainworksReloaded.Base.Effect
                     filterId.ToId(key, TemplateConstants.UpgradeMask), 
                     out var lookup, 
                     out var _);
-                AccessTools.Field(typeof(CardUpgradeData), "paramCardFilter").SetValue(data, lookup);
+                AccessTools.Field(typeof(CardEffectData), "paramCardFilter").SetValue(data, lookup);
+            }
+
+            var cardPoolId = configuration.GetSection("param_card_pool")?.ParseString();
+            if (cardPoolId != null)
+            {
+                cardPoolRegister.TryLookupId(
+                    cardPoolId.ToId(key, TemplateConstants.CardPool),
+                    out var lookup,
+                    out var _
+                    );
+                AccessTools.Field(typeof(CardEffectData), "paramCardPool").SetValue(data, lookup);
             }
         }
     }
