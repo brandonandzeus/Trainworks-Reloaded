@@ -134,9 +134,9 @@ namespace TrainworksReloaded.Base.Card
             //handle tooltips
             int tooltip_count = 0;
             var tooltips = checkOverride
-                ? []
-                : (List<String>)
-                    AccessTools.Field(typeof(CardData), "cardLoreTooltipKeys").GetValue(data);
+                ? (List<String>)
+                    AccessTools.Field(typeof(CardData), "cardLoreTooltipKeys").GetValue(data)
+                : [];
             foreach (var tooltip in configuration.GetSection("lore_tooltips").GetChildren())
             {
                 var localizationTooltipTerm = tooltip.ParseLocalizationTerm();
@@ -150,11 +150,13 @@ namespace TrainworksReloaded.Base.Card
                     else
                     {
                         localizationTooltipTerm.Key = tooltipKey;
+                        tooltips.Add(localizationTooltipTerm.Key);
                     }
                     termRegister.Register(tooltipKey, localizationTooltipTerm);
                     tooltip_count++;
                 }
             }
+            AccessTools.Field(typeof(CardData), "cardLoreTooltipKeys").SetValue(data, tooltips);
 
             //handle one-to-one values
             var defaultCost = checkOverride
