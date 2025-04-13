@@ -383,6 +383,33 @@ namespace TrainworksReloaded.Base.Character
                     subtypes.Add(str);
             }
 
+            //handle tooltips
+            int tooltip_count = 0;
+            var tooltips = checkOverride
+                ? (List<String>)
+                    AccessTools.Field(typeof(CharacterData), "characterLoreTooltipKeys").GetValue(data)
+                : [];
+            foreach (var tooltip in configuration.GetSection("character_lore_tooltips").GetChildren())
+            {
+                var localizationTooltipTerm = tooltip.ParseLocalizationTerm();
+                if (localizationTooltipTerm != null)
+                {
+                    string tooltipKey = $"CharacterData_tooltipKey{tooltip_count}-{name}";
+                    if (checkOverride && tooltips.Contains(localizationTooltipTerm.Key))
+                    {
+                        tooltipKey = localizationTooltipTerm.Key;
+                    }
+                    else
+                    {
+                        localizationTooltipTerm.Key = tooltipKey;
+                        tooltips.Add(localizationTooltipTerm.Key);
+                    }
+                    termRegister.Register(tooltipKey, localizationTooltipTerm);
+                    tooltip_count++;
+                }
+            }
+            AccessTools.Field(typeof(CharacterData), "characterLoreTooltipKeys").SetValue(data, tooltips);
+
             //endless baseline stats
             var endlessBaselineStats = checkOverride
                 ? (EndlessBaselineStats)
