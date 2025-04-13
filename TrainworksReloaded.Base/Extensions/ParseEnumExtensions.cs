@@ -156,6 +156,21 @@ namespace TrainworksReloaded.Base.Extensions
             return new Color(r ?? 0.0f, g ?? 0.0f, b ?? 0.0f, a ?? 1.0f);
         }
 
+        public static string? ParseLocalization(this IConfigurationSection section)
+        {
+            var str = section.Value;
+            if (string.IsNullOrEmpty(str))
+            {
+                return null;
+            }
+            // Quote string if it contains quotes otherwise it will break when sending to I2.Loc
+            if (str.Contains(','))
+            {
+                str = string.Format("\"{0}\"", str);
+            }
+            return str;
+        }
+
         public static LocalizationTerm? ParseLocalizationTerm(this IConfigurationSection section)
         {
             var key = section.GetSection("id").Value;
@@ -163,16 +178,16 @@ namespace TrainworksReloaded.Base.Extensions
             var description = section.GetSection("description").Value;
             var group = section.GetSection("group").Value;
             var speaker_descriptions = section.GetSection("speaker_descriptions").Value;
-            var english = section.GetSection("english").Value;
-            var french = section.GetSection("french").Value;
-            var german = section.GetSection("german").Value;
-            var russian = section.GetSection("russian").Value;
-            var portuguese = section.GetSection("portuguese").Value;
-            var chinese = section.GetSection("chinese").Value;
-            var spanish = section.GetSection("spanish").Value;
-            var chinese_traditional = section.GetSection("chinese_traditional").Value;
-            var korean = section.GetSection("korean").Value;
-            var japanese = section.GetSection("japanese").Value;
+            var english = section.GetSection("english").ParseLocalization();
+            var french = section.GetSection("french").ParseLocalization();
+            var german = section.GetSection("german").ParseLocalization();
+            var russian = section.GetSection("russian").ParseLocalization();
+            var portuguese = section.GetSection("portuguese").ParseLocalization();
+            var chinese = section.GetSection("chinese").ParseLocalization();
+            var spanish = section.GetSection("spanish").ParseLocalization();
+            var chinese_traditional = section.GetSection("chinese_traditional").ParseLocalization();
+            var korean = section.GetSection("korean").ParseLocalization();
+            var japanese = section.GetSection("japanese").ParseLocalization();
             if (
                 key == null
                 && type == null

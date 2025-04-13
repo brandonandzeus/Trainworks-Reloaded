@@ -24,6 +24,10 @@
                         "type": "string",
                         "description": "The TraitStateName, this should be the name of a Class inheriting from CardTraitState. Trainworks will search your mod for the class, then the base game."
                     },
+                    "param_float": {
+                        "type": "number",
+                        "description": "Float parameter for the trait. Defaults to 1.0"
+                    },
                     "param_int": {
                         "type": "integer",
                         "description": "Integer parameter for the trait."
@@ -31,6 +35,10 @@
                     "track_type": {
                         "type": "string",
                         "description": "Type of tracking for the trait."
+                    },
+                    "trait_is_removable" {
+                        "type": "boolean",
+                        "description": "Determines if the trait can be removed via a CardUpgrade (remove_trait_upgrades). Defaults to true."
                     }
                 },
                 "description": "A trait definition that specifies the properties and behaviors of a trait that can be applied to cards."

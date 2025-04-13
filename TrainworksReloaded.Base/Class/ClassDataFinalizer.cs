@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using HarmonyLib;
+using Microsoft.Extensions.Configuration;
 using TrainworksReloaded.Base.Card;
 using TrainworksReloaded.Base.Extensions;
+using TrainworksReloaded.Base.Relic;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
@@ -18,6 +20,7 @@ namespace TrainworksReloaded.Base.Class
         private readonly ICache<IDefinition<ClassData>> cache;
         private readonly IRegister<Sprite> spriteRegister;
         private readonly IRegister<CardData> cardDataRegister;
+        private readonly IRegister<RelicData> relicDataRegister;
         private readonly IRegister<CardUpgradeData> upgradeDataRegister;
 
         public ClassDataFinalizer(
@@ -25,6 +28,7 @@ namespace TrainworksReloaded.Base.Class
             ICache<IDefinition<ClassData>> cache,
             IRegister<Sprite> spriteRegister,
             IRegister<CardData> cardDataRegister,
+            IRegister<RelicData> relicDataRegister,
             IRegister<CardUpgradeData> upgradeDataRegister
         )
         {
@@ -32,6 +36,7 @@ namespace TrainworksReloaded.Base.Class
             this.cache = cache;
             this.spriteRegister = spriteRegister;
             this.cardDataRegister = cardDataRegister;
+            this.relicDataRegister = relicDataRegister;
             this.upgradeDataRegister = upgradeDataRegister;
         }
 
@@ -124,12 +129,20 @@ namespace TrainworksReloaded.Base.Class
             //handle starter relics
             var starterRelics =
                 (List<RelicData>)
-                    AccessTools.Field(typeof(ClassData), "starterRelics").GetValue(data);
-            if (starterRelics == null)
+                    AccessTools.Field(typeof(ClassData), "starterRelics").GetValue(data) ?? [];
+            foreach (var child in configuration.GetSection("starter_relics").GetChildren())
             {
-                starterRelics = new List<RelicData>();
-                AccessTools.Field(typeof(ClassData), "starterRelics").SetValue(data, starterRelics);
+                var id = child.GetSection("id").Value?.ToId(key, TemplateConstants.RelicData);
+                if (id == null)
+                {
+                    continue;
+                }
+                if (relicDataRegister.TryLookupName(id, out var relicData, out var _))
+                {
+                    starterRelics.Add(relicData);
+                }
             }
+            AccessTools.Field(typeof(ClassData), "starterRelics").SetValue(data, starterRelics);
 
             //handle champion data
             var champions = configuration.GetSection("champions").GetChildren().ToList();

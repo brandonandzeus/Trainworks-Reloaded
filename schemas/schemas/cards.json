@@ -189,7 +189,7 @@
                     },
                     "targets_room": {
                         "type": "boolean",
-                        "description": "Whether this card targets an entire room."
+                        "description": "Whether this card targets an entire room. Defaults to true."
                     },
                     "traits": {
                         "type": "array",
