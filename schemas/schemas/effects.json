@@ -81,8 +81,8 @@
                         "description": "Minimum integer value for the effect."
                     },
                     "param_multipler": {
-                        "type": "integer",
-                        "description": "Multiplier parameter for the effect."
+                        "type": "number",
+                        "description": "Multiplier parameter for the effect. Defaults to 1.0"
                     },
                     "param_status_effects": {
                         "type": "array",
@@ -97,7 +97,7 @@
                     },
                     "param_subtypes": {
                         "$ref": "../definitions/subtype.json",
-                        "description": "Subtype parameter for the effect."
+                        "description": "Subtype parameter for the effect. Defaults to SubtypesData_None."
                     },
                     "param_trigger": {
                         "$ref": "../definitions/character_trigger.json",
@@ -156,7 +156,7 @@
                     },
                     "target_subtype": {
                         "$ref": "../definitions/subtype.json",
-                        "description": "Subtype to target."
+                        "description": "Subtype to target. Defaults to SubtypesData_None"
                     },
                     "target_team": {
                         "$ref": "../definitions/team.json",

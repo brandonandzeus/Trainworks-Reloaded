@@ -86,7 +86,7 @@ namespace TrainworksReloaded.Base.Effect
                 .SetValue(data, fullyQualifiedName);
 
             //strings
-            var targetCharacterSubtype = "";
+            var targetCharacterSubtype = "SubtypesData_None";
             AccessTools
                 .Field(typeof(CardEffectData), "targetCharacterSubtype")
                 .SetValue(
@@ -100,7 +100,7 @@ namespace TrainworksReloaded.Base.Effect
                 .Field(typeof(CardEffectData), "paramStr")
                 .SetValue(data, configuration.GetSection("param_str").ParseString() ?? paramStr);
 
-            var paramSubtype = "";
+            var paramSubtype = "SubtypesData_None";
             AccessTools
                 .Field(typeof(CardEffectData), "paramSubtype")
                 .SetValue(
@@ -279,7 +279,7 @@ namespace TrainworksReloaded.Base.Effect
                 );
 
             //floats
-            var paramMultiplier = 0.0f;
+            var paramMultiplier = 1.0f;
             AccessTools
                 .Field(typeof(CardEffectData), "paramMultiplier")
                 .SetValue(

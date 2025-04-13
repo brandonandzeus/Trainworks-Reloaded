@@ -209,8 +209,7 @@ namespace TrainworksReloaded.Base.Card
                 .SetValue(data, configuration.GetSection("ability").ParseBool() ?? defaultAbility);
 
             var defaultTargetsRoom =
-                checkOverride
-                && (bool)AccessTools.Field(typeof(CardData), "targetsRoom").GetValue(data);
+                checkOverride ? (bool)AccessTools.Field(typeof(CardData), "targetsRoom").GetValue(data) : true;
             AccessTools
                 .Field(typeof(CardData), "targetsRoom")
                 .SetValue(

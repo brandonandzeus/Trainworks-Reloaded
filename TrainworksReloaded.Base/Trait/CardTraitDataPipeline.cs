@@ -137,7 +137,7 @@ namespace TrainworksReloaded.Base.Trait
                 .Field(typeof(CardTraitData), "paramInt3")
                 .SetValue(data, configuration.GetSection("param_int_3").ParseInt() ?? paramInt3);
 
-            var paramFloat = 0.0f;
+            var paramFloat = 1f;
             AccessTools
                 .Field(typeof(CardTraitData), "paramFloat")
                 .SetValue(data, configuration.GetSection("param_float").ParseFloat() ?? paramFloat);
@@ -161,7 +161,7 @@ namespace TrainworksReloaded.Base.Trait
                 .Field(typeof(CardTraitData), "paramBool")
                 .SetValue(data, configuration.GetSection("param_bool").ParseBool() ?? paramBool);
 
-            var traitIsRemovable = false;
+            var traitIsRemovable = true;
             AccessTools
                 .Field(typeof(CardTraitData), "traitIsRemovable")
                 .SetValue(
