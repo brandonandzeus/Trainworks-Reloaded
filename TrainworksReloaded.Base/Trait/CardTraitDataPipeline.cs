@@ -142,7 +142,7 @@ namespace TrainworksReloaded.Base.Trait
                 .Field(typeof(CardTraitData), "paramFloat")
                 .SetValue(data, configuration.GetSection("param_float").ParseFloat() ?? paramFloat);
 
-            var subtype = "SubtypeData_None";
+            var subtype = "SubtypesData_None";
             AccessTools
                 .Field(typeof(CardTraitData), "paramSubtype")
                 .SetValue(data, configuration.GetSection("param_subtype").ParseString() ?? subtype);
