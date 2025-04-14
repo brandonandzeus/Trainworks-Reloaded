@@ -4,6 +4,7 @@
     "type": "string",
     "enum": [
         "card_art",
-        "map_node_icon"
+        "map_node_icon",
+        "character_art"
     ]
 }
