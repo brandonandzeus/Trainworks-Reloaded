@@ -309,8 +309,8 @@ namespace TrainworksReloaded.Plugin
                 >();
 
                 //register Card Pool
-                c.RegisterSingleton<IRegister<CardPool>, CardpoolRegister>(); //a place to register and access custom card data
-                c.RegisterSingleton<CardpoolRegister, CardpoolRegister>();
+                c.RegisterSingleton<IRegister<CardPool>, CardPoolRegister>(); //a place to register and access custom card data
+                c.RegisterSingleton<CardPoolRegister, CardPoolRegister>();
                 c.Register<IDataPipeline<IRegister<CardPool>, CardPool>, CardPoolPipeline>(); //a data pipeline to run as soon as register is needed
                 c.RegisterInitializer<IRegister<CardPool>>(x =>
                 {

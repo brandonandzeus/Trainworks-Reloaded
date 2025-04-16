@@ -9,9 +9,9 @@ namespace TrainworksReloaded.Base.Reward
 {
     public class RewardDataRegister : Dictionary<string, RewardData>, IRegister<RewardData>
     {
-        private readonly IModLogger<CardpoolRegister> logger;
+        private readonly IModLogger<CardPoolRegister> logger;
 
-        public RewardDataRegister(GameDataClient client, IModLogger<CardpoolRegister> logger)
+        public RewardDataRegister(GameDataClient client, IModLogger<CardPoolRegister> logger)
         {
             this.logger = logger;
         }

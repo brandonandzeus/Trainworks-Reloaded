@@ -56,6 +56,10 @@
                         "type": "boolean",
                         "description": "Second boolean parameter for the effect."
                     },
+                    "param_card_pool": {
+                        "type": "string",
+                        "description": "Reference to CardPool for the effect."
+                    },
                     "param_character_data": {
                         "type": "string",
                         "description": "Reference to character data for the effect."
