@@ -8,11 +8,11 @@ using TrainworksReloaded.Core.Enum;
 
 namespace TrainworksReloaded.Base.Card
 {
-    public class CardpoolRegister : Dictionary<string, CardPool>, IRegister<CardPool>
+    public class CardPoolRegister : Dictionary<string, CardPool>, IRegister<CardPool>
     {
-        private readonly IModLogger<CardpoolRegister> logger;
+        private readonly IModLogger<CardPoolRegister> logger;
 
-        public CardpoolRegister(GameDataClient client, IModLogger<CardpoolRegister> logger)
+        public CardPoolRegister(GameDataClient client, IModLogger<CardPoolRegister> logger)
         {
             this.logger = logger;
         }
