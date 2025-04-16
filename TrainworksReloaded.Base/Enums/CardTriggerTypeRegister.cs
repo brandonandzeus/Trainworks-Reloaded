@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using TrainworksReloaded.Base.Effect;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Interfaces;
 using static CharacterTriggerData;
 using static RimLight;
@@ -21,31 +22,36 @@ namespace TrainworksReloaded.Base.Enums
             this.logger = logger;
         }
 
+        public List<string> GetAllIdentifiers(RegisterIdentifierType identifierType)
+        {
+            return identifierType switch
+            {
+                RegisterIdentifierType.ReadableID => [.. this.Keys],
+                RegisterIdentifierType.GUID => [.. this.Keys],
+                _ => []
+            };
+        }
+
         public void Register(string key, CardTriggerType item)
         {
             logger.Log(LogLevel.Info, $"Register Card Trigger Enum ({key})");
-
             Add(key, item);
         }
 
-        public bool TryLookupId(
-            string id,
-            [NotNullWhen(true)] out CardTriggerType lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
+        public bool TryLookupIdentifier(string identifier, RegisterIdentifierType identifierType, [NotNullWhen(true)] out CardTriggerType lookup, [NotNullWhen(true)] out bool? IsModded)
         {
+            lookup = default;
             IsModded = true;
-            return this.TryGetValue(id, out lookup);
+            switch (identifierType)
+            {
+                case RegisterIdentifierType.ReadableID:
+                    return this.TryGetValue(identifier, out lookup);
+                case RegisterIdentifierType.GUID:
+                    return this.TryGetValue(identifier, out lookup);
+                default:
+                    return false;
+            }
         }
 
-        public bool TryLookupName(
-            string name,
-            [NotNullWhen(true)] out CardTriggerType lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
-        {
-            IsModded = true;
-            return this.TryGetValue(name, out lookup);
-        }
     }
 }

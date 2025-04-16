@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using System.Text;
 using HarmonyLib;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -45,36 +46,42 @@ namespace TrainworksReloaded.Base.Prefab
             this.Add(key, item);
         }
 
-        public bool TryLookupId(
-            string id,
-            [NotNullWhen(true)] out VfxAtLoc? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
+
+        public List<string> GetAllIdentifiers(RegisterIdentifierType identifierType)
         {
-            IsModded = true;
-            var result = this.TryGetValue(id, out lookup);
-            if (result == false)
+            return identifierType switch
             {
-                lookup = Default;
-                result = true;
-            }
-            return result;
+                RegisterIdentifierType.ReadableID => [.. this.Keys],
+                RegisterIdentifierType.GUID => [.. this.Keys],
+                _ => [],
+            };
         }
 
-        public bool TryLookupName(
-            string name,
-            [NotNullWhen(true)] out VfxAtLoc? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
+        public bool TryLookupIdentifier(string identifier, RegisterIdentifierType identifierType, [NotNullWhen(true)] out VfxAtLoc? lookup, [NotNullWhen(true)] out bool? IsModded)
         {
+            lookup = null;
             IsModded = true;
-            var result = this.TryGetValue(name, out lookup);
-            if (result == false)
+            switch (identifierType)
             {
-                lookup = Default;
-                result = true;
+                case RegisterIdentifierType.ReadableID:
+                    var result = this.TryGetValue(identifier, out lookup);
+                    if (result == false)
+                    {
+                        lookup = Default;
+                        result = true;
+                    }
+                    return result;
+                case RegisterIdentifierType.GUID:
+                    var result2 = this.TryGetValue(identifier, out lookup);
+                    if (result2 == false)
+                    {
+                        lookup = Default;
+                        result2 = true;
+                    }
+                    return result2;
+                default:
+                    return false;
             }
-            return result;
         }
     }
 }

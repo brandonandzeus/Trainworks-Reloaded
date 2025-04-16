@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text;
 using HarmonyLib;
 using Malee;
 using TrainworksReloaded.Base.Card;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
 
@@ -27,35 +29,41 @@ namespace TrainworksReloaded.Base.CardUpgrade
             Add(key, item);
         }
 
-        public bool TryLookupId(
-            string id,
-            [NotNullWhen(true)] out CardUpgradeMaskData? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
+        public List<string> GetAllIdentifiers(RegisterIdentifierType identifierType)
         {
-            bool ret = TryGetValue(id, out lookup);
-            IsModded = ret;
-            return ret;
+            return identifierType switch
+            {
+                RegisterIdentifierType.ReadableID => [.. this.Keys],
+                RegisterIdentifierType.GUID => [.. this.Values.Select(mask => mask.name)],
+                _ => [],
+            };
         }
 
-        public bool TryLookupName(
-            string name,
-            [NotNullWhen(true)] out CardUpgradeMaskData? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
+
+        public bool TryLookupIdentifier(string identifier, RegisterIdentifierType identifierType, [NotNullWhen(true)] out CardUpgradeMaskData? lookup, [NotNullWhen(true)] out bool? IsModded)
         {
             lookup = null;
             IsModded = false;
-            foreach (var mask in this.Values)
+            switch (identifierType)
             {
-                if (mask.name.Equals(name, StringComparison.OrdinalIgnoreCase))
-                {
-                    lookup = mask;
-                    IsModded = true;
-                    return true;
-                }
+                case RegisterIdentifierType.ReadableID:
+                    foreach (var mask in this.Values)
+                    {
+                        if (mask.name.Equals(identifier, StringComparison.OrdinalIgnoreCase))
+                        {
+                            lookup = mask;
+                            IsModded = true;
+                            return true;
+                        }
+                    }
+                    return false;
+                case RegisterIdentifierType.GUID:
+                    bool ret = TryGetValue(identifier, out lookup);
+                    IsModded = ret;
+                    return ret;
             }
             return false;
         }
+
     }
 }

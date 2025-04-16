@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
 using UnityEngine.AddressableAssets.ResourceLocators;
@@ -18,40 +20,46 @@ namespace TrainworksReloaded.Base.Prefab
             this.logger = logger;
         }
 
+
         public void Register(string key, Sprite item)
         {
             logger.Log(LogLevel.Info, $"Register Sprite ({key})");
             this.Add(key, item);
         }
 
-        public bool TryLookupId(
-            string id,
-            [NotNullWhen(true)] out Sprite? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
+        public List<string> GetAllIdentifiers(RegisterIdentifierType identifierType)
         {
-            IsModded = true;
-            return this.TryGetValue(id, out lookup);
+            return identifierType switch
+            {
+                RegisterIdentifierType.ReadableID => [.. this.Values.Select(sprite => sprite.name)],
+                RegisterIdentifierType.GUID => [.. this.Keys],
+                _ => [],
+            };
         }
 
-        public bool TryLookupName(
-            string name,
-            [NotNullWhen(true)] out Sprite? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
+        public bool TryLookupIdentifier(string identifier, RegisterIdentifierType identifierType, [NotNullWhen(true)] out Sprite? lookup, [NotNullWhen(true)] out bool? IsModded)
         {
             lookup = null;
             IsModded = true;
-            foreach (var sprite in this.Values)
+            switch (identifierType)
             {
-                if (sprite.name == name)
-                {
-                    lookup = sprite;
-                    IsModded = true;
-                    return true;
-                }
+                case RegisterIdentifierType.ReadableID:
+                    foreach (var sprite in this.Values)
+                    {
+                        if (sprite.name == identifier)
+                        {
+                            lookup = sprite;
+                            IsModded = true;
+                            return true;
+                        }
+                    }
+                    return false;
+                case RegisterIdentifierType.GUID:
+                    return this.TryGetValue(identifier, out lookup);
+                default:
+                    return false;
             }
-            return false;
         }
+
     }
 }

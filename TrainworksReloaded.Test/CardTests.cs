@@ -5,6 +5,7 @@ using SimpleInjector;
 using TrainworksReloaded.Base;
 using TrainworksReloaded.Base.Card;
 using TrainworksReloaded.Base.Localization;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
 using TrainworksReloaded.Plugin;
@@ -58,14 +59,15 @@ namespace TrainworksReloaded.Test
             // TryLookupName
             termRegister
                 .Setup(tr =>
-                    tr.TryLookupName(
+                    tr.TryLookupIdentifier(
                         It.IsAny<string>(),
+                        It.IsAny<RegisterIdentifierType>(),
                         out It.Ref<LocalizationTerm?>.IsAny,
                         out It.Ref<bool?>.IsAny
                     )
                 )
                 .Returns(
-                    (string name, out LocalizationTerm? term, out bool? isModded) =>
+                    (string name, RegisterIdentifierType identifierType, out LocalizationTerm? term, out bool? isModded) =>
                     {
                         term = TermDictionary.Values.FirstOrDefault(t => t.English == name);
                         isModded = false;
@@ -76,14 +78,15 @@ namespace TrainworksReloaded.Test
             // TryLookupId
             termRegister
                 .Setup(tr =>
-                    tr.TryLookupId(
+                    tr.TryLookupIdentifier(
                         It.IsAny<string>(),
+                        It.IsAny<RegisterIdentifierType>(),
                         out It.Ref<LocalizationTerm?>.IsAny,
                         out It.Ref<bool?>.IsAny
                     )
                 )
                 .Returns(
-                    (string id, out LocalizationTerm? term, out bool? isModded) =>
+                    (string id, RegisterIdentifierType identifierType, out LocalizationTerm? term, out bool? isModded) =>
                     {
                         term = TermDictionary.ContainsKey(id) ? TermDictionary[id] : null;
                         isModded = false;
@@ -235,14 +238,15 @@ namespace TrainworksReloaded.Test
             var mockCardRegister = new Mock<IRegister<CardData>>();
             mockCardRegister
                 .Setup(cr =>
-                    cr.TryLookupName(
+                    cr.TryLookupIdentifier(
                         "fire_starter",
+                        It.IsAny<RegisterIdentifierType>(),
                         out It.Ref<CardData?>.IsAny,
                         out It.Ref<bool?>.IsAny
                     )
                 )
                 .Returns(
-                    (string _, out CardData? card, out bool? modded) =>
+                    (string _, RegisterIdentifierType identifierType, out CardData? card, out bool? modded) =>
                     {
                         modded = true;
                         card = existingCard;

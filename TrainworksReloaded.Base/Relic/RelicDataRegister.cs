@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using HarmonyLib;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Interfaces;
 
 namespace TrainworksReloaded.Base.Relic
@@ -27,6 +28,16 @@ namespace TrainworksReloaded.Base.Relic
             this.logger = logger;
         }
 
+        public List<string> GetAllIdentifiers(RegisterIdentifierType identifierType)
+        {
+            return identifierType switch
+            {
+                RegisterIdentifierType.ReadableID => [.. this.Keys],
+                RegisterIdentifierType.GUID => [.. this.Keys],
+                _ => [],
+            };
+        }
+
         public void Register(string key, RelicData item)
         {
             logger.Log(Core.Interfaces.LogLevel.Info, $"Register Relic {key}... ");
@@ -41,16 +52,19 @@ namespace TrainworksReloaded.Base.Relic
             Add(key, item);
         }
 
-        public bool TryLookupId(string id, [NotNullWhen(true)] out RelicData? lookup, [NotNullWhen(true)] out bool? IsModded)
+        public bool TryLookupIdentifier(string identifier, RegisterIdentifierType identifierType, [NotNullWhen(true)] out RelicData? lookup, [NotNullWhen(true)] out bool? IsModded)
         {
+            lookup = null;
             IsModded = true;
-            return this.TryGetValue(id, out lookup);
-        }
-
-        public bool TryLookupName(string name, [NotNullWhen(true)] out RelicData? lookup, [NotNullWhen(true)] out bool? IsModded)
-        {
-            IsModded = true;
-            return this.TryGetValue(name, out lookup);
+            switch (identifierType)
+            {
+                case RegisterIdentifierType.ReadableID:
+                    return this.TryGetValue(identifier, out lookup);
+                case RegisterIdentifierType.GUID:
+                    return this.TryGetValue(identifier, out lookup);
+                default:
+                    return false;
+            }
         }
     }
 }

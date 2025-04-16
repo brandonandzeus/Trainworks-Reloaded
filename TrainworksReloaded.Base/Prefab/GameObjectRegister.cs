@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml.Linq;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -162,35 +163,38 @@ namespace TrainworksReloaded.Base.Prefab
             this.Add(key, item);
         }
 
-        public bool TryLookupId(
-            string id,
-            [NotNullWhen(true)] out GameObject? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
+        public List<string> GetAllIdentifiers(RegisterIdentifierType identifierType)
         {
-            IsModded = true;
-            return this.TryGetValue(id, out lookup);
+            return identifierType switch
+            {
+                RegisterIdentifierType.ReadableID => [.. this.Select(gameobject => gameobject.Key)],
+                RegisterIdentifierType.GUID => [.. this.Keys],
+                _ => [],
+            };
         }
 
-        public bool TryLookupName(
-            string name,
-            [NotNullWhen(true)] out GameObject? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
+        public bool TryLookupIdentifier(string identifier, RegisterIdentifierType identifierType, [NotNullWhen(true)] out GameObject? lookup, [NotNullWhen(true)] out bool? IsModded)
         {
             lookup = null;
             IsModded = true;
-            foreach (var gameobject in this.Values)
+            switch (identifierType)
             {
-                if (gameobject.name == name)
-                {
-                    lookup = gameobject;
-                    IsModded = true;
-                    return true;
-                }
+                case RegisterIdentifierType.ReadableID:
+                    foreach (var gameobject in this.Values)
+                    {
+                        if (gameobject.name == identifier)
+                        {
+                            lookup = gameobject;
+                            IsModded = true;
+                            return true;
+                        }
+                    }
+                    return false;
+                case RegisterIdentifierType.GUID:
+                    return this.TryGetValue(identifier, out lookup);
+                default:
+                    return false;
             }
-
-            return false;
         }
     }
 }

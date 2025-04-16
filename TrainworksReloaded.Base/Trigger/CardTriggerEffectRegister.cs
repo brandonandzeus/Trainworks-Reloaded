@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Interfaces;
 
 namespace TrainworksReloaded.Base.Trigger
@@ -17,40 +19,44 @@ namespace TrainworksReloaded.Base.Trigger
             this.logger = logger;
         }
 
+        public List<string> GetAllIdentifiers(RegisterIdentifierType identifierType)
+        {
+            return identifierType switch
+            {
+                RegisterIdentifierType.ReadableID => [.. this.Values.Select(trigger => trigger.GetDebugName())],
+                RegisterIdentifierType.GUID => [.. this.Keys],
+                _ => [],
+            };
+        }
+
         public void Register(string key, CardTriggerEffectData item)
         {
             logger.Log(LogLevel.Info, $"Register Card Trigger Effect ({key})");
             Add(key, item);
         }
 
-        public bool TryLookupId(
-            string id,
-            [NotNullWhen(true)] out CardTriggerEffectData? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
-        {
-            IsModded = true;
-            return this.TryGetValue(id, out lookup);
-        }
-
-        public bool TryLookupName(
-            string name,
-            [NotNullWhen(true)] out CardTriggerEffectData? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
+        public bool TryLookupIdentifier(string identifier, RegisterIdentifierType identifierType, [NotNullWhen(true)] out CardTriggerEffectData? lookup, [NotNullWhen(true)] out bool? IsModded)
         {
             lookup = null;
             IsModded = true;
-            foreach (var trigger in this.Values)
+            switch (identifierType)
             {
-                if (trigger.GetDebugName() == name)
-                {
-                    lookup = trigger;
-                    IsModded = true;
-                    return true;
-                }
+                case RegisterIdentifierType.ReadableID:
+                    foreach (var trigger in this.Values)
+                    {
+                        if (trigger.GetDebugName() == identifier)
+                        {
+                            lookup = trigger;
+                            IsModded = true;
+                            return true;
+                        }
+                    }
+                    return false;
+                case RegisterIdentifierType.GUID:
+                    return this.TryGetValue(identifier, out lookup);
+                default:
+                    return false;
             }
-            return false;
         }
     }
 }
