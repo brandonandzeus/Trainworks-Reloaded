@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using I2.Loc;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Interfaces;
 
 namespace TrainworksReloaded.Base.Localization
@@ -55,22 +56,29 @@ namespace TrainworksReloaded.Base.Localization
             }
         }
 
-        public bool TryLookupName(
-            string name,
-            [NotNullWhen(true)] out LocalizationTerm? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
+        public List<string> GetAllIdentifiers(RegisterIdentifierType identifierType)
         {
-            throw new NotImplementedException();
+            return identifierType switch
+            {
+                RegisterIdentifierType.ReadableID => [.. this.Keys],
+                RegisterIdentifierType.GUID => [.. this.Keys],
+                _ => []
+            };
         }
 
-        public bool TryLookupId(
-            string id,
-            [NotNullWhen(true)] out LocalizationTerm? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
+        public bool TryLookupIdentifier(string identifier, RegisterIdentifierType identifierType, [NotNullWhen(true)] out LocalizationTerm? lookup, [NotNullWhen(true)] out bool? IsModded)
         {
-            throw new NotImplementedException();
+            lookup = null;
+            IsModded = true;
+            switch (identifierType)
+            {
+                case RegisterIdentifierType.ReadableID:
+                    return this.TryGetValue(identifier, out lookup);
+                case RegisterIdentifierType.GUID:
+                    return this.TryGetValue(identifier, out lookup);
+                default:
+                    return false;
+            }
         }
     }
 }

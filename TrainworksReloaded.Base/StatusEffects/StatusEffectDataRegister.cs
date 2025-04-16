@@ -3,9 +3,11 @@ using Malee;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text;
 using TrainworksReloaded.Base.Card;
 using TrainworksReloaded.Base.Effect;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
 
@@ -28,33 +30,38 @@ namespace TrainworksReloaded.Base.StatusEffects
             Add(key, item);
         }
 
-        public bool TryLookupId(
-            string id,
-            [NotNullWhen(true)] out StatusEffectData? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
+        public List<string> GetAllIdentifiers(RegisterIdentifierType identifierType)
         {
-            IsModded = true;
-            return this.TryGetValue(id, out lookup);
+            return identifierType switch
+            {
+                RegisterIdentifierType.ReadableID => [.. this.Values.Select(effect => effect.GetStatusId())],
+                RegisterIdentifierType.GUID => [.. this.Keys],
+                _ => [],
+            };
         }
 
-        public bool TryLookupName(
-            string name,
-            [NotNullWhen(true)] out StatusEffectData? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
+
+        public bool TryLookupIdentifier(string identifier, RegisterIdentifierType identifierType, [NotNullWhen(true)] out StatusEffectData? lookup, [NotNullWhen(true)] out bool? IsModded)
         {
             lookup = null;
             IsModded = true;
-            foreach (var effect in this.Values)
+            switch (identifierType)
             {
-                if (effect.GetStatusId() == name)
-                {
-                    lookup = effect;
-                    return true;
-                }
+                case RegisterIdentifierType.ReadableID:
+                    foreach (var effect in this.Values)
+                    {
+                        if (effect.GetStatusId() == identifier)
+                        {
+                            lookup = effect;
+                            return true;
+                        }
+                    }
+                    return false;
+                case RegisterIdentifierType.GUID:
+                    return this.TryGetValue(identifier, out lookup);
+                default:
+                    return false;
             }
-            return false;
         }
     }
 }

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using HarmonyLib;
 using TrainworksReloaded.Base.Character;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Interfaces;
 
 namespace TrainworksReloaded.Base.Class
@@ -39,42 +41,44 @@ namespace TrainworksReloaded.Base.Class
             this.Add(key, item);
         }
 
-        public bool TryLookupId(
-            string id,
-            [NotNullWhen(true)] out ClassData? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
+        public List<string> GetAllIdentifiers(RegisterIdentifierType identifierType)
         {
-            lookup = null;
-            IsModded = null;
-            foreach (var @class in SaveManager.Value.GetAllGameData().GetAllClassDatas())
+            return identifierType switch
             {
-                if (@class.GetID().Equals(id, StringComparison.OrdinalIgnoreCase))
-                {
-                    lookup = @class;
-                    IsModded = ContainsKey(@class.name);
-                    return true;
-                }
-            }
-            return false;
+                RegisterIdentifierType.ReadableID => [.. SaveManager.Value.GetAllGameData().GetAllClassDatas().Select(classData => classData.name)],
+                RegisterIdentifierType.GUID => [.. SaveManager.Value.GetAllGameData().GetAllClassDatas().Select(classData => classData.GetID())],
+                _ => []
+            };
         }
 
-        public bool TryLookupName(
-            string name,
-            [NotNullWhen(true)] out ClassData? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
+        public bool TryLookupIdentifier(string identifier, RegisterIdentifierType identifierType, [NotNullWhen(true)] out ClassData? lookup, [NotNullWhen(true)] out bool? IsModded)
         {
             lookup = null;
             IsModded = null;
-            foreach (var @class in SaveManager.Value.GetAllGameData().GetAllClassDatas())
+            switch (identifierType)
             {
-                if (@class.name.Equals(name, StringComparison.OrdinalIgnoreCase))
-                {
-                    lookup = @class;
-                    IsModded = ContainsKey(@class.name);
-                    return true;
-                }
+                case RegisterIdentifierType.ReadableID:
+                    foreach (var @class in SaveManager.Value.GetAllGameData().GetAllClassDatas())
+                    {
+                        if (@class.name.Equals(identifier, StringComparison.OrdinalIgnoreCase))
+                        {
+                            lookup = @class;
+                            IsModded = ContainsKey(@class.name);
+                            return true;
+                        }
+                    }
+                    return false;
+                case RegisterIdentifierType.GUID:
+                    foreach (var @class in SaveManager.Value.GetAllGameData().GetAllClassDatas())
+                    {
+                        if (@class.GetID().Equals(identifier, StringComparison.OrdinalIgnoreCase))
+                        {
+                            lookup = @class;
+                            IsModded = ContainsKey(@class.name);
+                            return true;
+                        }
+                    }
+                    return false;
             }
             return false;
         }

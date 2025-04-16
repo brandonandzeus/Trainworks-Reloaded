@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using HarmonyLib;
 using Malee;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
 
@@ -68,21 +70,39 @@ namespace TrainworksReloaded.Base.Card
             return false;
         }
 
-        public bool TryLookupName(
-            string name,
-            [NotNullWhen(true)] out CardData? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
+        public List<string> GetAllIdentifiers(RegisterIdentifierType identifierType)
+        {
+            return identifierType switch
+            {
+                RegisterIdentifierType.ReadableID => [.. SaveManager.Value.GetAllGameData().GetAllCardData().Select(card => card.GetAssetKey())],
+                RegisterIdentifierType.GUID => [.. SaveManager.Value.GetAllGameData().GetAllCardData().Select(card => card.GetID())],
+                _ => [],
+            };
+        }
+
+        public bool TryLookupIdentifier(string identifier, RegisterIdentifierType identifierType, [NotNullWhen(true)] out CardData? lookup, [NotNullWhen(true)] out bool? IsModded)
         {
             lookup = null;
             IsModded = null;
             foreach (var card in SaveManager.Value.GetAllGameData().GetAllCardData())
             {
-                if (card.GetAssetKey().Equals(name, StringComparison.OrdinalIgnoreCase))
-                {
-                    lookup = card;
-                    IsModded = this.ContainsKey(card.name);
-                    return true;
+                switch (identifierType){
+                    case RegisterIdentifierType.ReadableID:
+                        if (card.GetAssetKey().Equals(identifier, StringComparison.OrdinalIgnoreCase))
+                        {
+                            lookup = card;
+                            IsModded = this.ContainsKey(card.name);
+                            return true;
+                        }
+                        break;
+                    case RegisterIdentifierType.GUID:
+                        if (card.GetID().Equals(identifier, StringComparison.OrdinalIgnoreCase))
+                        {
+                            lookup = card;
+                            IsModded = this.ContainsKey(card.name);
+                            return true;
+                        }
+                        break;
                 }
             }
             return false;

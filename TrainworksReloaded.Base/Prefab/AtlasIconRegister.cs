@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
 using UnityEngine.AddressableAssets.ResourceLocators;
@@ -13,39 +15,46 @@ namespace TrainworksReloaded.Base.Prefab
     {
         private readonly IModLogger<AtlasIconRegister> logger = logger;
 
+
         public void Register(string key, Texture2D item)
         {
             logger.Log(LogLevel.Info, $"Register Icon ({key})");
             this.Add(key, item);
         }
 
-        public bool TryLookupId(
-            string id,
-            [NotNullWhen(true)] out Texture2D? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
+
+        public List<string> GetAllIdentifiers(RegisterIdentifierType identifierType)
         {
-            IsModded = true;
-            return this.TryGetValue(id, out lookup);
+            return identifierType switch
+            {
+                RegisterIdentifierType.ReadableID => [.. this.Values.Select(icon => icon.name)],
+                RegisterIdentifierType.GUID => [.. this.Keys],
+                _ => [],
+            };
         }
 
-        public bool TryLookupName(
-            string name,
-            [NotNullWhen(true)] out Texture2D? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
+        public bool TryLookupIdentifier(string identifier, RegisterIdentifierType identifierType, [NotNullWhen(true)] out Texture2D? lookup, [NotNullWhen(true)] out bool? IsModded)
         {
             lookup = null;
             IsModded = true;
-            foreach (var icon in this.Values)
+            switch (identifierType)
             {
-                if (icon.name == name)
-                {
-                    lookup = icon;
-                    return true;
-                }
+                case RegisterIdentifierType.ReadableID:
+                    foreach (var icon in this.Values)
+                    {
+                        if (icon.name == identifier)
+                        {
+                            lookup = icon;
+                            return true;
+                        }
+                    }
+                    return false;
+                case RegisterIdentifierType.GUID:
+                    return this.TryGetValue(identifier, out lookup);
+                default:
+                    return false;
             }
-            return false;
         }
+
     }
 }

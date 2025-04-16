@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using TrainworksReloaded.Base.Effect;
 using TrainworksReloaded.Base.Trigger;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Interfaces;
 
 namespace TrainworksReloaded.Base.Enums
@@ -19,30 +20,36 @@ namespace TrainworksReloaded.Base.Enums
             this.logger = logger;
         }
 
+
         public void Register(string key, CharacterTriggerData.Trigger item)
         {
             logger.Log(LogLevel.Info, $"Register Character Trigger Enum ({key})");
             Add(key, item);
         }
 
-        public bool TryLookupId(
-            string id,
-            [NotNullWhen(true)] out CharacterTriggerData.Trigger lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
+        public List<string> GetAllIdentifiers(RegisterIdentifierType identifierType)
         {
-            IsModded = true;
-            return TryGetValue(id, out lookup);
+            return identifierType switch
+            {
+                RegisterIdentifierType.ReadableID => [.. this.Keys],
+                RegisterIdentifierType.GUID => [.. this.Keys],
+                _ => []
+            };
         }
 
-        public bool TryLookupName(
-            string name,
-            [NotNullWhen(true)] out CharacterTriggerData.Trigger lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
+        public bool TryLookupIdentifier(string identifier, RegisterIdentifierType identifierType, [NotNullWhen(true)] out CharacterTriggerData.Trigger lookup, [NotNullWhen(true)] out bool? IsModded)
         {
+            lookup = default;
             IsModded = true;
-            return this.TryGetValue(name, out lookup);
+            switch (identifierType)
+            {
+                case RegisterIdentifierType.ReadableID:
+                    return this.TryGetValue(identifier, out lookup);
+                case RegisterIdentifierType.GUID:
+                    return this.TryGetValue(identifier, out lookup);
+                default:
+                    return false;
+            }
         }
     }
 }

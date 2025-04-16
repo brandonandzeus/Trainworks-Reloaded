@@ -147,7 +147,7 @@ namespace TrainworksReloaded.Base.Relic
                 if (idConfig == null) continue;
 
                 var id = idConfig.ToId(key, TemplateConstants.Character);
-                if (characterRegister.TryLookupId(id, out var character, out var _))
+                if (characterRegister.TryLookupName(id, out var character, out var _))
                 {
                     characters.Add(character);
                 }

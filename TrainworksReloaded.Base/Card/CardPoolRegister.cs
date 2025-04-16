@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using TrainworksReloaded.Base.CardUpgrade;
 using TrainworksReloaded.Core.Interfaces;
-using static RimLight;
+using TrainworksReloaded.Core.Enum;
 
 namespace TrainworksReloaded.Base.Card
 {
@@ -23,24 +23,21 @@ namespace TrainworksReloaded.Base.Card
             Add(key, item);
         }
 
-        public bool TryLookupId(
-            string id,
-            [NotNullWhen(true)] out CardPool? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
+
+        public List<string> GetAllIdentifiers(RegisterIdentifierType identifierType)
         {
-            IsModded = true;
-            return this.TryGetValue(id, out lookup);
+            return [.. this.Keys];
         }
 
-        public bool TryLookupName(
-            string name,
+        public bool TryLookupIdentifier(
+            string identifier,
+            RegisterIdentifierType identifierType,
             [NotNullWhen(true)] out CardPool? lookup,
             [NotNullWhen(true)] out bool? IsModded
         )
         {
             IsModded = true;
-            return this.TryGetValue(name, out lookup);
+            return this.TryGetValue(identifier, out lookup);
         }
     }
 }
