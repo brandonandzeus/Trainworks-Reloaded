@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Interfaces;
 
 namespace TrainworksReloaded.Base.Relic
@@ -14,22 +15,37 @@ namespace TrainworksReloaded.Base.Relic
             this.logger = logger;
         }
 
+
         public void Register(string key, RelicEffectData item)
         {
             logger.Log(Core.Interfaces.LogLevel.Info, $"Register RelicEffect {key}... ");
             Add(key, item);
         }
 
-        public bool TryLookupId(string id, [NotNullWhen(true)] out RelicEffectData? lookup, [NotNullWhen(true)] out bool? IsModded)
+        public List<string> GetAllIdentifiers(RegisterIdentifierType identifierType)
         {
+            return identifierType switch
+            {
+                RegisterIdentifierType.ReadableID => [.. this.Keys],
+                RegisterIdentifierType.GUID => [.. this.Keys],
+                _ => [],
+            };
+        }
+        
+        public bool TryLookupIdentifier(string identifier, RegisterIdentifierType identifierType, [NotNullWhen(true)] out RelicEffectData? lookup, [NotNullWhen(true)] out bool? IsModded)
+        {
+            lookup = null;
             IsModded = true;
-            return this.TryGetValue(id, out lookup);
+            switch (identifierType)
+            {
+                case RegisterIdentifierType.ReadableID:
+                    return this.TryGetValue(identifier, out lookup);
+                case RegisterIdentifierType.GUID:
+                    return this.TryGetValue(identifier, out lookup);
+                default:
+                    return false;
+            }
         }
 
-        public bool TryLookupName(string name, [NotNullWhen(true)] out RelicEffectData? lookup, [NotNullWhen(true)] out bool? IsModded)
-        {
-            IsModded = true;
-            return this.TryGetValue(name, out lookup);
-        }
     }
-} 
+}

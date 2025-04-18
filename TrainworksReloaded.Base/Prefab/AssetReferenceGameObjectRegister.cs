@@ -4,6 +4,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using HarmonyLib;
 using TrainworksReloaded.Base.Extensions;
+using TrainworksReloaded.Core.Enum;
+using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -22,51 +24,49 @@ namespace TrainworksReloaded.Base.Prefab
             this.objectRegister = objectRegister;
         }
 
+        public List<string> GetAllIdentifiers(RegisterIdentifierType identifierType)
+        {
+            return objectRegister.GetAllIdentifiers(identifierType);
+        }
+
         public void Register(string key, AssetReferenceGameObject item)
         {
             //
         }
 
-        public bool TryLookupId(
-            string id,
-            [NotNullWhen(true)] out AssetReferenceGameObject? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
+        public bool TryLookupIdentifier(string identifier, RegisterIdentifierType identifierType, [NotNullWhen(true)] out AssetReferenceGameObject? lookup, [NotNullWhen(true)] out bool? IsModded)
         {
             lookup = null;
             IsModded = false;
-            if (objectRegister.TryLookupId(id, out GameObject? gameObject, out bool? modded))
+            switch (identifierType)
             {
-                lookup = new AssetReferenceGameObject();
-                IsModded = modded;
-                lookup.SetAssetAndId(Hash128.Compute(id).ToString(), gameObject);
-                return true;
+                case RegisterIdentifierType.ReadableID:
+                    if (objectRegister.TryLookupName(identifier, out GameObject? readableGameObject, out bool? readableModded))
+                    {
+                        lookup = new AssetReferenceGameObject();
+                        IsModded = readableModded;
+                        lookup.SetAssetAndId(Hash128.Compute(identifier).ToString(), readableGameObject);
+                        return true;
+                    }
+
+                    lookup = new AssetReferenceGameObject();
+                    lookup.SetId(identifier);
+                    return true;
+                case RegisterIdentifierType.GUID:
+                    if (objectRegister.TryLookupId(identifier, out GameObject? guidGameObject, out bool? guidModded))
+                    {
+                        lookup = new AssetReferenceGameObject();
+                        IsModded = guidModded;
+                        lookup.SetAssetAndId(Hash128.Compute(identifier).ToString(), guidGameObject);
+                        return true;
+                    }
+
+                    lookup = new AssetReferenceGameObject();
+                    lookup.SetId(identifier);
+                    return true;
+                default:
+                    return false;
             }
-
-            lookup = new AssetReferenceGameObject();
-            lookup.SetId(id);
-            return true;
-        }
-
-        public bool TryLookupName(
-            string name,
-            [NotNullWhen(true)] out AssetReferenceGameObject? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
-        {
-            lookup = null;
-            IsModded = false;
-            if (objectRegister.TryLookupId(name, out GameObject? gameObject, out bool? modded))
-            {
-                lookup = new AssetReferenceGameObject();
-                IsModded = modded;
-                lookup.SetAssetAndId(Hash128.Compute(name).ToString(), gameObject);
-                return true;
-            }
-
-            lookup = new AssetReferenceGameObject();
-            lookup.SetId(name);
-            return true;
         }
     }
 }

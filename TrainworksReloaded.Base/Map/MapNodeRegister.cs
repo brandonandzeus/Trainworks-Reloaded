@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text;
 using HarmonyLib;
 using TrainworksReloaded.Base.Card;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Interfaces;
 using static RimLight;
 
@@ -30,6 +32,7 @@ namespace TrainworksReloaded.Base.Map
             this.logger = logger;
         }
 
+
         public void Register(string key, MapNodeData item)
         {
             logger.Log(Core.Interfaces.LogLevel.Info, $"Register Map Node {key}... ");
@@ -41,47 +44,67 @@ namespace TrainworksReloaded.Base.Map
             Add(key, item);
         }
 
-        public bool TryLookupId(
-            string id,
-            [NotNullWhen(true)] out MapNodeData? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
+        public List<string> GetAllIdentifiers(RegisterIdentifierType identifierType)
         {
-            IsModded = true;
-            var data = SaveManager.Value.GetAllGameData().FindMapNodeData(id);
-            if (data != null)
-            {
-                lookup = data;
-                IsModded = this.ContainsKey(data.name);
-                return true;
-            }
-            return this.TryGetValue(id, out lookup);
-        }
-
-        public bool TryLookupName(
-            string name,
-            [NotNullWhen(true)] out MapNodeData? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
-        {
-            IsModded = true;
-            var data = SaveManager.Value.GetAllGameData();
+            var allGameData = SaveManager.Value.GetAllGameData();
             var mapData =
                 (List<MapNodeData>)
-                    AccessTools.Field(typeof(AllGameData), "mapNodeDatas").GetValue(data);
-            if (data != null)
+                    AccessTools.Field(typeof(AllGameData), "mapNodeDatas").GetValue(allGameData);
+            switch (identifierType)
             {
-                foreach (var map in mapData)
-                {
-                    if (map.name == name)
+                case RegisterIdentifierType.ReadableID:
+                    if (allGameData != null)
                     {
-                        lookup = map;
-                        IsModded = this.ContainsKey(data.name);
+                        return [.. mapData.Select(map => map.name)];
+                    }
+                    return [.. this.Select(map => map.Key)];
+                case RegisterIdentifierType.GUID:
+                    if (allGameData != null)
+                    {
+                        return [.. mapData.Select(map => map.GetID())];
+                    }
+                    return [.. this.Select(map => map.Value.GetID())];
+                default:
+                    return [];
+            }
+        }
+
+        public bool TryLookupIdentifier(string identifier, RegisterIdentifierType identifierType, [NotNullWhen(true)] out MapNodeData? lookup, [NotNullWhen(true)] out bool? IsModded)
+        {
+            lookup = null;
+            IsModded = true;
+            switch (identifierType)
+            {
+                case RegisterIdentifierType.ReadableID:
+                    var allGameData = SaveManager.Value.GetAllGameData();
+                    var mapData =
+                        (List<MapNodeData>)
+                            AccessTools.Field(typeof(AllGameData), "mapNodeDatas").GetValue(allGameData);
+                    if (allGameData != null)
+                    {
+                        foreach (var map in mapData)
+                        {
+                            if (map.name == identifier)
+                            {
+                                lookup = map;
+                                IsModded = this.ContainsKey(allGameData.name);
+                                return true;
+                            }
+                        }
+                    }
+                    return this.TryGetValue(identifier, out lookup);
+                case RegisterIdentifierType.GUID:
+                    var mapNodeData = SaveManager.Value.GetAllGameData().FindMapNodeData(identifier);
+                    if (mapNodeData != null)
+                    {
+                        lookup = mapNodeData;
+                        IsModded = this.ContainsKey(mapNodeData.name);
                         return true;
                     }
-                }
+                    return this.TryGetValue(identifier, out lookup);
+                default:
+                    return false;
             }
-            return this.TryGetValue(name, out lookup);
         }
     }
 }

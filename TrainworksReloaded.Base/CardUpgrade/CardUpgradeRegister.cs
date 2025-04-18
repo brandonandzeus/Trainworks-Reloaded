@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text;
 using HarmonyLib;
 using Malee;
 using TrainworksReloaded.Base.Card;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
 
@@ -33,6 +35,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
             this.logger = logger;
         }
 
+
         public void Register(string key, CardUpgradeData item)
         {
             logger.Log(Core.Interfaces.LogLevel.Info, $"Registering Upgrade {key}... ");
@@ -44,44 +47,48 @@ namespace TrainworksReloaded.Base.CardUpgrade
             Add(key, item);
         }
 
-        public bool TryLookupId(
-            string id,
-            [NotNullWhen(true)] out CardUpgradeData? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
+        public List<string> GetAllIdentifiers(RegisterIdentifierType identifierType)
         {
-            lookup = null;
-            IsModded = null;
-            foreach (var card in SaveManager.Value.GetAllGameData().GetAllCardUpgradeData())
+            return identifierType switch
             {
-                if (card.GetID().Equals(id, StringComparison.OrdinalIgnoreCase))
-                {
-                    lookup = card;
-                    IsModded = this.ContainsKey(card.name);
-                    return true;
-                }
-            }
-            return false;
+                RegisterIdentifierType.ReadableID => [.. SaveManager.Value.GetAllGameData().GetAllCardUpgradeData().Select(upgrade => upgrade.GetAssetKey())],
+                RegisterIdentifierType.GUID => [.. SaveManager.Value.GetAllGameData().GetAllCardUpgradeData().Select(upgrade => upgrade.GetID())],
+                _ => [],
+            };
         }
 
-        public bool TryLookupName(
-            string name,
-            [NotNullWhen(true)] out CardUpgradeData? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
+        public bool TryLookupIdentifier(string identifier, RegisterIdentifierType identifierType, [NotNullWhen(true)] out CardUpgradeData? lookup, [NotNullWhen(true)] out bool? IsModded)
         {
             lookup = null;
             IsModded = null;
-            foreach (var card in SaveManager.Value.GetAllGameData().GetAllCardUpgradeData())
+            switch (identifierType)
             {
-                if (card.GetAssetKey().Equals(name, StringComparison.OrdinalIgnoreCase))
-                {
-                    lookup = card;
-                    IsModded = this.ContainsKey(card.name);
-                    return true;
-                }
+                case RegisterIdentifierType.ReadableID:
+                    foreach (var card in SaveManager.Value.GetAllGameData().GetAllCardUpgradeData())
+                    {
+                        if (card.GetAssetKey().Equals(identifier, StringComparison.OrdinalIgnoreCase))
+                        {
+                            lookup = card;
+                            IsModded = this.ContainsKey(card.name);
+                            return true;
+                        }
+                    }
+                    return false;
+                case RegisterIdentifierType.GUID:
+                    foreach (var card in SaveManager.Value.GetAllGameData().GetAllCardUpgradeData())
+                    {
+                        if (card.GetID().Equals(identifier, StringComparison.OrdinalIgnoreCase))
+                        {
+                            lookup = card;
+                            IsModded = this.ContainsKey(card.name);
+                            return true;
+                        }
+                    }
+                    return false;
+                default:
+                    return false;
             }
-            return false;
         }
+
     }
 }

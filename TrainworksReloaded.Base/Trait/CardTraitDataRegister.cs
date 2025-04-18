@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Interfaces;
 
 namespace TrainworksReloaded.Base.Trait
@@ -13,40 +15,47 @@ namespace TrainworksReloaded.Base.Trait
             this.logger = logger;
         }
 
+
         public void Register(string key, CardTraitData item)
         {
             logger.Log(LogLevel.Info, $"Register Trait ({key})");
             Add(key, item);
         }
 
-        public bool TryLookupId(
-            string id,
-            [NotNullWhen(true)] out CardTraitData? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
-        {
-            IsModded = true;
-            return this.TryGetValue(id, out lookup);
-        }
 
-        public bool TryLookupName(
-            string name,
-            [NotNullWhen(true)] out CardTraitData? lookup,
-            [NotNullWhen(true)] out bool? IsModded
-        )
+        public List<string> GetAllIdentifiers(RegisterIdentifierType identifierType)
+        {
+            return identifierType switch
+            {
+                RegisterIdentifierType.ReadableID => [.. this.Values.Select(trait => trait.traitStateName)],
+                RegisterIdentifierType.GUID => [.. this.Keys],
+                _ => [],
+            };
+        }
+        
+        public bool TryLookupIdentifier(string identifier, RegisterIdentifierType identifierType, [NotNullWhen(true)] out CardTraitData? lookup, [NotNullWhen(true)] out bool? IsModded)
         {
             lookup = null;
             IsModded = true;
-            foreach (var trait in this.Values)
+            switch (identifierType)
             {
-                if (trait.traitStateName == name)
-                {
-                    lookup = trait;
-                    IsModded = true;
-                    return true;
-                }
+                case RegisterIdentifierType.ReadableID:
+                    foreach (var trait in this.Values)
+                    {
+                        if (trait.traitStateName == identifier)
+                        {
+                            lookup = trait;
+                            IsModded = true;
+                            return true;
+                        }
+                    }
+                    return false;
+                case RegisterIdentifierType.GUID:
+                    return this.TryGetValue(identifier, out lookup);
+                default:
+                    return false;
             }
-            return false;
         }
+
     }
 }
