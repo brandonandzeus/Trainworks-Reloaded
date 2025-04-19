@@ -261,7 +261,7 @@ namespace TrainworksReloaded.Base.StatusEffects
             var paramFloat = 0f;
             AccessTools
                 .Field(typeof(StatusEffectData), "paramFloat")
-                .SetValue(data, configuration.GetSection("param_secondary_int").ParseFloat() ?? paramFloat);
+                .SetValue(data, configuration.GetSection("param_float").ParseFloat() ?? paramFloat);
 
             var allowSecondaryTooltipPlacement = false;
             AccessTools
