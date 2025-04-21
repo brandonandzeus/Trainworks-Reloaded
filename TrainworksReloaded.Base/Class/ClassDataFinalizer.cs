@@ -5,6 +5,7 @@ using System.Text;
 using HarmonyLib;
 using Microsoft.Extensions.Configuration;
 using TrainworksReloaded.Base.Card;
+using TrainworksReloaded.Base.CardUpgrade;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Base.Relic;
 using TrainworksReloaded.Core.Extensions;
@@ -143,6 +144,22 @@ namespace TrainworksReloaded.Base.Class
                 }
             }
             AccessTools.Field(typeof(ClassData), "starterRelics").SetValue(data, starterRelics);
+
+            //handle starter card upgrade
+            var upgradeConfig = configuration.GetSection("starter_upgrade").Value;
+            if (
+                upgradeConfig != null
+                && upgradeDataRegister.TryLookupName(
+                    upgradeConfig.ToId(key, TemplateConstants.Upgrade),
+                    out var upgradeData,
+                    out var _
+                )
+            )
+            {
+                AccessTools
+                    .Field(typeof(ClassData), "starterCardUpgrade")
+                    .SetValue(data, upgradeData);
+            }
 
             //handle champion data
             var champions = configuration.GetSection("champions").GetChildren().ToList();
