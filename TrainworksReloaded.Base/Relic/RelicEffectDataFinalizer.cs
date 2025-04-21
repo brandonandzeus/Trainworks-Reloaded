@@ -22,6 +22,9 @@ namespace TrainworksReloaded.Base.Relic
         private readonly IRegister<CardUpgradeData> upgradeRegister;
         private readonly IRegister<RewardData> rewardRegister;
         private readonly IRegister<CardUpgradeMaskData> cardUpgradeMaskRegister;
+        private readonly IRegister<VfxAtLoc> vfxRegister;
+        private readonly IRegister<CollectableRelicData> relicRegister;
+        private readonly IRegister<CharacterTriggerData.Trigger> triggerEnumRegister;
 
         public RelicEffectDataFinalizer(
             IModLogger<RelicEffectDataFinalizer> logger,
@@ -35,7 +38,10 @@ namespace TrainworksReloaded.Base.Relic
             IRegister<CardUpgradeData> upgradeRegister,
             IRegister<StatusEffectData> statusRegister,
             IRegister<RewardData> rewardRegister,
-            IRegister<CardUpgradeMaskData> cardUpgradeMaskRegister
+            IRegister<CardUpgradeMaskData> cardUpgradeMaskRegister,
+            IRegister<VfxAtLoc> vfxRegister,
+            IRegister<CollectableRelicData> relicRegister,
+            IRegister<CharacterTriggerData.Trigger> triggerEnumRegister
         )
         {
             this.logger = logger;
@@ -50,6 +56,9 @@ namespace TrainworksReloaded.Base.Relic
             this.statusEffectRegister = statusRegister;
             this.rewardRegister = rewardRegister;
             this.cardUpgradeMaskRegister = cardUpgradeMaskRegister;
+            this.vfxRegister = vfxRegister;
+            this.relicRegister = relicRegister;
+            this.triggerEnumRegister = triggerEnumRegister;
         }
 
         public void FinalizeData()
@@ -65,7 +74,6 @@ namespace TrainworksReloaded.Base.Relic
         {
             /*
             Types that need registers but don't have them yet:
-            - AdditionalTooltipData
             - CharacterSubstitution
             - RelicEffectCondition
             - RarityTicketMultiplier
@@ -258,6 +266,54 @@ namespace TrainworksReloaded.Base.Relic
             {
                 AccessTools.Field(typeof(RelicEffectData), "paramCardFilterSecondary").SetValue(data, cardFilterSecondary);
             }
+
+            var appliedVFXId = configuration.GetSection("applied_vfx").ParseString() ?? "";
+            if (
+                vfxRegister.TryLookupId(
+                    appliedVFXId.ToId(key, TemplateConstants.Vfx),
+                    out var appliedVFX,
+                    out var _
+                )
+            )
+            {
+                AccessTools.Field(typeof(RelicEffectData), "appliedVFX").SetValue(data, appliedVFX);
+            }
+
+            var relicId = configuration.GetSection("param_relic").ParseString() ?? "";
+            if (
+                relicRegister.TryLookupId(
+                    relicId.ToId(key, TemplateConstants.RelicData),
+                    out var relic,
+                    out var _
+                )
+            )
+            {
+                AccessTools.Field(typeof(RelicEffectData), "paramRelic").SetValue(data, relic);
+            }
+
+            var trigger = CharacterTriggerData.Trigger.OnDeath;
+            var triggerSection = configuration.GetSection("param_trigger");
+            if (triggerSection.Value != null)
+            {
+                var value = triggerSection.Value;
+                if (
+                    triggerEnumRegister.TryLookupId(
+                        value.ToId(key, TemplateConstants.CharacterTriggerEnum),
+                        out var triggerFound,
+                        out var _
+                    )
+                )
+                {
+                    trigger = triggerFound;
+                }
+                else
+                {
+                    trigger = triggerSection.ParseTrigger() ?? default;
+                }
+            }
+            AccessTools
+                .Field(typeof(RelicEffectData), "paramTrigger")
+                .SetValue(data, trigger);
         }
     }
 }
