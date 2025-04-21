@@ -84,7 +84,7 @@ namespace TrainworksReloaded.Base.Room
                 AccessTools.Field(typeof(RoomModifierData), "icon").SetValue(data, spriteLookup);
             }
 
-            var param_card_upgrade = configuration.GetSection("param_card_upgrade").ParseString();
+            var param_card_upgrade = configuration.GetSection("param_upgrade").ParseString();
             if (
                 param_card_upgrade != null
                 && upgradeDataRegister.TryLookupId(

@@ -62,7 +62,7 @@
                         "type": "string",
                         "description": "Card reference parameter."
                     },
-                    "param_card_upgrade": {
+                    "param_upgrade": {
                         "type": "string",
                         "description": "Card upgrade reference parameter."
                     },
