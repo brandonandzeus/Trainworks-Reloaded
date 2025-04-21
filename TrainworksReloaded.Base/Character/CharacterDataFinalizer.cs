@@ -22,6 +22,7 @@ namespace TrainworksReloaded.Base.Character
         private readonly IRegister<VfxAtLoc> vfxRegister;
         private readonly IRegister<StatusEffectData> statusRegister;
         private readonly IRegister<CardData> cardRegister;
+        private readonly IRegister<RoomModifierData> roomModifierRegister;
         private readonly FallbackDataProvider dataProvider;
 
         public CharacterDataFinalizer(
@@ -32,6 +33,7 @@ namespace TrainworksReloaded.Base.Character
             IRegister<VfxAtLoc> vfxRegister,
             IRegister<StatusEffectData> statusRegister,
             IRegister<CardData> cardRegister,
+            IRegister<RoomModifierData> roomModifierRegister,
             FallbackDataProvider dataProvider
         )
         {
@@ -42,6 +44,7 @@ namespace TrainworksReloaded.Base.Character
             this.vfxRegister = vfxRegister;
             this.statusRegister = statusRegister;
             this.cardRegister = cardRegister;
+            this.roomModifierRegister = roomModifierRegister;
             this.dataProvider = dataProvider;
         }
 
@@ -242,6 +245,31 @@ namespace TrainworksReloaded.Base.Character
             AccessTools
                 .Field(typeof(CharacterData), "startingStatusEffects")
                 .SetValue(data, startingStatusEffects.ToArray());
+
+            var roomModifiers = new List<RoomModifierData>();
+            if (!checkOverride)
+            {
+                var roomModifiers2 = (List<RoomModifierData>)
+                    AccessTools
+                        .Field(typeof(CharacterData), "roomModifiers")
+                        .GetValue(data);
+                if (roomModifiers2 != null)
+                    roomModifiers.AddRange(roomModifiers2);
+            }
+            foreach (var child in configuration.GetSection("room_modifiers").GetChildren())
+            {
+                var idConfig = child?.GetSection("id").Value;
+                if (idConfig == null) 
+                    continue;
+                var roomModifierId = idConfig.ToId(key, TemplateConstants.RoomModifier);
+                if (roomModifierRegister.TryLookupId(roomModifierId, out var roomModifierData, out var _))
+                {
+                    roomModifiers.Add(roomModifierData);
+                }
+            }
+            AccessTools
+                .Field(typeof(CharacterData), "roomModifiers")
+                .SetValue(data, roomModifiers);
 
             AccessTools
                 .Field(typeof(CharacterData), "fallbackData")
