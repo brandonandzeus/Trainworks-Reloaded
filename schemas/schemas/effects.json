@@ -12,6 +12,21 @@
                     "name"
                 ],
                 "properties": {
+                    "additional_tooltips": {
+                        "type": "array",
+                        "description": "Additional tooltips to display for this card effect.",
+                        "items": {
+                            "$ref": "../definitions/additonal_tooltips.json"
+                        }
+                    },
+                    "applied_to_self_vfx": {
+                        "type": "string",
+                        "description": "Reference to VFX to use when applying the card effect to self."
+                    },
+                    "applied_vfx": {
+                        "type": "string",
+                        "description": "Reference to VFX to use when applying the card effect."
+                    },
                     "anim_to_play": {
                         "$ref": "../definitions/anim.json",
                         "description": "Animation to play when this effect is triggered."
@@ -31,6 +46,10 @@
                     "filter_on_main_subclass": {
                         "type": "boolean",
                         "description": "Whether to filter based on the main subclass."
+                    },
+                    "hide_tooltip": {
+                        "type": "boolean",
+                        "description": "Whether to hide this card effect's tooltips."
                     },
                     "id": {
                         "type": "string",
@@ -154,9 +173,9 @@
                         "$ref": "../definitions/health_filter.json",
                         "description": "Filter for target health when selecting targets."
                     },
-                    "target_selection_mode": {
+                    "target_card_selection_mode": {
                         "$ref": "../definitions/card_selection_mode.json",
-                        "description": "Mode for selecting cards as targets."
+                        "description": "Used in CardEffectRecursion to choose how cards from target_mode are selected."
                     },
                     "target_subtype": {
                         "$ref": "../definitions/subtype.json",

@@ -12,30 +12,36 @@ namespace TrainworksReloaded.Base.Effect
 {
     public class CardEffectFinalizer : IDataFinalizer
     {
+        private readonly IRegister<CardData> cardRegister;
         private readonly IRegister<CharacterData> characterDataRegister;
         private readonly IRegister<CardUpgradeData> cardUpgradeRegister;
         private readonly IRegister<StatusEffectData> statusRegister;
         private readonly IRegister<CharacterTriggerData.Trigger> triggerEnumRegister;
         private readonly IRegister<CardUpgradeMaskData> upgradeMaskRegister;
         private readonly IRegister<CardPool> cardPoolRegister;
+        private readonly IRegister<VfxAtLoc> vfxRegister;
         private readonly ICache<IDefinition<CardEffectData>> cache;
 
         public CardEffectFinalizer(
+            IRegister<CardData> cardRegister,
             IRegister<CharacterData> characterDataRegister,
             IRegister<CardUpgradeData> cardUpgradeRegister,
             IRegister<CardUpgradeMaskData> upgradeMaskRegister,
             IRegister<StatusEffectData> statusRegister,
             IRegister<CharacterTriggerData.Trigger> triggerEnumRegister,
             IRegister<CardPool> cardPoolRegister,
+            IRegister<VfxAtLoc> vfxRegister,
             ICache<IDefinition<CardEffectData>> cache
         )
         {
+            this.cardRegister = cardRegister;
             this.characterDataRegister = characterDataRegister;
             this.cardUpgradeRegister = cardUpgradeRegister;
             this.statusRegister = statusRegister;
             this.triggerEnumRegister = triggerEnumRegister;
             this.upgradeMaskRegister = upgradeMaskRegister;
             this.cardPoolRegister = cardPoolRegister;
+            this.vfxRegister = vfxRegister;
             this.cache = cache;
         }
 
@@ -53,6 +59,21 @@ namespace TrainworksReloaded.Base.Effect
             var configuration = definition.Configuration;
             var key = definition.Key;
             var data = definition.Data;
+
+            var cardConfig = configuration.GetSection("param_card_data").Value;
+            if (
+                cardConfig != null
+                && cardRegister.TryLookupName(
+                    cardConfig.ToId(key, TemplateConstants.Card),
+                    out var cardData,
+                    out var _
+                )
+            )
+            {
+                AccessTools
+                    .Field(typeof(CardEffectData), "paramCharacterData")
+                    .SetValue(data, cardData);
+            }
 
             var characterConfig = configuration.GetSection("param_character_data").Value;
             if (
@@ -225,6 +246,30 @@ namespace TrainworksReloaded.Base.Effect
                     out var _
                     );
                 AccessTools.Field(typeof(CardEffectData), "paramCardPool").SetValue(data, lookup);
+            }
+
+            var appliedToSelfVFXId = configuration.GetSection("applied_to_self_vfx").ParseString() ?? "";
+            if (
+                vfxRegister.TryLookupId(
+                    appliedToSelfVFXId.ToId(key, TemplateConstants.Vfx),
+                    out var appliedToSelfVFX,
+                    out var _
+                )
+            )
+            {
+                AccessTools.Field(typeof(CardData), "appliedToSelfVFX").SetValue(data, appliedToSelfVFX);
+            }
+
+            var appliedVFXId = configuration.GetSection("applied_vfx").ParseString() ?? "";
+            if (
+                vfxRegister.TryLookupId(
+                    appliedVFXId.ToId(key, TemplateConstants.Vfx),
+                    out var appliedVFX,
+                    out var _
+                )
+            )
+            {
+                AccessTools.Field(typeof(CardEffectData), "appliedVFX").SetValue(data, appliedVFX);
             }
         }
     }
