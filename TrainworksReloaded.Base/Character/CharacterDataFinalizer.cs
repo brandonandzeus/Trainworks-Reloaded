@@ -93,6 +93,13 @@ namespace TrainworksReloaded.Base.Character
                 AccessTools.Field(typeof(CharacterData), "unitAbility").SetValue(data, abilityCard);
             }
 
+            //handle equipment
+            var grafted_equipment = configuration.GetSection("grafted_equipment").ParseString() ?? "";
+            if (!grafted_equipment.IsNullOrEmpty() && cardRegister.TryLookupName(grafted_equipment.ToId(key, TemplateConstants.Card), out var equipmentCard, out var _))
+            {
+                AccessTools.Field(typeof(CharacterData), "graftedEquipment").SetValue(data, equipmentCard);
+            }
+
             //handle triggers
             var triggerDatas = new List<CharacterTriggerData>();
             var triggerDatasConfigs = configuration
