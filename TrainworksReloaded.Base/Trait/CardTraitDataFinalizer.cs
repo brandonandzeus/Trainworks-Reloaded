@@ -50,7 +50,7 @@ namespace TrainworksReloaded.Base.Trait
                 .SetValue(data, card);
 
             // CardUpgrade
-            var cardUpgradeConfig = configuration.GetSection("param_card_upgrade_data").Value;
+            var cardUpgradeConfig = configuration.GetSection("param_upgrade").Value;
             CardUpgradeData? cardUpgrade = null;
             if (cardUpgradeConfig != null)
             {

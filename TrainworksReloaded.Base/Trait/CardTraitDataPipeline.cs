@@ -4,6 +4,7 @@ using HarmonyLib;
 using Microsoft.Extensions.Configuration;
 using SimpleInjector;
 using TrainworksReloaded.Base.Extensions;
+using TrainworksReloaded.Base.Localization;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
@@ -14,11 +15,18 @@ namespace TrainworksReloaded.Base.Trait
     {
         private readonly PluginAtlas atlas;
         private readonly IModLogger<CardTraitDataPipeline> logger;
+        private readonly IRegister<LocalizationTerm> localizationService;
 
-        public CardTraitDataPipeline(PluginAtlas atlas, IModLogger<CardTraitDataPipeline> logger)
+        public CardTraitDataPipeline(
+            PluginAtlas atlas,
+            IModLogger<CardTraitDataPipeline> logger,
+            IRegister<LocalizationTerm> localizationService
+        )
         {
             this.atlas = atlas;
             this.logger = logger;
+            this.localizationService = localizationService;
+            
         }
 
         public List<IDefinition<CardTraitData>> Run(IRegister<CardTraitData> service)
@@ -114,13 +122,17 @@ namespace TrainworksReloaded.Base.Trait
                 .Field(typeof(CardTraitData), "paramStr")
                 .SetValue(data, configuration.GetSection("param_str").ParseString() ?? paramStr);
 
-            var paramDescription = "";
-            AccessTools
-                .Field(typeof(CardTraitData), "paramDescription")
-                .SetValue(
-                    data,
-                    configuration.GetSection("param_description").ParseString() ?? paramDescription
-                );
+            var paramDescription = configuration.GetSection("param_description").ParseLocalizationTerm();
+            if (paramDescription != null)
+            {
+                var descriptionKey = $"CardTraitData_descriptionKey-{name}";
+                paramDescription.Key = descriptionKey;
+                localizationService.Register(paramDescription.Key, paramDescription);
+                AccessTools
+                    .Field(typeof(CardTraitData), "paramDescription")
+                    .SetValue(data, descriptionKey);
+            }    
+
 
             var paramInt = 0;
             AccessTools
