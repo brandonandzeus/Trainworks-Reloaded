@@ -71,7 +71,7 @@ namespace TrainworksReloaded.Base.Effect
             )
             {
                 AccessTools
-                    .Field(typeof(CardEffectData), "paramCharacterData")
+                    .Field(typeof(CardEffectData), "paramCardData")
                     .SetValue(data, cardData);
             }
 
