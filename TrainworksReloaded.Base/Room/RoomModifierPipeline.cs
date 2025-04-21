@@ -191,7 +191,7 @@ namespace TrainworksReloaded.Base.Room
                 var tooltipData = new AdditionalTooltipData();
 
                 var titleKey = $"RoomModifierDataTooltip_titleKey_{configCount}-{name}";
-                var descriptionTKey = $"RoomModifierDataTooltip_titleKey_{configCount}-{name}";
+                var descriptionTKey = $"RoomModifierDataTooltip_descriptionKey_{configCount}-{name}";
 
                 var titleKeyTerm = configuration.GetSection("titles").ParseLocalizationTerm();
                 if (titleKeyTerm != null)
@@ -218,7 +218,7 @@ namespace TrainworksReloaded.Base.Room
                 tooltipData.hideInTrainRoomUI =
                     configuration.GetSection("hide_in_train_room").ParseBool() ?? false;
                 tooltipData.allowSecondaryPlacement =
-                    configuration.GetSection("allow_secondary").ParseBool() ?? false;
+                    configuration.GetSection("allow_secondary_placement").ParseBool() ?? false;
                 tooltipData.isTriggerTooltip =
                     configuration.GetSection("hide_in_train_room").ParseBool() ?? false;
 
