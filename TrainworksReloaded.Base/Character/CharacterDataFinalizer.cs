@@ -23,6 +23,7 @@ namespace TrainworksReloaded.Base.Character
         private readonly IRegister<StatusEffectData> statusRegister;
         private readonly IRegister<CardData> cardRegister;
         private readonly IRegister<RoomModifierData> roomModifierRegister;
+        private readonly IRegister<RelicData> relicRegister;
         private readonly FallbackDataProvider dataProvider;
 
         public CharacterDataFinalizer(
@@ -34,6 +35,7 @@ namespace TrainworksReloaded.Base.Character
             IRegister<StatusEffectData> statusRegister,
             IRegister<CardData> cardRegister,
             IRegister<RoomModifierData> roomModifierRegister,
+            IRegister<RelicData> relicRegister,
             FallbackDataProvider dataProvider
         )
         {
@@ -45,6 +47,7 @@ namespace TrainworksReloaded.Base.Character
             this.statusRegister = statusRegister;
             this.cardRegister = cardRegister;
             this.roomModifierRegister = roomModifierRegister;
+            this.relicRegister = relicRegister;
             this.dataProvider = dataProvider;
         }
 
@@ -277,6 +280,20 @@ namespace TrainworksReloaded.Base.Character
             AccessTools
                 .Field(typeof(CharacterData), "roomModifiers")
                 .SetValue(data, roomModifiers);
+
+
+            var relicId = configuration.GetSection("enemy_relic").ParseString() ?? "";
+            if (
+                relicRegister.TryLookupId(
+                    relicId.ToId(key, TemplateConstants.RelicData),
+                    out var relic,
+                    out var _
+                )
+            )
+            {
+                AccessTools.Field(typeof(RelicEffectData), "enemyRelicData").SetValue(data, relic);
+            }
+
 
             AccessTools
                 .Field(typeof(CharacterData), "fallbackData")

@@ -398,7 +398,7 @@ namespace TrainworksReloaded.Base.Effect
                 additionalTooltips.Add(tooltipData);
             }
             AccessTools
-                .Field(typeof(RoomModifierData), "additionalTooltips")
+                .Field(typeof(CardEffectData), "additionalTooltips")
                 .SetValue(data, additionalTooltips.ToArray());
 
             service.Register(name, data);

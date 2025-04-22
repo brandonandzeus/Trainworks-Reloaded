@@ -317,7 +317,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 )
             )
             {
-                AccessTools.Field(typeof(RoomModifierData), "icon").SetValue(data, spriteLookup);
+                AccessTools.Field(typeof(CardUpgradeData), "upgradeIcon").SetValue(data, spriteLookup);
             }
         }
     }

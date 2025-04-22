@@ -23,7 +23,7 @@ namespace TrainworksReloaded.Base.Relic
         private readonly IRegister<RewardData> rewardRegister;
         private readonly IRegister<CardUpgradeMaskData> cardUpgradeMaskRegister;
         private readonly IRegister<VfxAtLoc> vfxRegister;
-        private readonly IRegister<CollectableRelicData> relicRegister;
+        private readonly IRegister<RelicData> relicRegister;
         private readonly IRegister<CharacterTriggerData.Trigger> triggerEnumRegister;
 
         public RelicEffectDataFinalizer(
@@ -40,7 +40,7 @@ namespace TrainworksReloaded.Base.Relic
             IRegister<RewardData> rewardRegister,
             IRegister<CardUpgradeMaskData> cardUpgradeMaskRegister,
             IRegister<VfxAtLoc> vfxRegister,
-            IRegister<CollectableRelicData> relicRegister,
+            IRegister<RelicData> relicRegister,
             IRegister<CharacterTriggerData.Trigger> triggerEnumRegister
         )
         {
@@ -276,7 +276,7 @@ namespace TrainworksReloaded.Base.Relic
                 )
             )
             {
-                AccessTools.Field(typeof(RelicEffectData), "appliedVFX").SetValue(data, appliedVFX);
+                AccessTools.Field(typeof(RelicEffectData), "appliedVfx").SetValue(data, appliedVFX);
             }
 
             var relicId = configuration.GetSection("param_relic").ParseString() ?? "";
@@ -288,10 +288,10 @@ namespace TrainworksReloaded.Base.Relic
                 )
             )
             {
-                AccessTools.Field(typeof(RelicEffectData), "paramRelic").SetValue(data, relic);
+                AccessTools.Field(typeof(RelicEffectData), "paramRelic").SetValue(data, relic as CollectableRelicData);
             }
 
-            var trigger = CharacterTriggerData.Trigger.OnDeath;
+            var paramTrigger = CharacterTriggerData.Trigger.OnDeath;
             var triggerSection = configuration.GetSection("param_trigger");
             if (triggerSection.Value != null)
             {
@@ -304,16 +304,16 @@ namespace TrainworksReloaded.Base.Relic
                     )
                 )
                 {
-                    trigger = triggerFound;
+                    paramTrigger = triggerFound;
                 }
                 else
                 {
-                    trigger = triggerSection.ParseTrigger() ?? default;
+                    paramTrigger = triggerSection.ParseTrigger() ?? default;
                 }
             }
             AccessTools
                 .Field(typeof(RelicEffectData), "paramTrigger")
-                .SetValue(data, trigger);
+                .SetValue(data, paramTrigger);
         }
     }
 }

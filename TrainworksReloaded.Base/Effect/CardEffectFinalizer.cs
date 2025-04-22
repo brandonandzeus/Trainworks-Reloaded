@@ -257,7 +257,7 @@ namespace TrainworksReloaded.Base.Effect
                 )
             )
             {
-                AccessTools.Field(typeof(CardData), "appliedToSelfVFX").SetValue(data, appliedToSelfVFX);
+                AccessTools.Field(typeof(CardEffectData), "appliedToSelfVFX").SetValue(data, appliedToSelfVFX);
             }
 
             var appliedVFXId = configuration.GetSection("applied_vfx").ParseString() ?? "";
