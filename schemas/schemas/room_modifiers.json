@@ -54,10 +54,6 @@
                         "type": "string",
                         "description": "Mod GUID to search for a custom room modifier. If not specified then your Mod's assembly is searched."
                     },
-                    "names": {
-                        "$ref": "../definitions/parse_term.json",
-                        "description": "Localized text for this room modifier's name."
-                    },
                     "param_card": {
                         "type": "string",
                         "description": "Card reference parameter."

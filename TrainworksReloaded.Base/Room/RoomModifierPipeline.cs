@@ -70,7 +70,6 @@ namespace TrainworksReloaded.Base.Room
                 return null;
             }
             var name = key.GetId("RoomModifier", id);
-            var namekey = $"RoomModifierData_nameKey-{name}";
             var descriptionKey = $"RoomModifierData_descriptionKey-{name}";
             var descriptionKeyInPlay = $"RoomModifierData_descriptionKeyInPlay-{name}";
             var extraTooltipTitleKey = $"RoomModifierData_extraTooltipTitleKey-{name}";
@@ -96,13 +95,6 @@ namespace TrainworksReloaded.Base.Room
             AccessTools
                 .Field(typeof(RoomModifierData), "roomStateModifierClassName")
                 .SetValue(data, fullyQualifiedName);
-
-            var nameTerm = configuration.GetSection("names").ParseLocalizationTerm();
-            if (nameTerm != null)
-            {
-                nameTerm.Key = nameClass;
-                termRegister.Register(nameClass, nameTerm);
-            }
 
             //handle descriptions
             var descriptionKeyTerm = configuration
@@ -142,6 +134,12 @@ namespace TrainworksReloaded.Base.Room
                 extraTooltipTitleKeyTerm.Key = extraTooltipTitleKey;
                 termRegister.Register(extraTooltipTitleKey, extraTooltipTitleKeyTerm);
             }
+            else
+            {
+                AccessTools
+                    .Field(typeof(RoomModifierData), "extraTooltipTitleKey")
+                    .SetValue(data, string.Empty);
+            }
 
             //handle descriptions
             var extraTooltipBodyKeyTerm = configuration
@@ -155,8 +153,14 @@ namespace TrainworksReloaded.Base.Room
                 extraTooltipBodyKeyTerm.Key = extraTooltipBodyKey;
                 termRegister.Register(extraTooltipBodyKey, extraTooltipBodyKeyTerm);
             }
+            else
+            {
+                AccessTools
+                    .Field(typeof(RoomModifierData), "extraTooltipBodyKey")
+                    .SetValue(data, string.Empty);
+            }
 
-            var paramSubtype = "";
+                var paramSubtype = "";
             AccessTools
                 .Field(typeof(RoomModifierData), "paramSubtype")
                 .SetValue(
