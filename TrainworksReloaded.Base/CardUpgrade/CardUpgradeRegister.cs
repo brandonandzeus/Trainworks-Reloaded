@@ -23,7 +23,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
         {
             SaveManager = new Lazy<SaveManager>(() =>
             {
-                if (client.TryGetValue(typeof(SaveManager).Name, out var details))
+                if (client.TryGetValue(typeof(SaveManager), out var details))
                 {
                     return (SaveManager)details.Provider;
                 }

@@ -30,9 +30,9 @@ namespace TrainworksReloaded.Base.Enums
         {
             SaveManager = new Lazy<SaveManager>(() =>
             {
-                if (client.TryGetValue(nameof(SaveManager), out var details))
+                if (client.TryGetProvider<SaveManager>(out var provider))
                 {
-                    return (SaveManager)details.Provider;
+                    return provider;
                 }
                 else
                 {

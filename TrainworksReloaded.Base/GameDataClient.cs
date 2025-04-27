@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace TrainworksReloaded.Base
 {
@@ -14,24 +16,42 @@ namespace TrainworksReloaded.Base
         }
     }
 
-    public class GameDataClient : Dictionary<string, ProviderDetails>, IClient
+    public class GameDataClient : Dictionary<Type, ProviderDetails>, IClient
     {
         public void NewProviderAvailable(IProvider newProvider)
         {
-            this.Add(newProvider.GetType().Name, new ProviderDetails(false, newProvider));
+            this.Add(newProvider.GetType(), new ProviderDetails(false, newProvider));
         }
 
         public void NewProviderFullyInstalled(IProvider newProvider)
         {
-            if (this.ContainsKey(newProvider.GetType().Name))
+            if (this.ContainsKey(newProvider.GetType()))
             {
-                this[newProvider.GetType().Name].IsInitialized = true;
+                this[newProvider.GetType()].IsInitialized = true;
             }
         }
 
         public void ProviderRemoved(IProvider removeProvider)
         {
-            this.Remove(removeProvider.GetType().Name);
+            this.Remove(removeProvider.GetType());
+        }
+
+        public bool TryGetProvider<T>([NotNullWhen(true)] out T? provider) where T : IProvider
+        {
+            return TryGetProvider<T>(out provider, out _);
+        }
+
+        public bool TryGetProvider<T>([NotNullWhen(true)] out T? provider, out bool fullyInitialized) where T : IProvider
+        {
+            if (TryGetValue(typeof(T), out var details))
+            {
+                fullyInitialized = details.IsInitialized;
+                provider = (T)details.Provider;
+                return true;
+            }
+            fullyInitialized = false;
+            provider = default;
+            return false;
         }
     }
 }
