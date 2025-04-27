@@ -99,10 +99,6 @@
                         "$ref": "../definitions/parse_term.json",
                         "description": "Text to display when the modifier is played."
                     },
-                    "sprite": {
-                        "type": "string",
-                        "description": "Reference to the room modifier's sprite."
-                    },
                     "triggered_vfx": {
                         "type": "string",
                         "description": "Reference to the VFX played when triggered."

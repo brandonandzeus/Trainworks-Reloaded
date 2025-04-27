@@ -71,19 +71,6 @@ namespace TrainworksReloaded.Base.Room
                 $"Finalizing Room Modifier {definition.Id.ToId(key, "RoomModifier")}... "
             );
 
-            var sprite = configuration.GetSection("sprite").ParseString();
-            if (
-                sprite != null
-                && spriteRegister.TryLookupId(
-                    sprite.ToId(key, "Sprite"),
-                    out var spriteLookup,
-                    out var _
-                )
-            )
-            {
-                AccessTools.Field(typeof(RoomModifierData), "icon").SetValue(data, spriteLookup);
-            }
-
             var cardConfig = configuration.GetSection("param_card").Value;
             if (
                 cardConfig != null
