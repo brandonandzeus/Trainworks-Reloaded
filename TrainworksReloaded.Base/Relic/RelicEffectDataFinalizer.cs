@@ -292,7 +292,7 @@ namespace TrainworksReloaded.Base.Relic
                 }
                 excludedSubtypes.Add(lookup.Key);
             }
-            AccessTools.Field(typeof(RelicEffectData), "paramExcludeCharacterSubtypes").SetValue(data, excludedSubtypes);
+            AccessTools.Field(typeof(RelicEffectData), "paramExcludeCharacterSubtypes").SetValue(data, excludedSubtypes.ToArray());
         }
     }
 }
