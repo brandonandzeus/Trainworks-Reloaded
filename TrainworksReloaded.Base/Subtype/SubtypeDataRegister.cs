@@ -36,9 +36,6 @@ namespace TrainworksReloaded.Base.Subtype
         {
             logger.Log(Core.Interfaces.LogLevel.Info, $"Register Subtype {key}... ");
             Add(key, item);
-
-            //var manager = SaveManager.Value.GetAllGameData().GetBalanceData().GetSubtypesData();
-            //manager.AllData.Add(item);
             SubtypeManager.AllData.Add(item);
         }
 

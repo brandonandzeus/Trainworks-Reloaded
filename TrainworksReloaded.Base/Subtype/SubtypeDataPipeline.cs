@@ -52,7 +52,7 @@ namespace TrainworksReloaded.Base.Subtype
 
                     AccessTools.Field(typeof(SubtypeData), "_subtype").SetValue(subtypeData, nameKey);
 
-                    service.Add(key, subtypeData);
+                    service.Register(name, subtypeData);
 
                     processList.Add(new SubtypeDefinition(key, subtypeData, config)
                     {
