@@ -86,27 +86,10 @@ namespace TrainworksReloaded.Base.Effect
                 .SetValue(data, fullyQualifiedName);
 
             //strings
-            var targetCharacterSubtype = "SubtypesData_None";
-            AccessTools
-                .Field(typeof(CardEffectData), "targetCharacterSubtype")
-                .SetValue(
-                    data,
-                    configuration.GetSection("target_subtype").ParseString()
-                        ?? targetCharacterSubtype
-                );
-
             var paramStr = "";
             AccessTools
                 .Field(typeof(CardEffectData), "paramStr")
                 .SetValue(data, configuration.GetSection("param_str").ParseString() ?? paramStr);
-
-            var paramSubtype = "SubtypesData_None";
-            AccessTools
-                .Field(typeof(CardEffectData), "paramSubtype")
-                .SetValue(
-                    data,
-                    configuration.GetSection("param_subtype").ParseString() ?? paramSubtype
-                );
 
             //bools
             var suppressPyreRoomFocus = false;

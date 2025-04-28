@@ -22,6 +22,7 @@ namespace TrainworksReloaded.Base.Character
         private readonly IRegister<VfxAtLoc> vfxRegister;
         private readonly IRegister<StatusEffectData> statusRegister;
         private readonly IRegister<CardData> cardRegister;
+        private readonly IRegister<SubtypeData> subtypeRegister;
         private readonly FallbackDataProvider dataProvider;
 
         public CharacterDataFinalizer(
@@ -32,6 +33,7 @@ namespace TrainworksReloaded.Base.Character
             IRegister<VfxAtLoc> vfxRegister,
             IRegister<StatusEffectData> statusRegister,
             IRegister<CardData> cardRegister,
+            IRegister<SubtypeData> subtypeRegister,
             FallbackDataProvider dataProvider
         )
         {
@@ -42,6 +44,7 @@ namespace TrainworksReloaded.Base.Character
             this.vfxRegister = vfxRegister;
             this.statusRegister = statusRegister;
             this.cardRegister = cardRegister;
+            this.subtypeRegister = subtypeRegister;
             this.dataProvider = dataProvider;
         }
 
@@ -242,6 +245,31 @@ namespace TrainworksReloaded.Base.Character
             AccessTools
                 .Field(typeof(CharacterData), "startingStatusEffects")
                 .SetValue(data, startingStatusEffects.ToArray());
+
+            //subtypes
+            var subtypes =
+                (List<string>)
+                    AccessTools.Field(typeof(CharacterData), "subtypeKeys").GetValue(data) ?? [];
+            //Ensure subtypeKeys List is initialized (shouldn't change the reference) unless it was null previously
+            AccessTools.Field(typeof(CharacterData), "subtypeKeys").SetValue(data, subtypes);
+
+            if (checkOverride)
+            {
+                subtypes.Clear();
+            }
+            foreach (var config in configuration.GetSection("subtypes").GetChildren())
+            {
+                var id = config?.ParseString();
+                if (id == null ||
+                    !subtypeRegister.TryLookupId(
+                        id.ToId(key, TemplateConstants.Subtype),
+                        out var lookup,
+                        out var _))
+                {
+                    continue;
+                }
+                subtypes.Add(lookup.Key);
+            }
 
             AccessTools
                 .Field(typeof(CharacterData), "fallbackData")

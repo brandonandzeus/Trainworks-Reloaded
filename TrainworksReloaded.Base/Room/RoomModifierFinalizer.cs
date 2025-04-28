@@ -21,6 +21,7 @@ namespace TrainworksReloaded.Base.Room
         private readonly IRegister<VfxAtLoc> vfxRegister;
         private readonly IRegister<StatusEffectData> statusRegister;
         private readonly IRegister<CharacterTriggerData.Trigger> triggerEnumRegister;
+        private readonly IRegister<SubtypeData> subtypeRegister;
 
         public RoomModifierFinalizer(
             IModLogger<RoomModifierFinalizer> logger,
@@ -31,7 +32,8 @@ namespace TrainworksReloaded.Base.Room
             IRegister<CardEffectData> cardEffectDataRegister,
             IRegister<VfxAtLoc> vfxRegister,
             IRegister<StatusEffectData> statusRegister,
-            IRegister<CharacterTriggerData.Trigger> triggerEnumRegister
+            IRegister<CharacterTriggerData.Trigger> triggerEnumRegister,
+            IRegister<SubtypeData> subtypeRegister
         )
         {
             this.logger = logger;
@@ -43,7 +45,7 @@ namespace TrainworksReloaded.Base.Room
             this.vfxRegister = vfxRegister;
             this.statusRegister = statusRegister;
             this.triggerEnumRegister = triggerEnumRegister;
-
+            this.subtypeRegister = subtypeRegister;
         }
 
         public void FinalizeData()
@@ -187,6 +189,21 @@ namespace TrainworksReloaded.Base.Room
                 .Field(typeof(RoomModifierData), "paramTrigger")
                 .SetValue(data, paramTrigger);
 
+            var paramSubtype = "SubtypesData_None";
+            var paramSubtypeId = configuration.GetSection("param_subtype").ParseString();
+            if (paramSubtypeId != null)
+            {
+                if (subtypeRegister.TryLookupId(
+                    paramSubtypeId.ToId(key, TemplateConstants.Subtype),
+                    out var lookup,
+                    out var _))
+                {
+                    paramSubtype = lookup.Key;
+                }
+            }
+            AccessTools
+                .Field(typeof(RoomModifierData), "paramSubtype")
+                .SetValue(data, paramSubtype);
         }
     }
 }

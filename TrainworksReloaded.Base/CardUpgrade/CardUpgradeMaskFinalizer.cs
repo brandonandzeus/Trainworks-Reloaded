@@ -1,6 +1,8 @@
 ﻿using HarmonyLib;
+using StateMechanic;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Core.Extensions;
@@ -16,6 +18,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
         private readonly IRegister<StatusEffectData> statusRegister;
         private readonly IRegister<ClassData> classRegister;
         private readonly IRegister<CardPool> poolRegister;
+        private readonly IRegister<SubtypeData> subtypeRegister;
 
         public CardUpgradeMaskFinalizer(
             IModLogger<CardUpgradeMaskFinalizer> logger,
@@ -23,7 +26,8 @@ namespace TrainworksReloaded.Base.CardUpgrade
             IRegister<CardUpgradeData> upgradeRegister,
             IRegister<StatusEffectData> statusRegister,
             IRegister<ClassData> classRegister,
-            IRegister<CardPool> poolRegister
+            IRegister<CardPool> poolRegister,
+            IRegister<SubtypeData> subtypeRegister
         )
         {
             this.logger = logger;
@@ -32,6 +36,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
             this.statusRegister = statusRegister;
             this.classRegister = classRegister;
             this.poolRegister = poolRegister;
+            this.subtypeRegister = subtypeRegister;
         }
 
         public void FinalizeData()
@@ -186,6 +191,38 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 excludedUpgrades.Add(lookup);
             }
             AccessTools.Field(typeof(CardUpgradeMaskData), "excludedCardUpgrades").SetValue(data, excludedUpgrades);
+
+            List<string> subtypesRequired = [];
+            foreach (var child in configuration.GetSection("required_subtypes").GetChildren())
+            {
+                var id = child?.ParseString();
+                if (id == null ||
+                    !subtypeRegister.TryLookupId(
+                        id.ToId(key, TemplateConstants.Subtype),
+                        out var lookup,
+                        out var _))
+                {
+                    continue;
+                }
+                subtypesRequired.Add(lookup.Key);
+            }
+            AccessTools.Field(typeof(CardUpgradeMaskData), "requiredSubtypes").SetValue(data, subtypesRequired);
+
+            List<string> subtypesExcluded = [];
+            foreach (var child in configuration.GetSection("excluded_subtypes").GetChildren())
+            {
+                var id = child?.ParseString();
+                if (id == null ||
+                    !subtypeRegister.TryLookupId(
+                        id.ToId(key, TemplateConstants.Subtype),
+                        out var lookup,
+                        out var _))
+                {
+                    continue;
+                }
+                subtypesExcluded.Add(lookup.Key);
+            }
+            AccessTools.Field(typeof(CardUpgradeMaskData), "excludedSubtypes").SetValue(data, subtypesExcluded);
         }
     }
 }

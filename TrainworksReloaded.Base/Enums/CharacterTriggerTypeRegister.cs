@@ -20,7 +20,6 @@ namespace TrainworksReloaded.Base.Enums
             this.logger = logger;
         }
 
-
         public void Register(string key, CharacterTriggerData.Trigger item)
         {
             logger.Log(LogLevel.Info, $"Register Character Trigger Enum ({key})");
