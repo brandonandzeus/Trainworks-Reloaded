@@ -79,7 +79,7 @@ namespace TrainworksReloaded.Base.Character
                     }
                 }
 
-                var term = child.GetSection("expressiosn").ParseLocalizationTerm();
+                var term = child.GetSection("expressions").ParseLocalizationTerm();
                 if (term != null)
                 {
                     term.Key = $"CharacterChatterData_triggerExpressions{i}-{name}";
