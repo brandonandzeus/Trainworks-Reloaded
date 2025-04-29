@@ -104,10 +104,6 @@
                         "type": "string",
                         "description": "Reference to the character's art asset."
                     },
-                    "character_chatter_data": {
-                        "type": "string",
-                        "description": "Reference to the character's dialogue data."
-                    },
                     "character_lore_tooltips": {
                         "type": "array",
                         "description": "List of lore tooltips for this character.",
@@ -118,6 +114,10 @@
                     "character_sound_data": {
                         "type": "string",
                         "description": "Reference to the character's sound data."
+                    },
+                    "chatter": {
+                        "type": "string",
+                        "description": "Reference to the character's dialogue data."
                     },
                     "chosen_variant": {
                         "type": "boolean",

@@ -27,5 +27,6 @@ namespace TrainworksReloaded.Base
         public const string RelicData = "RelicData";
         public const string RelicEffectData = "RelicEffectData";
         public const string Character = "Character";
+        public const string Chatter = "Chatter";
     }
 }
