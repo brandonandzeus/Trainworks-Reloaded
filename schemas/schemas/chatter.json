@@ -1,0 +1,69 @@
+{
+    "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/chatter.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "added_expressions": {
+        "type": "array",
+        "items": {
+          "$ref": "../definitions/parse_term.json"
+        },
+        "description": "Chatter when the character is spawned."
+      },
+      "base_chatter": {
+        "type": "string",
+        "description": "Reference to chatter to use as a base useful for common expressions. Note this is not recursive, that is, the base chatter referenced can't itself set this property."
+      },
+      "attacking_expressions": {
+        "type": "array",
+        "items": {
+          "$ref": "parse_term.json"
+        },
+        "description": "Chatter when the character is attacking."
+      },
+      "gender": {
+        "type": "string",
+        "enum": [
+          "neutral",
+          "male",
+          "female"
+        ],
+        "description": "Gender."
+      },
+      "id": {
+        "type": "string",
+        "description": "Unique identifier for this chatter."
+      },
+      "idle_expressions": {
+        "type": "array",
+        "items": {
+          "$ref": "parse_term.json"
+        },
+        "description": "Chatter when the character is idle."
+      },
+      "slayed_expressions": {
+        "type": "array",
+        "items": {
+          "$ref": "parse_term.json"
+        },
+        "description": "Chatter when the character is slain."
+      },
+      "trigger_expressions": {
+        "type": "array",
+        "description": "Chatter when the character fires a trigger",
+        "items": {
+          "type": "object",
+          "properties": {
+            "trigger": {
+              "$ref": "character_trigger.json",
+              "description": "Trigger type"
+            },
+            "expressions": {
+              "$ref": "parse_term.json"
+            }
+          }
+        }
+      }
+    }
+  }
+}

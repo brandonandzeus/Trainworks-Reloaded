@@ -32,6 +32,9 @@
         "characters": {
             "$ref": "schemas/characters.json#/properties/characters"
         },
+        "chatter": {
+            "$ref": "schemas/chatter.json#/properties/chatter"
+        },
         "classes": {
             "$ref": "schemas/classes.json#/properties/classes"
         },

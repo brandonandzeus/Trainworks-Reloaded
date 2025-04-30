@@ -990,7 +990,8 @@ namespace TrainworksReloaded.Base.Extensions
                 _ => null
             };
         }
-        public static SpecialCharacterType? ParseSpecialCharacterType(this IConfigurationSection section){
+        public static SpecialCharacterType? ParseSpecialCharacterType(this IConfigurationSection section)
+        {
             var val = section.Value;
             if (string.IsNullOrEmpty(val))
             {
@@ -1070,6 +1071,28 @@ namespace TrainworksReloaded.Base.Extensions
                 result |= classType.Value;
             }
             return result;
+        }
+
+        public static CharacterChatterData.Gender ParseGender(this IConfigurationSection section, CharacterChatterData.Gender defaultValue)
+        {
+            var val = section.Value;
+            if (string.IsNullOrEmpty(val))
+            {
+                return defaultValue;
+            }
+            val = val.ToLower();
+            CharacterChatterData.Gender? value = val switch
+            {
+                "male" => CharacterChatterData.Gender.Male,
+                "female" => CharacterChatterData.Gender.Female,
+                "neutral" => CharacterChatterData.Gender.Neutral,
+                _ => null
+            };
+            if (value == null)
+            {
+                return defaultValue;
+            }
+            return value.Value;
         }
     }
 }

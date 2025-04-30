@@ -131,6 +131,7 @@ namespace TrainworksReloaded.Plugin
                         typeof(CardPoolFinalizer),
                         typeof(CharacterTriggerTypeFinalizer),
                         typeof(CardTriggerTypeFinalizer),
+                        typeof(CharacterChatterFinalizer),
                         typeof(RelicDataFinalizer),
                         typeof(RelicEffectDataFinalizer),
                         typeof(GameObjectFinalizer),
@@ -390,6 +391,21 @@ namespace TrainworksReloaded.Plugin
                 {
                     var pipeline = c.GetInstance<
                         IDataPipeline<IRegister<CharacterTriggerData>, CharacterTriggerData>
+                    >();
+                    pipeline.Run(x);
+                });
+
+                //Register Character Chatter
+                c.RegisterSingleton<IRegister<CharacterChatterData>, CharacterChatterRegister>(); 
+                c.RegisterSingleton<CharacterChatterRegister, CharacterChatterRegister>();
+                c.Register<
+                    IDataPipeline<IRegister<CharacterChatterData>, CharacterChatterData>,
+                    CharacterChatterPipeline
+                >();
+                c.RegisterInitializer<IRegister<CharacterChatterData>>(x =>
+                {
+                    var pipeline = c.GetInstance<
+                        IDataPipeline<IRegister<CharacterChatterData>, CharacterChatterData>
                     >();
                     pipeline.Run(x);
                 });
