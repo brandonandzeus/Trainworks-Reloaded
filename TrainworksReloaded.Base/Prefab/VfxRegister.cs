@@ -14,7 +14,7 @@ namespace TrainworksReloaded.Base.Prefab
 {
     public class VfxRegister : Dictionary<string, VfxAtLoc>, IRegister<VfxAtLoc>
     {
-        private static VfxAtLoc Default { get; set; }
+        public static VfxAtLoc Default { get; set; }
 
         static VfxRegister()
         {

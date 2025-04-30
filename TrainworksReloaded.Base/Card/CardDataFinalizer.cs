@@ -343,6 +343,8 @@ namespace TrainworksReloaded.Base.Card
             )
             {
                 AccessTools.Field(typeof(CardData), "specialEdgeVFX").SetValue(data, specialEdgeVfx);
+            }else{
+                AccessTools.Field(typeof(CardData), "specialEdgeVFX").SetValue(data, VfxRegister.Default);
             }
 
             AccessTools
