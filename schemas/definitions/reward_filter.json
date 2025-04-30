@@ -2,10 +2,27 @@
     "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/definitions/reward_filter.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "string",
-    "enum": [
+    "description": "Filters that determine when a reward is available. Can be a single filter or multiple filters combined using the '|' character.",
+    "examples": [
         "none",
         "only_endless",
         "not_endless",
-        "only_if_allied_champ"
+        "only_if_allied_champ",
+        "only_endless|only_if_allied_champ",
+        "not_endless|only_if_allied_champ"
+    ],
+    "oneOf": [{
+            "enum": [
+                "none",
+                "only_endless",
+                "not_endless",
+                "only_if_allied_champ"
+            ]
+        },
+        {
+            "type": "string",
+            "pattern": "^(none|only_endless|not_endless|only_if_allied_champ)(\\|(none|only_endless|not_endless|only_if_allied_champ))*$",
+            "description": "Multiple filters combined with '|' character"
+        }
     ]
 }

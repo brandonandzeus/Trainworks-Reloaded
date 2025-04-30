@@ -30,6 +30,7 @@
         "front_in_room_and_room_above",
         "weakest_all_rooms",
         "strongest_all_rooms",
-        "last_equipped_character"
+        "last_equipped_character",
+        "last_sacrificed_character"
     ]
 }
