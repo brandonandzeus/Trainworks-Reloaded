@@ -35,6 +35,6 @@
         "on_hit",
         "on_post_spawn",
         "on_pre_attacked_life_link",
-        null
+        "on_pre_attacked_titan_skin"
     ]
 }
