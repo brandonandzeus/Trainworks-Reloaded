@@ -133,6 +133,10 @@
                         "$ref": "../definitions/parse_term.json",
                         "description": "Localized text for this card's name."
                     },
+                    "off_cooldown_vfx": {
+                        "type": "string",
+                        "description": "Vfx used when card is off cooldown."
+                    },
                     "override": {
                         "type": "boolean",
                         "description": "Whether this card overrides an existing card with the same ID."
@@ -178,6 +182,10 @@
                                 }
                             }
                         }
+                    },
+                    "special_edge_vfx": {
+                        "type": "string",
+                        "description": "VFX used on the edge of the card."
                     },
                     "target_assist": {
                         "$ref": "../definitions/target_assist.json",
@@ -229,10 +237,6 @@
                     "unlock_level": {
                         "type": "integer",
                         "description": "The level at which this card becomes available."
-                    },
-                    "vfx": {
-                        "type": "string",
-                        "description": "Visual effect played when this card is used."
                     }
                 },
                 "required": [
