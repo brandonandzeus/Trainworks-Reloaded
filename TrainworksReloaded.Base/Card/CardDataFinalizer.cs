@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using HarmonyLib;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Base.Prefab;
@@ -320,16 +321,28 @@ namespace TrainworksReloaded.Base.Card
                     .Field(typeof(CardData), "effectTriggers")
                     .SetValue(data, effectTriggers);
 
-            var offCooldownVFX = configuration.GetSection("vfx").ParseString() ?? "";
+            var offCooldownVFXId = configuration.GetSection("off_cooldown_vfx").ParseString() ?? "";
             if (
                 vfxRegister.TryLookupId(
-                    offCooldownVFX.ToId(key, TemplateConstants.Vfx),
-                    out var vfx,
+                    offCooldownVFXId.ToId(key, TemplateConstants.Vfx),
+                    out var offCooldownVfx,
                     out var _
                 )
             )
             {
-                AccessTools.Field(typeof(CardData), "offCooldownVFX").SetValue(data, vfx);
+                AccessTools.Field(typeof(CardData), "offCooldownVFX").SetValue(data, offCooldownVfx);
+            }
+
+            var specialEdgeVFXId = configuration.GetSection("special_edge_vfx").ParseString() ?? "";
+            if (
+                vfxRegister.TryLookupId(
+                    specialEdgeVFXId.ToId(key, TemplateConstants.Vfx),
+                    out var specialEdgeVfx,
+                    out var _
+                )
+            )
+            {
+                AccessTools.Field(typeof(CardData), "specialEdgeVFX").SetValue(data, specialEdgeVfx);
             }
 
             AccessTools
