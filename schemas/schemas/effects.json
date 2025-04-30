@@ -119,10 +119,6 @@
                         "type": "boolean",
                         "description": "Whether to show a notification in the Pyre UI."
                     },
-                    "skip_subsequent_previews": {
-                        "type": "boolean",
-                        "description": "Whether to skip previewing subsequent effects."
-                    },
                     "status_effect_filters": {
                         "type": "array",
                         "description": "List of status effects to filter by.",

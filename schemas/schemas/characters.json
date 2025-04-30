@@ -96,10 +96,6 @@
                         "type": "boolean",
                         "description": "Whether this character can receive healing."
                     },
-                    "can_equip_only_grafted": {
-                        "type": "boolean",
-                        "description": "Whether this character can only equip grafted equipment."
-                    },
                     "character_art": {
                         "type": "string",
                         "description": "Reference to the character's art asset."
@@ -212,10 +208,6 @@
                     "pyre_heart_data": {
                         "type": "string",
                         "description": "Reference to the Pyre heart data."
-                    },
-                    "remove_triggers_on_relentless": {
-                        "type": "boolean",
-                        "description": "Whether to remove triggers when this character becomes relentless."
                     },
                     "room_modifiers": {
                         "type": "array",
