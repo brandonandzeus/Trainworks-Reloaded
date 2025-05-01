@@ -169,15 +169,6 @@ namespace TrainworksReloaded.Base.Effect
                         ?? shouldFailToCastIfTestFails
                 );
 
-            var shouldSkipSubsequentEffectsPreviews = false;
-            AccessTools
-                .Field(typeof(CardEffectData), "shouldSkipSubsequentEffectsPreviews")
-                .SetValue(
-                    data,
-                    configuration.GetSection("skip_subsequent_previews").ParseBool()
-                        ?? shouldSkipSubsequentEffectsPreviews
-                );
-
             var useIntRange = false;
             AccessTools
                 .Field(typeof(CardEffectData), "useIntRange")

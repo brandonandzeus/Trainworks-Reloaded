@@ -239,20 +239,6 @@ namespace TrainworksReloaded.Base.Character
                     configuration.GetSection("chosen_variant").ParseBool() ?? chosenVariant
                 );
 
-            var removeTriggersOnRelentlessChange =
-                checkOverride
-                && (bool)
-                    AccessTools
-                        .Field(typeof(CharacterData), "removeTriggersOnRelentlessChange")
-                        .GetValue(data);
-            AccessTools
-                .Field(typeof(CharacterData), "removeTriggersOnRelentlessChange")
-                .SetValue(
-                    data,
-                    configuration.GetSection("remove_triggers_on_relentless").ParseBool()
-                        ?? removeTriggersOnRelentlessChange
-                );
-
             var isPyreHeart =
                 checkOverride
                 && (bool)AccessTools.Field(typeof(CharacterData), "isPyreHeart").GetValue(data);
@@ -272,20 +258,6 @@ namespace TrainworksReloaded.Base.Character
                     data,
                     configuration.GetSection("disable_in_daily_challenges").ParseBool()
                         ?? disableInDailyChallenges
-                );
-
-            var canOnlyEquipGraftedEquipment =
-                checkOverride
-                && (bool)
-                    AccessTools
-                        .Field(typeof(CharacterData), "canOnlyEquipGraftedEquipment")
-                        .GetValue(data);
-            AccessTools
-                .Field(typeof(CharacterData), "canOnlyEquipGraftedEquipment")
-                .SetValue(
-                    data,
-                    configuration.GetSection("can_equip_only_grafted").ParseBool()
-                        ?? canOnlyEquipGraftedEquipment
                 );
 
             //int
