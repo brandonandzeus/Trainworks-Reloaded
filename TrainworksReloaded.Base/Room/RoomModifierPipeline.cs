@@ -174,6 +174,15 @@ namespace TrainworksReloaded.Base.Room
                         ?? useTitleForCardDescription
                 );
 
+            var disallowInDeploymentPhase = false;
+            AccessTools
+                .Field(typeof(RoomModifierData), "disallowedInDeploymentPhase")
+                .SetValue(
+                    data,
+                    configuration.GetSection("disallow_in_deployment").ParseBool()
+                        ?? disallowInDeploymentPhase
+                );
+
             //int
             var paramInt = 0;
             AccessTools

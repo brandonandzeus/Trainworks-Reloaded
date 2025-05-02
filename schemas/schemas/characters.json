@@ -201,6 +201,10 @@
                         "$ref": "../definitions/parse_term.json",
                         "description": "Localized text for this character's name."
                     },
+                    "prevent_abilities_from_equipment": {
+                        "type": "boolean",
+                        "description": "Prevents ability from being overwritten by equipment"
+                    },
                     "projectile_vfx": {
                         "type": "string",
                         "description": "Visual effect played for this character's projectiles."

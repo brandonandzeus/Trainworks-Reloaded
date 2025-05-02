@@ -184,6 +184,10 @@
                                                             "$ref": "../definitions/rarity.json",
                                                             "description": "Minimum rarity for cards in this draft."
                                                         },
+                                                        "rarity_ceiling": {
+                                                            "$ref": "../definitions/rarity.json",
+                                                            "description": "Maximum rarity for cards in this draft."
+                                                        },
                                                         "class_data_override": {
                                                             "type": "string",
                                                             "description": "Override class data for this draft."

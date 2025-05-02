@@ -183,6 +183,11 @@ namespace TrainworksReloaded.Base.StatusEffects
                 .Field(typeof(StatusEffectData), "removeStackAtEndOfTurn")
                 .SetValue(data, configuration.GetSection("remove_stack_at_end_of_turn").ParseBool() ?? removeStackAtEndOfTurn);
 
+            var removeAtEndOfTurnAfterPostCombat = false;
+            AccessTools
+                .Field(typeof(StatusEffectData), "removeAtEndOfTurnAfterPostCombat")
+                .SetValue(data, configuration.GetSection("remove_at_end_of_turn_after_post_combat").ParseBool() ?? removeAtEndOfTurnAfterPostCombat);
+
             var removeAtEndOfTurn = false;
             AccessTools
                 .Field(typeof(StatusEffectData), "removeAtEndOfTurn")

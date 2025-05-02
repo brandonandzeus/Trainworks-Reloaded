@@ -500,9 +500,11 @@ namespace TrainworksReloaded.Plugin
                     pipeline.Run(x);
                 });
                 c.Collection.Register<IFactory<RelicData>>(
-                    [typeof(CollectableRelicDataFactory)],
+                    [typeof(CollectableRelicDataFactory), typeof(EnhancerDataFactory)],
                     Lifestyle.Singleton
                 );
+
+                //CollectableRelicData
                 c.RegisterDecorator(
                     typeof(IDataPipeline<IRegister<RelicData>, RelicData>),
                     typeof(CollectableRelicDataPipelineDecorator)
@@ -513,6 +515,18 @@ namespace TrainworksReloaded.Plugin
                     xs => xs.ImplementationType == typeof(RelicDataFinalizer)
                 );
                 c.RegisterSingleton<VanillaRelicPoolDelegator>();
+
+                //EnhancerData
+                c.RegisterDecorator(
+                    typeof(IDataPipeline<IRegister<RelicData>, RelicData>),
+                    typeof(EnhancerDataPipelineDecorator)
+                );
+                c.RegisterDecorator(
+                    typeof(IDataFinalizer),
+                    typeof(EnhancerDataFinalizerDecorator),
+                    xs => xs.ImplementationType == typeof(RelicDataFinalizer)
+                );
+                c.RegisterSingleton<VanillaEnhancerPoolDelegator>();
 
                 //Register Relic Effect Data
                 c.RegisterSingleton<IRegister<RelicEffectData>, RelicEffectDataRegister>();

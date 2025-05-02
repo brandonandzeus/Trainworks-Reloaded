@@ -84,6 +84,10 @@
                         "type": "boolean",
                         "description": "Secondary boolean parameter"
                     },
+                    "param_bool_3": {
+                        "type": "boolean",
+                        "description": "Tertiary boolean parameter"
+                    },
                     "target_mode": {
                         "$ref": "../definitions/target_mode.json",
                         "description": "Target mode for the effect"

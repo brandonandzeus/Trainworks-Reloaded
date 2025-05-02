@@ -168,6 +168,9 @@ namespace TrainworksReloaded.Base.Relic
             var paramBool2 = config.GetSection("param_bool_2").ParseBool() ?? false;
             AccessTools.Field(typeof(RelicEffectData), "paramBool2").SetValue(data, paramBool2);
 
+            var paramBool3 = config.GetSection("param_bool_3").ParseBool() ?? false;
+            AccessTools.Field(typeof(RelicEffectData), "paramBool3").SetValue(data, paramBool3);
+
             // Handle target mode
             var targetMode = config.GetSection("target_mode").ParseTargetMode() ?? TargetMode.Room;
             AccessTools.Field(typeof(RelicEffectData), "paramTargetMode").SetValue(data, targetMode);

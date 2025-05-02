@@ -47,6 +47,10 @@
                         "type": "boolean",
                         "description": "Whether this trigger only activates if the character has equipment."
                     },
+                    "remove_on_relentless_change": {
+                        "type": "boolean",
+                        "description": "Mainly for flying bosses, remove this trigger on relentless"
+                    },
                     "show_text_on_trigger_success_only": {
                         "type": "boolean",
                         "description": "Whether to only show text when the trigger successfully activates."

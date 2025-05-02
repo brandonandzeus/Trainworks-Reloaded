@@ -130,6 +130,9 @@ namespace TrainworksReloaded.Base.Reward
             var rarityFloor = draftConfiguration.GetSection("rarity_floor").ParseRarity() ?? CollectableRarity.Common;
             AccessTools.Field(typeof(DraftRewardData), "rarityFloorOverride").SetValue(draftData, rarityFloor);
 
+            var rarityCeiling = draftConfiguration.GetSection("rarity_ceiling").ParseRarity() ?? CollectableRarity.Unset;
+            AccessTools.Field(typeof(DraftRewardData), "rarityCeilingOverride").SetValue(draftData, rarityCeiling);
+
             // Set class data override
             var classDataOverride = draftConfiguration.GetSection("class_data_override").ParseString();
             if (classDataOverride != null && classRegister.TryLookupName(classDataOverride.ToId(key, TemplateConstants.Class), out var classData, out var _))

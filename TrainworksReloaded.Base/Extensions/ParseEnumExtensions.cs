@@ -373,7 +373,6 @@ namespace TrainworksReloaded.Base.Extensions
                     TrackedValueType.StatusEffectCountInTargetRoom,
                 "corruption_in_target_room" => TrackedValueType.CorruptionInTargetRoom,
                 "turn_count" => TrackedValueType.TurnCount,
-                "regal_count_in_target_room" => TrackedValueType.RegalCountInTargetRoom,
                 "dragons_hoard_amount" => TrackedValueType.DragonsHoardAmount,
                 "moon_phase" => TrackedValueType.MoonPhase,
                 "magic_power_in_target_room" => TrackedValueType.MagicPowerInTargetRoom,

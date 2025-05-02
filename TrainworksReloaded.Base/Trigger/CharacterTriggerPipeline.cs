@@ -157,6 +157,16 @@ namespace TrainworksReloaded.Base.Trigger
                         ?? onlyTriggerIfEquipped
                 );
 
+            var removeOnRelentlessChange = false;
+            AccessTools
+                .Field(typeof(CharacterTriggerData), "removeOnRelentlessChange")
+                .SetValue(
+                    data,
+                    configuration.GetSection("remove_on_relentless_change").ParseBool()
+                        ?? removeOnRelentlessChange
+                );
+            
+
             service.Register(name, data);
             return new CharacterTriggerDefinition(key, data, configuration) { Id = id };
         }
