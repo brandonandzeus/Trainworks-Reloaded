@@ -20,6 +20,7 @@ using TrainworksReloaded.Base.Relic;
 using TrainworksReloaded.Base.Reward;
 using TrainworksReloaded.Base.Room;
 using TrainworksReloaded.Base.StatusEffects;
+using TrainworksReloaded.Base.Subtype;
 using TrainworksReloaded.Base.Trait;
 using TrainworksReloaded.Base.Trigger;
 using TrainworksReloaded.Core;
@@ -306,6 +307,21 @@ namespace TrainworksReloaded.Plugin
                 {
                     var pipeline = c.GetInstance<
                         IDataPipeline<IRegister<CardTriggerType>, CardTriggerType>
+                    >();
+                    pipeline.Run(x);
+                });
+
+                //Register Subtypes
+                c.RegisterSingleton<IRegister<SubtypeData>, SubtypeDataRegister>();
+                c.RegisterSingleton<SubtypeDataRegister, SubtypeDataRegister>();
+                c.Register<
+                    IDataPipeline<IRegister<SubtypeData>, SubtypeData>,
+                    SubtypeDataPipeline
+                >();
+                c.RegisterInitializer<IRegister<SubtypeData>>(x =>
+                {
+                    var pipeline = c.GetInstance<
+                        IDataPipeline<IRegister<SubtypeData>, SubtypeData>
                     >();
                     pipeline.Run(x);
                 });

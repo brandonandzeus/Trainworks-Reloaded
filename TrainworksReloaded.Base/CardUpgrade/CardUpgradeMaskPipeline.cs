@@ -166,23 +166,6 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 .ToList();
             AccessTools.Field(typeof(CardUpgradeMaskData), "excludedRarities").SetValue(data, raritesExcluded);
 
-            var subtypesRequired = configuration
-                .GetSection("required_subtypes")
-                .GetChildren()
-                .Select(xs => xs.ParseString())
-                .Where(xs => xs != null)
-                .Cast<string>()
-                .ToList();
-            AccessTools.Field(typeof(CardUpgradeMaskData), "requiredSubtypes").SetValue(data, subtypesRequired);
-            var subtypesExcluded = configuration
-                .GetSection("excluded_subtypes")
-                .GetChildren()
-                .Select(xs => xs.ParseString())
-                .Where(xs => xs != null)
-                .Cast<string>()
-                .ToList();
-            AccessTools.Field(typeof(CardUpgradeMaskData), "excludedSubtypes").SetValue(data, subtypesExcluded);
-
             var sizesRequired = configuration
                 .GetSection("required_sizes")
                 .GetChildren()
