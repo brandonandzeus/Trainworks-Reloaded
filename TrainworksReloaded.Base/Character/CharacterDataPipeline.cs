@@ -347,28 +347,6 @@ namespace TrainworksReloaded.Base.Character
                         ?? bossTitanAffinity
                 );
 
-            //subtypes
-            var subtypes =
-                (List<string>)
-                    AccessTools.Field(typeof(CharacterData), "subtypeKeys").GetValue(data);
-            if (subtypes == null)
-            {
-                subtypes = new List<string>();
-                AccessTools.Field(typeof(CharacterData), "subtypeKeys").SetValue(data, subtypes);
-            }
-
-            if (checkOverride)
-            {
-                subtypes.Clear();
-            }
-
-            foreach (var config in configuration.GetSection("subtypes").GetChildren().ToList())
-            {
-                var str = config.ParseString();
-                if (str != null)
-                    subtypes.Add(str);
-            }
-
             //handle tooltips
             int tooltip_count = 0;
             var tooltips = checkOverride

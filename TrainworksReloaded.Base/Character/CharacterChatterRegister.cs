@@ -1,31 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
-using TrainworksReloaded.Base.Effect;
-using TrainworksReloaded.Base.Trigger;
+using System.Linq;
+using HarmonyLib;
+using Malee;
 using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Interfaces;
+using UnityEngine;
 
-namespace TrainworksReloaded.Base.Enums
+namespace TrainworksReloaded.Base.Character
 {
-    public class CharacterTriggerTypeRegister
-        : Dictionary<string, CharacterTriggerData.Trigger>,
-            IRegister<CharacterTriggerData.Trigger>
+    public class CharacterChatterRegister : Dictionary<string, CharacterChatterData>, IRegister<CharacterChatterData>
     {
-        private readonly IModLogger<CharacterTriggerRegister> logger;
+        private readonly IModLogger<CharacterChatterRegister> logger;
 
-        public CharacterTriggerTypeRegister(IModLogger<CharacterTriggerRegister> logger)
+        public CharacterChatterRegister(IModLogger<CharacterChatterRegister> logger)
         {
             this.logger = logger;
         }
 
-        public void Register(string key, CharacterTriggerData.Trigger item)
+
+        public void Register(string key, CharacterChatterData item)
         {
-            logger.Log(LogLevel.Info, $"Register Character Trigger Enum ({key})");
+            logger.Log(Core.Interfaces.LogLevel.Info, $"Register Character Chatter {key}... ");
             Add(key, item);
         }
-
+        
         public List<string> GetAllIdentifiers(RegisterIdentifierType identifierType)
         {
             return identifierType switch
@@ -36,7 +36,7 @@ namespace TrainworksReloaded.Base.Enums
             };
         }
 
-        public bool TryLookupIdentifier(string identifier, RegisterIdentifierType identifierType, [NotNullWhen(true)] out CharacterTriggerData.Trigger lookup, [NotNullWhen(true)] out bool? IsModded)
+        public bool TryLookupIdentifier(string identifier, RegisterIdentifierType identifierType, [NotNullWhen(true)] out CharacterChatterData? lookup, [NotNullWhen(true)] out bool? IsModded)
         {
             lookup = default;
             IsModded = true;
@@ -50,5 +50,6 @@ namespace TrainworksReloaded.Base.Enums
                     return false;
             }
         }
+
     }
 }

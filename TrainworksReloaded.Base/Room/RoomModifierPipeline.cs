@@ -156,14 +156,6 @@ namespace TrainworksReloaded.Base.Room
                 termRegister.Register(extraTooltipBodyKey, extraTooltipBodyKeyTerm);
             }
 
-            var paramSubtype = "";
-            AccessTools
-                .Field(typeof(RoomModifierData), "paramSubtype")
-                .SetValue(
-                    data,
-                    configuration.GetSection("param_subtype").ParseString() ?? paramSubtype
-                );
-
             //bool
             var useTitleForCardDescription = false;
             AccessTools

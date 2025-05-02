@@ -9,14 +9,32 @@ using TrainworksReloaded.Core.Interfaces;
 
 namespace TrainworksReloaded.Base.Trait
 {
-    public class CardTraitDataFinalizer(
-        IModLogger<CardTraitDataFinalizer> logger,
-        ICache<IDefinition<CardTraitData>> cache,
-        IRegister<CardUpgradeData> upgradeRegister,
-        IRegister<CardData> cardRegister,
-        IRegister<StatusEffectData> statusRegister
-        ) : IDataFinalizer
+    public class CardTraitDataFinalizer : IDataFinalizer
     {
+        private readonly IModLogger<CardTraitDataFinalizer> logger;
+        private readonly ICache<IDefinition<CardTraitData>> cache;
+        private readonly IRegister<CardUpgradeData> upgradeRegister;
+        private readonly IRegister<CardData> cardRegister;
+        private readonly IRegister<StatusEffectData> statusRegister;
+        private readonly IRegister<SubtypeData> subtypeRegister;
+
+        public CardTraitDataFinalizer(
+            IModLogger<CardTraitDataFinalizer> logger,
+            ICache<IDefinition<CardTraitData>> cache,
+            IRegister<CardUpgradeData> upgradeRegister,
+            IRegister<CardData> cardRegister,
+            IRegister<StatusEffectData> statusRegister,
+            IRegister<SubtypeData> subtypeRegister
+        )
+        {
+            this.logger = logger;
+            this.cache = cache;
+            this.upgradeRegister = upgradeRegister;
+            this.cardRegister = cardRegister;
+            this.statusRegister = statusRegister;
+            this.subtypeRegister = subtypeRegister;
+        }
+
         public void FinalizeData()
         {
             foreach (var definition in cache.GetCacheItems())
@@ -83,6 +101,23 @@ namespace TrainworksReloaded.Base.Trait
             AccessTools
                 .Field(typeof(CardTraitData), "paramStatusEffects")
                 .SetValue(data, paramStatusEffects.ToArray());
+
+            var paramSubtype = "SubtypesData_None";
+            var paramSubtypeId = configuration.GetSection("param_subtype").ParseString();
+            if (paramSubtypeId != null)
+            {
+                if (subtypeRegister.TryLookupId(
+                    paramSubtypeId.ToId(key, TemplateConstants.Subtype),
+                    out var lookup,
+                    out var _
+                ))
+                {
+                    paramSubtype = lookup.Key;
+                }
+            }
+            AccessTools
+                .Field(typeof(CardTraitData), "paramSubtype")
+                .SetValue(data, paramSubtype);
         }
     }
 }
