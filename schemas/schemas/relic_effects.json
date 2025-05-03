@@ -9,6 +9,17 @@
                 "type": "object",
                 "required": ["id", "name"],
                 "properties": {
+                    "additional_tooltips": {
+                        "type": "array",
+                        "description": "Additional tooltips to display for this card effect.",
+                        "items": {
+                            "$ref": "../definitions/additonal_tooltips.json"
+                        }
+                    },
+                    "applied_vfx": {
+                        "type": "string",
+                        "description": "Reference to VFX to use when applying the effect to a character"
+                    },
                     "id": {
                         "type": "string",
                         "description": "Unique identifier for the relic effect"
@@ -51,11 +62,11 @@
                     },
                     "min_int": {
                         "type": "integer",
-                        "description": "Minimum integer value for range"
+                        "description": "When use_int_range is true. Minimum integer value for range"
                     },
                     "max_int": {
                         "type": "integer",
-                        "description": "Maximum integer value for range"
+                        "description": "When use_int_range is true. Maximum integer value for range"
                     },
                     "param_string": {
                         "type": "string",
@@ -131,21 +142,14 @@
                         },
                         "description": "Array of card triggers"
                     },
+                    "param_trigger": {
+                        "$ref": "../definitions/character_trigger.json",
+                        "description": "Trigger parameter for the relic effect."
+                    },
                     "param_status_effects": {
                         "type": "array",
                         "items": {
-                            "type": "object",
-                            "required": ["status", "count"],
-                            "properties": {
-                                "status": {
-                                    "type": "string",
-                                    "description": "Status effect identifier"
-                                },
-                                "count": {
-                                    "type": "integer",
-                                    "description": "Count of the status effect"
-                                }
-                            }
+                            "$ref": "../definitions/status_effect.json"
                         },
                         "description": "Array of status effects with their counts"
                     },
@@ -227,9 +231,13 @@
                         "type": "string",
                         "description": "Card data identifier"
                     },
-                    "param_card_upgrade_data": {
+                    "param_upgrade": {
                         "type": "string",
                         "description": "Card upgrade data identifier"
+                    },
+                    "param_relic": {
+                        "type": "string",
+                        "description": "Relic data identifier"
                     },
                     "param_reward": {
                         "type": "string",

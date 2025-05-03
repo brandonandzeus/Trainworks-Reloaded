@@ -70,6 +70,10 @@
                     "trigger_once": {
                         "type": "boolean",
                         "description": "Whether this trigger can only activate once."
+                    },
+                    "trigger_at_threshold": {
+                        "type": "integer",
+                        "description": "This value tells the trigger to only fire if a parameter is greater than this number. The parameter value is determined by the trigger type. (i.e. for a Revenge trigger the parameter will be the amount of damage taken.)"
                     }
                 },
                 "required": [

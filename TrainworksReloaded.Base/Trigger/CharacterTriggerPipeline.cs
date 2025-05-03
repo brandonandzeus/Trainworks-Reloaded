@@ -148,6 +148,14 @@ namespace TrainworksReloaded.Base.Trigger
                     configuration.GetSection("trigger_once").ParseBool() ?? triggerOnce
                 );
 
+            var triggerAtThreshold = 0;
+            AccessTools
+                .Field(typeof(CharacterTriggerData), "triggerAtThreshold")
+                .SetValue(
+                    data,
+                    configuration.GetSection("trigger_at_threshold").ParseInt() ?? triggerAtThreshold
+                );
+
             var onlyTriggerIfEquipped = false;
             AccessTools
                 .Field(typeof(CharacterTriggerData), "onlyTriggerIfEquipped")

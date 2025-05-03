@@ -23,6 +23,9 @@ namespace TrainworksReloaded.Base.Relic
         private readonly IRegister<RewardData> rewardRegister;
         private readonly IRegister<CardUpgradeMaskData> cardUpgradeMaskRegister;
         private readonly IRegister<SubtypeData> subtypeRegister;
+        private readonly IRegister<VfxAtLoc> vfxRegister;
+        private readonly IRegister<RelicData> relicRegister;
+        private readonly IRegister<CharacterTriggerData.Trigger> triggerEnumRegister;
 
         public RelicEffectDataFinalizer(
             IModLogger<RelicEffectDataFinalizer> logger,
@@ -36,8 +39,11 @@ namespace TrainworksReloaded.Base.Relic
             IRegister<CardUpgradeData> upgradeRegister,
             IRegister<StatusEffectData> statusRegister,
             IRegister<RewardData> rewardRegister,
+            IRegister<SubtypeData> subtypeRegister,
             IRegister<CardUpgradeMaskData> cardUpgradeMaskRegister,
-            IRegister<SubtypeData> subtypeRegister
+            IRegister<VfxAtLoc> vfxRegister,
+            IRegister<RelicData> relicRegister,
+            IRegister<CharacterTriggerData.Trigger> triggerEnumRegister
         )
         {
             this.logger = logger;
@@ -53,6 +59,9 @@ namespace TrainworksReloaded.Base.Relic
             this.rewardRegister = rewardRegister;
             this.cardUpgradeMaskRegister = cardUpgradeMaskRegister;
             this.subtypeRegister = subtypeRegister;
+            this.vfxRegister = vfxRegister;
+            this.relicRegister = relicRegister;
+            this.triggerEnumRegister = triggerEnumRegister;
         }
 
         public void FinalizeData()
@@ -68,7 +77,6 @@ namespace TrainworksReloaded.Base.Relic
         {
             /*
             Types that need registers but don't have them yet:
-            - AdditionalTooltipData
             - CharacterSubstitution
             - RelicEffectCondition
             - RarityTicketMultiplier
@@ -277,7 +285,6 @@ namespace TrainworksReloaded.Base.Relic
             }
             AccessTools.Field(typeof(RelicEffectData), "paramCharacterSubtype").SetValue(data, characterSubtype);
 
-
             // Handle excluded character subtypes
             List<string> excludedSubtypes = [];
             foreach (var id in configuration.GetSection("excluded_character_subtypes").GetChildren())
@@ -293,6 +300,54 @@ namespace TrainworksReloaded.Base.Relic
                 excludedSubtypes.Add(lookup.Key);
             }
             AccessTools.Field(typeof(RelicEffectData), "paramExcludeCharacterSubtypes").SetValue(data, excludedSubtypes.ToArray());
+
+            var appliedVFXId = configuration.GetSection("applied_vfx").ParseString() ?? "";
+            if (
+                vfxRegister.TryLookupId(
+                    appliedVFXId.ToId(key, TemplateConstants.Vfx),
+                    out var appliedVFX,
+                    out var _
+                )
+            )
+            {
+                AccessTools.Field(typeof(RelicEffectData), "appliedVfx").SetValue(data, appliedVFX);
+            }
+
+            var relicId = configuration.GetSection("param_relic").ParseString() ?? "";
+            if (
+                relicRegister.TryLookupId(
+                    relicId.ToId(key, TemplateConstants.RelicData),
+                    out var relic,
+                    out var _
+                )
+            )
+            {
+                AccessTools.Field(typeof(RelicEffectData), "paramRelic").SetValue(data, relic as CollectableRelicData);
+            }
+
+            var paramTrigger = CharacterTriggerData.Trigger.OnDeath;
+            var triggerSection = configuration.GetSection("param_trigger");
+            if (triggerSection.Value != null)
+            {
+                var value = triggerSection.Value;
+                if (
+                    triggerEnumRegister.TryLookupId(
+                        value.ToId(key, TemplateConstants.CharacterTriggerEnum),
+                        out var triggerFound,
+                        out var _
+                    )
+                )
+                {
+                    paramTrigger = triggerFound;
+                }
+                else
+                {
+                    paramTrigger = triggerSection.ParseTrigger() ?? default;
+                }
+            }
+            AccessTools
+                .Field(typeof(RelicEffectData), "paramTrigger")
+                .SetValue(data, paramTrigger);
         }
     }
 }

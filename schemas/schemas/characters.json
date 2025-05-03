@@ -153,9 +153,9 @@
                             "attack"
                         ]
                     },
-                    "enemy_relic_data": {
+                    "enemy_relic": {
                         "type": "string",
-                        "description": "Reference to the enemy's relic data."
+                        "description": "Reference to a relic for the enemy's relic data."
                     },
                     "equip_limit": {
                         "type": "integer",

@@ -24,6 +24,8 @@ namespace TrainworksReloaded.Base.Character
         private readonly IRegister<CardData> cardRegister;
         private readonly IRegister<CharacterChatterData> chatterRegister;
         private readonly IRegister<SubtypeData> subtypeRegister;
+        private readonly IRegister<RoomModifierData> roomModifierRegister;
+        private readonly IRegister<RelicData> relicRegister;
         private readonly FallbackDataProvider dataProvider;
 
         public CharacterDataFinalizer(
@@ -36,6 +38,8 @@ namespace TrainworksReloaded.Base.Character
             IRegister<CardData> cardRegister,
             IRegister<CharacterChatterData> chatterRegister,
             IRegister<SubtypeData> subtypeRegister,
+            IRegister<RoomModifierData> roomModifierRegister,
+            IRegister<RelicData> relicRegister,
             FallbackDataProvider dataProvider
         )
         {
@@ -48,6 +52,8 @@ namespace TrainworksReloaded.Base.Character
             this.cardRegister = cardRegister;
             this.chatterRegister = chatterRegister;
             this.subtypeRegister = subtypeRegister;
+            this.roomModifierRegister = roomModifierRegister;
+            this.relicRegister = relicRegister;
             this.dataProvider = dataProvider;
         }
 
@@ -94,6 +100,13 @@ namespace TrainworksReloaded.Base.Character
             if (!ability.IsNullOrEmpty() && cardRegister.TryLookupName(ability.ToId(key, TemplateConstants.Card), out var abilityCard, out var _))
             {
                 AccessTools.Field(typeof(CharacterData), "unitAbility").SetValue(data, abilityCard);
+            }
+
+            //handle equipment
+            var grafted_equipment = configuration.GetSection("grafted_equipment").ParseString() ?? "";
+            if (!grafted_equipment.IsNullOrEmpty() && cardRegister.TryLookupName(grafted_equipment.ToId(key, TemplateConstants.Card), out var equipmentCard, out var _))
+            {
+                AccessTools.Field(typeof(CharacterData), "graftedEquipment").SetValue(data, equipmentCard);
             }
 
             //handle triggers
@@ -283,6 +296,45 @@ namespace TrainworksReloaded.Base.Character
                 }
                 subtypes.Add(lookup.Key);
             }
+
+            var roomModifiers = new List<RoomModifierData>();
+            if (!checkOverride)
+            {
+                var roomModifiers2 = (List<RoomModifierData>)
+                    AccessTools
+                        .Field(typeof(CharacterData), "roomModifiers")
+                        .GetValue(data);
+                if (roomModifiers2 != null)
+                    roomModifiers.AddRange(roomModifiers2);
+            }
+            foreach (var child in configuration.GetSection("room_modifiers").GetChildren())
+            {
+                var idConfig = child?.GetSection("id").Value;
+                if (idConfig == null) 
+                    continue;
+                var roomModifierId = idConfig.ToId(key, TemplateConstants.RoomModifier);
+                if (roomModifierRegister.TryLookupId(roomModifierId, out var roomModifierData, out var _))
+                {
+                    roomModifiers.Add(roomModifierData);
+                }
+            }
+            AccessTools
+                .Field(typeof(CharacterData), "roomModifiers")
+                .SetValue(data, roomModifiers);
+
+
+            var relicId = configuration.GetSection("enemy_relic").ParseString() ?? "";
+            if (
+                relicRegister.TryLookupId(
+                    relicId.ToId(key, TemplateConstants.RelicData),
+                    out var relic,
+                    out var _
+                )
+            )
+            {
+                AccessTools.Field(typeof(RelicEffectData), "enemyRelicData").SetValue(data, relic);
+            }
+
 
             AccessTools
                 .Field(typeof(CharacterData), "fallbackData")

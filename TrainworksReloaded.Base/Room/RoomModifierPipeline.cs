@@ -70,7 +70,6 @@ namespace TrainworksReloaded.Base.Room
                 return null;
             }
             var name = key.GetId("RoomModifier", id);
-            var namekey = $"RoomModifierData_nameKey-{name}";
             var descriptionKey = $"RoomModifierData_descriptionKey-{name}";
             var descriptionKeyInPlay = $"RoomModifierData_descriptionKeyInPlay-{name}";
             var extraTooltipTitleKey = $"RoomModifierData_extraTooltipTitleKey-{name}";
@@ -96,14 +95,6 @@ namespace TrainworksReloaded.Base.Room
             AccessTools
                 .Field(typeof(RoomModifierData), "roomStateModifierClassName")
                 .SetValue(data, fullyQualifiedName);
-
-            var nameTerm = configuration.GetSection("names").ParseLocalizationTerm();
-            if (nameTerm != null)
-            {
-                nameTerm.Key = nameClass;
-                termRegister.Register(nameClass, nameTerm);
-            }
-
             //handle descriptions
             var descriptionKeyTerm = configuration
                 .GetSection("descriptions")
@@ -142,6 +133,12 @@ namespace TrainworksReloaded.Base.Room
                 extraTooltipTitleKeyTerm.Key = extraTooltipTitleKey;
                 termRegister.Register(extraTooltipTitleKey, extraTooltipTitleKeyTerm);
             }
+            else
+            {
+                AccessTools
+                    .Field(typeof(RoomModifierData), "extraTooltipTitleKey")
+                    .SetValue(data, string.Empty);
+            }
 
             //handle descriptions
             var extraTooltipBodyKeyTerm = configuration
@@ -154,6 +151,12 @@ namespace TrainworksReloaded.Base.Room
                     .SetValue(data, extraTooltipBodyKey);
                 extraTooltipBodyKeyTerm.Key = extraTooltipBodyKey;
                 termRegister.Register(extraTooltipBodyKey, extraTooltipBodyKeyTerm);
+            }
+            else
+            {
+                AccessTools
+                    .Field(typeof(RoomModifierData), "extraTooltipBodyKey")
+                    .SetValue(data, string.Empty);
             }
 
             //bool
@@ -192,7 +195,7 @@ namespace TrainworksReloaded.Base.Room
                 var tooltipData = new AdditionalTooltipData();
 
                 var titleKey = $"RoomModifierDataTooltip_titleKey_{configCount}-{name}";
-                var descriptionTKey = $"RoomModifierDataTooltip_titleKey_{configCount}-{name}";
+                var descriptionTKey = $"RoomModifierDataTooltip_descriptionKey_{configCount}-{name}";
 
                 var titleKeyTerm = configuration.GetSection("titles").ParseLocalizationTerm();
                 if (titleKeyTerm != null)
@@ -219,7 +222,7 @@ namespace TrainworksReloaded.Base.Room
                 tooltipData.hideInTrainRoomUI =
                     configuration.GetSection("hide_in_train_room").ParseBool() ?? false;
                 tooltipData.allowSecondaryPlacement =
-                    configuration.GetSection("allow_secondary").ParseBool() ?? false;
+                    configuration.GetSection("allow_secondary_placement").ParseBool() ?? false;
                 tooltipData.isTriggerTooltip =
                     configuration.GetSection("hide_in_train_room").ParseBool() ?? false;
 

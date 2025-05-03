@@ -13,7 +13,7 @@
                 "properties": {
                     "ability_upgrade": {
                         "type": "string",
-                        "description": "Reference to an ability upgrade."
+                        "description": "Reference to card specifiying the unit ability upgrade."
                     },
                     "allow_secondary_tooltip_placement": {
                         "type": "boolean",
@@ -66,7 +66,7 @@
                     },
                     "does_not_replace_ability": {
                         "type": "boolean",
-                        "description": "Whether this upgrade should not replace the card's ability."
+                        "description": "Whether this upgrade should not replace the unit's ability."
                     },
                     "filters": {
                         "type": "array",
@@ -111,9 +111,19 @@
                     },
                     "remove_trait_upgrades": {
                         "type": "array",
-                        "description": "List of trait upgrades to remove.",
+                        "description": "List of trait class names to permanently remove.",
                         "items": {
-                            "type": "string"
+                            "type": "object"
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "description": "The TraitStateName, this should be the name of a Class inheriting from CardTraitState (preceeded by an @ if a custom modded class). Trainworks will search your mod for the class, then the base game."
+                                },
+                                "mod_reference": {
+                                    "type": "string",
+                                    "description": "Mod GUID to search for a custom trait. If not specified then your Mod's assembly is searched."
+                                }
+                            }
                         }
                     },
                     "remove_upgrades": {

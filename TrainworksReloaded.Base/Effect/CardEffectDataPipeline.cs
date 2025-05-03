@@ -5,6 +5,7 @@ using HarmonyLib;
 using Microsoft.Extensions.Configuration;
 using SimpleInjector;
 using TrainworksReloaded.Base.Extensions;
+using TrainworksReloaded.Base.Localization;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
@@ -15,10 +16,16 @@ namespace TrainworksReloaded.Base.Effect
     {
         private readonly PluginAtlas atlas;
         private readonly IModLogger<CardEffectDataPipeline> logger;
+        private readonly IRegister<LocalizationTerm> termRegister;
 
-        public CardEffectDataPipeline(PluginAtlas atlas, IModLogger<CardEffectDataPipeline> logger)
+        public CardEffectDataPipeline(
+            PluginAtlas atlas,
+            IRegister<LocalizationTerm> termRegister,
+            IModLogger<CardEffectDataPipeline> logger
+        )
         {
             this.atlas = atlas;
+            this.termRegister = termRegister;
             this.logger = logger;
         }
 
@@ -135,6 +142,15 @@ namespace TrainworksReloaded.Base.Effect
                     data,
                     configuration.GetSection("ignore_temporary_modifiers").ParseBool()
                         ?? ignoreTemporaryModifiersFromSource
+                );
+
+            var hideTooltip = false;
+            AccessTools
+                .Field(typeof(CardEffectData), "hideTooltip")
+                .SetValue(
+                    data,
+                    configuration.GetSection("hide_tooltip").ParseBool()
+                        ?? hideTooltip
                 );
 
             var showPyreNotification = false;
@@ -304,7 +320,7 @@ namespace TrainworksReloaded.Base.Effect
                 .Field(typeof(CardEffectData), "targetCardSelectionMode")
                 .SetValue(
                     data,
-                    configuration.GetSection("target_selection_mode").ParseCardSelectionMode()
+                    configuration.GetSection("target_card_selection_mode").ParseCardSelectionMode()
                         ?? targetCardSelectionMode
                 );
 
@@ -313,6 +329,51 @@ namespace TrainworksReloaded.Base.Effect
             AccessTools
                 .Field(typeof(CardEffectData), "animToPlay")
                 .SetValue(data, configuration.GetSection("anim_to_play").ParseAnim() ?? animToPlay);
+
+            var additionalTooltips = new List<AdditionalTooltipData>();
+            int configCount = 0;
+            foreach (var config in configuration.GetSection("additional_tooltips").GetChildren())
+            {
+                var tooltipData = new AdditionalTooltipData();
+
+                var titleKey = $"CardEffectDataTooltip_titleKey_{configCount}-{name}";
+                var descriptionTKey = $"CardEffectDataTooltip_descriptionKey_{configCount}-{name}";
+
+                var titleKeyTerm = configuration.GetSection("titles").ParseLocalizationTerm();
+                if (titleKeyTerm != null)
+                {
+                    tooltipData.titleKey = titleKey;
+                    titleKeyTerm.Key = titleKey;
+                    termRegister.Register(titleKey, titleKeyTerm);
+                }
+                var descriptionTKeyTerm = configuration
+                    .GetSection("descriptions")
+                    .ParseLocalizationTerm();
+                if (descriptionTKeyTerm != null)
+                {
+                    tooltipData.descriptionKey = descriptionTKey;
+                    descriptionTKeyTerm.Key = descriptionTKey;
+                    termRegister.Register(descriptionTKey, descriptionTKeyTerm);
+                }
+
+                tooltipData.style =
+                    configuration.GetSection("param_trigger").ParseTooltipDesignType()
+                    ?? TooltipDesigner.TooltipDesignType.Default;
+                tooltipData.isStatusTooltip =
+                    configuration.GetSection("is_status").ParseBool() ?? false;
+                tooltipData.hideInTrainRoomUI =
+                    configuration.GetSection("hide_in_train_room").ParseBool() ?? false;
+                tooltipData.allowSecondaryPlacement =
+                    configuration.GetSection("allow_secondary_placement").ParseBool() ?? false;
+                tooltipData.isTriggerTooltip =
+                    configuration.GetSection("hide_in_train_room").ParseBool() ?? false;
+
+                configCount++;
+                additionalTooltips.Add(tooltipData);
+            }
+            AccessTools
+                .Field(typeof(CardEffectData), "additionalTooltips")
+                .SetValue(data, additionalTooltips.ToArray());
 
             service.Register(name, data);
             return new CardEffectDefinition(key, data, configuration);
