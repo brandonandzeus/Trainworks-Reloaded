@@ -17,12 +17,11 @@ namespace TrainworksReloaded.Base.Subtype
 
         public SubtypeDataRegister(GameDataClient client, IModLogger<SubtypeDataRegister> logger)
         {
-            // TODO update this to the new method of getting SaveManager.
             SaveManager = new Lazy<SaveManager>(() =>
             {
-                if (client.TryGetValue(typeof(SaveManager).Name, out var details))
+                if (client.TryGetProvider<SaveManager>(out var provider))
                 {
-                    return (SaveManager)details.Provider;
+                    return provider;
                 }
                 else
                 {
