@@ -276,8 +276,6 @@ namespace TrainworksReloaded.Base.Character
             var subtypes =
                 (List<string>)
                     AccessTools.Field(typeof(CharacterData), "subtypeKeys").GetValue(data) ?? [];
-            //Ensure subtypeKeys List is initialized (shouldn't change the reference) unless it was null previously
-            AccessTools.Field(typeof(CharacterData), "subtypeKeys").SetValue(data, subtypes);
 
             if (checkOverride)
             {
@@ -296,6 +294,7 @@ namespace TrainworksReloaded.Base.Character
                 }
                 subtypes.Add(lookup.Key);
             }
+            AccessTools.Field(typeof(CharacterData), "subtypeKeys").SetValue(data, subtypes);
 
             var roomModifiers = new List<RoomModifierData>();
             if (!checkOverride)
