@@ -16,9 +16,9 @@ namespace TrainworksReloaded.Base.Relic
         {
             SaveManager = new Lazy<SaveManager>(() =>
             {
-                if (client.TryGetValue(typeof(SaveManager).Name, out var details))
+                if (client.TryGetProvider<SaveManager>(out var provider))
                 {
-                    return (SaveManager)details.Provider;
+                    return provider;
                 }
                 else
                 {

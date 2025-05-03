@@ -234,6 +234,52 @@ namespace TrainworksReloaded.Base.Relic
             }
             AccessTools.Field(typeof(RelicEffectData), "effectConditions").SetValue(data, relicEffectConditions);
 
+            var additionalTooltips = new List<AdditionalTooltipData>();
+            int configCount = 0;
+            foreach (var tooltipConfig in config.GetSection("additional_tooltips").GetChildren())
+            {
+                var tooltipData = new AdditionalTooltipData();
+
+                var titleKey = $"RelicEffectDataTooltip_titleKey_{configCount}-{name}";
+                var descriptionTKey = $"RelicEffectDataTooltip_descriptionKey_{configCount}-{name}";
+
+                var titleKeyTerm = tooltipConfig.GetSection("titles").ParseLocalizationTerm();
+                if (titleKeyTerm != null)
+                {
+                    tooltipData.titleKey = titleKey;
+                    titleKeyTerm.Key = titleKey;
+                    _termRegister.Register(titleKey, titleKeyTerm);
+                }
+                var descriptionTKeyTerm = tooltipConfig
+                    .GetSection("descriptions")
+                    .ParseLocalizationTerm();
+                if (descriptionTKeyTerm != null)
+                {
+                    tooltipData.descriptionKey = descriptionTKey;
+                    descriptionTKeyTerm.Key = descriptionTKey;
+                    _termRegister.Register(descriptionTKey, descriptionTKeyTerm);
+                }
+
+                tooltipData.style =
+                    tooltipConfig.GetSection("param_trigger").ParseTooltipDesignType()
+                    ?? TooltipDesigner.TooltipDesignType.Default;
+                tooltipData.isStatusTooltip =
+                    tooltipConfig.GetSection("is_status").ParseBool() ?? false;
+                tooltipData.hideInTrainRoomUI =
+                    tooltipConfig.GetSection("hide_in_train_room").ParseBool() ?? false;
+                tooltipData.allowSecondaryPlacement =
+                    tooltipConfig.GetSection("allow_secondary_placement").ParseBool() ?? false;
+                tooltipData.isTriggerTooltip =
+                    tooltipConfig.GetSection("hide_in_train_room").ParseBool() ?? false;
+
+                configCount++;
+                additionalTooltips.Add(tooltipData);
+            }
+            AccessTools
+                .Field(typeof(RelicEffectData), "additionalTooltips")
+                .SetValue(data, additionalTooltips.ToArray());
+
+
             service.Register(name, data);
             return new RelicEffectDataDefinition(key, data, config){
                 Id = effectId

@@ -36,7 +36,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
 
         public List<IDefinition<CardUpgradeData>> Run(IRegister<CardUpgradeData> service)
         {
-            // We load all cards and then finalize them to avoid dependency loops
+            // We load all upgrades and then finalize them to avoid dependency loops
             var processList = new List<IDefinition<CardUpgradeData>>();
             foreach (var config in atlas.PluginDefinitions)
             {
@@ -307,12 +307,22 @@ namespace TrainworksReloaded.Base.CardUpgrade
             }
             foreach (var upgrade in upgrades)
             {
-                var val = upgrade.Value;
-                if (val == null)
+                var traitStateName = upgrade.GetSection("name").Value;
+                if (traitStateName == null)
+                    continue;
+
+                var modReference = upgrade.GetSection("mod_reference").Value ?? key;
+                var assembly = atlas.PluginDefinitions.GetValueOrDefault(modReference)?.Assembly;
+                if (
+                    !traitStateName.GetFullyQualifiedName<CardTraitState>(
+                        assembly,
+                        out string? fullyQualifiedName
+                    )
+                )
                 {
                     continue;
                 }
-                removeTraitUpgrades.Add(val.ToId(key, TemplateConstants.Trait));
+                removeTraitUpgrades.Add(fullyQualifiedName);
             }
             AccessTools
                 .Field(typeof(CardUpgradeData), "removeTraitUpgrades")

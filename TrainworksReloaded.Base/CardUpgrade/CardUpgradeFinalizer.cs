@@ -9,6 +9,7 @@ using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Base.Prefab;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
+using UnityEngine;
 
 namespace TrainworksReloaded.Base.CardUpgrade
 {
@@ -16,6 +17,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
     {
         private readonly IModLogger<CardUpgradeFinalizer> logger;
         private readonly ICache<IDefinition<CardUpgradeData>> cache;
+        private readonly IRegister<CardData> cardRegister;
         private readonly IRegister<CharacterTriggerData> triggerRegister;
         private readonly IRegister<RoomModifierData> roomModifierRegister;
         private readonly IRegister<CardTraitData> traitRegister;
@@ -23,11 +25,13 @@ namespace TrainworksReloaded.Base.CardUpgrade
         private readonly IRegister<CardUpgradeData> upgradeRegister;
         private readonly IRegister<VfxAtLoc> vfxRegister;
         private readonly IRegister<StatusEffectData> statusRegister;
+        private readonly IRegister<Sprite> spriteRegister;
         private readonly IRegister<CardUpgradeMaskData> upgradeMaskRegister;
 
         public CardUpgradeFinalizer(
             IModLogger<CardUpgradeFinalizer> logger,
             ICache<IDefinition<CardUpgradeData>> cache,
+            IRegister<CardData> cardRegister,
             IRegister<CharacterTriggerData> triggerRegister,
             IRegister<RoomModifierData> roomModifierRegister,
             IRegister<CardTraitData> traitRegister,
@@ -35,11 +39,13 @@ namespace TrainworksReloaded.Base.CardUpgrade
             IRegister<CardUpgradeData> upgradeRegister,
             IRegister<VfxAtLoc> vfxRegister,
             IRegister<StatusEffectData> statusRegister,
+            IRegister<Sprite> spriteRegister,
             IRegister<CardUpgradeMaskData> upgradeMaskRegister
         )
         {
             this.logger = logger;
             this.cache = cache;
+            this.cardRegister = cardRegister;
             this.triggerRegister = triggerRegister;
             this.roomModifierRegister = roomModifierRegister;
             this.traitRegister = traitRegister;
@@ -47,6 +53,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
             this.upgradeRegister = upgradeRegister;
             this.vfxRegister = vfxRegister;
             this.statusRegister = statusRegister;
+            this.spriteRegister = spriteRegister;
             this.upgradeMaskRegister = upgradeMaskRegister;
         }
 
@@ -293,6 +300,25 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 filters.Add(lookup);
             }
             AccessTools.Field(typeof(CardUpgradeData), "filters").SetValue(data, filters);
+
+            var ability = configuration.GetSection("ability_upgrade").ParseString() ?? "";
+            if (!ability.IsNullOrEmpty() && cardRegister.TryLookupName(ability.ToId(key, TemplateConstants.Card), out var abilityCard, out var _))
+            {
+                AccessTools.Field(typeof(CharacterData), "unitAbilityUpgrade").SetValue(data, abilityCard);
+            }
+
+            var sprite = configuration.GetSection("icon").ParseString();
+            if (
+                sprite != null
+                && spriteRegister.TryLookupId(
+                    sprite.ToId(key, TemplateConstants.Sprite),
+                    out var spriteLookup,
+                    out var _
+                )
+            )
+            {
+                AccessTools.Field(typeof(CardUpgradeData), "upgradeIcon").SetValue(data, spriteLookup);
+            }
         }
     }
 }

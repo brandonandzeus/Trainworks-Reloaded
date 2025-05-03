@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Interfaces;
+using static RotaryHeart.Lib.DataBaseExample;
 
 namespace TrainworksReloaded.Base.Localization
 {
@@ -29,7 +30,11 @@ namespace TrainworksReloaded.Base.Localization
 
         public void LoadData()
         {
-            var manager = gameDataClient["LanguageManager"].Provider;
+            if (!gameDataClient.TryGetProvider<LanguageManager>(out var manager))
+            {
+                logger.Log(LogLevel.Warning, "Unable to get replacement strings dictionary.");
+                return;
+            }
             var handler = AccessTools.Field(typeof(LanguageManager), "_paramHandler").GetValue(manager);
             var dict = AccessTools.Field(typeof(LocalizationGlobalParameterHandler), "_replacements").GetValue(handler) as Dictionary<string, ReplacementStringData>;
             if (dict == null)
