@@ -20,7 +20,9 @@ namespace TrainworksReloaded.Base
     {
         public void NewProviderAvailable(IProvider newProvider)
         {
-            this.Add(newProvider.GetType(), new ProviderDetails(false, newProvider));
+            // TODO keep a list of all providers of a type.
+            // Calling add here previously errored due to multiple MerchantCharacterUI objects being provided.
+            this[newProvider.GetType()] = new ProviderDetails(false, newProvider);
         }
 
         public void NewProviderFullyInstalled(IProvider newProvider)

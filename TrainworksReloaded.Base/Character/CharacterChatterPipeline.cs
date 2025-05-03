@@ -8,6 +8,7 @@ using TrainworksReloaded.Base.Localization;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
+using UnityEngine;
 using static CharacterChatterData;
 
 namespace TrainworksReloaded.Base.Character
@@ -78,7 +79,7 @@ namespace TrainworksReloaded.Base.Character
                 return null;
             }
 
-            CharacterChatterData data = new();
+            CharacterChatterData data = ScriptableObject.CreateInstance<CharacterChatterData>();
             var name = key.GetId(TemplateConstants.Chatter, id);
             data.name = name;
 
