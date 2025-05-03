@@ -20,6 +20,7 @@ using TrainworksReloaded.Base.Relic;
 using TrainworksReloaded.Base.Reward;
 using TrainworksReloaded.Base.Room;
 using TrainworksReloaded.Base.StatusEffects;
+using TrainworksReloaded.Base.Subtype;
 using TrainworksReloaded.Base.Trait;
 using TrainworksReloaded.Base.Trigger;
 using TrainworksReloaded.Core;
@@ -131,6 +132,7 @@ namespace TrainworksReloaded.Plugin
                         typeof(CardPoolFinalizer),
                         typeof(CharacterTriggerTypeFinalizer),
                         typeof(CardTriggerTypeFinalizer),
+                        typeof(CharacterChatterFinalizer),
                         typeof(RelicDataFinalizer),
                         typeof(RelicEffectDataFinalizer),
                         typeof(GameObjectFinalizer),
@@ -309,6 +311,21 @@ namespace TrainworksReloaded.Plugin
                     pipeline.Run(x);
                 });
 
+                //Register Subtypes
+                c.RegisterSingleton<IRegister<SubtypeData>, SubtypeDataRegister>();
+                c.RegisterSingleton<SubtypeDataRegister, SubtypeDataRegister>();
+                c.Register<
+                    IDataPipeline<IRegister<SubtypeData>, SubtypeData>,
+                    SubtypeDataPipeline
+                >();
+                c.RegisterInitializer<IRegister<SubtypeData>>(x =>
+                {
+                    var pipeline = c.GetInstance<
+                        IDataPipeline<IRegister<SubtypeData>, SubtypeData>
+                    >();
+                    pipeline.Run(x);
+                });
+
                 //Register Status Effect Data
                 c.RegisterSingleton<IRegister<StatusEffectData>, StatusEffectDataRegister>();
                 c.RegisterSingleton<StatusEffectDataRegister, StatusEffectDataRegister>();
@@ -390,6 +407,21 @@ namespace TrainworksReloaded.Plugin
                 {
                     var pipeline = c.GetInstance<
                         IDataPipeline<IRegister<CharacterTriggerData>, CharacterTriggerData>
+                    >();
+                    pipeline.Run(x);
+                });
+
+                //Register Character Chatter
+                c.RegisterSingleton<IRegister<CharacterChatterData>, CharacterChatterRegister>(); 
+                c.RegisterSingleton<CharacterChatterRegister, CharacterChatterRegister>();
+                c.Register<
+                    IDataPipeline<IRegister<CharacterChatterData>, CharacterChatterData>,
+                    CharacterChatterPipeline
+                >();
+                c.RegisterInitializer<IRegister<CharacterChatterData>>(x =>
+                {
+                    var pipeline = c.GetInstance<
+                        IDataPipeline<IRegister<CharacterChatterData>, CharacterChatterData>
                     >();
                     pipeline.Run(x);
                 });

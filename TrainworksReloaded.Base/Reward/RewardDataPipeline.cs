@@ -148,7 +148,7 @@ namespace TrainworksReloaded.Base.Reward
                 .Field(typeof(RewardData), "_filter")
                 .SetValue(
                     data,
-                    configuration.GetSection("filter").ParseRewardFiler() ?? RewardData.Filter.None
+                    configuration.GetSection("filter").ParseRewardFilter() ?? RewardData.Filter.None
                 );
 
             service.Register(name, data);

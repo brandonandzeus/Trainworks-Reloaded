@@ -34,7 +34,6 @@
         "status_effect_count_in_target_room",
         "corruption_in_target_room",
         "turn_count",
-        "regal_count_in_target_room",
         "dragons_hoard_amount",
         "moon_phase",
         "magic_power_in_target_room",
@@ -44,6 +43,7 @@
         "pyre_heart_resurrection",
         "num_specific_cards_in_deck",
         "any_status_effect_stacks_added",
-        "any_status_effect_stacks_removed"
+        "any_status_effect_stacks_removed",
+        "last_attack_damage_dealt"
     ]
 }

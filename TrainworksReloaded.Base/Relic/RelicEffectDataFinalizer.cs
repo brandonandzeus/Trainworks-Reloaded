@@ -22,6 +22,7 @@ namespace TrainworksReloaded.Base.Relic
         private readonly IRegister<CardUpgradeData> upgradeRegister;
         private readonly IRegister<RewardData> rewardRegister;
         private readonly IRegister<CardUpgradeMaskData> cardUpgradeMaskRegister;
+        private readonly IRegister<SubtypeData> subtypeRegister;
         private readonly IRegister<VfxAtLoc> vfxRegister;
         private readonly IRegister<RelicData> relicRegister;
         private readonly IRegister<CharacterTriggerData.Trigger> triggerEnumRegister;
@@ -38,6 +39,7 @@ namespace TrainworksReloaded.Base.Relic
             IRegister<CardUpgradeData> upgradeRegister,
             IRegister<StatusEffectData> statusRegister,
             IRegister<RewardData> rewardRegister,
+            IRegister<SubtypeData> subtypeRegister,
             IRegister<CardUpgradeMaskData> cardUpgradeMaskRegister,
             IRegister<VfxAtLoc> vfxRegister,
             IRegister<RelicData> relicRegister,
@@ -56,6 +58,7 @@ namespace TrainworksReloaded.Base.Relic
             this.statusEffectRegister = statusRegister;
             this.rewardRegister = rewardRegister;
             this.cardUpgradeMaskRegister = cardUpgradeMaskRegister;
+            this.subtypeRegister = subtypeRegister;
             this.vfxRegister = vfxRegister;
             this.relicRegister = relicRegister;
             this.triggerEnumRegister = triggerEnumRegister;
@@ -266,6 +269,37 @@ namespace TrainworksReloaded.Base.Relic
             {
                 AccessTools.Field(typeof(RelicEffectData), "paramCardFilterSecondary").SetValue(data, cardFilterSecondary);
             }
+
+            // Handle character subtype
+            var characterSubtype = "SubtypesData_None";
+            var characterSubtypeId = configuration.GetSection("character_subtype").ParseString();
+            if (characterSubtypeId != null)
+            {
+                if (subtypeRegister.TryLookupId(
+                    characterSubtypeId.ToId(key, TemplateConstants.Subtype),
+                    out var lookup,
+                    out var _))
+                {
+                    characterSubtype = lookup.Key;
+                }
+            }
+            AccessTools.Field(typeof(RelicEffectData), "paramCharacterSubtype").SetValue(data, characterSubtype);
+
+            // Handle excluded character subtypes
+            List<string> excludedSubtypes = [];
+            foreach (var id in configuration.GetSection("excluded_character_subtypes").GetChildren())
+            {
+                var idConfig = id?.ParseString();
+                if (idConfig == null || !subtypeRegister.TryLookupId(
+                    idConfig.ToId(key, TemplateConstants.Subtype),
+                    out var lookup,
+                    out var _))
+                {
+                    continue;
+                }
+                excludedSubtypes.Add(lookup.Key);
+            }
+            AccessTools.Field(typeof(RelicEffectData), "paramExcludeCharacterSubtypes").SetValue(data, excludedSubtypes.ToArray());
 
             var appliedVFXId = configuration.GetSection("applied_vfx").ParseString() ?? "";
             if (

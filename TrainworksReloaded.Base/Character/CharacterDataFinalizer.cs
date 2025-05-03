@@ -22,6 +22,8 @@ namespace TrainworksReloaded.Base.Character
         private readonly IRegister<VfxAtLoc> vfxRegister;
         private readonly IRegister<StatusEffectData> statusRegister;
         private readonly IRegister<CardData> cardRegister;
+        private readonly IRegister<CharacterChatterData> chatterRegister;
+        private readonly IRegister<SubtypeData> subtypeRegister;
         private readonly IRegister<RoomModifierData> roomModifierRegister;
         private readonly IRegister<RelicData> relicRegister;
         private readonly FallbackDataProvider dataProvider;
@@ -34,6 +36,8 @@ namespace TrainworksReloaded.Base.Character
             IRegister<VfxAtLoc> vfxRegister,
             IRegister<StatusEffectData> statusRegister,
             IRegister<CardData> cardRegister,
+            IRegister<CharacterChatterData> chatterRegister,
+            IRegister<SubtypeData> subtypeRegister,
             IRegister<RoomModifierData> roomModifierRegister,
             IRegister<RelicData> relicRegister,
             FallbackDataProvider dataProvider
@@ -46,6 +50,8 @@ namespace TrainworksReloaded.Base.Character
             this.vfxRegister = vfxRegister;
             this.statusRegister = statusRegister;
             this.cardRegister = cardRegister;
+            this.chatterRegister = chatterRegister;
+            this.subtypeRegister = subtypeRegister;
             this.roomModifierRegister = roomModifierRegister;
             this.relicRegister = relicRegister;
             this.dataProvider = dataProvider;
@@ -255,6 +261,41 @@ namespace TrainworksReloaded.Base.Character
             AccessTools
                 .Field(typeof(CharacterData), "startingStatusEffects")
                 .SetValue(data, startingStatusEffects.ToArray());
+
+            // TODO checkOverride is not honored, should allow merging the existing data.
+            var chatterId = configuration.GetSection("chatter").ParseString();
+            if (chatterId != null)
+            {
+                if (chatterRegister.TryLookupId(chatterId.ToId(key, TemplateConstants.Chatter), out var lookup, out var _))
+                {
+                    AccessTools.Field(typeof(CharacterData), "characterChatterData").SetValue(data, lookup);
+                }
+            }
+
+            //subtypes
+            var subtypes =
+                (List<string>)
+                    AccessTools.Field(typeof(CharacterData), "subtypeKeys").GetValue(data) ?? [];
+            //Ensure subtypeKeys List is initialized (shouldn't change the reference) unless it was null previously
+            AccessTools.Field(typeof(CharacterData), "subtypeKeys").SetValue(data, subtypes);
+
+            if (checkOverride)
+            {
+                subtypes.Clear();
+            }
+            foreach (var config in configuration.GetSection("subtypes").GetChildren())
+            {
+                var id = config?.ParseString();
+                if (id == null ||
+                    !subtypeRegister.TryLookupId(
+                        id.ToId(key, TemplateConstants.Subtype),
+                        out var lookup,
+                        out var _))
+                {
+                    continue;
+                }
+                subtypes.Add(lookup.Key);
+            }
 
             var roomModifiers = new List<RoomModifierData>();
             if (!checkOverride)

@@ -95,7 +95,6 @@ namespace TrainworksReloaded.Base.Room
             AccessTools
                 .Field(typeof(RoomModifierData), "roomStateModifierClassName")
                 .SetValue(data, fullyQualifiedName);
-
             //handle descriptions
             var descriptionKeyTerm = configuration
                 .GetSection("descriptions")
@@ -159,14 +158,6 @@ namespace TrainworksReloaded.Base.Room
                     .Field(typeof(RoomModifierData), "extraTooltipBodyKey")
                     .SetValue(data, string.Empty);
             }
-
-                var paramSubtype = "";
-            AccessTools
-                .Field(typeof(RoomModifierData), "paramSubtype")
-                .SetValue(
-                    data,
-                    configuration.GetSection("param_subtype").ParseString() ?? paramSubtype
-                );
 
             //bool
             var useTitleForCardDescription = false;

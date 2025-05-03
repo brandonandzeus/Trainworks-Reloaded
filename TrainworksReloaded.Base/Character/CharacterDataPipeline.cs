@@ -239,20 +239,6 @@ namespace TrainworksReloaded.Base.Character
                     configuration.GetSection("chosen_variant").ParseBool() ?? chosenVariant
                 );
 
-            var removeTriggersOnRelentlessChange =
-                checkOverride
-                && (bool)
-                    AccessTools
-                        .Field(typeof(CharacterData), "removeTriggersOnRelentlessChange")
-                        .GetValue(data);
-            AccessTools
-                .Field(typeof(CharacterData), "removeTriggersOnRelentlessChange")
-                .SetValue(
-                    data,
-                    configuration.GetSection("remove_triggers_on_relentless").ParseBool()
-                        ?? removeTriggersOnRelentlessChange
-                );
-
             var isPyreHeart =
                 checkOverride
                 && (bool)AccessTools.Field(typeof(CharacterData), "isPyreHeart").GetValue(data);
@@ -272,20 +258,6 @@ namespace TrainworksReloaded.Base.Character
                     data,
                     configuration.GetSection("disable_in_daily_challenges").ParseBool()
                         ?? disableInDailyChallenges
-                );
-
-            var canOnlyEquipGraftedEquipment =
-                checkOverride
-                && (bool)
-                    AccessTools
-                        .Field(typeof(CharacterData), "canOnlyEquipGraftedEquipment")
-                        .GetValue(data);
-            AccessTools
-                .Field(typeof(CharacterData), "canOnlyEquipGraftedEquipment")
-                .SetValue(
-                    data,
-                    configuration.GetSection("can_equip_only_grafted").ParseBool()
-                        ?? canOnlyEquipGraftedEquipment
                 );
 
             //int
@@ -360,28 +332,6 @@ namespace TrainworksReloaded.Base.Character
                     configuration.GetSection("titan_affinity").ParseTitanAffinity()
                         ?? bossTitanAffinity
                 );
-
-            //subtypes
-            var subtypes =
-                (List<string>)
-                    AccessTools.Field(typeof(CharacterData), "subtypeKeys").GetValue(data);
-            if (subtypes == null)
-            {
-                subtypes = new List<string>();
-                AccessTools.Field(typeof(CharacterData), "subtypeKeys").SetValue(data, subtypes);
-            }
-
-            if (checkOverride)
-            {
-                subtypes.Clear();
-            }
-
-            foreach (var config in configuration.GetSection("subtypes").GetChildren().ToList())
-            {
-                var str = config.ParseString();
-                if (str != null)
-                    subtypes.Add(str);
-            }
 
             //handle tooltips
             int tooltip_count = 0;

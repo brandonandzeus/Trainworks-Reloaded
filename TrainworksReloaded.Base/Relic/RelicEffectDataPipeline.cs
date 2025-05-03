@@ -143,20 +143,6 @@ namespace TrainworksReloaded.Base.Relic
             var paramString = config.GetSection("param_string").ParseString() ?? "";
             AccessTools.Field(typeof(RelicEffectData), "paramString").SetValue(data, paramString);
 
-
-            // Handle character subtype
-            var characterSubtype = config.GetSection("character_subtype").ParseString() ?? "SubtypesData_None";
-            AccessTools.Field(typeof(RelicEffectData), "paramCharacterSubtype").SetValue(data, characterSubtype);
-
-
-            // Handle excluded character subtypes
-            var excludedSubtypes = config.GetSection("excluded_character_subtypes").GetChildren()
-                .Select(x => x.Value)
-                .Where(x => x != null)
-                .ToArray() ?? [];
-            AccessTools.Field(typeof(RelicEffectData), "paramExcludeCharacterSubtypes").SetValue(data, excludedSubtypes);
-
-
             // Handle special character type
             var specialCharacterType = config.GetSection("special_character_type").ParseSpecialCharacterType() ?? SpecialCharacterType.None;
             AccessTools.Field(typeof(RelicEffectData), "paramSpecialCharacterType").SetValue(data, specialCharacterType);

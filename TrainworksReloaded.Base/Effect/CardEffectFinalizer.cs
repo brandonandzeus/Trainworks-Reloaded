@@ -5,6 +5,7 @@ using System.Text;
 using HarmonyLib;
 using TrainworksReloaded.Base.Card;
 using TrainworksReloaded.Base.Extensions;
+using TrainworksReloaded.Base.Subtype;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 
@@ -19,6 +20,7 @@ namespace TrainworksReloaded.Base.Effect
         private readonly IRegister<CharacterTriggerData.Trigger> triggerEnumRegister;
         private readonly IRegister<CardUpgradeMaskData> upgradeMaskRegister;
         private readonly IRegister<CardPool> cardPoolRegister;
+        private readonly IRegister<SubtypeData> subtypeRegister;
         private readonly IRegister<VfxAtLoc> vfxRegister;
         private readonly ICache<IDefinition<CardEffectData>> cache;
 
@@ -30,6 +32,7 @@ namespace TrainworksReloaded.Base.Effect
             IRegister<StatusEffectData> statusRegister,
             IRegister<CharacterTriggerData.Trigger> triggerEnumRegister,
             IRegister<CardPool> cardPoolRegister,
+            IRegister<SubtypeData> subtypeRegister,
             IRegister<VfxAtLoc> vfxRegister,
             ICache<IDefinition<CardEffectData>> cache
         )
@@ -41,6 +44,7 @@ namespace TrainworksReloaded.Base.Effect
             this.triggerEnumRegister = triggerEnumRegister;
             this.upgradeMaskRegister = upgradeMaskRegister;
             this.cardPoolRegister = cardPoolRegister;
+            this.subtypeRegister = subtypeRegister;
             this.vfxRegister = vfxRegister;
             this.cache = cache;
         }
@@ -60,7 +64,7 @@ namespace TrainworksReloaded.Base.Effect
             var key = definition.Key;
             var data = definition.Data;
 
-            var cardConfig = configuration.GetSection("param_card_data").Value;
+            var cardConfig = configuration.GetSection("param_card").Value;
             if (
                 cardConfig != null
                 && cardRegister.TryLookupName(
@@ -247,6 +251,41 @@ namespace TrainworksReloaded.Base.Effect
                     );
                 AccessTools.Field(typeof(CardEffectData), "paramCardPool").SetValue(data, lookup);
             }
+
+            var targetCharacterSubtype = "SubtypesData_None";
+            var targetCharacterSubtypeId = configuration.GetSection("target_subtype").ParseString();
+            if (targetCharacterSubtypeId != null)
+            {
+                if (subtypeRegister.TryLookupId(
+                    targetCharacterSubtypeId.ToId(key, TemplateConstants.Subtype),
+                    out var lookup,
+                    out var _
+                ))
+                {
+                    targetCharacterSubtype = lookup.Key;
+                }
+            }
+            AccessTools
+                .Field(typeof(CardEffectData), "targetCharacterSubtype")
+                .SetValue(data, targetCharacterSubtype);
+
+
+            var paramSubtype = "SubtypesData_None";
+            var paramSubtypeId = configuration.GetSection("param_subtype").ParseString();
+            if (paramSubtypeId != null)
+            {
+                if (subtypeRegister.TryLookupId(
+                    paramSubtypeId.ToId(key, TemplateConstants.Subtype),
+                    out var lookup,
+                    out var _
+                ))
+                {
+                    paramSubtype = lookup.Key;
+                }
+            }
+            AccessTools
+                .Field(typeof(CardEffectData), "paramSubtype")
+                .SetValue(data, paramSubtype);
 
             var appliedToSelfVFXId = configuration.GetSection("applied_to_self_vfx").ParseString() ?? "";
             if (

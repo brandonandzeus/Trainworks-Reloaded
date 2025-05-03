@@ -39,21 +39,40 @@ namespace TrainworksReloaded.Base.Extensions
             };
         }
 
-        public static RewardData.Filter? ParseRewardFiler(this IConfigurationSection section)
+        public static RewardData.Filter? ParseRewardFilter(this IConfigurationSection section)
         {
             var val = section.Value;
             if (string.IsNullOrEmpty(val))
             {
                 return null;
             }
-            return val.ToLower() switch
+
+            val = val.ToLower();
+            var values = val.Split('|', StringSplitOptions.RemoveEmptyEntries)
+                           .Select(v => v.Trim())
+                           .ToList();
+
+            RewardData.Filter result = RewardData.Filter.None;
+            foreach (var value in values)
             {
-                "none" => RewardData.Filter.None,
-                "only_endless" => RewardData.Filter.OnlyInEndless,
-                "not_endless" => RewardData.Filter.NotInEndless,
-                "only_if_allied_champ" => RewardData.Filter.OnlyIfHasAlliedChampion,
-                _ => null,
-            };
+                RewardData.Filter? flag = value switch
+                {
+                    "none" => RewardData.Filter.None,
+                    "only_endless" => RewardData.Filter.OnlyInEndless,
+                    "not_endless" => RewardData.Filter.NotInEndless,
+                    "only_if_allied_champ" => RewardData.Filter.OnlyIfHasAlliedChampion,
+                    _ => null
+                };
+
+                if (flag == null)
+                {
+                    return null;
+                }
+
+                result |= flag.Value;
+            }
+
+            return result;
         }
 
         public static CardData.CostType? ParseCostType(this IConfigurationSection section)
@@ -106,6 +125,7 @@ namespace TrainworksReloaded.Base.Extensions
                 "starter" => CollectableRarity.Starter,
                 "rare" => CollectableRarity.Rare,
                 "champion" => CollectableRarity.Champion,
+                "unset" => CollectableRarity.Unset,
                 _ => null,
             };
         }
@@ -252,15 +272,33 @@ namespace TrainworksReloaded.Base.Extensions
             {
                 return null;
             }
-            return val.ToLower() switch
+            
+            val = val.ToLower();
+            var values = val.Split('|', StringSplitOptions.RemoveEmptyEntries)
+                           .Select(v => v.Trim())
+                           .ToList();
+
+            CardTargetMode result = CardTargetMode.All;
+            foreach (var value in values)
             {
-                "all" => CardTargetMode.All,
-                "single" => CardTargetMode.SingleTarget,
-                "targetless" => CardTargetMode.Targetless,
-                "other" => CardTargetMode.Other,
-                "none" => CardTargetMode.NONE,
-                _ => null,
-            };
+                CardTargetMode? flag = value switch
+                {
+                    "none" => CardTargetMode.NONE,
+                    "all" => CardTargetMode.All,
+                    "single" => CardTargetMode.SingleTarget,
+                    "targetless" => CardTargetMode.Targetless,
+                    "other" => CardTargetMode.Other,
+                    _ => null
+                };
+
+                if (flag == null)
+                {
+                    return null;
+                }
+
+                result |= flag.Value;
+            }
+            return result;
         }
 
         public static object ParseCompareOperator(this IConfigurationSection section, string defaultVal = "and")
@@ -373,7 +411,6 @@ namespace TrainworksReloaded.Base.Extensions
                     TrackedValueType.StatusEffectCountInTargetRoom,
                 "corruption_in_target_room" => TrackedValueType.CorruptionInTargetRoom,
                 "turn_count" => TrackedValueType.TurnCount,
-                "regal_count_in_target_room" => TrackedValueType.RegalCountInTargetRoom,
                 "dragons_hoard_amount" => TrackedValueType.DragonsHoardAmount,
                 "moon_phase" => TrackedValueType.MoonPhase,
                 "magic_power_in_target_room" => TrackedValueType.MagicPowerInTargetRoom,
@@ -385,6 +422,7 @@ namespace TrainworksReloaded.Base.Extensions
                 "num_specific_cards_in_deck" => TrackedValueType.NumSpecificCardsInDeck,
                 "any_status_effect_stacks_added" => TrackedValueType.AnyStatusEffectStacksAdded,
                 "any_status_effect_stacks_removed" => TrackedValueType.AnyStatusEffectStacksRemoved,
+                "last_attack_damage_dealt" => TrackedValueType.LastAttackDamageDealt,
                 _ => null,
             };
         }
@@ -501,6 +539,7 @@ namespace TrainworksReloaded.Base.Extensions
                 "weakest_all_rooms" => TargetMode.WeakestAllRooms,
                 "strongest_all_rooms" => TargetMode.StrongestAllRooms,
                 "last_equipped_character" => TargetMode.LastEquippedCharacter,
+                "last_sacrificed_character" => TargetMode.LastSacrificedCharacter,
                 _ => null,
             };
         }
@@ -585,9 +624,7 @@ namespace TrainworksReloaded.Base.Extensions
                 "on_attacking" => CharacterTriggerData.Trigger.OnAttacking,
                 "on_kill" => CharacterTriggerData.Trigger.OnKill,
                 "on_any_hero_death_on_floor" => CharacterTriggerData.Trigger.OnAnyHeroDeathOnFloor,
-                "on_any_monster_death_on_floor" => CharacterTriggerData
-                    .Trigger
-                    .OnAnyMonsterDeathOnFloor,
+                "on_any_monster_death_on_floor" => CharacterTriggerData.Trigger.OnAnyMonsterDeathOnFloor,
                 "on_heal" => CharacterTriggerData.Trigger.OnHeal,
                 "on_team_turn_begin" => CharacterTriggerData.Trigger.OnTeamTurnBegin,
                 "pre_combat" => CharacterTriggerData.Trigger.PreCombat,
@@ -619,9 +656,7 @@ namespace TrainworksReloaded.Base.Extensions
                 "card_regal_played" => CharacterTriggerData.Trigger.CardRegalPlayed,
                 "regal_count_added" => CharacterTriggerData.Trigger.RegalCountAdded,
                 "on_unit_ability_available" => CharacterTriggerData.Trigger.OnUnitAbilityAvailable,
-                "on_unit_ability_unavailable" => CharacterTriggerData
-                    .Trigger
-                    .OnUnitAbilityUnavailable,
+                "on_unit_ability_unavailable" => CharacterTriggerData.Trigger.OnUnitAbilityUnavailable,
                 "on_shift" => CharacterTriggerData.Trigger.OnShift,
                 "on_equipment_added" => CharacterTriggerData.Trigger.OnEquipmentAdded,
                 "on_equipment_removed" => CharacterTriggerData.Trigger.OnEquipmentRemoved,
@@ -636,9 +671,7 @@ namespace TrainworksReloaded.Base.Extensions
                 "on_reanimated" => CharacterTriggerData.Trigger.OnReanimated,
                 "on_graft_equipment_added" => CharacterTriggerData.Trigger.OnGraftEquipmentAdded,
                 "on_new_status_effect_added" => CharacterTriggerData.Trigger.OnNewStatusEffectAdded,
-                "on_queued_status_effect_to_add" => CharacterTriggerData
-                    .Trigger
-                    .OnQueuedStatusEffectToAdd,
+                "on_queued_status_effect_to_add" => CharacterTriggerData.Trigger.OnQueuedStatusEffectToAdd,
                 "on_moon_lit" => CharacterTriggerData.Trigger.OnMoonLit,
                 "on_moon_shade" => CharacterTriggerData.Trigger.OnMoonShade,
                 "on_moonlit_lost" => CharacterTriggerData.Trigger.OnMoonlitLost,
@@ -647,9 +680,9 @@ namespace TrainworksReloaded.Base.Extensions
                 "on_troop_removed" => CharacterTriggerData.Trigger.OnTroopRemoved,
                 "on_train_room_loop" => CharacterTriggerData.Trigger.OnTrainRoomLoop,
                 "on_status_effect_changed" => CharacterTriggerData.Trigger.OnStatusEffectChanged,
-                "on_attacking_before_damage" => CharacterTriggerData
-                    .Trigger
-                    .OnAttackingBeforeDamage,
+                "on_attacking_before_damage" => CharacterTriggerData.Trigger.OnAttackingBeforeDamage,
+                "on_silence" => CharacterTriggerData.Trigger.OnSilence,
+                "on_silence_lost" => CharacterTriggerData.Trigger.OnSilenceLost,
                 _ => null,
             };
         }
@@ -916,6 +949,7 @@ namespace TrainworksReloaded.Base.Extensions
                 "on_hit" => StatusEffectData.TriggerStage.OnHit,
                 "on_post_spawn" => StatusEffectData.TriggerStage.OnPostSpawn,
                 "on_pre_attacked_life_link" => StatusEffectData.TriggerStage.OnPreAttackedLifeLink,
+                "on_pre_attacked_titan_skin" => StatusEffectData.TriggerStage.OnPreAttackedTitanSkin,
                 _ => null
             };
         }
@@ -956,7 +990,8 @@ namespace TrainworksReloaded.Base.Extensions
                 _ => null
             };
         }
-        public static SpecialCharacterType? ParseSpecialCharacterType(this IConfigurationSection section){
+        public static SpecialCharacterType? ParseSpecialCharacterType(this IConfigurationSection section)
+        {
             var val = section.Value;
             if (string.IsNullOrEmpty(val))
             {
@@ -1036,6 +1071,28 @@ namespace TrainworksReloaded.Base.Extensions
                 result |= classType.Value;
             }
             return result;
+        }
+
+        public static CharacterChatterData.Gender ParseGender(this IConfigurationSection section, CharacterChatterData.Gender defaultValue)
+        {
+            var val = section.Value;
+            if (string.IsNullOrEmpty(val))
+            {
+                return defaultValue;
+            }
+            val = val.ToLower();
+            CharacterChatterData.Gender? value = val switch
+            {
+                "male" => CharacterChatterData.Gender.Male,
+                "female" => CharacterChatterData.Gender.Female,
+                "neutral" => CharacterChatterData.Gender.Neutral,
+                _ => null
+            };
+            if (value == null)
+            {
+                return defaultValue;
+            }
+            return value.Value;
         }
     }
 }
