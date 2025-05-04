@@ -236,7 +236,7 @@ namespace TrainworksReloaded.Base.Relic
             }
 
             // Handle card upgrade data
-            var cardUpgradeDataId = configuration.GetSection("param_card_upgrade_data").ParseString();
+            var cardUpgradeDataId = configuration.GetSection("param_upgrade").ParseString();
             if (cardUpgradeDataId != null && upgradeRegister.TryLookupName(cardUpgradeDataId.ToId(key, TemplateConstants.Upgrade), out var cardUpgradeData, out var _))
             {
                 AccessTools.Field(typeof(RelicEffectData), "paramCardUpgradeData").SetValue(data, cardUpgradeData);

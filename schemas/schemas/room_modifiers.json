@@ -22,6 +22,10 @@
                         "$ref": "../definitions/parse_term.json",
                         "description": "Localized text describing this room modifier."
                     },
+                    "disallow_in_deployment"{
+                        "type": "boolean",
+                        "description": "Disallows this RoomModifier effect in the deployment phase"
+                    },
                     "effects": {
                         "type": "array",
                         "description": "List of effects applied by this room modifier.",

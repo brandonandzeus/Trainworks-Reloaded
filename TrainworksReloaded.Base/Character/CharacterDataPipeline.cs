@@ -260,6 +260,20 @@ namespace TrainworksReloaded.Base.Character
                         ?? disableInDailyChallenges
                 );
 
+            var preventAbilitiesFromEquipment =
+                checkOverride
+                && (bool)
+                    AccessTools
+                        .Field(typeof(CharacterData), "preventAbilitiesFromEquipment")
+                        .GetValue(data);
+            AccessTools
+                .Field(typeof(CharacterData), "preventAbilitiesFromEquipment")
+                .SetValue(
+                    data,
+                    configuration.GetSection("prevent_abilities_from_equipment").ParseBool()
+                        ?? preventAbilitiesFromEquipment
+                );
+
             //int
             var size = checkOverride
                 ? (int)AccessTools.Field(typeof(CharacterData), "size").GetValue(data)

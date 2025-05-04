@@ -81,11 +81,15 @@ namespace TrainworksReloaded.Base.Relic
             var type = config.GetSection("type").ParseString();
             if (type == null || !generators.TryGetValue(type, out var factory))
             {
+                _logger.Log(LogLevel.Error, $"Generator for relic type {type} missing");
                 return null;
             }
             var data = factory.GetValue();
             if (data == null)
+            {
+                _logger.Log(LogLevel.Error, $"Factory for relic type {type} missing");
                 return null;
+            }
             data.name = name;
             var guid = _guidProvider.GetGuidDeterministic(name);
             AccessTools.Field(typeof(RelicData), "id").SetValue(data, guid.ToString());

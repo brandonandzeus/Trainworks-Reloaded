@@ -75,6 +75,28 @@ namespace TrainworksReloaded.Plugin.Patches
             relicDelegator.RelicPoolToData.Clear();
             logger.Log(LogLevel.Info, "Relic pool processing complete");
 
+            var enhancerDelegator = container.GetInstance<VanillaEnhancerPoolDelegator>();
+            foreach (var poolName in enhancerDelegator.EnhancerPoolToData.Keys)
+            {
+                var enhancerPool = GetVanillaEnhancerPool(____assetLoadingData.AllGameData, poolName);
+                if (enhancerPool == null)
+                {
+                    logger.Log(LogLevel.Warning, $"Could not find enhancer pool associated with {poolName}!");
+                    continue;
+                }
+                var dataList =
+                    (ReorderableArray<EnhancerData>)
+                        AccessTools
+                            .Field(typeof(EnhancerPool), "relicDataList")
+                            .GetValue(enhancerPool);
+                foreach (var enhancer in enhancerDelegator.EnhancerPoolToData[poolName])
+                {
+                    dataList.Add(enhancer);
+                }
+                logger.Log(LogLevel.Debug, $"Added {enhancerDelegator.EnhancerPoolToData[poolName].Count} enhancers to {poolName}");
+            }
+            logger.Log(LogLevel.Info, "Enhancer pool processing complete");
+
             var classRegister = container.GetInstance<ClassDataRegister>();
             var classDatas =
                 (List<ClassData>)
@@ -160,6 +182,55 @@ namespace TrainworksReloaded.Plugin.Patches
             var finalizer = container.GetInstance<Finalizer>();
             finalizer.FinalizeData();
             logger.Log(LogLevel.Info, "TrainworksReloaded initialization complete!");
+        }
+
+        private static EnhancerPool? GetVanillaEnhancerPool(AllGameData allGameData, string poolName)
+        {
+            var merchantPoolName = poolName switch
+            {
+                "unit_upgrade_common" => "UnitUpgradePoolCommon",
+                "unit_upgrade_rare" => "UnitUpgradePoolRare",
+                "spell_upgrade_common" => "SpellUpgradePoolCommon",
+                "spell_upgrade_cost_reduction" => "SpellUpgradePoolCostReduction",
+                "spell_upgrade_rare" => "SpellUpgradePoolRare",
+                _ => null
+            };
+
+            if (poolName == "draft_upgrade")
+            {
+                CollectableRelicData? capriciousReflection = allGameData.FindCollectableRelicData("9e0e5d4e-6d16-43f1-8cd4-cc4c2b431afd");
+                var effect = capriciousReflection?.GetFirstRelicEffectData<RelicEffectAddStartingUpgradeToCardDrafts>();
+                return effect?.GetParamEnhancerPool();
+            }
+            else if (merchantPoolName != null)
+            {
+                IReadOnlyList<string> Merchants = [
+                    "ed1b1cfa-9da2-4588-85fe-6360913ef41e", // Unit Upgrades
+                    "9a70610f-8900-4900-b96d-4f88faa0f105", // Spell Upgrades
+                    "f57bc1e9-4e86-4abf-af2a-0d56d2b3f59a", // Artifact Merchant
+                    "e2c67b52-4d52-48b5-b20a-c6f4c12e44fa"  // Equipment Merchant
+                ];
+                foreach (var merchantID in Merchants)
+                {
+                    var mapNode = allGameData.FindMapNodeData(merchantID);
+                    if (mapNode is MerchantData merchant)
+                    {
+                        for (int i = 0; i < merchant.GetNumRewards(); i++)
+                        {
+                            RewardData reward = merchant.GetReward(i).RewardData;
+                            if (reward is EnhancerPoolRewardData enhancerPoolReward)
+                            {
+                                var foundEnhancerPool = (EnhancerPool)AccessTools.Field(typeof(EnhancerPoolRewardData), "relicPool").GetValue(enhancerPoolReward);
+                                if (foundEnhancerPool.name == merchantPoolName)
+                                {
+                                    return foundEnhancerPool;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
         }
     }
 }

@@ -49,6 +49,14 @@ namespace TrainworksReloaded.Base.Relic
                         AccessTools.Field(typeof(AllGameData), "collectableRelicDatas").GetValue(gamedata);
                 RelicDatas.Add(collectableRelic);
             }
+            else if (item is EnhancerData enhancerData)
+            {
+                var gamedata = SaveManager.Value.GetAllGameData();
+                var enhancerDatas =
+                    (List<EnhancerData>)
+                        AccessTools.Field(typeof(AllGameData), "enhancerDatas").GetValue(gamedata);
+                enhancerDatas.Add(enhancerData);
+            }
             Add(key, item);
         }
 
