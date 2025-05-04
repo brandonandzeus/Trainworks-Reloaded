@@ -40,27 +40,23 @@ namespace TrainworksReloaded.Base.Subtype
 
         public List<string> GetAllIdentifiers(RegisterIdentifierType identifierType)
         {
-            return identifierType switch
-            {
-                RegisterIdentifierType.ReadableID => [.. this.Keys],
-                RegisterIdentifierType.GUID => [.. this.Keys],
-                _ => []
-            };
+            List<string> ret = [.. this.Keys];
+            if (identifierType == RegisterIdentifierType.GUID)
+                ret.AddRange([.. SubtypeManager.AllData.Select(subtype => subtype.Key)]);
+            return ret;
         }
 
         public bool TryLookupIdentifier(string identifier, RegisterIdentifierType identifierType, [NotNullWhen(true)] out SubtypeData? lookup, [NotNullWhen(true)] out bool? IsModded)
         {
             lookup = default;
             IsModded = true;
-            switch (identifierType)
+            if (this.TryGetValue(identifier, out lookup))
             {
-                case RegisterIdentifierType.ReadableID:
-                    return this.TryGetValue(identifier, out lookup);
-                case RegisterIdentifierType.GUID:
-                    return this.TryGetValue(identifier, out lookup);
-                default:
-                    return false;
+                return true;
             }
+            lookup = SubtypeManager.GetSubtypeData(identifier);
+            IsModded = false;
+            return lookup != null;
         }
     }
 }
