@@ -4,9 +4,13 @@ on:
   push:
     branches:
       - main
+    paths:
+      - schemas/**
   pull_request:
     branches:
       - main
+    paths:
+      - schemas/**
 
 jobs:
   validate:
@@ -19,9 +23,8 @@ jobs:
     - name: Validate JSON Schema
       uses: walbo/validate-json@v1.1.0
       with:
-        # Files to validate
         files: 
           schemas/schemas/*.json
           schemas/definitions/*.json
-        # Choose schema version
+        print-valid-files: true
         schema-version: draft-07
