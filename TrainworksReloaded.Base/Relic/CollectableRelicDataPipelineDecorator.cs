@@ -89,11 +89,12 @@ namespace TrainworksReloaded.Base.Relic
             // Handle force update count label flag
             var forceUpdateCountLabel = configuration.GetSection("force_update_count_label").ParseBool() ?? false;
             AccessTools.Field(typeof(CollectableRelicData), "forceUpdateCountLabel").SetValue(collectableRelic, forceUpdateCountLabel);
-      
             // Handle pool
+            // TODO remove in favor of pools.
             var pool = configuration.GetSection("pool").ParseString();
             if (pool != null)
             {
+                logger.Log(LogLevel.Error, "[Deprecation] relics.pool is deprecated and will be removed soon use relics.pools instead.");
                 if (!relicPoolDelegator.RelicPoolToData.ContainsKey(pool))
                 {
                     relicPoolDelegator.RelicPoolToData[pool] = [];
