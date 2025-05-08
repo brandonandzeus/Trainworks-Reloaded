@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  build-and-test:
+  validate:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,6 +20,8 @@ jobs:
       uses: walbo/validate-json@v1.1.0
       with:
         # Files to validate
-        files: schemas/base.json
+        files: 
+          schemas/schemas/*.json
+          schemas/definitions/*.json
         # Choose schema version
         schema-version: draft-07
