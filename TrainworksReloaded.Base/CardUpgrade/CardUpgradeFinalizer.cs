@@ -304,7 +304,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
             var ability = configuration.GetSection("ability_upgrade").ParseString() ?? "";
             if (!ability.IsNullOrEmpty() && cardRegister.TryLookupName(ability.ToId(key, TemplateConstants.Card), out var abilityCard, out var _))
             {
-                AccessTools.Field(typeof(CharacterData), "unitAbilityUpgrade").SetValue(data, abilityCard);
+                AccessTools.Field(typeof(CardUpgradeData), "unitAbilityUpgrade").SetValue(data, abilityCard);
             }
 
             var sprite = configuration.GetSection("icon").ParseString();
