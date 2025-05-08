@@ -41,6 +41,9 @@
         "effects": {
             "$ref": "schemas/effects.json#/properties/effects"
         },
+        "enhancer_pools": {
+            "$ref": "schemas/enhancer_pools.json#/properties/enhancer_pools"
+        },
         "game_objects": {
             "$ref": "schemas/game_objects.json#/properties/game_objects"
         },
@@ -50,11 +53,14 @@
         "map_nodes": {
             "$ref": "schemas/map_nodes.json#/properties/map_nodes"
         },
-        "rewards": {
-            "$ref": "schemas/rewards.json#/properties/rewards"
+        "relic_pools": {
+            "$ref": "schemas/relic_pools.json#/properties/relic_pools"
         },
         "replacement_texts": {
             "$ref": "schemas/replacement_texts.json#/properties/replacement_texts"
+        },
+        "rewards": {
+            "$ref": "schemas/rewards.json#/properties/rewards"
         },
         "room_modifiers": {
             "$ref": "schemas/room_modifiers.json#/properties/room_modifiers"
