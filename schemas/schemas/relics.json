@@ -146,7 +146,7 @@
                             "pools": {
                               "type": "array",
                               "description": "Pools to add this relic to",
-                              "items":{
+                              "items": {
                                 "type": "string",
                                 "enum": [
                                   "megapool",
