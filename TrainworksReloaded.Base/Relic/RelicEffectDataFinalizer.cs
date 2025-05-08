@@ -26,6 +26,7 @@ namespace TrainworksReloaded.Base.Relic
         private readonly IRegister<VfxAtLoc> vfxRegister;
         private readonly IRegister<RelicData> relicRegister;
         private readonly IRegister<CharacterTriggerData.Trigger> triggerEnumRegister;
+        private readonly IRegister<EnhancerPool> enhancerPoolRegister;
 
         public RelicEffectDataFinalizer(
             IModLogger<RelicEffectDataFinalizer> logger,
@@ -43,7 +44,8 @@ namespace TrainworksReloaded.Base.Relic
             IRegister<CardUpgradeMaskData> cardUpgradeMaskRegister,
             IRegister<VfxAtLoc> vfxRegister,
             IRegister<RelicData> relicRegister,
-            IRegister<CharacterTriggerData.Trigger> triggerEnumRegister
+            IRegister<CharacterTriggerData.Trigger> triggerEnumRegister,
+            IRegister<EnhancerPool> enhancerPoolRegister
         )
         {
             this.logger = logger;
@@ -62,6 +64,7 @@ namespace TrainworksReloaded.Base.Relic
             this.vfxRegister = vfxRegister;
             this.relicRegister = relicRegister;
             this.triggerEnumRegister = triggerEnumRegister;
+            this.enhancerPoolRegister = enhancerPoolRegister;
         }
 
         public void FinalizeData()
@@ -85,7 +88,6 @@ namespace TrainworksReloaded.Base.Relic
             - CardSetBuilder
             - CollectibleRelicData
             - CovenantData
-            - EnhancerPool
             - RandomChampionPool
             - RoomData
             */ 
@@ -348,6 +350,23 @@ namespace TrainworksReloaded.Base.Relic
             AccessTools
                 .Field(typeof(RelicEffectData), "paramTrigger")
                 .SetValue(data, paramTrigger);
+
+            var enhancerPoolId = configuration.GetSection("param_enhancer_pool")?.ParseString();
+            if (enhancerPoolId != null)
+            {
+                if (
+                    enhancerPoolRegister.TryLookupId(
+                        enhancerPoolId.ToId(key, TemplateConstants.EnhancerPool),
+                        out var enhancerPool,
+                        out var _
+                    )
+                )
+                {
+                    AccessTools
+                        .Field(typeof(RelicEffectData), "paramEnhancerPool")
+                        .SetValue(data, enhancerPool);
+                }
+            }
         }
     }
 }
