@@ -11,193 +11,205 @@
                     "id",
                     "name"
                 ],
-                "properties": {
-                    "additional_tooltips": {
-                        "type": "array",
-                        "description": "Additional tooltips to display for this card effect.",
-                        "items": {
-                            "$ref": "../definitions/additonal_tooltips.json"
-                        }
-                    },
-                    "applied_to_self_vfx": {
-                        "type": "string",
-                        "description": "Reference to VFX to use when applying the card effect to self."
-                    },
-                    "applied_vfx": {
-                        "type": "string",
-                        "description": "Reference to VFX to use when applying the card effect."
-                    },
-                    "anim_to_play": {
-                        "$ref": "../definitions/anim.json",
-                        "description": "Animation to play when this effect is triggered."
-                    },
-                    "cancel_subsequent_effects_on_failure": {
-                        "type": "boolean",
-                        "description": "Whether to cancel all subsequent effects if this effect fails."
-                    },
-                    "copy_modifiers": {
-                        "type": "boolean",
-                        "description": "Whether to copy modifiers when applying this effect."
-                    },
-                    "fail_to_cast_on_failure": {
-                        "type": "boolean",
-                        "description": "Whether to fail the entire cast if this effect fails."
-                    },
-                    "filter_on_main_subclass": {
-                        "type": "boolean",
-                        "description": "Whether to filter based on the main subclass."
-                    },
-                    "hide_tooltip": {
-                        "type": "boolean",
-                        "description": "Whether to hide this card effect's tooltips."
-                    },
-                    "id": {
-                        "type": "string",
-                        "description": "Unique identifier for this effect."
-                    },
-                    "ignore_temporary_modifiers": {
-                        "type": "boolean",
-                        "description": "Whether to ignore temporary modifiers when applying this effect."
-                    },
-                    "mod_reference": {
-                        "type": "string",
-                        "description": "Mod GUID to search for a custom effect. If not specified then your Mod's assembly is searched."
-                    },
-                    "name": {
-                        "$ref": "../definitions/card_effect.json",
-                        "description": "The EffectStateName, this should be the name of a Class inheriting from CardEffectBase. Trainworks will search your mod for the class, then the base game."
-                    },
-                    "param_bool": {
-                        "type": "boolean",
-                        "description": "Boolean parameter for the effect."
-                    },
-                    "param_bool_2": {
-                        "type": "boolean",
-                        "description": "Second boolean parameter for the effect."
-                    },
-                    "param_card_pool": {
-                        "type": "string",
-                        "description": "Reference to CardPool for the effect."
-                    },
-                    "param_character_data": {
-                        "type": "string",
-                        "description": "Reference to character data for the effect."
-                    },
-                    "param_int": {
-                        "type": "integer",
-                        "description": "Integer parameter for the effect."
-                    },
-                    "param_int_2": {
-                        "type": "integer",
-                        "description": "Second integer parameter for the effect."
-                    },
-                    "param_int_3": {
-                        "type": "integer",
-                        "description": "Third integer parameter for the effect."
-                    },
-                    "param_max_int": {
-                        "type": "integer",
-                        "description": "Maximum integer value for the effect."
-                    },
-                    "param_min_int": {
-                        "type": "integer",
-                        "description": "Minimum integer value for the effect."
-                    },
-                    "param_multiplier": {
-                        "type": "number",
-                        "description": "Multiplier parameter for the effect. Defaults to 1.0"
-                    },
-                    "param_status_effects": {
-                        "type": "array",
-                        "description": "List of status effects to apply.",
-                        "items": {
-                            "$ref": "../definitions/status_effect.json"
-                        }
-                    },
-                    "param_str": {
-                        "type": "string",
-                        "description": "String parameter for the effect."
-                    },
-                    "param_subtypes": {
-                        "$ref": "../definitions/subtype.json",
-                        "description": "Subtype parameter for the effect. Defaults to SubtypesData_None."
-                    },
-                    "param_trigger": {
-                        "$ref": "../definitions/character_trigger.json",
-                        "description": "Trigger parameter for the effect."
-                    },
-                    "param_upgrade": {
-                        "type": "string",
-                        "description": "Reference to an upgrade to apply."
-                    },
-                    "should_test": {
-                        "type": "boolean",
-                        "description": "Whether this effect should be tested before applying."
-                    },
-                    "show_pyre_notification": {
-                        "type": "boolean",
-                        "description": "Whether to show a notification in the Pyre UI."
-                    },
-                    "status_effect_filters": {
-                        "type": "array",
-                        "description": "List of status effects to filter by.",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "status_effect_multiplier": {
-                        "type": "string",
-                        "description": "Status effect multiplier parameter."
-                    },
-                    "supress_pyre_room_focus": {
-                        "type": "boolean",
-                        "description": "Whether to suppress Pyre room focus when applying this effect."
-                    },
-                    "target_card_type": {
-                        "$ref": "../definitions/card_type_target.json",
-                        "description": "Type of card to target."
-                    },
-                    "target_ignore_bosses": {
-                        "type": "boolean",
-                        "description": "Whether to ignore boss characters when targeting."
-                    },
-                    "target_mode": {
-                        "$ref": "../definitions/target_mode.json",
-                        "description": "Mode for selecting targets."
-                    },
-                    "target_mode_health_filter": {
-                        "$ref": "../definitions/health_filter.json",
-                        "description": "Filter for target health when selecting targets."
-                    },
-                    "target_card_selection_mode": {
-                        "$ref": "../definitions/card_selection_mode.json",
-                        "description": "Used in CardEffectRecursion to choose how cards from target_mode are selected."
-                    },
-                    "target_subtype": {
-                        "$ref": "../definitions/subtype.json",
-                        "description": "Subtype to target. Defaults to SubtypesData_None"
-                    },
-                    "target_team": {
-                        "$ref": "../definitions/team.json",
-                        "description": "Team to target."
-                    },
-                    "use_health_missing_multiplier": {
-                        "type": "boolean",
-                        "description": "Whether to use missing health as a multiplier."
-                    },
-                    "use_int_range": {
-                        "type": "boolean",
-                        "description": "Whether to use an integer range for parameters."
-                    },
-                    "use_magic_power_multiplier": {
-                        "type": "boolean",
-                        "description": "Whether to use magic power as a multiplier."
-                    },
-                    "use_status_effect_multiplier": {
-                        "type": "boolean",
-                        "description": "Whether to use status effect count as a multiplier."
-                    }
+              "properties": {
+                "additional_tooltips": {
+                  "type": "array",
+                  "description": "Additional tooltips to display for this card effect.",
+                  "items": {
+                    "$ref": "../definitions/additonal_tooltips.json"
+                  }
                 },
+                "applied_to_self_vfx": {
+                  "type": "string",
+                  "description": "Reference to VFX to use when applying the card effect to self."
+                },
+                "applied_vfx": {
+                  "type": "string",
+                  "description": "Reference to VFX to use when applying the card effect."
+                },
+                "anim_to_play": {
+                  "$ref": "../definitions/anim.json",
+                  "description": "Animation to play when this effect is triggered."
+                },
+                "cancel_subsequent_effects_on_failure": {
+                  "type": "boolean",
+                  "description": "Whether to cancel all subsequent effects if this effect fails."
+                },
+                "copy_modifiers": {
+                  "type": "boolean",
+                  "description": "Whether to copy modifiers when applying this effect."
+                },
+                "disallow_status_effect_modifiers": {
+                  "type": "boolean",
+                  "description": "Disables modification of status effect stacks (Disables modification from Dualism, CardTraits, Relics, etc.)"
+                },
+                "fail_to_cast_on_failure": {
+                  "type": "boolean",
+                  "description": "Whether to fail the entire cast if this effect fails."
+                },
+                "filter_on_main_subclass": {
+                  "type": "boolean",
+                  "description": "Whether to filter based on the main subclass."
+                },
+                "hide_tooltip": {
+                  "type": "boolean",
+                  "description": "Whether to hide this card effect's tooltips."
+                },
+                "id": {
+                  "type": "string",
+                  "description": "Unique identifier for this effect."
+                },
+                "ignore_temporary_modifiers": {
+                  "type": "boolean",
+                  "description": "Whether to ignore temporary modifiers when applying this effect."
+                },
+                "mod_reference": {
+                  "type": "string",
+                  "description": "Mod GUID to search for a custom effect. If not specified then your Mod's assembly is searched."
+                },
+                "name": {
+                  "$ref": "../definitions/card_effect.json",
+                  "description": "The EffectStateName, this should be the name of a Class inheriting from CardEffectBase. Trainworks will search your mod for the class, then the base game."
+                },
+                "param_bool": {
+                  "type": "boolean",
+                  "description": "Boolean parameter for the effect."
+                },
+                "param_bool_2": {
+                  "type": "boolean",
+                  "description": "Second boolean parameter for the effect."
+                },
+                "param_card_filter": {
+                  "type": "string",
+                  "description": "Reference to a CardUpgradeMaskData. Used in certain effects to filter out target cards."
+                },
+                "param_card_filter_2": {
+                  "type": "string",
+                  "description": "Reference to a CardUpgradeMaskData. A Secondary filter used in certain effects to filter out target cards (Currently only used by CardEffectDrawType)."
+                },
+                "param_card_pool": {
+                  "type": "string",
+                  "description": "Reference to CardPool for the effect."
+                },
+                "param_character_data": {
+                  "type": "string",
+                  "description": "Reference to character data for the effect."
+                },
+                "param_int": {
+                  "type": "integer",
+                  "description": "Integer parameter for the effect."
+                },
+                "param_int_2": {
+                  "type": "integer",
+                  "description": "Second integer parameter for the effect."
+                },
+                "param_int_3": {
+                  "type": "integer",
+                  "description": "Third integer parameter for the effect."
+                },
+                "param_max_int": {
+                  "type": "integer",
+                  "description": "Maximum integer value for the effect."
+                },
+                "param_min_int": {
+                  "type": "integer",
+                  "description": "Minimum integer value for the effect."
+                },
+                "param_multiplier": {
+                  "type": "number",
+                  "description": "Multiplier parameter for the effect. Defaults to 1.0"
+                },
+                "param_status_effects": {
+                  "type": "array",
+                  "description": "List of status effects to apply.",
+                  "items": {
+                    "$ref": "../definitions/status_effect.json"
+                  }
+                },
+                "param_str": {
+                  "type": "string",
+                  "description": "String parameter for the effect."
+                },
+                "param_subtypes": {
+                  "$ref": "../definitions/subtype.json",
+                  "description": "Subtype parameter for the effect. Defaults to SubtypesData_None."
+                },
+                "param_trigger": {
+                  "$ref": "../definitions/character_trigger.json",
+                  "description": "Trigger parameter for the effect."
+                },
+                "param_upgrade": {
+                  "type": "string",
+                  "description": "Reference to an upgrade to apply."
+                },
+                "should_test": {
+                  "type": "boolean",
+                  "description": "Whether this effect should be tested before applying."
+                },
+                "show_pyre_notification": {
+                  "type": "boolean",
+                  "description": "Whether to show a notification in the Pyre UI."
+                },
+                "status_effect_filters": {
+                  "type": "array",
+                  "description": "List of status effects to filter by.",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "status_effect_multiplier": {
+                  "type": "string",
+                  "description": "Status effect multiplier parameter."
+                },
+                "supress_pyre_room_focus": {
+                  "type": "boolean",
+                  "description": "Whether to suppress Pyre room focus when applying this effect."
+                },
+                "target_card_type": {
+                  "$ref": "../definitions/card_type_target.json",
+                  "description": "Type of card to target."
+                },
+                "target_ignore_bosses": {
+                  "type": "boolean",
+                  "description": "Whether to ignore boss characters when targeting."
+                },
+                "target_mode": {
+                  "$ref": "../definitions/target_mode.json",
+                  "description": "Mode for selecting targets."
+                },
+                "target_mode_health_filter": {
+                  "$ref": "../definitions/health_filter.json",
+                  "description": "Filter for target health when selecting targets."
+                },
+                "target_card_selection_mode": {
+                  "$ref": "../definitions/card_selection_mode.json",
+                  "description": "Used in CardEffectRecursion to choose how cards from target_mode are selected."
+                },
+                "target_subtype": {
+                  "$ref": "../definitions/subtype.json",
+                  "description": "Subtype to target. Defaults to SubtypesData_None"
+                },
+                "target_team": {
+                  "$ref": "../definitions/team.json",
+                  "description": "Team to target."
+                },
+                "use_health_missing_multiplier": {
+                  "type": "boolean",
+                  "description": "Whether to use missing health as a multiplier."
+                },
+                "use_int_range": {
+                  "type": "boolean",
+                  "description": "Whether to use an integer range for parameters."
+                },
+                "use_magic_power_multiplier": {
+                  "type": "boolean",
+                  "description": "Whether to use magic power as a multiplier."
+                },
+                "use_status_effect_multiplier": {
+                  "type": "boolean",
+                  "description": "Whether to use status effect count as a multiplier."
+                }
+              },
                 "description": "An effect definition that specifies how a card or ability affects the game state."
             }
         }
