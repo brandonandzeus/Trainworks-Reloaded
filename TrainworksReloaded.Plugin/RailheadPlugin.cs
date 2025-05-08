@@ -130,6 +130,8 @@ namespace TrainworksReloaded.Plugin
                         typeof(MapNodeFinalizer),
                         typeof(RewardDataFinalizer),
                         typeof(CardPoolFinalizer),
+                        typeof(EnhancerPoolFinalizer),
+                        typeof(RelicPoolFinalizer),
                         typeof(CharacterTriggerTypeFinalizer),
                         typeof(CardTriggerTypeFinalizer),
                         typeof(CharacterChatterFinalizer),
@@ -272,7 +274,7 @@ namespace TrainworksReloaded.Plugin
                     pipeline.Run(x);
                 });
 
-                //Register Custom Character Triggers Types.
+                //Register Custom Character Trigger Types.
                 c.RegisterSingleton<
                     IRegister<CharacterTriggerData.Trigger>,
                     CharacterTriggerTypeRegister
@@ -296,7 +298,7 @@ namespace TrainworksReloaded.Plugin
                     pipeline.Run(x);
                 });
 
-                //Register Custom Card Triggers Types.
+                //Register Custom Card Trigger Types.
                 c.RegisterSingleton<IRegister<CardTriggerType>, CardTriggerTypeRegister>();
                 c.RegisterSingleton<CardTriggerTypeRegister, CardTriggerTypeRegister>();
                 c.Register<
@@ -356,13 +358,33 @@ namespace TrainworksReloaded.Plugin
                     PoolingCardDataPipelineDecorator
                 >();
 
-                //register Card Pool
+                //Register Card Pool
                 c.RegisterSingleton<IRegister<CardPool>, CardPoolRegister>(); //a place to register and access custom card data
                 c.RegisterSingleton<CardPoolRegister, CardPoolRegister>();
                 c.Register<IDataPipeline<IRegister<CardPool>, CardPool>, CardPoolPipeline>(); //a data pipeline to run as soon as register is needed
                 c.RegisterInitializer<IRegister<CardPool>>(x =>
                 {
                     var pipeline = c.GetInstance<IDataPipeline<IRegister<CardPool>, CardPool>>();
+                    pipeline.Run(x);
+                });
+
+                //Register Enhancer Pool
+                c.RegisterSingleton<IRegister<EnhancerPool>, EnhancerPoolRegister>();
+                c.RegisterSingleton<EnhancerPoolRegister, EnhancerPoolRegister>();
+                c.Register<IDataPipeline<IRegister<EnhancerPool>, EnhancerPool>, EnhancerPoolPipeline>();
+                c.RegisterInitializer<IRegister<EnhancerPool>>(x =>
+                {
+                    var pipeline = c.GetInstance<IDataPipeline<IRegister<EnhancerPool>, EnhancerPool>>();
+                    pipeline.Run(x);
+                });
+
+                //Register Relic Pool
+                c.RegisterSingleton<IRegister<RelicPool>, RelicPoolRegister>();
+                c.RegisterSingleton<RelicPoolRegister, RelicPoolRegister>();
+                c.Register<IDataPipeline<IRegister<RelicPool>, RelicPool>, RelicPoolPipeline>();
+                c.RegisterInitializer<IRegister<RelicPool>>(x =>
+                {
+                    var pipeline = c.GetInstance<IDataPipeline<IRegister<RelicPool>, RelicPool>>();
                     pipeline.Run(x);
                 });
 
@@ -535,9 +557,13 @@ namespace TrainworksReloaded.Plugin
                     [typeof(CollectableRelicDataFactory), typeof(EnhancerDataFactory)],
                     Lifestyle.Singleton
                 );
+                c.RegisterDecorator<
+                IDataPipeline<IRegister<RelicData>, RelicData>,
+                PoolingRelicDataPipelineDecorator>();
+
 
                 //CollectableRelicData
-                c.RegisterDecorator(
+c.RegisterDecorator(
                     typeof(IDataPipeline<IRegister<RelicData>, RelicData>),
                     typeof(CollectableRelicDataPipelineDecorator)
                 );

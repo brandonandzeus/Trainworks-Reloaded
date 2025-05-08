@@ -374,6 +374,16 @@ namespace TrainworksReloaded.Base.Character
             }
             AccessTools.Field(typeof(CharacterData), "characterLoreTooltipKeys").SetValue(data, tooltips);
 
+            var artistAttribution = checkOverride
+                ? (string)AccessTools.Field(typeof(CharacterData), "artistAttribution").GetValue(data)
+                : "";
+            AccessTools
+                .Field(typeof(CharacterData), "artistAttribution")
+                .SetValue(
+                    data,
+                    configuration.GetSection("artist").ParseString() ?? artistAttribution
+                );
+
             //endless baseline stats
             var endlessBaselineStats = checkOverride
                 ? (EndlessBaselineStats)

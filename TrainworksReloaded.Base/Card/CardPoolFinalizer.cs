@@ -13,12 +13,12 @@ namespace TrainworksReloaded.Base.Card
 {
     public class CardPoolFinalizer : IDataFinalizer
     {
-        private readonly IModLogger<CardDataFinalizer> logger;
+        private readonly IModLogger<CardPoolFinalizer> logger;
         private readonly ICache<IDefinition<CardPool>> cache;
         private readonly IRegister<CardData> cardRegister;
 
         public CardPoolFinalizer(
-            IModLogger<CardDataFinalizer> logger,
+            IModLogger<CardPoolFinalizer> logger,
             ICache<IDefinition<CardPool>> cache,
             IRegister<CardData> cardRegister
         )

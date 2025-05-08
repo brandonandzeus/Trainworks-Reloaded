@@ -1,288 +1,292 @@
 {
-    "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/characters.json",
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "properties": {
-        "characters": {
+  "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/characters.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "properties": {
+    "characters": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "A collection of all characters in the game, defining their properties, abilities, and behaviors.",
+      "items": {
+        "properties": {
+          "ability": {
+            "type": "string",
+            "description": "The unique identifier for this character's ability."
+          },
+          "artist": {
+            "type": "string",
+            "description": "The artist who created the character art."
+          },
+          "animator": {
+            "type": "string",
+            "description": "Reference to the character's animation controller."
+          },
+          "ascends_train_automatically": {
+            "type": "boolean",
+            "description": "Whether this character automatically moves up the train when possible."
+          },
+          "attack_damage": {
+            "type": "integer",
+            "description": "Base damage dealt by this character's attacks."
+          },
+          "attack_teleports_to_defender": {
+            "type": "boolean",
+            "description": "Whether this character teleports to its target when attacking."
+          },
+          "attack_vfx": {
+            "type": "string",
+            "description": "Visual effect played when this character attacks."
+          },
+          "block_size_increase": {
+            "type": "boolean",
+            "description": "Whether this character's size increases when blocking."
+          },
+          "boss_action_groups": {
+            "type": "array",
+            "description": "List of action groups for boss characters.",
+            "items": {
+              "properties": {
+                "repeats": {
+                  "type": "integer",
+                  "description": "Number of times this action group repeats."
+                },
+                "actions": {
+                  "type": "array",
+                  "description": "List of actions in this group.",
+                  "items": {
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "Name of this action."
+                      },
+                      "tooltip": {
+                        "$ref": "../definitions/parse_term.json",
+                        "description": "Localized text describing this action."
+                      },
+                      "team": {
+                        "$ref": "../definitions/team.json",
+                        "description": "Which team this action affects."
+                      },
+                      "effects": {
+                        "type": "array",
+                        "description": "List of effects this action applies.",
+                        "items": {
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "description": "Reference to an effect's unique identifier."
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "boss_cast_vfx": {
+            "type": "string",
+            "description": "Visual effect played when this boss character casts an ability."
+          },
+          "boss_room_cast_vfx": {
+            "type": "string",
+            "description": "Visual effect played in the room when this boss character casts an ability."
+          },
+          "can_attack": {
+            "type": "boolean",
+            "description": "Whether this character can perform attacks."
+          },
+          "can_be_healed": {
+            "type": "boolean",
+            "description": "Whether this character can receive healing."
+          },
+          "character_art": {
+            "type": "string",
+            "description": "Reference to the character's art asset."
+          },
+          "character_lore_tooltips": {
+            "type": "array",
+            "description": "List of lore tooltips for this character.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "character_sound_data": {
+            "type": "string",
+            "description": "Reference to the character's sound data."
+          },
+          "chatter": {
+            "type": "string",
+            "description": "Reference to the character's dialogue data."
+          },
+          "chosen_variant": {
+            "type": "boolean",
+            "description": "Whether this is a chosen variant of the character."
+          },
+          "death_slides_backwards": {
+            "type": "boolean",
+            "description": "Whether this character slides backward when dying."
+          },
+          "death_type": {
+            "$ref": "../definitions/death_type.json",
+            "description": "Type of death animation to play."
+          },
+          "death_vfx": {
+            "type": "string",
+            "description": "Visual effect played when this character dies."
+          },
+          "disable_in_daily_challenges": {
+            "type": "boolean",
+            "description": "Whether this character is disabled in daily challenges."
+          },
+          "endless_stats": {
+            "type": "object",
+            "description": "Stats for this character in endless mode.",
+            "properties": {
+              "health": {
+                "type": "integer",
+                "description": "Health value in endless mode."
+              },
+              "attack": {
+                "type": "integer",
+                "description": "Attack value in endless mode."
+              }
+            },
+            "required": [
+              "health",
+              "attack"
+            ]
+          },
+          "enemy_relic": {
+            "type": "string",
+            "description": "Reference to a relic for the enemy's relic data."
+          },
+          "equip_limit": {
+            "type": "integer",
+            "description": "Maximum number of equipment this character can have."
+          },
+          "grafted_equipment": {
+            "type": "string",
+            "description": "Reference to this character's grafted equipment."
+          },
+          "health": {
+            "type": "integer",
+            "description": "Base health of this character."
+          },
+          "hide_in_logbook": {
+            "type": "boolean",
+            "description": "Whether this character should be hidden in the logbook."
+          },
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for this character."
+          },
+          "impact_vfx": {
+            "type": "string",
+            "description": "Visual effect played when this character is hit."
+          },
+          "is_mini_boss": {
+            "type": "boolean",
+            "description": "Whether this character is a mini-boss."
+          },
+          "is_outer_train_boss": {
+            "type": "boolean",
+            "description": "Whether this character is an outer train boss."
+          },
+          "is_pyre": {
+            "type": "boolean",
+            "description": "Whether this character is the Pyre."
+          },
+          "loops_between_floors": {
+            "type": "boolean",
+            "description": "Whether this character loops between floors."
+          },
+          "names": {
+            "$ref": "../definitions/parse_term.json",
+            "description": "Localized text for this character's name."
+          },
+          "prevent_abilities_from_equipment": {
+            "type": "boolean",
+            "description": "Prevents ability from being overwritten by equipment"
+          },
+          "projectile_vfx": {
+            "type": "string",
+            "description": "Visual effect played for this character's projectiles."
+          },
+          "pyre_heart_data": {
+            "type": "string",
+            "description": "Reference to the Pyre heart data."
+          },
+          "room_modifiers": {
+            "type": "array",
+            "description": "List of room modifiers this character applies.",
+            "items": {
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Reference to a room modifier's unique identifier."
+                }
+              }
+            }
+          },
+          "size": {
+            "type": "integer",
+            "description": "Size of this character in the room."
+          },
+          "starting_status_effects": {
+            "type": "array",
+            "description": "List of status effects this character starts with.",
+            "items": {
+              "$ref": "../definitions/status_effect.json"
+            }
+          },
+          "status_effect_immunities": {
+            "type": "array",
+            "description": "List of status effects this character is immune to.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "subtypes": {
+            "type": "array",
+            "description": "List of subtypes this character belongs to.",
+            "items": {
+              "$ref": "../definitions/subtype.json"
+            }
+          },
+          "titan_affinity": {
+            "$ref": "../definitions/titan_affinity.json",
+            "description": "This character's affinity with titans."
+          },
+          "triggers": {
             "type": "array",
             "uniqueItems": true,
-            "description": "A collection of all characters in the game, defining their properties, abilities, and behaviors.",
+            "description": "List of triggers this character has.",
             "items": {
-                "properties": {
-                    "ability": {
-                        "type": "string",
-                        "description": "The unique identifier for this character's ability."
-                    },
-                    "animator": {
-                        "type": "string",
-                        "description": "Reference to the character's animation controller."
-                    },
-                    "ascends_train_automatically": {
-                        "type": "boolean",
-                        "description": "Whether this character automatically moves up the train when possible."
-                    },
-                    "attack_damage": {
-                        "type": "integer",
-                        "description": "Base damage dealt by this character's attacks."
-                    },
-                    "attack_teleports_to_defender": {
-                        "type": "boolean",
-                        "description": "Whether this character teleports to its target when attacking."
-                    },
-                    "attack_vfx": {
-                        "type": "string",
-                        "description": "Visual effect played when this character attacks."
-                    },
-                    "block_size_increase": {
-                        "type": "boolean",
-                        "description": "Whether this character's size increases when blocking."
-                    },
-                    "boss_action_groups": {
-                        "type": "array",
-                        "description": "List of action groups for boss characters.",
-                        "items": {
-                            "properties": {
-                                "repeats": {
-                                    "type": "integer",
-                                    "description": "Number of times this action group repeats."
-                                },
-                                "actions": {
-                                    "type": "array",
-                                    "description": "List of actions in this group.",
-                                    "items": {
-                                        "properties": {
-                                            "name": {
-                                                "type": "string",
-                                                "description": "Name of this action."
-                                            },
-                                            "tooltip": {
-                                                "$ref": "../definitions/parse_term.json",
-                                                "description": "Localized text describing this action."
-                                            },
-                                            "team": {
-                                                "$ref": "../definitions/team.json",
-                                                "description": "Which team this action affects."
-                                            },
-                                            "effects": {
-                                                "type": "array",
-                                                "description": "List of effects this action applies.",
-                                                "items": {
-                                                    "properties": {
-                                                        "id": {
-                                                            "type": "string",
-                                                            "description": "Reference to an effect's unique identifier."
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "boss_cast_vfx": {
-                        "type": "string",
-                        "description": "Visual effect played when this boss character casts an ability."
-                    },
-                    "boss_room_cast_vfx": {
-                        "type": "string",
-                        "description": "Visual effect played in the room when this boss character casts an ability."
-                    },
-                    "can_attack": {
-                        "type": "boolean",
-                        "description": "Whether this character can perform attacks."
-                    },
-                    "can_be_healed": {
-                        "type": "boolean",
-                        "description": "Whether this character can receive healing."
-                    },
-                    "character_art": {
-                        "type": "string",
-                        "description": "Reference to the character's art asset."
-                    },
-                    "character_lore_tooltips": {
-                        "type": "array",
-                        "description": "List of lore tooltips for this character.",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "character_sound_data": {
-                        "type": "string",
-                        "description": "Reference to the character's sound data."
-                    },
-                    "chatter": {
-                        "type": "string",
-                        "description": "Reference to the character's dialogue data."
-                    },
-                    "chosen_variant": {
-                        "type": "boolean",
-                        "description": "Whether this is a chosen variant of the character."
-                    },
-                    "death_slides_backwards": {
-                        "type": "boolean",
-                        "description": "Whether this character slides backward when dying."
-                    },
-                    "death_type": {
-                        "$ref": "../definitions/death_type.json",
-                        "description": "Type of death animation to play."
-                    },
-                    "death_vfx": {
-                        "type": "string",
-                        "description": "Visual effect played when this character dies."
-                    },
-                    "disable_in_daily_challenges": {
-                        "type": "boolean",
-                        "description": "Whether this character is disabled in daily challenges."
-                    },
-                    "endless_stats": {
-                        "type": "object",
-                        "description": "Stats for this character in endless mode.",
-                        "properties": {
-                            "health": {
-                                "type": "integer",
-                                "description": "Health value in endless mode."
-                            },
-                            "attack": {
-                                "type": "integer",
-                                "description": "Attack value in endless mode."
-                            }
-                        },
-                        "required": [
-                            "health",
-                            "attack"
-                        ]
-                    },
-                    "enemy_relic": {
-                        "type": "string",
-                        "description": "Reference to a relic for the enemy's relic data."
-                    },
-                    "equip_limit": {
-                        "type": "integer",
-                        "description": "Maximum number of equipment this character can have."
-                    },
-                    "grafted_equipment": {
-                        "type": "string",
-                        "description": "Reference to this character's grafted equipment."
-                    },
-                    "health": {
-                        "type": "integer",
-                        "description": "Base health of this character."
-                    },
-                    "hide_in_logbook": {
-                        "type": "boolean",
-                        "description": "Whether this character should be hidden in the logbook."
-                    },
-                    "id": {
-                        "type": "string",
-                        "description": "Unique identifier for this character."
-                    },
-                    "impact_vfx": {
-                        "type": "string",
-                        "description": "Visual effect played when this character is hit."
-                    },
-                    "is_mini_boss": {
-                        "type": "boolean",
-                        "description": "Whether this character is a mini-boss."
-                    },
-                    "is_outer_train_boss": {
-                        "type": "boolean",
-                        "description": "Whether this character is an outer train boss."
-                    },
-                    "is_pyre": {
-                        "type": "boolean",
-                        "description": "Whether this character is the Pyre."
-                    },
-                    "loops_between_floors": {
-                        "type": "boolean",
-                        "description": "Whether this character loops between floors."
-                    },
-                    "names": {
-                        "$ref": "../definitions/parse_term.json",
-                        "description": "Localized text for this character's name."
-                    },
-                    "prevent_abilities_from_equipment": {
-                        "type": "boolean",
-                        "description": "Prevents ability from being overwritten by equipment"
-                    },
-                    "projectile_vfx": {
-                        "type": "string",
-                        "description": "Visual effect played for this character's projectiles."
-                    },
-                    "pyre_heart_data": {
-                        "type": "string",
-                        "description": "Reference to the Pyre heart data."
-                    },
-                    "room_modifiers": {
-                        "type": "array",
-                        "description": "List of room modifiers this character applies.",
-                        "items": {
-                            "required": [
-                                "id"
-                            ],
-                            "properties": {
-                                "id": {
-                                    "type": "string",
-                                    "description": "Reference to a room modifier's unique identifier."
-                                }
-                            }
-                        }
-                    },
-                    "size": {
-                        "type": "integer",
-                        "description": "Size of this character in the room."
-                    },
-                    "starting_status_effects": {
-                        "type": "array",
-                        "description": "List of status effects this character starts with.",
-                        "items": {
-                            "$ref": "../definitions/status_effect.json"
-                        }
-                    },
-                    "status_effect_immunities": {
-                        "type": "array",
-                        "description": "List of status effects this character is immune to.",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "subtypes": {
-                        "type": "array",
-                        "description": "List of subtypes this character belongs to.",
-                        "items": {
-                            "$ref": "../definitions/subtype.json"
-                        }
-                    },
-                    "titan_affinity": {
-                        "$ref": "../definitions/titan_affinity.json",
-                        "description": "This character's affinity with titans."
-                    },
-                    "triggers": {
-                        "type": "array",
-                        "uniqueItems": true,
-                        "description": "List of triggers this character has.",
-                        "items": {
-                            "required": [
-                                "id"
-                            ],
-                            "properties": {
-                                "id": {
-                                    "type": "string",
-                                    "description": "Reference to a trigger's unique identifier."
-                                }
-                            }
-                        }
-                    },
-                    "valid_attack_phase": {
-                        "type": "string",
-                        "description": "Phase during which this character can attack."
-                    }
-                },
-                "required": [
-                    "id"
-                ],
-                "description": "A character definition that specifies all properties and behaviors of a character in the game."
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Reference to a trigger's unique identifier."
+                }
+              }
             }
-        }
+          },
+          "valid_attack_phase": {
+            "type": "string",
+            "description": "Phase during which this character can attack."
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "description": "A character definition that specifies all properties and behaviors of a character in the game."
+      }
     }
+  }
 }

@@ -143,13 +143,16 @@
                               "description": "Whether to force update the count label for this relic",
                               "default": false
                             },
-                            "pool": {
-                              "type": "string",
-                              "description": "Pool to add this relic to",
-                              "enum": [
-                                "megapool",
-                                null
-                              ]
+                            "pools": {
+                              "type": "array",
+                              "description": "Pools to add this relic to",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "megapool",
+                                  null
+                                ]
+                              }
                             }
                           }
                         }

@@ -241,6 +241,16 @@ namespace TrainworksReloaded.Base.Effect
                 AccessTools.Field(typeof(CardEffectData), "paramCardFilter").SetValue(data, lookup);
             }
 
+            var filter2Id = configuration.GetSection("param_card_filter_2")?.ParseString();
+            if (filter2Id != null)
+            {
+                upgradeMaskRegister.TryLookupId(
+                    filter2Id.ToId(key, TemplateConstants.UpgradeMask),
+                    out var lookup,
+                    out var _);
+                AccessTools.Field(typeof(CardEffectData), "paramCardFilterSecondary").SetValue(data, lookup);
+            }
+
             var cardPoolId = configuration.GetSection("param_card_pool")?.ParseString();
             if (cardPoolId != null)
             {

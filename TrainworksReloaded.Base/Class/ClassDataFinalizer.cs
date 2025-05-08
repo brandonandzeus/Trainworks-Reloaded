@@ -17,20 +17,22 @@ namespace TrainworksReloaded.Base.Class
 {
     public class ClassDataFinalizer : IDataFinalizer
     {
-        private readonly IModLogger<CardDataFinalizer> logger;
+        private readonly IModLogger<ClassDataFinalizer> logger;
         private readonly ICache<IDefinition<ClassData>> cache;
         private readonly IRegister<Sprite> spriteRegister;
         private readonly IRegister<CardData> cardDataRegister;
         private readonly IRegister<RelicData> relicDataRegister;
         private readonly IRegister<CardUpgradeData> upgradeDataRegister;
+        private readonly IRegister<EnhancerPool> enhancerPoolRegister;
 
         public ClassDataFinalizer(
-            IModLogger<CardDataFinalizer> logger,
+            IModLogger<ClassDataFinalizer> logger,
             ICache<IDefinition<ClassData>> cache,
             IRegister<Sprite> spriteRegister,
             IRegister<CardData> cardDataRegister,
             IRegister<RelicData> relicDataRegister,
-            IRegister<CardUpgradeData> upgradeDataRegister
+            IRegister<CardUpgradeData> upgradeDataRegister,
+            IRegister<EnhancerPool> enhancerPoolRegister
         )
         {
             this.logger = logger;
@@ -39,6 +41,7 @@ namespace TrainworksReloaded.Base.Class
             this.cardDataRegister = cardDataRegister;
             this.relicDataRegister = relicDataRegister;
             this.upgradeDataRegister = upgradeDataRegister;
+            this.enhancerPoolRegister = enhancerPoolRegister;
         }
 
         public void FinalizeData()
@@ -159,6 +162,23 @@ namespace TrainworksReloaded.Base.Class
                 AccessTools
                     .Field(typeof(ClassData), "starterCardUpgrade")
                     .SetValue(data, upgradeData);
+            }
+
+            var enhancerPoolId = configuration.GetSection("random_draft_enhancer_pool")?.ParseString();
+            if (enhancerPoolId != null)
+            {
+                if (
+                    enhancerPoolRegister.TryLookupId(
+                        enhancerPoolId.ToId(key, TemplateConstants.EnhancerPool),
+                        out var enhancerPool,
+                        out var _
+                    )
+                )
+                {
+                    AccessTools
+                        .Field(typeof(ClassData), "randomDraftEnhancerPool")
+                        .SetValue(data, enhancerPool);
+                }
             }
 
             //handle champion data

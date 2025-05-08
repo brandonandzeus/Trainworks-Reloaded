@@ -230,6 +230,15 @@ namespace TrainworksReloaded.Base.Effect
                         ?? useMagicPowerMultiplier
                 );
 
+            var disallowStatusEffectStackModifiers = false;
+            AccessTools
+                .Field(typeof(CardEffectData), "disallowStatusEffectStackModifiers")
+                .SetValue(
+                    data,
+                    configuration.GetSection("disallow_status_effect_modifiers").ParseBool()
+                        ?? disallowStatusEffectStackModifiers
+                );
+
             //ints
             var paramInt = 0;
             AccessTools
