@@ -295,6 +295,16 @@ namespace TrainworksReloaded.Base.CardUpgrade
                     configuration.GetSection("bonus_equipment").ParseInt() ?? bonusEquipment
                 );
 
+            var excludeFromClones = checkOverride
+                ? (bool)AccessTools.Field(typeof(CardUpgradeData), "excludeFromClones").GetValue(data)
+                : false;
+            AccessTools
+                .Field(typeof(CardUpgradeData), "excludeFromClones")
+                .SetValue(
+                    data,
+                    configuration.GetSection("exclude_from_clones").ParseBool() ?? excludeFromClones
+                );
+
             //List<String>
             var removeTraitUpgrades =
                 (List<string>)
