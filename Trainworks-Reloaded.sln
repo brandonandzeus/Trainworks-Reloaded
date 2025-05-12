@@ -4,7 +4,6 @@ VisualStudioVersion = 17.13.35818.85
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1A2204AF-0342-4C29-9E34-81A7B205B175}"
 	ProjectSection(SolutionItems) = preProject
-		json-schema.json = json-schema.json
 		nuget.config = nuget.config
 		thunderstore.toml = thunderstore.toml
 	EndProjectSection
@@ -16,6 +15,99 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrainworksReloaded.Plugin", "TrainworksReloaded.Plugin\TrainworksReloaded.Plugin.csproj", "{A22B53F5-2BAA-45EB-B596-E8B9297E16C8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrainworksReloaded.Test", "TrainworksReloaded.Test\TrainworksReloaded.Test.csproj", "{CA784FBC-9E4C-4503-93E6-24ADA5BDB032}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "schemas", "schemas", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		schemas\base.json = schemas\base.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "schemas", "schemas", "{7F34227B-9306-44A2-9242-AD2B3573E8A2}"
+	ProjectSection(SolutionItems) = preProject
+		schemas\schemas\atlas_icons.json = schemas\schemas\atlas_icons.json
+		schemas\schemas\cards.json = schemas\schemas\cards.json
+		schemas\schemas\card_pools.json = schemas\schemas\card_pools.json
+		schemas\schemas\card_triggers.json = schemas\schemas\card_triggers.json
+		schemas\schemas\card_trigger_types.json = schemas\schemas\card_trigger_types.json
+		schemas\schemas\characters.json = schemas\schemas\characters.json
+		schemas\schemas\character_triggers.json = schemas\schemas\character_triggers.json
+		schemas\schemas\character_trigger_types.json = schemas\schemas\character_trigger_types.json
+		schemas\schemas\chatter.json = schemas\schemas\chatter.json
+		schemas\schemas\classes.json = schemas\schemas\classes.json
+		schemas\schemas\effects.json = schemas\schemas\effects.json
+		schemas\schemas\enhancer_pools.json = schemas\schemas\enhancer_pools.json
+		schemas\schemas\game_objects.json = schemas\schemas\game_objects.json
+		schemas\schemas\localization_terms.json = schemas\schemas\localization_terms.json
+		schemas\schemas\map_nodes.json = schemas\schemas\map_nodes.json
+		schemas\schemas\relics.json = schemas\schemas\relics.json
+		schemas\schemas\relic_effects.json = schemas\schemas\relic_effects.json
+		schemas\schemas\relic_pools.json = schemas\schemas\relic_pools.json
+		schemas\schemas\replacement_texts.json = schemas\schemas\replacement_texts.json
+		schemas\schemas\rewards.json = schemas\schemas\rewards.json
+		schemas\schemas\room_modifiers.json = schemas\schemas\room_modifiers.json
+		schemas\schemas\sprites.json = schemas\schemas\sprites.json
+		schemas\schemas\status_effects.json = schemas\schemas\status_effects.json
+		schemas\schemas\subtypes.json = schemas\schemas\subtypes.json
+		schemas\schemas\traits.json = schemas\schemas\traits.json
+		schemas\schemas\upgrades.json = schemas\schemas\upgrades.json
+		schemas\schemas\upgrade_masks.json = schemas\schemas\upgrade_masks.json
+		schemas\schemas\vfxs.json = schemas\schemas\vfxs.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "definitions", "definitions", "{19B13F81-0D53-4CD7-A8BC-F82DAE202770}"
+	ProjectSection(SolutionItems) = preProject
+		schemas\definitions\additional_tooltips.json = schemas\definitions\additional_tooltips.json
+		schemas\definitions\anim.json = schemas\definitions\anim.json
+		schemas\definitions\attack_phase.json = schemas\definitions\attack_phase.json
+		schemas\definitions\bucket.json = schemas\definitions\bucket.json
+		schemas\definitions\card_effect.json = schemas\definitions\card_effect.json
+		schemas\definitions\card_pool.json = schemas\definitions\card_pool.json
+		schemas\definitions\card_selection_mode.json = schemas\definitions\card_selection_mode.json
+		schemas\definitions\card_style.json = schemas\definitions\card_style.json
+		schemas\definitions\card_target_mode.json = schemas\definitions\card_target_mode.json
+		schemas\definitions\card_trigger.json = schemas\definitions\card_trigger.json
+		schemas\definitions\card_type.json = schemas\definitions\card_type.json
+		schemas\definitions\card_type_target.json = schemas\definitions\card_type_target.json
+		schemas\definitions\character_trigger.json = schemas\definitions\character_trigger.json
+		schemas\definitions\class_type.json = schemas\definitions\class_type.json
+		schemas\definitions\color.json = schemas\definitions\color.json
+		schemas\definitions\compare_operator.json = schemas\definitions\compare_operator.json
+		schemas\definitions\cost_type.json = schemas\definitions\cost_type.json
+		schemas\definitions\death_type.json = schemas\definitions\death_type.json
+		schemas\definitions\display_category.json = schemas\definitions\display_category.json
+		schemas\definitions\dlc.json = schemas\definitions\dlc.json
+		schemas\definitions\entry_duration.json = schemas\definitions\entry_duration.json
+		schemas\definitions\game_object_type.json = schemas\definitions\game_object_type.json
+		schemas\definitions\health_filter.json = schemas\definitions\health_filter.json
+		schemas\definitions\lore_tooltip_style.json = schemas\definitions\lore_tooltip_style.json
+		schemas\definitions\map_node_type.json = schemas\definitions\map_node_type.json
+		schemas\definitions\map_skip_settings.json = schemas\definitions\map_skip_settings.json
+		schemas\definitions\parse_term.json = schemas\definitions\parse_term.json
+		schemas\definitions\persistence.json = schemas\definitions\persistence.json
+		schemas\definitions\rarity.json = schemas\definitions\rarity.json
+		schemas\definitions\rarity_ticket.json = schemas\definitions\rarity_ticket.json
+		schemas\definitions\relic_effect.json = schemas\definitions\relic_effect.json
+		schemas\definitions\reward_filter.json = schemas\definitions\reward_filter.json
+		schemas\definitions\reward_type.json = schemas\definitions\reward_type.json
+		schemas\definitions\run_type.json = schemas\definitions\run_type.json
+		schemas\definitions\special_character_type.json = schemas\definitions\special_character_type.json
+		schemas\definitions\stack_mode.json = schemas\definitions\stack_mode.json
+		schemas\definitions\status.json = schemas\definitions\status.json
+		schemas\definitions\status_effect.json = schemas\definitions\status_effect.json
+		schemas\definitions\subtype.json = schemas\definitions\subtype.json
+		schemas\definitions\target_assist.json = schemas\definitions\target_assist.json
+		schemas\definitions\target_mode.json = schemas\definitions\target_mode.json
+		schemas\definitions\team.json = schemas\definitions\team.json
+		schemas\definitions\titan_affinity.json = schemas\definitions\titan_affinity.json
+		schemas\definitions\tooltip_design.json = schemas\definitions\tooltip_design.json
+		schemas\definitions\tracked_value.json = schemas\definitions\tracked_value.json
+		schemas\definitions\tracked_value_type.json = schemas\definitions\tracked_value_type.json
+		schemas\definitions\trigger_stage.json = schemas\definitions\trigger_stage.json
+		schemas\definitions\upgrade_disabled.json = schemas\definitions\upgrade_disabled.json
+		schemas\definitions\vec2.json = schemas\definitions\vec2.json
+		schemas\definitions\vfx_display_type.json = schemas\definitions\vfx_display_type.json
+		schemas\definitions\vfx_facing.json = schemas\definitions\vfx_facing.json
+		schemas\definitions\vfx_location.json = schemas\definitions\vfx_location.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,6 +134,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {1A2204AF-0342-4C29-9E34-81A7B205B175}
+		{7F34227B-9306-44A2-9242-AD2B3573E8A2} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{19B13F81-0D53-4CD7-A8BC-F82DAE202770} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2C003FE2-99C5-46D3-9FF9-DA7FA29AF51E}
