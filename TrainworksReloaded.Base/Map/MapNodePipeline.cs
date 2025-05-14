@@ -137,7 +137,7 @@ namespace TrainworksReloaded.Base.Map
             //dlc
             AccessTools
                 .Field(typeof(MapNodeData), "requiredDlc")
-                .SetValue(data, configuration.GetSection("dlc").ParseDLC() ?? ShinyShoe.DLC.None);
+                .SetValue(data, configuration.GetSection("required_dlc").ParseDLC() ?? ShinyShoe.DLC.None);
 
             //skip settings
             AccessTools

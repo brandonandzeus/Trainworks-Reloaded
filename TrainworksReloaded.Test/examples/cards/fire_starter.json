@@ -12,7 +12,7 @@
       "targets_room": true,
       "targetless": false,
       "rarity": "common",
-      "dlc": "none",
+      "required_dlc": "none",
       "names": {
         "english": "Firestarter"
       },
@@ -28,7 +28,7 @@
         }
       ],
       "class": "ClassPyreborne",
-      "target_assist": "front_enemy",
+      "initial_keyboard_target": "front_enemy",
       "unlock_level": 0,
       "lore_tooltips": [
         {
