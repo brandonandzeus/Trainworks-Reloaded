@@ -72,11 +72,12 @@ namespace TrainworksReloaded.Base.Effect
             var data = new CardEffectData();
 
             // EffectClass
-            var effectStateName = configuration.GetSection("name").Value;
-            if (effectStateName == null)
+            var effectStateReference = configuration.GetSection("name").ParseReference();
+            if (effectStateReference == null)
                 return null;
 
-            var modReference = configuration.GetSection("mod_reference").Value ?? key;
+            var effectStateName = effectStateReference.id;
+            var modReference = effectStateReference.mod_reference ?? key;
             var assembly = atlas.PluginDefinitions.GetValueOrDefault(modReference)?.Assembly;
             if (
                 !effectStateName.GetFullyQualifiedName<CardEffectBase>(
