@@ -44,6 +44,8 @@ namespace TrainworksReloaded.Base.StatusEffects
         public bool TryLookupIdentifier(string identifier, RegisterIdentifierType identifierType, [NotNullWhen(true)] out StatusEffectData? lookup, [NotNullWhen(true)] out bool? IsModded)
         {
             lookup = null;
+            // StatusIDs are all lowercase.
+            identifier = identifier.ToLowerInvariant();
             IsModded = ContainsKey(identifier);
             switch (identifierType)
             {
