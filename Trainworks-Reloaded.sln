@@ -64,6 +64,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "definitions", "definitions"
 		schemas\definitions\card_selection_mode.json = schemas\definitions\card_selection_mode.json
 		schemas\definitions\card_style.json = schemas\definitions\card_style.json
 		schemas\definitions\card_target_mode.json = schemas\definitions\card_target_mode.json
+		schemas\definitions\card_trait.json = schemas\definitions\card_trait.json
 		schemas\definitions\card_trigger.json = schemas\definitions\card_trigger.json
 		schemas\definitions\card_type.json = schemas\definitions\card_type.json
 		schemas\definitions\card_type_target.json = schemas\definitions\card_type_target.json

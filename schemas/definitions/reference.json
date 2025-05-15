@@ -14,7 +14,7 @@
         },
         "mod_reference": {
           "type": "string",
-          "description": "Optional mod guid to refrence id from. By default your mod is searched."
+          "description": "Optional mod guid to reference the id from. If omitted then your plugin's guid is referenced."
         }
       }
     },

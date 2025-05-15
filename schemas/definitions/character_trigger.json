@@ -1,8 +1,10 @@
 {
-    "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/definitions/character_trigger.json",
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "type": "string",
-    "enum": [
+  "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/definitions/character_trigger.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "oneOf": [
+    {
+      "type": "string",
+      "enum": [
         "on_death",
         "post_combat",
         "on_spawn",
@@ -65,7 +67,11 @@
         "on_troop_removed",
         "on_train_room_loop",
         "on_status_effect_changed",
-        "on_attacking_before_damage",
-        null
-    ]
+        "on_attacking_before_damage"
+      ]
+    },
+    {
+      "$ref": "../definitions/reference.json"
+    }
+  ]
 }
