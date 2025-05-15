@@ -95,7 +95,7 @@
             "type": "boolean",
             "description": "Tertiary boolean parameter"
           },
-          "param_card_data": {
+          "param_card": {
             "type": "string",
             "description": "Card data identifier"
           },

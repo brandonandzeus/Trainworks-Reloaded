@@ -231,7 +231,7 @@ namespace TrainworksReloaded.Base.Relic
             }
 
             // Handle card data
-            var cardDataId = configuration.GetSection("param_card_data").ParseString();
+            var cardDataId = configuration.GetSection("param_card").ParseString();
             if (cardDataId != null && cardRegister.TryLookupId(cardDataId.ToId(key, TemplateConstants.Card), out var cardData, out var _))
             {
                 AccessTools.Field(typeof(RelicEffectData), "paramCardData").SetValue(data, cardData);

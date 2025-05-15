@@ -56,7 +56,7 @@ namespace TrainworksReloaded.Base.Trait
             );
 
             // Card
-            var cardConfig = configuration.GetSection("param_card_data").Value;
+            var cardConfig = configuration.GetSection("param_card").Value;
             CardData? card = null;
             if (cardConfig != null)
             {

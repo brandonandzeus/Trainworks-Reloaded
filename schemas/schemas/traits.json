@@ -44,7 +44,7 @@
                         "type": "boolean",
                         "description": "Boolean parameter for the trait. Defaults to false"
                     },
-                    "param_card_data": {
+                    "param_card": {
                         "type": "string",
                         "description": "Reference to an id for a card for a parameter"
                     },

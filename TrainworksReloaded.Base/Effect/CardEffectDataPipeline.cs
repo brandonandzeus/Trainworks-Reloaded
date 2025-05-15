@@ -122,7 +122,7 @@ namespace TrainworksReloaded.Base.Effect
                 .Field(typeof(CardEffectData), "filterBasedOnMainSubClass")
                 .SetValue(
                     data,
-                    configuration.GetSection("filter_on_main_subclass").ParseBool()
+                    configuration.GetSection("filter_based_on_main_sub_class").ParseBool()
                         ?? filterBasedOnMainSubClass
                 );
 
@@ -131,7 +131,7 @@ namespace TrainworksReloaded.Base.Effect
                 .Field(typeof(CardEffectData), "copyModifiersFromSource")
                 .SetValue(
                     data,
-                    configuration.GetSection("copy_modifiers").ParseBool()
+                    configuration.GetSection("copy_modifiers_from_source").ParseBool()
                         ?? copyModifiersFromSource
                 );
 
@@ -140,7 +140,7 @@ namespace TrainworksReloaded.Base.Effect
                 .Field(typeof(CardEffectData), "ignoreTemporaryModifiersFromSource")
                 .SetValue(
                     data,
-                    configuration.GetSection("ignore_temporary_modifiers").ParseBool()
+                    configuration.GetSection("ignore_temporary_modifiers_from_source").ParseBool()
                         ?? ignoreTemporaryModifiersFromSource
                 );
 
@@ -172,7 +172,7 @@ namespace TrainworksReloaded.Base.Effect
                 .Field(typeof(CardEffectData), "shouldCancelSubsequentEffectsIfTestFails")
                 .SetValue(
                     data,
-                    configuration.GetSection("cancel_subsequent_effects_on_failure").ParseBool()
+                    configuration.GetSection("should_cancel_subsequent_effects_if_test_fails").ParseBool()
                         ?? shouldCancelSubsequentEffectsIfTestFails
                 );
 
@@ -181,9 +181,19 @@ namespace TrainworksReloaded.Base.Effect
                 .Field(typeof(CardEffectData), "shouldFailToCastIfTestFails")
                 .SetValue(
                     data,
-                    configuration.GetSection("fail_to_cast_on_failure").ParseBool()
+                    configuration.GetSection("should_fail_to_cast_if_test_fails").ParseBool()
                         ?? shouldFailToCastIfTestFails
                 );
+
+            var shouldSkipSubsequentEffectsPreviews = false;
+            AccessTools
+                .Field(typeof(CardEffectData), "shouldSkipSubsequentEffectsPreviews")
+                .SetValue(
+                    data,
+                    configuration.GetSection("should_skip_subsequent_effects_previews").ParseBool()
+                        ?? shouldSkipSubsequentEffectsPreviews
+                );
+            
 
             var useIntRange = false;
             AccessTools

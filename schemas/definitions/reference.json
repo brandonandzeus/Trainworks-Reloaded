@@ -8,8 +8,8 @@
       "properties": {
         "id": {
           "type": "string",
-          "minLength": 1,
-          "pattern": "@.+",
+          "minLength": 2,
+          "pattern": "^@.+$",
           "description": "Unique reference to a particular object."
         },
         "mod_reference": {
@@ -20,8 +20,8 @@
     },
     {
       "type": "string",
-      "minLength": 1,
-      "pattern": "@.+",
+      "minLength": 2,
+      "pattern": "^@.+$",
       "description": "Unique reference to a particular object."
     }
   ]

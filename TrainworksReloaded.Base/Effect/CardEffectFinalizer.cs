@@ -8,6 +8,7 @@ using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Base.Subtype;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
+using static TrainworksReloaded.Base.Extensions.ParseReferenceExtensions;
 
 namespace TrainworksReloaded.Base.Effect
 {
@@ -64,11 +65,11 @@ namespace TrainworksReloaded.Base.Effect
             var key = definition.Key;
             var data = definition.Data;
 
-            var cardConfig = configuration.GetSection("param_card").Value;
+            var cardReference = configuration.GetSection("param_card").ParseReference();
             if (
-                cardConfig != null
+                cardReference != null
                 && cardRegister.TryLookupName(
-                    cardConfig.ToId(key, TemplateConstants.Card),
+                    cardReference.ToId(key, TemplateConstants.Card),
                     out var cardData,
                     out var _
                 )
@@ -79,11 +80,11 @@ namespace TrainworksReloaded.Base.Effect
                     .SetValue(data, cardData);
             }
 
-            var characterConfig = configuration.GetSection("param_character_data").Value;
+            var characterReference = configuration.GetSection("param_character").ParseReference();
             if (
-                characterConfig != null
+                characterReference != null
                 && characterDataRegister.TryLookupName(
-                    characterConfig.ToId(key, "Character"),
+                    characterReference.ToId(key, TemplateConstants.Character),
                     out var characterData,
                     out var _
                 )
@@ -94,11 +95,11 @@ namespace TrainworksReloaded.Base.Effect
                     .SetValue(data, characterData);
             }
 
-            var characterConfig2 = configuration.GetSection("param_character_data_2").Value;
+            var characterReference2 = configuration.GetSection("param_character_data_2").ParseReference();
             if (
-                characterConfig2 != null
+                characterReference2 != null
                 && characterDataRegister.TryLookupName(
-                    characterConfig2.ToId(key, "Character"),
+                    characterReference2.ToId(key, TemplateConstants.Character),
                     out var characterData2,
                     out var _
                 )
@@ -111,22 +112,23 @@ namespace TrainworksReloaded.Base.Effect
 
             //card pools
             var characterDataPool = new List<CharacterData>();
-            var characterDataPoolConfig = configuration
+            var characterReferences = configuration
                 .GetSection("param_character_data_pool")
                 .GetChildren()
-                .Select(x => x.Value);
-            foreach (var characterDataConfig in characterDataPoolConfig)
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var characterDataConfig in characterReferences)
             {
                 if (
-                    characterDataConfig != null
-                    && characterDataRegister.TryLookupName(
-                        characterDataConfig.ToId(key, "Character"),
-                        out var card,
+                    characterDataRegister.TryLookupName(
+                        characterDataConfig.ToId(key, TemplateConstants.Character),
+                        out var character,
                         out var _
                     )
                 )
                 {
-                    characterDataPool.Add(card);
+                    characterDataPool.Add(character);
                 }
             }
             AccessTools
@@ -134,11 +136,11 @@ namespace TrainworksReloaded.Base.Effect
                 .SetValue(data, characterDataPool);
 
             //upgrades
-            var upgradeConfig = configuration.GetSection("param_upgrade").Value;
+            var upgradeReference = configuration.GetSection("param_upgrade").ParseReference();
             if (
-                upgradeConfig != null
+                upgradeReference != null
                 && cardUpgradeRegister.TryLookupName(
-                    upgradeConfig.ToId(key, TemplateConstants.Upgrade),
+                    upgradeReference.ToId(key, TemplateConstants.Upgrade),
                     out var upgradeData,
                     out var _
                 )
@@ -150,10 +152,11 @@ namespace TrainworksReloaded.Base.Effect
             }
 
             // Status effects.
-            var statusEffectStackMultiplier = configuration.GetSection("status_effect_multiplier").ParseString() ?? "";
-            if (!statusEffectStackMultiplier.IsNullOrEmpty())
+            string statusEffectStackMultiplier = string.Empty;
+            var statusEffectStackMultiplierReference = configuration.GetSection("status_effect_multiplier").ParseReference();
+            if (statusEffectStackMultiplierReference != null)
             {
-                var statusEffectId = statusEffectStackMultiplier.ToId(key, TemplateConstants.StatusEffect);
+                var statusEffectId = statusEffectStackMultiplierReference.ToId(key, TemplateConstants.StatusEffect);
                 if (statusRegister.TryLookupId(statusEffectId, out var statusEffectData, out var _))
                 {
                     statusEffectStackMultiplier = statusEffectData.GetStatusId();
@@ -165,20 +168,19 @@ namespace TrainworksReloaded.Base.Effect
 
 
             //string[]
-            var targetModeStatusEffectsFilterConfig = configuration.GetSection("status_effect_filters").GetChildren();
-            List<String> targetModeStatusEffectsFilter = [];
-            foreach (var child in targetModeStatusEffectsFilterConfig)
+            var targetModeStatusEffectsFilterReferences = configuration.GetSection("target_mode_status_effect_filter")
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            List<string> targetModeStatusEffectsFilter = [];
+            foreach (var statusReference in targetModeStatusEffectsFilterReferences)
             {
-                var idConfig = child?.GetSection("status").Value;
-                if (idConfig == null)
-                    continue;
-                var statusEffectId = idConfig.ToId(key, TemplateConstants.StatusEffect);
-                string statusId = idConfig;
+                var statusEffectId = statusReference.ToId(key, TemplateConstants.StatusEffect);
                 if (statusRegister.TryLookupId(statusEffectId, out var statusEffectData, out var _))
                 {
-                    statusId = statusEffectData.GetStatusId();
+                    targetModeStatusEffectsFilter.Add(statusEffectData.GetStatusId());
                 }
-                targetModeStatusEffectsFilter.Add(statusId);
             }
             AccessTools
                 .Field(typeof(CardEffectData), "targetModeStatusEffectsFilter")
@@ -187,20 +189,18 @@ namespace TrainworksReloaded.Base.Effect
             List<StatusEffectStackData> paramStatusEffects = [];
             foreach (var child in configuration.GetSection("param_status_effects").GetChildren())
             {
-                var idConfig = child?.GetSection("status").Value;
-                if (idConfig == null)
+                var statusReference = child.GetSection("status").ParseReference();
+                if (statusReference == null)
                     continue;
-                var statusEffectId = idConfig.ToId(key, TemplateConstants.StatusEffect);
-                string statusId = idConfig;
+                var statusEffectId = statusReference.ToId(key, TemplateConstants.StatusEffect);
                 if (statusRegister.TryLookupId(statusEffectId, out var statusEffectData, out var _))
                 {
-                    statusId = statusEffectData.GetStatusId();
+                    paramStatusEffects.Add(new StatusEffectStackData
+                    {
+                        statusId = statusEffectData.GetStatusId(),
+                        count = child?.GetSection("count").ParseInt() ?? 0,
+                    });
                 }
-                paramStatusEffects.Add(new StatusEffectStackData()
-                {
-                    statusId = statusId,
-                    count = child?.GetSection("count").ParseInt() ?? 0,
-                });
             }
             AccessTools
                 .Field(typeof(CardEffectData), "paramStatusEffects")
@@ -208,13 +208,12 @@ namespace TrainworksReloaded.Base.Effect
 
             //trigger
             var paramTrigger = CharacterTriggerData.Trigger.OnDeath;
-            var triggerSection = configuration.GetSection("trigger");
-            if (triggerSection.Value != null)
+            var triggerReference = configuration.GetSection("param_trigger").ParseReference();
+            if (triggerReference != null)
             {
-                var value = triggerSection.Value;
                 if (
-                    !triggerEnumRegister.TryLookupId(
-                        value.ToId(key, TemplateConstants.CharacterTriggerEnum),
+                    triggerEnumRegister.TryLookupId(
+                        triggerReference.ToId(key, TemplateConstants.CharacterTriggerEnum),
                         out var triggerFound,
                         out var _
                     )
@@ -222,40 +221,40 @@ namespace TrainworksReloaded.Base.Effect
                 {
                     paramTrigger = triggerFound;
                 }
-                else
-                {
-                    paramTrigger = triggerSection.ParseTrigger() ?? default;
-                }
+            }
+            else
+            {
+
             }
             AccessTools
                 .Field(typeof(CardEffectData), "paramTrigger")
                 .SetValue(data, paramTrigger);
 
-            var filterId = configuration.GetSection("param_card_filter")?.ParseString();
-            if (filterId != null)
+            var filterReference = configuration.GetSection("param_card_filter").ParseReference();
+            if (filterReference != null)
             {
                 upgradeMaskRegister.TryLookupId(
-                    filterId.ToId(key, TemplateConstants.UpgradeMask), 
+                    filterReference.ToId(key, TemplateConstants.UpgradeMask), 
                     out var lookup, 
                     out var _);
                 AccessTools.Field(typeof(CardEffectData), "paramCardFilter").SetValue(data, lookup);
             }
 
-            var filter2Id = configuration.GetSection("param_card_filter_2")?.ParseString();
-            if (filter2Id != null)
+            var filter2Reference = configuration.GetSection("param_card_filter_2").ParseReference();
+            if (filter2Reference != null)
             {
                 upgradeMaskRegister.TryLookupId(
-                    filter2Id.ToId(key, TemplateConstants.UpgradeMask),
+                    filter2Reference.ToId(key, TemplateConstants.UpgradeMask),
                     out var lookup,
                     out var _);
                 AccessTools.Field(typeof(CardEffectData), "paramCardFilterSecondary").SetValue(data, lookup);
             }
 
-            var cardPoolId = configuration.GetSection("param_card_pool")?.ParseString();
-            if (cardPoolId != null)
+            var poolReference = configuration.GetSection("param_card_pool").ParseReference();
+            if (poolReference != null)
             {
                 cardPoolRegister.TryLookupId(
-                    cardPoolId.ToId(key, TemplateConstants.CardPool),
+                    poolReference.ToId(key, TemplateConstants.CardPool),
                     out var lookup,
                     out var _
                     );
@@ -263,11 +262,11 @@ namespace TrainworksReloaded.Base.Effect
             }
 
             var targetCharacterSubtype = "SubtypesData_None";
-            var targetCharacterSubtypeId = configuration.GetSection("target_subtype").ParseString();
-            if (targetCharacterSubtypeId != null)
+            var targetCharacterSubtypeReference = configuration.GetSection("target_subtype").ParseReference();
+            if (targetCharacterSubtypeReference != null)
             {
                 if (subtypeRegister.TryLookupId(
-                    targetCharacterSubtypeId.ToId(key, TemplateConstants.Subtype),
+                    targetCharacterSubtypeReference.ToId(key, TemplateConstants.Subtype),
                     out var lookup,
                     out var _
                 ))
@@ -281,11 +280,11 @@ namespace TrainworksReloaded.Base.Effect
 
 
             var paramSubtype = "SubtypesData_None";
-            var paramSubtypeId = configuration.GetSection("param_subtype").ParseString();
-            if (paramSubtypeId != null)
+            var paramSubtypeReference = configuration.GetSection("param_subtype").ParseReference();
+            if (paramSubtypeReference != null)
             {
                 if (subtypeRegister.TryLookupId(
-                    paramSubtypeId.ToId(key, TemplateConstants.Subtype),
+                    paramSubtypeReference.ToId(key, TemplateConstants.Subtype),
                     out var lookup,
                     out var _
                 ))
@@ -297,10 +296,10 @@ namespace TrainworksReloaded.Base.Effect
                 .Field(typeof(CardEffectData), "paramSubtype")
                 .SetValue(data, paramSubtype);
 
-            var appliedToSelfVFXId = configuration.GetSection("applied_to_self_vfx").ParseString() ?? "";
+            var appliedToSelfVFXId = configuration.GetSection("applied_to_self_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx) ?? "";
             if (
                 vfxRegister.TryLookupId(
-                    appliedToSelfVFXId.ToId(key, TemplateConstants.Vfx),
+                    appliedToSelfVFXId,
                     out var appliedToSelfVFX,
                     out var _
                 )
@@ -309,10 +308,10 @@ namespace TrainworksReloaded.Base.Effect
                 AccessTools.Field(typeof(CardEffectData), "appliedToSelfVFX").SetValue(data, appliedToSelfVFX);
             }
 
-            var appliedVFXId = configuration.GetSection("applied_vfx").ParseString() ?? "";
+            var appliedVFXId = configuration.GetSection("applied_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx) ?? "";
             if (
                 vfxRegister.TryLookupId(
-                    appliedVFXId.ToId(key, TemplateConstants.Vfx),
+                    appliedVFXId,
                     out var appliedVFX,
                     out var _
                 )
