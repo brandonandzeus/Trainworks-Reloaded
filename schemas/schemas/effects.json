@@ -178,10 +178,6 @@
                   "type": "boolean",
                   "description": "Whether to prevent playing the card (or trigger) entirely if this effects' TestEffect method fails. Example a card with the Sacrifice <subtype> will fail if the target isn't of proper subtype."
                 },
-                "should_skip_subsequent_effects_previews": {
-                  "type": "boolean",
-                  "description": "Whether to skip subsequent effects when previewing the effects of playing a card or trigger. You shouldn't need to set this to true."
-                }
                 "should_test": {
                   "type": "boolean",
                   "description": "Whether this effect should be tested before applying.",
