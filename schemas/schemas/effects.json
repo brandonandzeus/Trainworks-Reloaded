@@ -21,7 +21,8 @@
                 },
                 "anim_to_play": {
                   "$ref": "../definitions/anim.json",
-                  "description": "Animation to play when this effect is triggered."
+                  "description": "Animation to play when this effect is triggered.",
+                  "default": "none"
                 },
                 "applied_to_self_vfx": {
                   "$ref": "../defintions/reference.json",
@@ -164,7 +165,8 @@
                       "$ref": "../definitions/reference.json"
                     }
                   ],
-                  "description": "Trigger parameter for the effect. This is a reference to a defined Character Trigger."
+                  "description": "Trigger parameter for the effect. This is a reference to a defined Character Trigger.",
+                  "default": "on_death"
                 },
                 "param_upgrade": {
                   "$ref": "../definitions/reference.json",
@@ -204,11 +206,13 @@
                 },
                 "target_card_selection_mode": {
                   "$ref": "../definitions/card_selection_mode.json",
-                  "description": "Used in CardEffectRecursion to choose how cards from target_mode are selected."
+                  "description": "Used in CardEffectRecursion to choose how cards from target_mode are selected.",
+                  "default": "choose_to_hand"
                 },
                 "target_card_type": {
                   "$ref": "../definitions/card_type_target.json",
-                  "description": "Type of card to target."
+                  "description": "Type of card to target.",
+                  "default": "spell"
                 },
                 "target_ignore_bosses": {
                   "type": "boolean",
@@ -216,11 +220,13 @@
                 },
                 "target_mode": {
                   "$ref": "../definitions/target_mode.json",
-                  "description": "Mode for selecting targets. This property combined with target_team will get you the base characters targetted for the effect."
+                  "description": "Mode for selecting targets. This property combined with target_team will get you the base characters targetted for the effect.",
+                  "default": "room"
                 },
                 "target_mode_health_filter": {
                   "$ref": "../definitions/health_filter.json",
-                  "description": "Filter for target health when selecting targets."
+                  "description": "Filter for target health when selecting targets.",
+                  "default": "both"
                 },
                 "target_mode_status_effect_filter": {
                   "type": "array",
@@ -250,7 +256,8 @@
                 },
                 "target_team": {
                   "$ref": "../definitions/team.json",
-                  "description": "Team to target. \"monsters\" for friendly units or \"heroes\" for enemy units."
+                  "description": "Team to target. \"monsters\" for friendly units or \"heroes\" for enemy units.",
+                  "default": "none"
                 },
                 "use_health_missing_multiplier": {
                   "type": "boolean",
