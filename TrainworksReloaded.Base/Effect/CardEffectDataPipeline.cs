@@ -68,7 +68,7 @@ namespace TrainworksReloaded.Base.Effect
             {
                 return null;
             }
-            var name = key.GetId("Effect", id);
+            var name = key.GetId(TemplateConstants.Effect, id);
             var data = new CardEffectData();
 
             // EffectClass
@@ -367,7 +367,7 @@ namespace TrainworksReloaded.Base.Effect
                 }
 
                 tooltipData.style =
-                    configuration.GetSection("param_trigger").ParseTooltipDesignType()
+                    configuration.GetSection("style").ParseTooltipDesignType()
                     ?? TooltipDesigner.TooltipDesignType.Default;
                 tooltipData.isStatusTooltip =
                     configuration.GetSection("is_status").ParseBool() ?? false;

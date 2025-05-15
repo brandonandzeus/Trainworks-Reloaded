@@ -177,12 +177,12 @@ namespace TrainworksReloaded.Base.Card
 
             //handle traits
             var cardTraitDatas = new List<CardTraitData>();
-            var cardTraitDatasConfig = configuration.GetSection("traits")
+            var cardTraitReferences = configuration.GetSection("traits")
                 .GetChildren()
                 .Select(x => x.ParseReference())
                 .Where(x => x != null)
                 .Cast<ReferencedObject>();
-            foreach (var traitReference in cardTraitDatasConfig)
+            foreach (var traitReference in cardTraitReferences)
             {
                 var id = traitReference.ToId(key, TemplateConstants.Trait);
                 if (traitRegister.TryLookupId(id, out var card, out var _))

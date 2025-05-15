@@ -52,23 +52,18 @@ namespace TrainworksReloaded.Base.Trigger
 
             //handle trigger
             var trigger = CharacterTriggerData.Trigger.OnDeath;
-            var triggerSection = configuration.GetSection("trigger");
-            if (triggerSection.Value != null)
+            var triggerReference = configuration.GetSection("trigger").ParseReference();
+            if (triggerReference != null)
             {
-                var value = triggerSection.Value;
                 if (
                     triggerEnumRegister.TryLookupId(
-                        value.ToId(key, TemplateConstants.CharacterTriggerEnum),
+                        triggerReference.ToId(key, TemplateConstants.CharacterTriggerEnum),
                         out var triggerFound,
                         out var _
                     )
                 )
                 {
                     trigger = triggerFound;
-                }
-                else
-                {
-                    trigger = triggerSection.ParseTrigger() ?? default;
                 }
             }
             AccessTools

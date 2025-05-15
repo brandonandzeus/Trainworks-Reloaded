@@ -63,7 +63,7 @@ namespace TrainworksReloaded.Base.Trigger
             {
                 return null;
             }
-            var name = key.GetId("CTrigger", id);
+            var name = key.GetId(TemplateConstants.CharacterTrigger, id);
             var descriptionKey = $"CharacterTriggerData_descriptionKey-{name}";
             var additionalTextOnTriggerKey = $"CharacterTriggerData_textOnTriggerKey-{name}";
             var data = new CharacterTriggerData(CharacterTriggerData.Trigger.OnDeath, null);
