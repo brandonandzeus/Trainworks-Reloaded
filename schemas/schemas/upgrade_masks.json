@@ -1,293 +1,254 @@
 {
-    "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/upgrade_masks.json",
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "properties": {
-        "upgrade_masks": {
+  "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/upgrade_masks.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "properties": {
+    "upgrade_masks": {
+      "type": "array",
+      "description": "A collection of all upgrade masks in the game, defining which cards are eligible for upgrades.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "additional_card_types": {
             "type": "array",
-            "description": "A collection of all upgrade masks in the game, defining which cards are eligible for upgrades.",
+            "description": "Allow additional card types to be eligible for the CardUpgrade.",
             "items": {
-                "type": "object",
-                "properties": {
-                    "additional_card_types": {
-                        "type": "array",
-                        "description": "Allow additional card types to be eligible for the CardUpgrade.",
-                        "items": {
-                            "$ref": "../definitions/card_type.json"
-                        }
-                    },
-                    "allowed_pools": {
-                        "type": "array",
-                        "description": "List of card pools where this upgrade is allowed.",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "card_target_mode": {
-                        "$ref": "../definitions/card_target_mode.json",
-                        "description": "Target mode for the card upgrade."
-                    },
-                    "card_type": {
-                        "$ref": "../definitions/card_type.json",
-                        "description": "Primary Card type eligible for the CardUpgrade."
-                    },
-                    "cost_range": {
-                        "$ref": "../definitions/vec2.json",
-                        "description": "Range of costs for eligible cards."
-                    },
-                    "disabled_reason": {
-                        "$ref": "../definitions/upgrade_disabled.json",
-                        "description": "Reason why the upgrade is disabled."
-                    },
-                    "disallowed_pools": {
-                        "type": "array",
-                        "description": "List of card pools where this upgrade is not allowed.",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "exclude_if_has_ability": {
-                        "type": "boolean",
-                        "description": "The upgrade will be excluded if the monster has a unit ability."
-                    },
-                    "exclude_if_grafted": {
-                        "type": "boolean",
-                        "description": "The upgrade will be excluded if the monster has grafted equipment."
-                    },
-                    "exclude_if_not_upgraded": {
-                        "type": "boolean",
-                        "description": "The upgrade will be excluded if the monster has not been upgraded."
-                    },
-                    "exclude_non_attacking": {
-                        "type": "boolean",
-                        "description": "The upgrade will be excluded if the monster doesn't attack."
-                    },
-                    "exclude_if_upgraded": {
-                        "type": "boolean",
-                        "description": "The upgrade will be excluded if the monster has been upgraded."
-                    },
-                    "exclude_x_cost": {
-                        "type": "boolean",
-                        "description": "Whether to exclude X-cost cards."
-                    },
-                    "excluded_class": {
-                        "type": "array",
-                        "description": "List of excluded classes.",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "excluded_class_operator": {
-                        "$ref": "../definitions/compare_operator.json",
-                        "description": "Operator for excluded classes."
-                    },
-                    "excluded_effects": {
-                        "type": "array",
-                        "description": "List of excluded effects.",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "name": {
-                                    "type": "string",
-                                    "description": "Name of the effect."
-                                },
-                                "mod_reference": {
-                                    "type": "string",
-                                    "description": "Mod reference for the effect."
-                                }
-                            }
-                        }
-                    },
-                    "excluded_effects_operator": {
-                        "$ref": "../definitions/compare_operator.json",
-                        "description": "Operator for excluded effects."
-                    },
-                    "excluded_rarities": {
-                        "type": "array",
-                        "description": "List of excluded rarities.",
-                        "items": {
-                            "$ref": "../definitions/rarity.json"
-                        }
-                    },
-                    "excluded_rarities_operator": {
-                        "$ref": "../definitions/compare_operator.json",
-                        "description": "Operator for excluded rarities."
-                    },
-                    "excluded_sizes": {
-                        "type": "array",
-                        "description": "List of excluded sizes.",
-                        "items": {
-                            "type": "integer"
-                        }
-                    },
-                    "excluded_status": {
-                        "type": "array",
-                        "description": "List of excluded status effects.",
-                        "items": {
-                            "$ref": "../definitions/status_effect.json"
-                        }
-                    },
-                    "excluded_status_operator": {
-                        "$ref": "../definitions/compare_operator.json",
-                        "description": "Operator for excluded status effects."
-                    },
-                    "excluded_subtypes": {
-                        "type": "array",
-                        "description": "List of excluded subtypes.",
-                        "items": {
-                            "$ref": "../definitions/subtype.json"
-                        }
-                    },
-                    "excluded_subtypes_operator": {
-                        "$ref": "../definitions/compare_operator.json",
-                        "description": "Operator for excluded subtypes."
-                    },
-                    "excluded_traits": {
-                        "type": "array",
-                        "description": "List of excluded traits.",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "name": {
-                                    "type": "string",
-                                    "description": "Name of the trait."
-                                },
-                                "mod_reference": {
-                                    "type": "string",
-                                    "description": "Mod reference for the trait."
-                                }
-                            }
-                        }
-                    },
-                    "excluded_traits_operator": {
-                        "$ref": "../definitions/compare_operator.json",
-                        "description": "Operator for excluded traits."
-                    },
-                    "excluded_upgrade": {
-                        "type": "array",
-                        "description": "List of excluded upgrades.",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "excluded_upgrade_operator": {
-                        "$ref": "../definitions/compare_operator.json",
-                        "description": "Operator for excluded upgrades."
-                    },
-                    "id": {
-                        "type": "string",
-                        "description": "Unique identifier for this upgrade mask."
-                    },
-                    "require_x_cost": {
-                        "type": "boolean",
-                        "description": "Whether to require X-cost cards."
-                    },
-                    "required_class": {
-                        "type": "array",
-                        "description": "List of required classes.",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "required_class_operator": {
-                        "$ref": "../definitions/compare_operator.json",
-                        "description": "Operator for required classes."
-                    },
-                    "required_effects": {
-                        "type": "array",
-                        "description": "List of required effects.",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "name": {
-                                    "type": "string",
-                                    "description": "Name of the effect."
-                                },
-                                "mod_reference": {
-                                    "type": "string",
-                                    "description": "Mod reference for the effect."
-                                }
-                            }
-                        }
-                    },
-                    "required_effects_operator": {
-                        "$ref": "../definitions/compare_operator.json",
-                        "description": "Operator for required effects."
-                    },
-                    "required_rarities": {
-                        "type": "array",
-                        "description": "List of required rarities.",
-                        "items": {
-                            "$ref": "../definitions/rarity.json"
-                        }
-                    },
-                    "required_rarities_operator": {
-                        "$ref": "../definitions/compare_operator.json",
-                        "description": "Operator for required rarities."
-                    },
-                    "required_sizes": {
-                        "type": "array",
-                        "description": "List of required sizes.",
-                        "items": {
-                            "type": "integer"
-                        }
-                    },
-                    "required_status": {
-                        "type": "array",
-                        "description": "List of required status effects.",
-                        "items": {
-                            "$ref": "../definitions/status_effect.json"
-                        }
-                    },
-                    "required_status_operator": {
-                        "$ref": "../definitions/compare_operator.json",
-                        "description": "Operator for required status effects."
-                    },
-                    "required_subtypes": {
-                        "type": "array",
-                        "description": "List of required subtypes.",
-                        "items": {
-                            "$ref": "../definitions/subtype.json"
-                        }
-                    },
-                    "required_subtypes_operator": {
-                        "$ref": "../definitions/compare_operator.json",
-                        "description": "Operator for required subtypes."
-                    },
-                    "required_traits": {
-                        "type": "array",
-                        "description": "List of required traits.",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "name": {
-                                    "type": "string",
-                                    "description": "Name of the trait."
-                                },
-                                "mod_reference": {
-                                    "type": "string",
-                                    "description": "Mod reference for the trait."
-                                }
-                            }
-                        }
-                    },
-                    "required_traits_operator": {
-                        "$ref": "../definitions/compare_operator.json",
-                        "description": "Operator for required traits."
-                    },
-                    "required_upgrade": {
-                        "type": "array",
-                        "description": "List of required upgrades.",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "required_upgrade_operator": {
-                        "$ref": "../definitions/compare_operator.json",
-                        "description": "Operator for required upgrades."
-                    }
-                },
-                "description": "An upgrade mask definition that specifies which cards are eligible for upgrades based on various criteria."
+              "$ref": "../definitions/card_type.json"
             }
-        }
+          },
+          "allowed_pools": {
+            "type": "array",
+            "description": "List of card pools where this upgrade is allowed.",
+            "items": {
+              "$ref": "../definitions/card_pool.json"
+            }
+          },
+          "card_target_mode": {
+            "$ref": "../definitions/card_target_mode.json",
+            "description": "Target mode for the card upgrade."
+          },
+          "card_type": {
+            "$ref": "../definitions/card_type.json",
+            "description": "Primary Card type eligible for the CardUpgrade."
+          },
+          "cost_range": {
+            "$ref": "../definitions/vec2.json",
+            "description": "Range of costs for eligible cards."
+          },
+          "disabled_reason": {
+            "$ref": "../definitions/upgrade_disabled.json",
+            "description": "Reason why the upgrade is disabled."
+          },
+          "disallowed_pools": {
+            "type": "array",
+            "description": "List of card pools where this upgrade is not allowed.",
+            "items": {
+              "$ref": "../definitions/card_pool.json"
+            }
+          },
+          "exclude_if_has_ability": {
+            "type": "boolean",
+            "description": "The upgrade will be excluded if the monster has a unit ability."
+          },
+          "exclude_if_grafted": {
+            "type": "boolean",
+            "description": "The upgrade will be excluded if the monster has grafted equipment."
+          },
+          "exclude_if_not_upgraded": {
+            "type": "boolean",
+            "description": "The upgrade will be excluded if the monster has not been upgraded."
+          },
+          "exclude_non_attacking": {
+            "type": "boolean",
+            "description": "The upgrade will be excluded if the monster doesn't attack."
+          },
+          "exclude_if_upgraded": {
+            "type": "boolean",
+            "description": "The upgrade will be excluded if the monster has been upgraded."
+          },
+          "exclude_x_cost": {
+            "type": "boolean",
+            "description": "Whether to exclude X-cost cards."
+          },
+          "excluded_class": {
+            "type": "array",
+            "description": "List of excluded clans.",
+            "items": {
+              "$ref": "../definitions/classes.json"
+            }
+          },
+          "excluded_class_operator": {
+            "$ref": "../definitions/compare_operator.json",
+            "description": "Operator for excluded classes."
+          },
+          "excluded_effects": {
+            "type": "array",
+            "description": "List of excluded effects.",
+            "items": {
+              "$ref": "../definitions/card_effect.json"
+            }
+          },
+          "excluded_effects_operator": {
+            "$ref": "../definitions/compare_operator.json",
+            "description": "Operator for excluded effects."
+          },
+          "excluded_rarities": {
+            "type": "array",
+            "description": "List of excluded rarities.",
+            "items": {
+              "$ref": "../definitions/rarity.json"
+            }
+          },
+          "excluded_rarities_operator": {
+            "$ref": "../definitions/compare_operator.json",
+            "description": "Operator for excluded rarities."
+          },
+          "excluded_sizes": {
+            "type": "array",
+            "description": "List of excluded sizes.",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "excluded_status": {
+            "type": "array",
+            "description": "List of excluded status effects.",
+            "items": {
+              "$ref": "../definitions/status_effect.json"
+            }
+          },
+          "excluded_status_operator": {
+            "$ref": "../definitions/compare_operator.json",
+            "description": "Operator for excluded status effects."
+          },
+          "excluded_subtypes": {
+            "type": "array",
+            "description": "List of excluded subtypes.",
+            "items": {
+              "$ref": "../definitions/subtype.json"
+            }
+          },
+          "excluded_subtypes_operator": {
+            "$ref": "../definitions/compare_operator.json",
+            "description": "Operator for excluded subtypes."
+          },
+          "excluded_traits": {
+            "type": "array",
+            "description": "List of excluded traits.",
+            "items": {
+              "$ref": "../definitions/card_trait.json"
+            }
+          },
+          "excluded_traits_operator": {
+            "$ref": "../definitions/compare_operator.json",
+            "description": "Operator for excluded traits."
+          },
+          "excluded_upgrade": {
+            "type": "array",
+            "description": "List of excluded upgrades.",
+            "items": {
+              "$ref": "../definitions/card_upgrade.json"
+            }
+          },
+          "excluded_upgrade_operator": {
+            "$ref": "../definitions/compare_operator.json",
+            "description": "Operator for excluded upgrades."
+          },
+          "id": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Unique identifier for this upgrade mask."
+          },
+          "require_x_cost": {
+            "type": "boolean",
+            "description": "Whether to require X-cost cards."
+          },
+          "required_class": {
+            "type": "array",
+            "description": "List of required clans.",
+            "items": {
+              "$ref": "../definitions/classes.json"
+            }
+          },
+          "required_class_operator": {
+            "$ref": "../definitions/compare_operator.json",
+            "description": "Operator for required classes."
+          },
+          "required_effects": {
+            "type": "array",
+            "description": "List of required effects.",
+            "items": {
+              "$ref": "../definitions/card_effect.json"
+            }
+          },
+          "required_effects_operator": {
+            "$ref": "../definitions/compare_operator.json",
+            "description": "Operator for required effects."
+          },
+          "required_rarities": {
+            "type": "array",
+            "description": "List of required rarities.",
+            "items": {
+              "$ref": "../definitions/rarity.json"
+            }
+          },
+          "required_rarities_operator": {
+            "$ref": "../definitions/compare_operator.json",
+            "description": "Operator for required rarities."
+          },
+          "required_sizes": {
+            "type": "array",
+            "description": "List of required sizes.",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "required_status": {
+            "type": "array",
+            "description": "List of required status effects.",
+            "items": {
+              "$ref": "../definitions/status_effect.json"
+            }
+          },
+          "required_status_operator": {
+            "$ref": "../definitions/compare_operator.json",
+            "description": "Operator for required status effects."
+          },
+          "required_subtypes": {
+            "type": "array",
+            "description": "List of required subtypes.",
+            "items": {
+              "$ref": "../definitions/subtype.json"
+            }
+          },
+          "required_subtypes_operator": {
+            "$ref": "../definitions/compare_operator.json",
+            "description": "Operator for required subtypes."
+          },
+          "required_traits": {
+            "type": "array",
+            "description": "List of required traits.",
+            "items": {
+              "$ref": "../definitions/card_trait.json"
+            }
+          },
+          "required_traits_operator": {
+            "$ref": "../definitions/compare_operator.json",
+            "description": "Operator for required traits."
+          },
+          "required_upgrade": {
+            "type": "array",
+            "description": "List of required upgrades.",
+            "items": {
+              "$ref": "../definitions/card_upgrade.json"
+            }
+          },
+          "required_upgrade_operator": {
+            "$ref": "../definitions/compare_operator.json",
+            "description": "Operator for required upgrades."
+          }
+        },
+        "description": "An upgrade mask definition that specifies which cards are eligible for upgrades based on various criteria."
+      }
     }
+  }
 }

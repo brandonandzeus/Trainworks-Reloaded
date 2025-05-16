@@ -31,7 +31,6 @@ namespace TrainworksReloaded.Base.CardUpgrade
 
         public List<IDefinition<CardUpgradeMaskData>> Run(IRegister<CardUpgradeMaskData> service)
         {
-            // We load all cards and then finalize them to avoid dependency loops
             var processList = new List<IDefinition<CardUpgradeMaskData>>();
             foreach (var config in atlas.PluginDefinitions)
             {
@@ -41,7 +40,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
         }
 
         /// <summary>
-        /// Loads the Card Definitions in
+        /// Loads the Upgrade Mask Definitions in
         /// </summary>
         /// <param name="service"></param>
         /// <param name="key"></param>
@@ -246,25 +245,19 @@ namespace TrainworksReloaded.Base.CardUpgrade
             return new CardUpgradeMaskDefinition(key, data, configuration);
         }
 
-        private string? ParseEffectType<T>(IConfiguration configuration, string key, PluginAtlas atlas)
+        private string? ParseEffectType<T>(IConfigurationSection configuration, string key, PluginAtlas atlas)
         {
-            var name = configuration.GetSection("name").ParseString();
-            if (name == null)
-            {
+            var reference = configuration.ParseReference();
+            if (reference == null)
                 return null;
-            }
-            var modReference = configuration.GetSection("mod_reference").Value ?? key;
+            var name = reference.id;
+            var modReference = reference.mod_reference ?? key;
             var assembly = atlas.PluginDefinitions.GetValueOrDefault(modReference)?.Assembly;
-            if (
-                !name.GetFullyQualifiedName<T>(
-                    assembly,
-                    out string? fullyQualifiedName
-                )
-            )
+            if (name.GetFullyQualifiedName<T>(assembly, out string? fullyQualifiedName))
             {
-                return null;
+                return fullyQualifiedName;
             }
-            return fullyQualifiedName;
+            return null;
         }
     }
 }
