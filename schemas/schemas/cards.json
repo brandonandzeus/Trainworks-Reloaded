@@ -191,7 +191,7 @@
             "uniqueItems": true,
             "description": "List of traits this card has.",
             "items": {
-              "$ref": "../defintions/card_trait.json",
+              "$ref": "../defintions/reference.json",
               "description": "Reference to a trait's unique identifier."
             }
           },
@@ -206,7 +206,7 @@
           "unlock_level": {
             "type": "integer",
             "description": "The level at which this card becomes available to appear in card drafts.",
-            "default": 0,
+            "default": 0
           }
         },
         "required": [

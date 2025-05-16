@@ -297,25 +297,13 @@ namespace TrainworksReloaded.Base.Effect
                 .SetValue(data, paramSubtype);
 
             var appliedToSelfVFXId = configuration.GetSection("applied_to_self_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx) ?? "";
-            if (
-                vfxRegister.TryLookupId(
-                    appliedToSelfVFXId,
-                    out var appliedToSelfVFX,
-                    out var _
-                )
-            )
+            if (vfxRegister.TryLookupId(appliedToSelfVFXId, out var appliedToSelfVFX, out var _))
             {
                 AccessTools.Field(typeof(CardEffectData), "appliedToSelfVFX").SetValue(data, appliedToSelfVFX);
             }
 
             var appliedVFXId = configuration.GetSection("applied_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx) ?? "";
-            if (
-                vfxRegister.TryLookupId(
-                    appliedVFXId,
-                    out var appliedVFX,
-                    out var _
-                )
-            )
+            if (vfxRegister.TryLookupId(appliedVFXId, out var appliedVFX, out var _))
             {
                 AccessTools.Field(typeof(CardEffectData), "appliedVFX").SetValue(data, appliedVFX);
             }
