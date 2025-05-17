@@ -59,6 +59,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "definitions", "definitions"
 		schemas\definitions\anim.json = schemas\definitions\anim.json
 		schemas\definitions\attack_phase.json = schemas\definitions\attack_phase.json
 		schemas\definitions\bucket.json = schemas\definitions\bucket.json
+		schemas\definitions\card.json = schemas\definitions\card.json
 		schemas\definitions\card_effect.json = schemas\definitions\card_effect.json
 		schemas\definitions\card_pool.json = schemas\definitions\card_pool.json
 		schemas\definitions\card_selection_mode.json = schemas\definitions\card_selection_mode.json

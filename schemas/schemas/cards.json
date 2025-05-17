@@ -17,7 +17,7 @@
             "description": "Whether this card's ability can target other floors.",
             "default": false
           },
-          "card_art_reference": {
+          "card_art": {
             "description": "Reference to the card's artwork asset. This is either a reference to a game object, or an asset guid to reuse vanilla card art.",
             "oneOf": [
               {

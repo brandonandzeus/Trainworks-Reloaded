@@ -9,135 +9,114 @@
       "items": {
         "properties": {
           "ability": {
+            "$ref": "../definitions/card.json",
+            "description": "A reference to a card for this character's ability."
+          },
+          "animator": {
             "type": "string",
-            "description": "The unique identifier for this character's ability."
+            "description": "Reference to the character's animation controller. (Not Implemented)"
           },
           "artist": {
             "type": "string",
             "description": "The artist who created the character art."
           },
-          "animator": {
-            "type": "string",
-            "description": "Reference to the character's animation controller."
-          },
           "ascends_train_automatically": {
             "type": "boolean",
-            "description": "Whether this character automatically moves up the train when possible."
+            "description": "Whether this character automatically moves up the train when possible.",
+            "default": true
           },
           "attack_damage": {
             "type": "integer",
-            "description": "Base damage dealt by this character's attacks."
+            "description": "Base damage dealt by this character's attacks.",
+            "default": 0
           },
           "attack_teleports_to_defender": {
             "type": "boolean",
-            "description": "Whether this character teleports to its target when attacking."
+            "description": "Whether this character teleports to its target when attacking.",
+            "default": true
           },
           "attack_vfx": {
-            "type": "string",
+            "$ref": "../definitions/vfx.json",
             "description": "Visual effect played when this character attacks."
           },
-          "block_size_increase": {
+          "block_visual_size_increase": {
             "type": "boolean",
-            "description": "Whether this character's size increases when blocking."
+            "description": "Block the unit from growing when its size increases from upgrades.",
+            "default": false
           },
           "boss_action_groups": {
             "type": "array",
-            "description": "List of action groups for boss characters.",
+            "description": "List of action groups for flying boss characters. (Not implemented)",
             "items": {
-              "properties": {
-                "repeats": {
-                  "type": "integer",
-                  "description": "Number of times this action group repeats."
-                },
-                "actions": {
-                  "type": "array",
-                  "description": "List of actions in this group.",
-                  "items": {
-                    "properties": {
-                      "name": {
-                        "type": "string",
-                        "description": "Name of this action."
-                      },
-                      "tooltip": {
-                        "$ref": "../definitions/parse_term.json",
-                        "description": "Localized text describing this action."
-                      },
-                      "team": {
-                        "$ref": "../definitions/team.json",
-                        "description": "Which team this action affects."
-                      },
-                      "effects": {
-                        "type": "array",
-                        "description": "List of effects this action applies.",
-                        "items": {
-                          "properties": {
-                            "id": {
-                              "type": "string",
-                              "description": "Reference to an effect's unique identifier."
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
+              "$ref": "../definitions/boss_action_data.json"
             }
-          },
-          "boss_cast_vfx": {
-            "type": "string",
-            "description": "Visual effect played when this boss character casts an ability."
           },
           "boss_room_cast_vfx": {
             "type": "string",
             "description": "Visual effect played in the room when this boss character casts an ability."
           },
+          "boss_spell_cast_vfx": {
+            "$ref": "../definitions/vfx.json",
+            "description": "Visual effect played when this boss character casts an ability."
+          },
+          "boss_titan_affinity": {
+            "$ref": "../definitions/titan_affinity.json",
+            "description": "For a boss character its affinity with titans. Effects the freeze room effet."
+          },
           "can_attack": {
             "type": "boolean",
-            "description": "Whether this character can perform attacks."
+            "description": "Whether this character can perform attacks.",
+            "default": true
           },
           "can_be_healed": {
             "type": "boolean",
-            "description": "Whether this character can receive healing."
+            "description": "Whether this character can be healed.",
+            "default": true
           },
           "character_art": {
-            "type": "string",
+            "oneOf": [
+              {
+                "$ref": "../definitions/reference.json"
+              },
+              {
+                "type": "string",
+                "pattern": "[0-9a-fA-F]+",
+                "minLength": 32,
+                "maxLength": 32
+              }
+            ],
             "description": "Reference to the character's art asset."
-          },
-          "character_lore_tooltips": {
-            "type": "array",
-            "description": "List of lore tooltips for this character.",
-            "items": {
-              "type": "string"
-            }
           },
           "character_sound_data": {
             "type": "string",
-            "description": "Reference to the character's sound data."
+            "description": "Reference to the character's sound data. (Not implemented)"
           },
           "chatter": {
-            "type": "string",
+            "$ref": "../definitions/reference.json",
             "description": "Reference to the character's dialogue data."
           },
           "chosen_variant": {
             "type": "boolean",
-            "description": "Whether this is a chosen variant of the character."
+            "description": "Whether this is a chosen variant of the character. Setting this to true sets the chosen property in the shader."
           },
           "death_slides_backwards": {
             "type": "boolean",
-            "description": "Whether this character slides backward when dying."
+            "description": "Whether this character slides backward when dying.",
+            "default": true
           },
           "death_type": {
             "$ref": "../definitions/death_type.json",
-            "description": "Type of death animation to play."
+            "description": "Type of death animation to play.",
+            "default": "normal"
           },
           "death_vfx": {
-            "type": "string",
+            "$ref": "../definitions/vfx.json",
             "description": "Visual effect played when this character dies."
           },
           "disable_in_daily_challenges": {
             "type": "boolean",
-            "description": "Whether this character is disabled in daily challenges."
+            "description": "Whether this character is disabled in daily challenges.",
+            "default": false
           },
           "endless_stats": {
             "type": "object",
@@ -158,31 +137,34 @@
             ]
           },
           "enemy_relic": {
-            "type": "string",
-            "description": "Reference to a relic for the enemy's relic data."
+            "$ref": "../definitions/reference.json",
+            "description": "Reference to a relic (SinsData) for the enemy's relic data."
           },
-          "equip_limit": {
+          "equipment_limit": {
             "type": "integer",
-            "description": "Maximum number of equipment this character can have."
+            "description": "Maximum number of equipment this character can have.",
+            "default": 1
           },
           "grafted_equipment": {
-            "type": "string",
-            "description": "Reference to this character's grafted equipment."
+            "$ref": "../definitions/card.json",
+            "description": "Reference to an equipment card for this character's grafted equipment."
           },
           "health": {
             "type": "integer",
-            "description": "Base health of this character."
+            "description": "Base health of this character.",
+            "default": 0
           },
           "hide_in_logbook": {
             "type": "boolean",
             "description": "Whether this character should be hidden in the logbook."
           },
           "id": {
+            "minLength": 1,
             "type": "string",
             "description": "Unique identifier for this character."
           },
           "impact_vfx": {
-            "type": "string",
+            "$ref": "../definitions/vfx.json",
             "description": "Visual effect played when this character is hit."
           },
           "is_mini_boss": {
@@ -193,13 +175,20 @@
             "type": "boolean",
             "description": "Whether this character is an outer train boss."
           },
-          "is_pyre": {
+          "is_pyre_heart": {
             "type": "boolean",
             "description": "Whether this character is the Pyre."
           },
-          "loops_between_floors": {
+          "loops_between_train_floors": {
             "type": "boolean",
-            "description": "Whether this character loops between floors."
+            "description": "Whether this character loops between train floors (bypassing the pyre room)."
+          },
+          "lore_tooltips": {
+            "type": "array",
+            "description": "List of lore tooltips for this character.",
+            "items": {
+              "$ref": "../definitions/parse_term.json"
+            }
           },
           "names": {
             "$ref": "../definitions/parse_term.json",
@@ -210,31 +199,25 @@
             "description": "Prevents ability from being overwritten by equipment"
           },
           "projectile_vfx": {
-            "type": "string",
+            "$ref": "../definitions/vfx.json",
             "description": "Visual effect played for this character's projectiles."
           },
           "pyre_heart_data": {
             "type": "string",
-            "description": "Reference to the Pyre heart data."
+            "description": "Reference to the Pyre heart data (not implemented yet)."
           },
           "room_modifiers": {
             "type": "array",
             "description": "List of room modifiers this character applies.",
             "items": {
-              "required": [
-                "id"
-              ],
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "description": "Reference to a room modifier's unique identifier."
-                }
-              }
+              "$ref": "../definitions/reference.json",
+              "description": "Reference to a room modifier's unique identifier."
             }
           },
           "size": {
             "type": "integer",
-            "description": "Size of this character in the room."
+            "description": "Size of this character in the room.",
+            "default": 2
           },
           "starting_status_effects": {
             "type": "array",
@@ -247,7 +230,7 @@
             "type": "array",
             "description": "List of status effects this character is immune to.",
             "items": {
-              "type": "string"
+              "$ref": "../definitions/status.json"
             }
           },
           "subtypes": {
@@ -257,29 +240,19 @@
               "$ref": "../definitions/subtype.json"
             }
           },
-          "titan_affinity": {
-            "$ref": "../definitions/titan_affinity.json",
-            "description": "This character's affinity with titans."
-          },
           "triggers": {
             "type": "array",
             "uniqueItems": true,
-            "description": "List of triggers this character has.",
+            "description": "List of Character triggers this character has.",
             "items": {
-              "required": [
-                "id"
-              ],
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "description": "Reference to a trigger's unique identifier."
-                }
-              }
+              "$ref": "../definitions/reference.json",
+              "description": "Reference to a defined character trigger."
             }
           },
-          "valid_attack_phase": {
-            "type": "string",
-            "description": "Phase during which this character can attack."
+          "valid_boss_attack_phase": {
+            "$ref": "../definitions/attack_phase.json",
+            "description": "For a flying boss, this determines when they are able to attack. (Think Daedalus vs Talos from MT1. Talos attacks during the fight, Daedalus doesn't).",
+            "default": "relentless"
           }
         },
         "required": [

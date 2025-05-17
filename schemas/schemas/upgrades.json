@@ -12,7 +12,7 @@
         ],
         "properties": {
           "ability_upgrade": {
-            "$ref": "../definitions/cards.json",
+            "$ref": "../definitions/card.json",
             "description": "Reference to card specifiying the unit ability upgrade."
           },
           "allow_secondary_tooltip_placement": {

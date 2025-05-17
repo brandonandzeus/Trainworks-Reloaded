@@ -28,7 +28,8 @@
           },
           "card_type": {
             "$ref": "../definitions/card_type.json",
-            "description": "Primary Card type eligible for the CardUpgrade."
+            "description": "Primary Card type eligible for the CardUpgrade. Set to invalid (the default) to not check card type.",
+            "default": "invalid"
           },
           "cost_range": {
             "$ref": "../definitions/vec2.json",
@@ -193,7 +194,8 @@
           },
           "required_rarities_operator": {
             "$ref": "../definitions/compare_operator.json",
-            "description": "Operator for required rarities."
+            "description": "Operator for required rarities.",
+            "default": "or"
           },
           "required_sizes": {
             "type": "array",

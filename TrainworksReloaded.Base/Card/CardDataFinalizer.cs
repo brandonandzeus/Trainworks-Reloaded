@@ -158,7 +158,7 @@ namespace TrainworksReloaded.Base.Card
             }
 
             //handle art
-            var cardArtReference = configuration.GetSection("card_art_reference").ParseReference();
+            var cardArtReference = configuration.GetSection("card_art").ParseReference();
             if (cardArtReference != null)
             {
                 if (
