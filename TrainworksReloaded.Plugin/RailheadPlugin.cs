@@ -557,13 +557,10 @@ namespace TrainworksReloaded.Plugin
                     [typeof(CollectableRelicDataFactory), typeof(EnhancerDataFactory)],
                     Lifestyle.Singleton
                 );
-                c.RegisterDecorator<
-                IDataPipeline<IRegister<RelicData>, RelicData>,
-                PoolingRelicDataPipelineDecorator>();
 
 
                 //CollectableRelicData
-c.RegisterDecorator(
+                c.RegisterDecorator(
                     typeof(IDataPipeline<IRegister<RelicData>, RelicData>),
                     typeof(CollectableRelicDataPipelineDecorator)
                 );

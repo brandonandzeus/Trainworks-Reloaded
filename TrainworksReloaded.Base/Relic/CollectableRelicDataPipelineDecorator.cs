@@ -102,6 +102,22 @@ namespace TrainworksReloaded.Base.Relic
                 relicPoolDelegator.RelicPoolToData[pool].Add(collectableRelic);
                 logger.Log(LogLevel.Debug, $"Added relic {definition.Id.ToId(key, TemplateConstants.RelicData)} to pool: {pool}");
             }
+
+            // Handle pools
+            // TODO this should be handled in the finalizer.
+            foreach (var child in configuration.GetSection("pools").GetChildren())
+            {
+                var relicPool = child?.ParseString();
+                if (relicPool == null) continue;
+
+                if (!relicPoolDelegator.RelicPoolToData.ContainsKey(relicPool))
+                {
+                    relicPoolDelegator.RelicPoolToData[relicPool] = [];
+                }
+                relicPoolDelegator.RelicPoolToData[relicPool].Add(collectableRelic);
+
+                logger.Log(LogLevel.Debug, $"Added relic {definition.Id.ToId(key, TemplateConstants.RelicData)} to pool: {relicPool}");
+            }
         }
     }
 } 
