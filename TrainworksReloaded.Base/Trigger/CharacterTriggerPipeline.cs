@@ -83,7 +83,7 @@ namespace TrainworksReloaded.Base.Trigger
 
             //handle descriptions
             var localizationTrigger = configuration
-                .GetSection("text_on_trigger")
+                .GetSection("additional_text_on_trigger")
                 .ParseLocalizationTerm();
             if (localizationTrigger != null)
             {
@@ -100,7 +100,7 @@ namespace TrainworksReloaded.Base.Trigger
                 .Field(typeof(CharacterTriggerData), "showAdditionalTriggerTextOnSuccessOnly")
                 .SetValue(
                     data,
-                    configuration.GetSection("show_text_on_trigger_success_only").ParseBool()
+                    configuration.GetSection("show_additional_text_on_trigger_success_only").ParseBool()
                         ?? showAdditionalTriggerTextOnSuccessOnly
                 );
 
@@ -109,7 +109,7 @@ namespace TrainworksReloaded.Base.Trigger
                 .Field(typeof(CharacterTriggerData), "displayEffectHintText")
                 .SetValue(
                     data,
-                    configuration.GetSection("display_hint_text").ParseBool()
+                    configuration.GetSection("display_effect_hint_text").ParseBool()
                         ?? displayEffectHintText
                 );
 
@@ -118,7 +118,7 @@ namespace TrainworksReloaded.Base.Trigger
                 .Field(typeof(CharacterTriggerData), "hideVisualAndIgnoreSilence")
                 .SetValue(
                     data,
-                    configuration.GetSection("hide_tooltip").ParseBool()
+                    configuration.GetSection("hide_visual_and_ignore_silence").ParseBool()
                         ?? hideVisualAndIgnoreSilence
                 );
 
@@ -127,7 +127,7 @@ namespace TrainworksReloaded.Base.Trigger
                 .Field(typeof(CharacterTriggerData), "allowAdditionalTooltipsWhenVisualIsHidden")
                 .SetValue(
                     data,
-                    configuration.GetSection("allow_tooltips_when_hidden").ParseBool()
+                    configuration.GetSection("allow_additional_tooltips_when_visual_is_hidden").ParseBool()
                         ?? allowAdditionalTooltipsWhenVisualIsHidden
                 );
 

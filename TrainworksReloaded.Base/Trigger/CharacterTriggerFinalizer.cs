@@ -7,6 +7,7 @@ using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using static RimLight;
+using static TrainworksReloaded.Base.Extensions.ParseReferenceExtensions;
 
 namespace TrainworksReloaded.Base.Trigger
 {
@@ -72,29 +73,22 @@ namespace TrainworksReloaded.Base.Trigger
 
             //handle effects cards
             var effectDatas = new List<CardEffectData>();
-            var effectDatasConfig = configuration
+            var effectReferences = configuration
                 .GetSection("effects")
                 .GetChildren()
-                .Select(x => x.GetSection("id").ParseString());
-            foreach (var effectData in effectDatasConfig)
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var reference in effectReferences)
             {
-                if (effectData == null)
-                {
-                    continue;
-                }
-
                 if (
                     effectRegister.TryLookupId(
-                        effectData.ToId(key, TemplateConstants.Effect),
+                        reference.ToId(key, TemplateConstants.Effect),
                         out var effect,
                         out var _
                     )
                 )
                 {
-                    logger.Log(
-                        Core.Interfaces.LogLevel.Info,
-                        $"Adding Effect {effect.GetEffectStateName()}"
-                    );
                     effectDatas.Add(effect);
                 }
             }
