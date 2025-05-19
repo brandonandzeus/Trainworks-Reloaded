@@ -45,7 +45,7 @@ namespace TrainworksReloaded.Base.Card
 
             logger.Log(Core.Interfaces.LogLevel.Info, $"Finalizing Card Pool {data.name}... ");
 
-            //handle traits
+            //handle cards
             var cardDatas = new List<CardData>();
             var cardDatasConfig = configuration.GetSection("cards").GetChildren();
             foreach (var configData in cardDatasConfig)

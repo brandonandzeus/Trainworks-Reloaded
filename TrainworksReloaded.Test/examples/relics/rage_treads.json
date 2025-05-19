@@ -23,7 +23,7 @@
             "english": "Apply [effect0.status0.power] rage whenever one of your units moves.",
             "german": "Wenn du eine Zahl eingibst, wird dir die Zahl um 1 verringert und dir 1 Energie hinzugefügt."
         },
-        "relic_activated": {
+        "relic_activated_texts": {
             "english": "Rage Treads activated!",
             "german": "Rage Treads aktiviert!"
         },

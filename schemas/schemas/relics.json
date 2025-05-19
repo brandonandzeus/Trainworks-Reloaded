@@ -13,6 +13,7 @@
         ],
         "properties": {
           "id": {
+            "minLength": 1,
             "type": "string",
             "description": "Unique identifier for the relic"
           },
@@ -33,7 +34,7 @@
             "$ref": "../definitions/parse_term.json",
             "description": "Localization data for the relic's description"
           },
-          "relic_activated": {
+          "relic_activated_texts": {
             "$ref": "../definitions/parse_term.json",
             "description": "Localization data for the relic's activation message"
           },
@@ -53,26 +54,17 @@
             "description": "Style of the relic's lore tooltip"
           },
           "icon": {
-            "type": "string",
+            "$ref": "../definitions/reference.json",
             "description": "Sprite identifier for the relic's main icon"
           },
           "icon_small": {
-            "type": "string",
-            "description": "Sprite identifier for the relic's small icon (used when activated)"
+            "$ref": "../definitions/reference.json",
+            "description": "Sprite identifier for the relic's small icon (used when activated)."
           },
           "relic_effects": {
             "type": "array",
             "items": {
-              "type": "object",
-              "required": [
-                "id"
-              ],
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "description": "Identifier for the relic effect"
-                }
-              }
+              "$ref": "../definitions/reference.json"
             },
             "description": "Array of relic effects associated with this relic"
           }
@@ -96,17 +88,19 @@
                           "description": "Configuration specific to collectable relics",
                           "properties": {
                             "class": {
-                              "type": "string",
-                              "description": "ID of the class this relic is associated with"
+                              "$ref": "../definitions/classes.json",
+                              "description": "ID of the class this relic is associated with, leave unset for clanless."
                             },
                             "rarity": {
                               "$ref": "../definitions/rarity.json",
-                              "description": "Rarity of the collectable relic"
+                              "description": "Rarity of the collectable relic",
+                              "default": "common"
                             },
                             "unlock_level": {
                               "type": "integer",
                               "description": "Level required to unlock this relic. 0 or 1 will always be unlocked, 2 will unlock at level 2, etc.",
-                              "minimum": 0
+                              "minimum": 0,
+                              "default": 0
                             },
                             "from_story_event": {
                               "type": "boolean",
@@ -130,12 +124,12 @@
                             },
                             "required_dlc": {
                               "$ref": "../definitions/dlc.json",
-                              "description": "DLC required to use this relic",
+                              "description": "DLC required to see the relic",
                               "default": "none"
                             },
                             "deprioritize_in_ftue_drafts": {
                               "type": "boolean",
-                              "description": "Whether this relic should be deprioritized in FTUE drafts",
+                              "description": "Whether this relic should be deprioritized in FTUE (first time user experience) drafts",
                               "default": false
                             },
                             "force_update_count_label": {
@@ -147,11 +141,7 @@
                               "type": "array",
                               "description": "Pools to add this relic to",
                               "items": {
-                                "type": "string",
-                                "enum": [
-                                  "megapool",
-                                  null
-                                ]
+                                "$ref": "../definitions/relic_pool.json"
                               }
                             }
                           }
@@ -182,7 +172,8 @@
                             },
                             "rarity": {
                               "$ref": "../definitions/rarity.json",
-                              "description": "Rarity of the collectable relic"
+                              "description": "Rarity of the collectable relic",
+                              "default": "common"
                             },
                             "unlock_level": {
                               "type": "integer",
@@ -191,22 +182,14 @@
                             },
                             "num_cards_to_show_in_upgrade_screen": {
                               "type": "integer",
-                              "description": "Number of cards to show in the upgrade screen."
+                              "description": "Number of cards to show in the upgrade screen. The default is -1 for all cards.",
+                              "default": -1
                             },
                             "pools": {
                               "type": "array",
                               "description": "Pools to add this enhancer to.",
                               "items": {
-                                "type": "string",
-                                "enum": [
-                                  "unit_upgrade_common",
-                                  "unit_upgrade_rare",
-                                  "spell_upgrade_cost_reduction",
-                                  "spell_upgrade_common",
-                                  "spell_upgrade_rare",
-                                  "draft_upgrade",
-                                  null
-                                ]
+                                "$ref": "../definitions/enhancer_pool.json"
                               }
                             }
                           }
