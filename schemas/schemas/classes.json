@@ -1,215 +1,198 @@
 {
-    "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/classes.json",
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "properties": {
-        "classes": {
+  "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/classes.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "properties": {
+    "classes": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "A collection of all character classes in the game, defining their properties, champions, and visual elements.",
+      "items": {
+        "properties": {
+          "card_style": {
+            "$ref": "../definitions/card_style.json",
+            "description": "The visual style applied to cards of this class."
+          },
+          "champions": {
             "type": "array",
             "uniqueItems": true,
-            "description": "A collection of all character classes in the game, defining their properties, champions, and visual elements.",
+            "minItems": 1,
+            "description": "List of champion variants available for this class.",
             "items": {
-                "properties": {
-                    "card_style": {
-                        "$ref": "../definitions/card_style.json",
-                        "description": "The visual style applied to cards of this class."
-                    },
-                    "champions": {
-                        "type": "array",
-                        "uniqueItems": true,
-                        "minItems": 1,
-                        "description": "List of champion variants available for this class.",
-                        "items": {
-                            "required": [
-                                "id"
-                            ],
-                            "properties": {
-                                "id": {
-                                    "type": "string",
-                                    "description": "Unique identifier for this champion variant."
-                                },
-                                "card_data": {
-                                    "type": "string",
-                                    "description": "Reference to the champion's card data."
-                                },
-                                "starter_card": {
-                                    "type": "string",
-                                    "description": "Reference to the champion's starter card."
-                                },
-                                "upgrade_tree": {
-                                    "type": "array",
-                                    "description": "Tree of possible upgrades for this champion.",
-                                    "items": {
-                                        "type": "array",
-                                        "items": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "string",
-                                                    "description": "Reference to an upgrade's unique identifier."
-                                                }
-                                            },
-                                            "required": [
-                                                "id"
-                                            ]
-                                        }
-                                    }
-                                },
-                                "icon": {
-                                    "type": "string",
-                                    "description": "Reference to the champion's icon sprite."
-                                },
-                                "locked_icon": {
-                                    "type": "string",
-                                    "description": "Reference to the champion's locked state icon sprite."
-                                },
-                                "portrait": {
-                                    "type": "string",
-                                    "description": "Reference to the champion's portrait sprite."
-                                },
-                                "selected_cue": {
-                                    "type": "string",
-                                    "description": "Reference to the sound cue played when this champion is selected."
-                                }
-                            }
-                        }
-                    },
-                    "class_preview_texts": {
-                        "type": "array",
-                        "uniqueItems": true,
-                        "description": "List of preview texts shown for this class.",
-                        "items": {
-                            "$ref": "../definitions/parse_term.json",
-                            "properties": {
-                                "id": {
-                                    "type": "string",
-                                    "description": "Unique identifier for this preview text."
-                                }
-                            }
-                        }
-                    },
-                    "corruption_enabled": {
-                        "type": "boolean",
-                        "description": "Enables Wurmkin's charged echoes mechanic. Allowing stacking charged echoes on floors"
-                    },
-                    "descriptions": {
-                        "$ref": "../definitions/parse_term.json",
-                        "description": "Localized text describing this class."
-                    },
-                    "random_draft_enhancer_pool": {
-                        "type": "string",
-                        "description": "Reference to an EnhancerPool used to randomly apply enhancers to card drafts."
-                    },
-                    "icons": {
-                        "type": "object",
-                        "description": "Set of icons used to represent this class in different contexts.",
-                        "properties": {
-                            "small": {
-                                "type": "string",
-                                "description": "Reference to the small icon sprite."
-                            },
-                            "medium": {
-                                "type": "string",
-                                "description": "Reference to the medium icon sprite."
-                            },
-                            "large": {
-                                "type": "string",
-                                "description": "Reference to the large icon sprite."
-                            },
-                            "silhouette": {
-                                "type": "string",
-                                "description": "Reference to the silhouette icon sprite."
-                            }
-                        }
-                    },
-                    "id": {
-                        "type": "string",
-                        "description": "Unique identifier for this class."
-                    },
-                    "is_crew": {
-                        "type": "boolean",
-                        "description": "Whether this class is a crew member class."
-                    },
-                    "sfx_cue": {
-                        "type": "string",
-                        "description": "Reference to the sound effect cue played for this class."
-                    },
-                    "starter_relics": {
-                        "type": "array",
-                        "description": "List of relics that start with this class.",
-                        "items": {
-                            "required": [
-                                "id"
-                            ],
-                            "properties": {
-                                "id": {
-                                    "type": "string",
-                                    "description": "Reference to a relic's unique identifier."
-                                }
-                            }
-                        }
-                    },
-                    "starter_upgrade": {
-                        "type": "string",
-                        "description": "Reference to the upgrade applied to starter cards."
-                    },
-                    "subclass_descriptions": {
-                        "$ref": "../definitions/parse_term.json",
-                        "description": "Localized text describing the subclass system."
-                    },
-                    "titles": {
-                        "$ref": "../definitions/parse_term.json",
-                        "description": "Localized text for this class's title."
-                    },
-                    "ui_color": {
-                        "$ref": "../definitions/color.json",
-                        "description": "Primary color used in the UI for this class."
-                    },
-                    "ui_color_dark": {
-                        "$ref": "../definitions/color.json",
-                        "description": "Dark variant of the UI color for this class."
-                    },
-                    "ui_gradient": {
-                        "type": "array",
-                        "uniqueItems": true,
-                        "description": "Color gradient used in the UI for this class.",
-                        "items": {
-                            "required": [
-                                "time"
-                            ],
-                            "properties": {
-                                "time": {
-                                    "type": "number",
-                                    "description": "Time point in the gradient (0-1)."
-                                },
-                                "color": {
-                                    "$ref": "../definitions/color.json",
-                                    "description": "Color at this time point in the gradient."
-                                }
-                            }
-                        }
-                    },
-                    "unlock_data": {
-                        "type": "object",
-                        "description": "Data defining how this class is unlocked.",
-                        "properties": {
-                            "descriptions": {
-                                "$ref": "../definitions/parse_term.json",
-                                "description": "Localized text describing the unlock requirements."
-                            },
-                            "track_value": {
-                                "$ref": "../definitions/tracked_value.json",
-                                "description": "Value that needs to be tracked for unlocking."
-                            },
-                            "param_int": {
-                                "type": "integer",
-                                "description": "Numerical parameter for the unlock requirement."
-                            }
-                        }
-                    }
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "minLength": 1,
+                  "type": "string",
+                  "description": "Unique identifier for this champion variant."
                 },
-                "required": [
-                    "id"
-                ],
-                "description": "A class definition that specifies all properties and behaviors of a character class in the game."
+                "card_data": {
+                  "$ref": "../definitions/card.json",
+                  "description": "Reference to the champion's card data."
+                },
+                "starter_card": {
+                  "$ref": "../definitions/card.json",
+                  "description": "Reference to the champion's starter card."
+                },
+                "upgrade_tree": {
+                  "type": "array",
+                  "minLength": 1,
+                  "description": "Tree of possible upgrades for this champion.",
+                  "items": {
+                    "type": "array",
+                    "minLength": 1,
+                    "items": {
+                      "$ref": "../definitions/reference.json",
+                      "description": "Reference to an upgrade's unique identifier. These upgrades should have titles set for the name of the upgrade."
+                    }
+                  }
+                },
+                "icon": {
+                  "$ref": "../definitions/reference.json",
+                  "description": "Reference to the champion's icon sprite."
+                },
+                "locked_icon": {
+                  "$ref": "../definitions/reference.json",
+                  "description": "Reference to the champion's locked state icon sprite."
+                },
+                "portrait": {
+                  "$ref": "../definitions/reference.json",
+                  "description": "Reference to the champion's portrait sprite."
+                },
+                "selected_cue": {
+                  "type": "string",
+                  "description": "Reference to the sound cue played when this champion is selected."
+                }
+              }
             }
-        }
+          },
+          "class_unloock_preview_texts": {
+            "type": "array",
+            "uniqueItems": true,
+            "description": "List of preview texts shown for this class if locked.",
+            "items": {
+              "$ref": "../definitions/parse_term.json",
+            }
+          },
+          "corruption_enabled": {
+            "type": "boolean",
+            "description": "Enables Wurmkin's charged echoes mechanic. Allowing stacking charged echoes on floors"
+          },
+          "descriptions": {
+            "$ref": "../definitions/parse_term.json",
+            "description": "Localized text describing this class."
+          },
+          "random_draft_enhancer_pool": {
+            "$ref": "../definitions/enhancer_pool.json",
+            "description": "Reference to an EnhancerPool used to randomly apply enhancers to card drafts."
+          },
+          "icons": {
+            "type": "object",
+            "description": "Set of icons used to represent this class in different contexts.",
+            "properties": {
+              "small": {
+                "$ref": "../definitions/reference.json",
+                "description": "Reference to the small icon sprite."
+              },
+              "medium": {
+                "$ref": "../definitions/reference.json",
+                "description": "Reference to the medium icon sprite."
+              },
+              "large": {
+                "$ref": "../definitions/reference.json",
+                "description": "Reference to the large icon sprite."
+              },
+              "silhouette": {
+                "$ref": "../definitions/reference.json",
+                "description": "Reference to the silhouette icon sprite."
+              }
+            }
+          },
+          "id": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Unique identifier for this class."
+          },
+          "is_crew": {
+            "type": "boolean",
+            "description": "Whether this class is a crew member class."
+          },
+          "clan_select_sfx_cue": {
+            "$ref": "../definitions/reference.json",
+            "description": "Reference to the sound effect cue played for this class."
+          },
+          "starter_relics": {
+            "type": "array",
+            "description": "List of relics that start with this class.",
+            "items": {
+              "$ref": "../definitions/collectable_relic.json"
+            }
+          },
+          "starter_card_upgrade": {
+            "type": "string",
+            "description": "Reference to the upgrade applied to starter cards."
+          },
+          "subclass_descriptions": {
+            "$ref": "../definitions/parse_term.json",
+            "description": "Localized text describing the subclass system."
+          },
+          "titles": {
+            "$ref": "../definitions/parse_term.json",
+            "description": "Localized text for this class's title."
+          },
+          "ui_color": {
+            "$ref": "../definitions/color.json",
+            "description": "Primary color used in the UI for this class."
+          },
+          "ui_color_dark": {
+            "$ref": "../definitions/color.json",
+            "description": "Dark variant of the UI color for this class."
+          },
+          "ui_gradient": {
+            "type": "array",
+            "uniqueItems": true,
+            "description": "Color gradient used in the UI for this class.",
+            "items": {
+              "required": [
+                "time"
+              ],
+              "properties": {
+                "time": {
+                  "type": "number",
+                  "description": "Time point in the gradient (0-1)."
+                },
+                "color": {
+                  "$ref": "../definitions/color.json",
+                  "description": "Color at this time point in the gradient."
+                }
+              }
+            }
+          },
+          "unlock_data": {
+            "type": "object",
+            "description": "Data defining how this class is unlocked. (Not implemented)",
+            "properties": {
+              "descriptions": {
+                "$ref": "../definitions/parse_term.json",
+                "description": "Localized text describing the unlock requirements."
+              },
+              "tracked_value": {
+                "$ref": "../definitions/tracked_value.json",
+                "description": "Value that needs to be tracked for unlocking."
+              },
+              "param_int": {
+                "type": "integer",
+                "description": "Numerical parameter for the unlock requirement."
+              }
+            }
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "description": "A class definition that specifies all properties and behaviors of a character class in the game."
+      }
     }
+  }
 }
