@@ -110,7 +110,7 @@ namespace TrainworksReloaded.Base.Reward
             //boolean
             AccessTools
                 .Field(typeof(RewardData), "_showRewardFlowInEvent")
-                .SetValue(data, configuration.GetSection("show_in_event").ParseBool() ?? false);
+                .SetValue(data, configuration.GetSection("show_flow_in_event").ParseBool() ?? false);
 
             AccessTools
                 .Field(typeof(RewardData), "ShowRewardAnimationInEvent")
@@ -121,19 +121,19 @@ namespace TrainworksReloaded.Base.Reward
 
             AccessTools
                 .Field(typeof(RewardData), "_showCancelOverride")
-                .SetValue(data, configuration.GetSection("show_cancel").ParseBool() ?? false);
+                .SetValue(data, configuration.GetSection("show_cancel_override").ParseBool() ?? false);
 
             AccessTools
                 .Field(typeof(RewardData), "isUniqueInEndlessMode")
                 .SetValue(
                     data,
-                    configuration.GetSection("endless_mode_unique").ParseBool() ?? false
+                    configuration.GetSection("is_unique_in_endless_mode").ParseBool() ?? false
                 );
 
             //string
             AccessTools
                 .Field(typeof(RewardData), "_collectSFXCueName")
-                .SetValue(data, configuration.GetSection("collect_cue").ParseString() ?? "");
+                .SetValue(data, configuration.GetSection("collect_sfx_cue").ParseString() ?? "");
 
             //int[]
             var costs = configuration

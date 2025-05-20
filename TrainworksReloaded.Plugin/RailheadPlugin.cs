@@ -543,6 +543,11 @@ namespace TrainworksReloaded.Plugin
                     typeof(DraftRewardDataFinalizerDecorator),
                     xs => xs.ImplementationType == typeof(RewardDataFinalizer)
                 );
+                c.RegisterDecorator(
+                    typeof(IDataFinalizer),
+                    typeof(GrantableRewardDataFinalizerDecorator),
+                    xs => xs.ImplementationType == typeof(RewardDataFinalizer)
+                );
 
                 //Register Relic Data
                 c.RegisterSingleton<IRegister<RelicData>, RelicDataRegister>();

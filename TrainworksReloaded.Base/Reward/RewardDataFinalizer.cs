@@ -52,7 +52,7 @@ namespace TrainworksReloaded.Base.Reward
                 $"Finalizing Reward Data {definition.Id.ToId(key, TemplateConstants.RewardData)}... "
             );
 
-            var sprite = configuration.GetSection("sprite").ParseString();
+            var sprite = configuration.GetSection("sprite").ParseReference();
             if (
                 sprite != null
                 && spriteRegister.TryLookupId(
