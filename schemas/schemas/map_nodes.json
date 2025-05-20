@@ -1,222 +1,223 @@
 {
-    "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/map_nodes.json",
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "properties": {
-        "map_nodes": {
+  "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/map_nodes.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "properties": {
+    "map_nodes": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "A collection of all map nodes in the game, defining their properties, rewards, and behaviors.",
+      "items": {
+        "required": [
+          "id",
+          "type"
+        ],
+        "properties": {
+          "buckets": {
             "type": "array",
-            "uniqueItems": true,
-            "description": "A collection of all map nodes in the game, defining their properties, rewards, and behaviors.",
+            "description": "List of reward buckets for this map node.",
             "items": {
-                "required": [
-                    "id",
-                    "type"
-                ],
-                "properties": {
-                    "buckets": {
-                        "type": "array",
-                        "description": "List of reward buckets for this map node.",
-                        "items": {
-                            "properties": {
-                                "bucket": {
-                                    "$ref": "../definitions/bucket.json",
-                                    "description": "Type of reward bucket."
-                                },
-                                "run_type": {
-                                    "$ref": "../definitions/run_type.json",
-                                    "description": "Type of run this bucket applies to."
-                                }
-                            }
-                        }
-                    },
-                    "descriptions": {
-                        "$ref": "../definitions/parse_term.json",
-                        "description": "Localized text describing this map node."
-                    },
-                    "required_dlc": {
-                        "$ref": "../definitions/dlc.json",
-                        "description": "DLC this map node belongs to."
-                    },
-                    "id": {
-                        "type": "string",
-                        "description": "Unique identifier for this map node."
-                    },
-                    "ignore_if_present": {
-                        "type": "array",
-                        "description": "List of map nodes to ignore if present.",
-                        "items": {
-                            "type": "string",
-                            "description": "Map Node Reference"
-                        }
-                    },
-                    "is_banner": {
-                        "type": "boolean",
-                        "description": "Whether this is a banner map node."
-                    },
-                    "map_icon": {
-                        "type": "string",
-                        "description": "Reference to the map icon sprite."
-                    },
-                    "map_pools": {
-                        "type": "array",
-                        "description": "List of random map pools this node can appear in.",
-                        "items": {
-                            "type": "string",
-                            "description": "Random Map Data Reference"
-                        }
-                    },
-                    "minimap_icon": {
-                        "type": "string",
-                        "description": "Reference to the minimap icon sprite."
-                    },
-                    "node_selection_cue": {
-                        "type": "string",
-                        "description": "Reference to the sound cue played when selecting this node."
-                    },
-                    "prefab": {
-                        "type": "string",
-                        "description": "Reference to the map node prefab. Should be imported as Map Node Icon."
-                    },
-                    "skip_settings": {
-                        "$ref": "../definitions/map_skip_settings.json",
-                        "description": "Settings for when this node can be skipped."
-                    },
-                    "titles": {
-                        "$ref": "../definitions/parse_term.json",
-                        "description": "Localized text for this map node's title."
-                    },
-                    "type": {
-                        "$ref": "../definitions/map_node_type.json",
-                        "description": "Type of map node."
-                    },
-                    "updated_map_icon_on_click": {
-                        "type": "boolean",
-                        "description": "Whether the map icon updates when clicked."
-                    },
-                    "use_hp_tooltip": {
-                        "type": "boolean",
-                        "description": "Whether to show HP in the tooltip."
-                    }
+              "properties": {
+                "bucket": {
+                  "$ref": "../definitions/bucket.json",
+                  "description": "Type of reward bucket."
                 },
-                "dependencies": {
-                    "type": {
-                        "oneOf": [{
-                                "properties": {
-                                    "type": {
-                                        "enum": [
-                                            "merchant"
-                                        ]
-                                    },
-                                    "extensions": {
-                                        "type": "array",
-                                        "description": "Extensions for merchant map nodes.",
-                                        "items": {
-                                            "properties": {
-                                                "merchant": {
-                                                    "description": "Merchant Map Node (WIP)",
-                                                    "properties": {
-                                                        "currency": {
-                                                            "type": "string",
-                                                            "description": "Type of currency used in this merchant."
-                                                        },
-                                                        "merchant_screen_prefab": {
-                                                            "type": "string",
-                                                            "description": "Reference to the merchant screen prefab. Should be imported as Merchant Screen Content."
-                                                        },
-                                                        "rewards": {
-                                                            "type": "array",
-                                                            "description": "List of rewards available in this merchant. Should be imported as Merchant Reward Data.",
-                                                            "items": {
-                                                                "type": "object",
-                                                                "properties": {
-                                                                    "id": {
-                                                                        "type": "string",
-                                                                        "description": "Reference to a reward's unique identifier."
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "properties": {
-                                    "type": {
-                                        "enum": [
-                                            "random"
-                                        ]
-                                    }
-                                }
-                            },
-                            {
-                                "properties": {
-                                    "type": {
-                                        "enum": [
-                                            "reward"
-                                        ]
-                                    },
-                                    "extensions": {
-                                        "type": "array",
-                                        "description": "Extensions for reward map nodes.",
-                                        "items": {
-                                            "properties": {
-                                                "reward": {
-                                                    "type": "object",
-                                                    "description": "Reward node specific properties.",
-                                                    "properties": {
-                                                        "override_tooltip_with_reward": {
-                                                            "type": "boolean",
-                                                            "description": "Whether to override the tooltip with reward information."
-                                                        },
-                                                        "use_formatted_override_title": {
-                                                            "type": "boolean",
-                                                            "description": "Whether to use formatted override title."
-                                                        },
-                                                        "required_class": {
-                                                            "type": "string",
-                                                            "description": "Reference to required class for this reward."
-                                                        },
-                                                        "grant_immediately": {
-                                                            "type": "boolean",
-                                                            "description": "Whether to grant rewards immediately."
-                                                        },
-                                                        "rewards": {
-                                                            "type": "array",
-                                                            "description": "List of rewards available in this node.",
-                                                            "items": {
-                                                                "properties": {
-                                                                    "id": {
-                                                                        "type": "string",
-                                                                        "description": "Reference to a reward's unique identifier."
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            },
-                            {
-                                "properties": {
-                                    "type": {
-                                        "enum": [
-                                            "story_event"
-                                        ]
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                },
-                "description": "A map node definition that specifies the properties and behaviors of a node on the map."
+                "run_type": {
+                  "$ref": "../definitions/run_type.json",
+                  "description": "Type of run this bucket applies to."
+                }
+              }
             }
-        }
+          },
+          "descriptions": {
+            "$ref": "../definitions/parse_term.json",
+            "description": "Localized text describing this map node."
+          },
+          "required_dlc": {
+            "$ref": "../definitions/dlc.json",
+            "description": "DLC this map node belongs to."
+          },
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for this map node."
+          },
+          "ignore_if_present": {
+            "type": "array",
+            "description": "List of map nodes to ignore if present.",
+            "items": {
+              "type": "string",
+              "description": "Map Node Reference"
+            }
+          },
+          "is_banner": {
+            "type": "boolean",
+            "description": "Whether this is a banner map node."
+          },
+          "map_icon": {
+            "type": "string",
+            "description": "Reference to the map icon sprite."
+          },
+          "map_pools": {
+            "type": "array",
+            "description": "List of random map pools this node can appear in.",
+            "items": {
+              "type": "string",
+              "description": "Random Map Data Reference"
+            }
+          },
+          "minimap_icon": {
+            "type": "string",
+            "description": "Reference to the minimap icon sprite."
+          },
+          "node_selection_cue": {
+            "type": "string",
+            "description": "Reference to the sound cue played when selecting this node."
+          },
+          "prefab": {
+            "type": "string",
+            "description": "Reference to the map node prefab. Should be imported as Map Node Icon."
+          },
+          "skip_settings": {
+            "$ref": "../definitions/map_skip_settings.json",
+            "description": "Settings for when this node can be skipped."
+          },
+          "titles": {
+            "$ref": "../definitions/parse_term.json",
+            "description": "Localized text for this map node's title."
+          },
+          "type": {
+            "$ref": "../definitions/map_node_type.json",
+            "description": "Type of map node."
+          },
+          "updated_map_icon_on_click": {
+            "type": "boolean",
+            "description": "Whether the map icon updates when clicked."
+          },
+          "use_hp_tooltip": {
+            "type": "boolean",
+            "description": "Whether to show HP in the tooltip."
+          }
+        },
+        "dependencies": {
+          "type": {
+            "oneOf": [
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "merchant"
+                    ]
+                  },
+                  "extensions": {
+                    "type": "array",
+                    "description": "Extensions for merchant map nodes.",
+                    "items": {
+                      "properties": {
+                        "merchant": {
+                          "description": "Merchant Map Node (WIP)",
+                          "properties": {
+                            "currency": {
+                              "type": "string",
+                              "description": "Type of currency used in this merchant."
+                            },
+                            "merchant_screen_prefab": {
+                              "type": "string",
+                              "description": "Reference to the merchant screen prefab. Should be imported as Merchant Screen Content."
+                            },
+                            "rewards": {
+                              "type": "array",
+                              "description": "List of rewards available in this merchant. Should be imported as Merchant Reward Data.",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string",
+                                    "description": "Reference to a reward's unique identifier."
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "type": "object"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "random"
+                    ]
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "reward"
+                    ]
+                  },
+                  "extensions": {
+                    "type": "array",
+                    "description": "Extensions for reward map nodes.",
+                    "items": {
+                      "properties": {
+                        "reward": {
+                          "type": "object",
+                          "description": "Reward node specific properties.",
+                          "properties": {
+                            "override_tooltip_with_reward": {
+                              "type": "boolean",
+                              "description": "Whether to override the tooltip with reward information."
+                            },
+                            "use_formatted_override_title": {
+                              "type": "boolean",
+                              "description": "Whether to use formatted override title."
+                            },
+                            "required_class": {
+                              "type": "string",
+                              "description": "Reference to required class for this reward."
+                            },
+                            "grant_immediately": {
+                              "type": "boolean",
+                              "description": "Whether to grant rewards immediately."
+                            },
+                            "rewards": {
+                              "type": "array",
+                              "description": "List of rewards available in this node.",
+                              "items": {
+                                "properties": {
+                                  "id": {
+                                    "type": "string",
+                                    "description": "Reference to a reward's unique identifier."
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "story_event"
+                    ]
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "description": "A map node definition that specifies the properties and behaviors of a node on the map."
+      }
     }
+  }
 }
