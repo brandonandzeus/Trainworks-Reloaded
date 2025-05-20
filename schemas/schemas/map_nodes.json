@@ -37,46 +37,47 @@
             "description": "DLC this map node belongs to."
           },
           "id": {
+            "minLength": 1,
             "type": "string",
             "description": "Unique identifier for this map node."
           },
-          "ignore_if_present": {
+          "ignore_if_nodes_present": {
             "type": "array",
             "description": "List of map nodes to ignore if present.",
             "items": {
-              "type": "string",
+              "$ref": "../definitions/reference.json",
               "description": "Map Node Reference"
             }
           },
-          "is_banner": {
+          "is_banner_node": {
             "type": "boolean",
             "description": "Whether this is a banner map node."
           },
           "map_icon": {
-            "type": "string",
+            "$ref": "../definitions/reference.json",
             "description": "Reference to the map icon sprite."
           },
-          "map_pools": {
+          "pools": {
             "type": "array",
             "description": "List of random map pools this node can appear in.",
             "items": {
-              "type": "string",
-              "description": "Random Map Data Reference"
+              "$ref": "../definitions/reference.json",
+              "description": "Random Map Data Container Reference"
             }
           },
           "minimap_icon": {
-            "type": "string",
+            "$ref": "../definitions/reference.json",
             "description": "Reference to the minimap icon sprite."
           },
-          "node_selection_cue": {
+          "node_selected_sfx_cue": {
             "type": "string",
             "description": "Reference to the sound cue played when selecting this node."
           },
           "prefab": {
-            "type": "string",
+            "$ref": "../definitions/reference.json",
             "description": "Reference to the map node prefab. Should be imported as Map Node Icon."
           },
-          "skip_settings": {
+          "skip_check_settings": {
             "$ref": "../definitions/map_skip_settings.json",
             "description": "Settings for when this node can be skipped."
           },
@@ -88,13 +89,13 @@
             "$ref": "../definitions/map_node_type.json",
             "description": "Type of map node."
           },
-          "updated_map_icon_on_click": {
+          "update_map_icon_immediately_on_click": {
             "type": "boolean",
-            "description": "Whether the map icon updates when clicked."
+            "description": "Whether the map icon updates immediately when clicked."
           },
-          "use_hp_tooltip": {
+          "use_pyre_hp_tooltip": {
             "type": "boolean",
-            "description": "Whether to show HP in the tooltip."
+            "description": "Whether to show pyre hp in the tooltip."
           }
         },
         "dependencies": {
@@ -109,7 +110,7 @@
                   },
                   "extensions": {
                     "type": "array",
-                    "description": "Extensions for merchant map nodes.",
+                    "description": "Extensions for merchant map nodes. (Not implemented)",
                     "items": {
                       "properties": {
                         "merchant": {
@@ -117,23 +118,20 @@
                           "properties": {
                             "currency": {
                               "type": "string",
+                              "enum": [
+                                "gold"
+                              ],
                               "description": "Type of currency used in this merchant."
                             },
                             "merchant_screen_prefab": {
-                              "type": "string",
+                              "$ref": "../definitions/reference.json",
                               "description": "Reference to the merchant screen prefab. Should be imported as Merchant Screen Content."
                             },
                             "rewards": {
                               "type": "array",
                               "description": "List of rewards available in this merchant. Should be imported as Merchant Reward Data.",
                               "items": {
-                                "type": "object",
-                                "properties": {
-                                  "id": {
-                                    "type": "string",
-                                    "description": "Reference to a reward's unique identifier."
-                                  }
-                                }
+                                "$ref": "../definitions/reference.json"
                               }
                             }
                           },
@@ -169,17 +167,17 @@
                           "type": "object",
                           "description": "Reward node specific properties.",
                           "properties": {
-                            "override_tooltip_with_reward": {
+                            "override_tooltip_title_body": {
                               "type": "boolean",
-                              "description": "Whether to override the tooltip with reward information."
+                              "description": "Whether to override the tooltip title with the title from the first reward."
                             },
-                            "use_formatted_override_title": {
+                            "use_formatted_override_tooltip_title": {
                               "type": "boolean",
-                              "description": "Whether to use formatted override title."
+                              "description": "Whether to override the tooltip title with values from the first reward."
                             },
-                            "required_class": {
-                              "type": "string",
-                              "description": "Reference to required class for this reward."
+                            "class": {
+                              "$ref": "../definitions/classes.json",
+                              "description": "Reference to required clan for this reward."
                             },
                             "grant_immediately": {
                               "type": "boolean",
@@ -189,12 +187,7 @@
                               "type": "array",
                               "description": "List of rewards available in this node.",
                               "items": {
-                                "properties": {
-                                  "id": {
-                                    "type": "string",
-                                    "description": "Reference to a reward's unique identifier."
-                                  }
-                                }
+                                "$ref": "../definitions/reference.json"
                               }
                             }
                           }

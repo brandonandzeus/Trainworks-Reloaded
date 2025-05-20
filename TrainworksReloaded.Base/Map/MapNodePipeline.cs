@@ -116,23 +116,23 @@ namespace TrainworksReloaded.Base.Map
             //boolean
             AccessTools
                 .Field(typeof(MapNodeData), "isBannerNode")
-                .SetValue(data, configuration.GetSection("is_banner").ParseBool() ?? false);
+                .SetValue(data, configuration.GetSection("is_banner_node").ParseBool() ?? false);
 
             AccessTools
                 .Field(typeof(MapNodeData), "usePyreHeartHpTooltipKey")
-                .SetValue(data, configuration.GetSection("use_hp_tooltip").ParseBool() ?? false);
+                .SetValue(data, configuration.GetSection("use_pyre_hp_tooltip").ParseBool() ?? false);
 
             AccessTools
                 .Field(typeof(MapNodeData), "updateMapIconImmediatelyOnClick")
                 .SetValue(
                     data,
-                    configuration.GetSection("updated_map_icon_on_click").ParseBool() ?? false
+                    configuration.GetSection("update_map_icon_immediately_on_click").ParseBool() ?? false
                 );
 
             //string
             AccessTools
                 .Field(typeof(MapNodeData), "nodeSelectedSfxCue")
-                .SetValue(data, configuration.GetSection("node_selection_cue").ParseString() ?? "");
+                .SetValue(data, configuration.GetSection("node_selected_sfx_cue").ParseString() ?? "");
 
             //dlc
             AccessTools
@@ -142,7 +142,7 @@ namespace TrainworksReloaded.Base.Map
             //skip settings
             AccessTools
                 .Field(typeof(MapNodeData), "skipCheckSettings")
-                .SetValue(data, configuration.GetSection("skip_settings").ParseSkipSettings() ?? 0);
+                .SetValue(data, configuration.GetSection("skip_check_settings").ParseSkipSettings() ?? 0);
 
             service.Register(name, data);
 

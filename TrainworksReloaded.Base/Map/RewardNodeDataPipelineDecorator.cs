@@ -47,7 +47,7 @@ namespace TrainworksReloaded.Base.Map
                         .Field(typeof(RewardNodeData), "OverrideTooltipTitleBody")
                         .SetValue(
                             data,
-                            configuration.GetSection("override_tooltip_with_reward").ParseBool()
+                            configuration.GetSection("override_tooltip_title_body").ParseBool()
                                 ?? false
                         );
 
@@ -55,7 +55,7 @@ namespace TrainworksReloaded.Base.Map
                         .Field(typeof(RewardNodeData), "UseFormattedOverrideTooltipTitle")
                         .SetValue(
                             data,
-                            configuration.GetSection("use_formatted_override_title").ParseBool()
+                            configuration.GetSection("use_formatted_override_tooltip_title").ParseBool()
                                 ?? false
                         );
 
