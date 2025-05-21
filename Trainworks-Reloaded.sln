@@ -98,6 +98,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "definitions", "definitions"
 		schemas\definitions\relic_pool.json = schemas\definitions\relic_pool.json
 		schemas\definitions\reward_filter.json = schemas\definitions\reward_filter.json
 		schemas\definitions\reward_type.json = schemas\definitions\reward_type.json
+		schemas\definitions\room_modifier.json = schemas\definitions\room_modifier.json
 		schemas\definitions\run_type.json = schemas\definitions\run_type.json
 		schemas\definitions\special_character_type.json = schemas\definitions\special_character_type.json
 		schemas\definitions\stack_mode.json = schemas\definitions\stack_mode.json

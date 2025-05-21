@@ -1,0 +1,58 @@
+{
+  "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/definitions/card_effect.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Specifies RoomStateModifierClassName of a RoomModifier, this controls what code gets executed to run the effect. This specifies a name of a class that inherits from RoomStateModifierBase. Must be either one of the predefined effect types or a custom effect class from a mod that follows the same naming pattern.",
+  "examples": [
+    "RoomStateAddEffectOnUnitDeath",
+    "@MyModEffect",
+    {
+      "id": "@MyModEffect",
+      "mod_reference": "mypluginguid"
+    },
+    "RoomStateBuffModifier"
+  ],
+  "anyOf": [
+    {
+      "$ref": "../definitions/reference.json"
+    },
+    {
+      "type": "string",
+      "enum": [
+        "RoomStateAddEffectOnUnitDeath",
+        "RoomStateAddEffectPostCombatModifier",
+        "RoomStateAddEffectPreCombatModifier",
+        "RoomStateAddStatusEffectOnStatusApplied",
+        "RoomStateBuffModifier",
+        "RoomStateCapacityModifier",
+        "RoomStateConduitModifier",
+        "RoomStateCostModifierBase",
+        "RoomStateDamageAllPostCombatModifier",
+        "RoomStateDamageCostModifier",
+        "RoomStateEnergyModifier",
+        "RoomStateFirstSpellCostModifier",
+        "RoomStateFriendlyDamageMultiplierModifier",
+        "RoomStateFriendlyDamagePerCorruptionModifier",
+        "RoomStateHandSizeModifier",
+        "RoomStateHealCostModifier",
+        "RoomStateMagicalPowerModifier",
+        "RoomStateModifyTriggerCount",
+        "RoomStateNewMoonAlwaysActiveModifier",
+        "RoomStateRegenModifier",
+        "RoomStateSelfDamagePerCorruptionModifier",
+        "RoomStateSelfDamagePerGoldModifier",
+        "RoomStateSelfDamagePerMagicPowerModifier",
+        "RoomStateSelfDamagePerMissingHp",
+        "RoomStateSelfDamageWhenCorruptionModifier",
+        "RoomStateSpawnUnitOnUnitSpawnModifier",
+        "RoomStateSpellCostModifier",
+        "RoomStateSpikesDamageModifier",
+        "RoomStateStatusEffectDamageModifier",
+        "RoomStateStatusEffectOnSpawnModifier",
+        "RoomStateStatusEffectStackModifier",
+        "RoomStateTroopUnitUpgradeModifier",
+        "RoomStateUnitCostModifier",
+        "RoomStateValorModifier"
+      ]
+    }
+  ]
+}

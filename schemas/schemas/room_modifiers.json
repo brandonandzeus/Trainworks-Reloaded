@@ -22,20 +22,15 @@
             "$ref": "../definitions/parse_term.json",
             "description": "Localized text describing this room modifier."
           },
-          "disallow_in_deployment" {
+          "disallow_in_deployment": {
             "type": "boolean",
             "description": "Disallows this RoomModifier effect in the deployment phase"
           },
-          "effects": {
+          "param_effects": {
             "type": "array",
             "description": "List of effects applied by this room modifier.",
             "items": {
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "description": "Reference to an effect."
-                }
-              }
+              "$ref": "../definitions/reference.json"
             }
           },
           "extra_body_tooltips": {
@@ -47,23 +42,20 @@
             "description": "Additional title text for the tooltip."
           },
           "id": {
+            "minLength": 1,
             "type": "string",
             "description": "Unique identifier for this room modifier."
           },
           "name": {
-            "type": "string",
-            "description": "The RoomStateModifierClassName, this should be the name of a class inheriting from RoomStateModifierBase. Trainworks will search your mod for the class, then the base game."
-          },
-          "mod_reference": {
-            "type": "string",
-            "description": "Mod GUID to search for a custom room modifier. If not specified then your Mod's assembly is searched."
+            "$ref": "../definitions/room_modifier.json",
+            "description": "The RoomStateModifierClassName, this should be the name of a class inheriting from RoomStateModifierBase."
           },
           "param_card": {
-            "type": "string",
-            "description": "Card reference parameter."
+            "$ref": "../definitions/card.json",
+            "description": "Card parameter."
           },
           "param_upgrade": {
-            "type": "string",
+            "$ref": "../definitions/card_upgrade.json",
             "description": "Card upgrade reference parameter."
           },
           "param_int": {
@@ -78,17 +70,7 @@
             "type": "array",
             "description": "List of status effects to apply.",
             "items": {
-              "type": "object",
-              "properties": {
-                "status": {
-                  "type": "string",
-                  "description": "Status effect reference."
-                },
-                "count": {
-                  "type": "integer",
-                  "description": "Number of stacks to apply."
-                }
-              }
+              "$ref": "../definitions/status_effect.json"
             }
           },
           "param_subtype": {
@@ -99,15 +81,15 @@
             "$ref": "../definitions/character_trigger.json",
             "description": "Character trigger parameter."
           },
-          "play_descriptions": {
+          "in_play_descriptions": {
             "$ref": "../definitions/parse_term.json",
-            "description": "Text to display when the modifier is played."
+            "description": "Tooltip text to use when the modifier is in play on a character or room."
           },
           "triggered_vfx": {
-            "type": "string",
+            "$ref": "../definitions/vfx.json",
             "description": "Reference to the VFX played when triggered."
           },
-          "use_name_as_description": {
+          "use_title_for_card_description": {
             "type": "boolean",
             "description": "Whether to use the name as the description."
           }
