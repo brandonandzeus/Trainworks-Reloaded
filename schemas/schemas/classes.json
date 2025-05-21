@@ -43,7 +43,7 @@
                     "type": "array",
                     "minLength": 1,
                     "items": {
-                      "$ref": "../definitions/reference.json",
+                      "$ref": "../definitions/card_upgrade.json",
                       "description": "Reference to an upgrade's unique identifier. These upgrades should have titles set for the name of the upgrade."
                     }
                   }

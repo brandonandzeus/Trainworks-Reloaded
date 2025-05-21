@@ -10,6 +10,7 @@ using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
 using UnityEngine.UI;
 using static MultiplayerEmoteDefinitionData;
+using static TrainworksReloaded.Base.Extensions.ParseReferenceExtensions;
 
 namespace TrainworksReloaded.Base.Prefab
 {
@@ -93,7 +94,7 @@ namespace TrainworksReloaded.Base.Prefab
                 .Field(typeof(MapNodeIcon), "selectedIndicator")
                 .SetValue(mapNodeIcon, selectedIndicator);
 
-            var enabled_sprite = mapConfig.GetSection("enabled_sprite").ParseString();
+            var enabled_sprite = mapConfig.GetSection("enabled_sprite").ParseReference();
             var enabled_icon = GetIconSprite(definition.Key, enabled_sprite);
             if (enabled_icon != null)
             {
@@ -115,7 +116,7 @@ namespace TrainworksReloaded.Base.Prefab
 
             var visited_sprite_enabled = mapConfig
                 .GetSection("visited_sprite_enabled")
-                .ParseString();
+                .ParseReference();
             var visited_sprite_enabled_icon = GetIconSprite(definition.Key, visited_sprite_enabled);
             if (visited_sprite_enabled_icon != null)
             {
@@ -137,7 +138,7 @@ namespace TrainworksReloaded.Base.Prefab
 
             var visited_sprite_disabled = mapConfig
                 .GetSection("visited_sprite_disabled")
-                .ParseString();
+                .ParseReference();
             var visited_sprite_disabled_icon = GetIconSprite(
                 definition.Key,
                 visited_sprite_disabled
@@ -160,7 +161,7 @@ namespace TrainworksReloaded.Base.Prefab
                     .SetValue(mapNodeIcon, visited_sprite_disabled_icon);
             }
 
-            var disabled_sprite = mapConfig.GetSection("disabled_sprite").ParseString();
+            var disabled_sprite = mapConfig.GetSection("disabled_sprite").ParseReference();
             var disabled_sprite_icon = GetIconSprite(definition.Key, disabled_sprite);
             if (disabled_sprite_icon != null)
             {
@@ -180,7 +181,7 @@ namespace TrainworksReloaded.Base.Prefab
                     .SetValue(mapNodeIcon, disabled_sprite_icon);
             }
 
-            var frozen_sprite = mapConfig.GetSection("disabled_sprite").ParseString();
+            var frozen_sprite = mapConfig.GetSection("disabled_sprite").ParseReference();
             var frozen_sprite_icon = GetIconSprite(definition.Key, frozen_sprite);
             if (frozen_sprite_icon != null)
             {
@@ -206,7 +207,7 @@ namespace TrainworksReloaded.Base.Prefab
                 .SetValue(mapNodeIcon, new ParticleSystem[0]);
         }
 
-        public GameObject? GetIconSprite(string key, string? spriteStr)
+        public GameObject? GetIconSprite(string key, ReferencedObject? spriteStr)
         {
             if (spriteStr == null)
                 return null;
@@ -218,7 +219,9 @@ namespace TrainworksReloaded.Base.Prefab
                     out _
                 )
             )
+            {
                 return null;
+            }
 
             var iconSprite = new GameObject { name = $"IconSprite_{spriteStr}" };
             var rectTransform = iconSprite.AddComponent<RectTransform>();

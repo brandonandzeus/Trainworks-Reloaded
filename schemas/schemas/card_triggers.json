@@ -49,7 +49,7 @@
               },
               "trigger_effect": {
                 "type": "../definitions/card_trigger_effect.json",
-                "description": "Reference to ICardTriggerEffect to be played when triggered."
+                "description": "Specify a class name implementing the ICardTriggerEffect interface to be played when triggered."
               }
             },
             "required": [

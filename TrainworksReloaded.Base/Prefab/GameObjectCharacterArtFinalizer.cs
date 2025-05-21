@@ -55,7 +55,7 @@ namespace TrainworksReloaded.Base.Prefab
                 .Configuration.GetSection("extensions")
                 .GetSection("character_art");
 
-            var spriteVal = characterConfig.GetSection("sprite").Value;
+            var spriteVal = characterConfig.GetSection("sprite").ParseReference();
             if (spriteVal == null)
                 return;
 

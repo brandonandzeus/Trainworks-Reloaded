@@ -1,31 +1,32 @@
 {
-    "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/enhancer_pools.json",
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "properties": {
-        "enhancer_pools": {
-            "type": "array",
-            "uniqueItems": true,
-            "description": "A collection of enhancer pools that define which enhancers (shop upgrades) can appear in specific situations or rewards.",
+  "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/enhancer_pools.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "properties": {
+    "enhancer_pools": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "A collection of enhancer pools that define which enhancers (shop upgrades) can appear in specific situations or rewards.",
+      "items": {
+        "properties": {
+          "id": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Unique identifier for this enhancer pool. Used to reference this pool from other parts of the game."
+          },
+          "enhancers": {
             "items": {
-                "properties": {
-                    "id": {
-                        "type": "string",
-                        "description": "Unique identifier for this enhancer pool. Used to reference this pool from other parts of the game."
-                    },
-                    "enhancers": {
-                        "items": {
-                            "type": "string",
-                            "description": "Reference to an enhancer's unique identifier that can appear in this pool."
-                        },
-                        "type": "array",
-                        "description": "List of enhancers references that can appear in this pool."
-                    }
-                },
-                "required": [
-                    "id"
-                ],
-                "description": "A enhancer pool definition that specifies which enhancers can appear together."
-            }
-        }
+              "$ref": "../definitions/reference.json",
+              "description": "Reference to an enhancer's unique identifier that can appear in this pool."
+            },
+            "type": "array",
+            "description": "List of enhancers references that can appear in this pool."
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "description": "A enhancer pool definition that specifies which enhancers can appear together."
+      }
     }
+  }
 }

@@ -1,26 +1,26 @@
 {
-    "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/atlas_icons.json",
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "properties": {
-        "atlas_icons": {
-            "type": "array",
-            "description": "An array of images to load for use in tooltips or card text. Each image should ideally be 24x24 and if used for status/trigger tooltips the ID must match the ID of the sprite used.",
-            "items": {
-                "required": [
-                    "id",
-                    "path"
-                ],
-                "properties": {
-                    "id": {
-                        "type": "string",
-                        "description": "If this references a status effect icon or trigger icon, the ID must exactly match with the ID in the sprites section."
-                    },
-                    "path": {
-                        "type": "string",
-                        "description": "The path to the image file."
-                    }
-                }
-            }
+  "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/atlas_icons.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "properties": {
+    "atlas_icons": {
+      "type": "array",
+      "description": "An array of images to load for use in tooltips or card text. Each image should ideally be 24x24 and if used for status/trigger tooltips the ID must match the ID of the sprite used.",
+      "items": {
+        "required": [
+          "id",
+          "path"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "If this references a status effect icon or trigger icon, the ID must exactly match with the ID in the sprites section."
+          },
+          "path": {
+            "type": "string",
+            "description": "The path to the image file."
+          }
         }
+      }
     }
+  }
 }

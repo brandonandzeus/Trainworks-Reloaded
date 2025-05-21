@@ -1,25 +1,26 @@
 {
-    "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/subtypes.json",
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "properties": {
-        "subtypes": {
-            "type": "array",
-            "description": "A collection of all custom subtypes.",
-            "items": {
-                "required": [
-                    "id"
-                ],
-                "properties": {
-                    "id": {
-                        "type": "string",
-                        "description": "Unique identifier for this subtype."
-                    },
-					"names": {
-                        "$ref": "../definitions/parse_term.json",
-                        "description": "Localized text names for this subtype."
-                    },
-                }
-            }
+  "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/subtypes.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "properties": {
+    "subtypes": {
+      "type": "array",
+      "description": "A collection of all custom subtypes.",
+      "items": {
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Unique identifier for this subtype."
+          },
+          "names": {
+            "$ref": "../definitions/parse_term.json",
+            "description": "Localized text names for this subtype."
+          }
         }
+      }
     }
+  }
 }

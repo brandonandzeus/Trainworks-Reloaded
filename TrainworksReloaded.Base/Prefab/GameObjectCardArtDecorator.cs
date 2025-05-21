@@ -42,7 +42,7 @@ namespace TrainworksReloaded.Base.Prefab
                 .Configuration.GetSection("extensions")
                 .GetSection("card_art")
                 .GetSection("sprite")
-                .Value;
+                .ParseReference();
             if (spriteVal == null)
                 return;
 

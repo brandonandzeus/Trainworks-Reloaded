@@ -79,7 +79,7 @@
           "hide_in_logbook": {
             "type": "boolean",
             "description": "Whether this card should be hidden in the logbook.",
-            "default":  false
+            "default": false
           },
           "id": {
             "minLength": 1,
@@ -154,7 +154,7 @@
           "required_dlc": {
             "$ref": "../definitions/dlc.json",
             "description": "The DLC this card belongs to.",
-            "default":  "none"
+            "default": "none"
           },
           "shared_discovery_cards": {
             "type": "array",
