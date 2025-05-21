@@ -3,7 +3,7 @@
     "relic_effects": [{
         "id": "RageTreadsEffectOnAscend",
         "name": "RelicEffectAddStatusEffectOnUnitMoved",
-        "character_subtype": "SubtypesData_None",
+        "param_subtype": "SubtypesData_None",
         "target_mode": "front_in_room",
         "card_type": "monster",
         "param_int": 1,
