@@ -1,4 +1,6 @@
 # Trainworks-Reloaded
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded)
+
 Modding Framework for Monster Train 2
 
 ## How to Install
