@@ -69,7 +69,6 @@
           },
           "effects": {
             "type": "array",
-            "uniqueItems": true,
             "description": "List of effects this card has when played.",
             "items": {
               "$ref": "../definitions/reference.json",
@@ -140,7 +139,6 @@
           },
           "pools": {
             "type": "array",
-            "uniqueItems": true,
             "description": "List of card pools this card can appear in.",
             "items": {
               "$ref": "../definitions/card_pool.json"
@@ -188,7 +186,6 @@
           },
           "traits": {
             "type": "array",
-            "uniqueItems": true,
             "description": "List of traits this card has.",
             "items": {
               "$ref": "../defintions/reference.json",
