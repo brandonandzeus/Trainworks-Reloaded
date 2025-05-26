@@ -6,7 +6,15 @@
       "type": "string",
       "enum": [
         "ClassBanished",
-        "ClassPyreborne"
+        "ClassPyreborne",
+        "ClassLunaCoven",
+        "ClassUnderlegion",
+        "ClassLazarusLeague",
+        "ClassHellhorned",
+        "ClassAwoken",
+        "ClassStygian",
+        "ClassUmbra",
+        "ClassRemnant"
       ]
     },
     {
