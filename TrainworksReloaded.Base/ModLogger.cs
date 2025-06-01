@@ -22,17 +22,17 @@ namespace TrainworksReloaded.Base
 
         public void CloseLog() { }
 
-        public void Debug(string log, LogOptions options)
+        public void Debug(string log)
         {
             Log(Core.Interfaces.LogLevel.Debug, log);
         }
 
-        public void Error(string log, LogOptions options)
+        public void Error(string log)
         {
             Log(Core.Interfaces.LogLevel.Error, log);
         }
 
-        public void Info(string log, LogOptions options)
+        public void Info(string log)
         {
             Log(Core.Interfaces.LogLevel.Info, log);
         }
@@ -45,12 +45,12 @@ namespace TrainworksReloaded.Base
             );
         }
 
-        public void Verbose(string log, LogOptions options)
+        public void Verbose(string log)
         {
             Log(Core.Interfaces.LogLevel.Debug, log);
         }
 
-        public void Warning(string log, LogOptions options)
+        public void Warning(string log)
         {
             Log(Core.Interfaces.LogLevel.Warning, log);
         }
