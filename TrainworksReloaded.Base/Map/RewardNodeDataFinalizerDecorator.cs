@@ -73,7 +73,7 @@ namespace TrainworksReloaded.Base.Map
             );
 
             //class
-            var required_class = configuration.GetSection("class").ParseReference();
+            var required_class = configuration.GetDeprecatedSection("required_class", "class").ParseReference();
             if (
                 required_class != null
                 && classDataRegister.TryLookupName(

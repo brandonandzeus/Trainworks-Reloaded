@@ -12,6 +12,7 @@
         ],
         "properties": {
           "id": {
+            "minLength": 1,
             "type": "string",
             "description": "If this references a status effect icon or trigger icon, the ID must exactly match with the ID in the sprites section."
           },

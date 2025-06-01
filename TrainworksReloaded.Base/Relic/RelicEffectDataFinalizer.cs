@@ -124,7 +124,7 @@ namespace TrainworksReloaded.Base.Relic
 
             // Handle card effects
             var cardEffects = new List<CardEffectData>();
-            var cardEffectsReferences = configuration.GetSection("param_effects")
+            var cardEffectsReferences = configuration.GetDeprecatedSection("param_card_effects", "param_effects")
                .GetChildren()
                .Select(x => x.ParseReference())
                .Where(x => x != null)
@@ -228,7 +228,7 @@ namespace TrainworksReloaded.Base.Relic
             }
 
             // Handle card data
-            var cardReference = configuration.GetSection("param_card").ParseReference();
+            var cardReference = configuration.GetDeprecatedSection("param_card_data", "param_card").ParseReference();
             if (cardReference != null && cardRegister.TryLookupId(cardReference.ToId(key, TemplateConstants.Card), out var cardData, out var _))
             {
                 AccessTools.Field(typeof(RelicEffectData), "paramCardData").SetValue(data, cardData);
@@ -263,7 +263,7 @@ namespace TrainworksReloaded.Base.Relic
             }
             
             //handle paramCardFilterSecondary
-            var paramCardFilterSecondary = configuration.GetSection("param_card_filter_2").ParseReference();
+            var paramCardFilterSecondary = configuration.GetDeprecatedSection("param_card_filter_secondary", "param_card_filter_2").ParseReference();
             if (paramCardFilterSecondary != null && cardUpgradeMaskRegister.TryLookupId(paramCardFilterSecondary.ToId(key, TemplateConstants.UpgradeMask), out var cardFilterSecondary, out var _))
             {
                 AccessTools.Field(typeof(RelicEffectData), "paramCardFilterSecondary").SetValue(data, cardFilterSecondary);
@@ -271,7 +271,7 @@ namespace TrainworksReloaded.Base.Relic
 
             // Handle character subtype
             var characterSubtype = "SubtypesData_None";
-            var characterSubtypeReference = configuration.GetSection("param_subtype").ParseReference();
+            var characterSubtypeReference = configuration.GetDeprecatedSection("character_subtype", "param_subtype").ParseReference();
             if (characterSubtypeReference != null)
             {
                 if (subtypeRegister.TryLookupId(
@@ -286,7 +286,7 @@ namespace TrainworksReloaded.Base.Relic
 
             // Handle excluded character subtypes
             List<string> excludedSubtypes = [];
-            var subtypeReferences = configuration.GetSection("param_excluded_subtypes")
+            var subtypeReferences = configuration.GetDeprecatedSection("excluded_character_subtypes", "param_excluded_subtypes")
                .GetChildren()
                .Select(x => x.ParseReference())
                .Where(x => x != null)

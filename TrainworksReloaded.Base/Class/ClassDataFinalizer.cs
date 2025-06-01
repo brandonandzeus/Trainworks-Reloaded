@@ -151,7 +151,7 @@ namespace TrainworksReloaded.Base.Class
             AccessTools.Field(typeof(ClassData), "starterRelics").SetValue(data, starterRelics);
 
             //handle starter card upgrade
-            var upgradeConfig = configuration.GetSection("starter_card_upgrade").ParseReference();
+            var upgradeConfig = configuration.GetDeprecatedSection("starter_upgrade", "starter_card_upgrade").ParseReference();
             if (
                 upgradeConfig != null
                 && upgradeDataRegister.TryLookupName(

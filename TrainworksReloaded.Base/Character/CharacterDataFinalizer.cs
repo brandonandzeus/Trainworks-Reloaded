@@ -135,7 +135,7 @@ namespace TrainworksReloaded.Base.Character
                 AccessTools.Field(typeof(CharacterData), "deathVFX").SetValue(data, death_vfx);
             }
 
-            var bossSpellCastVFXId = configuration.GetSection("boss_spell_cast_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx) ?? "";
+            var bossSpellCastVFXId = configuration.GetDeprecatedSection("boss_cast_vfx", "boss_spell_cast_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx) ?? "";
             if (vfxRegister.TryLookupId(bossSpellCastVFXId, out var boss_cast_vfx, out var _))
             {
                 AccessTools
@@ -291,7 +291,7 @@ namespace TrainworksReloaded.Base.Character
                 .Field(typeof(CharacterData), "roomModifiers")
                 .SetValue(data, roomModifiers);
 
-            var relicReference = configuration.GetSection("enemy_relic").ParseReference();
+            var relicReference = configuration.GetDeprecatedSection("enemy_relic_data", "enemy_relic").ParseReference();
             if (relicReference != null)
             {
                 relicRegister.TryLookupId(relicReference.ToId(key, TemplateConstants.RelicData), out var relic, out var _);

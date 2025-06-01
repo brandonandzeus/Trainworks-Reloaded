@@ -142,7 +142,7 @@ namespace TrainworksReloaded.Base.Card
                 .SetValue(data, SharedMasteryCards);
 
             //handle linked mastery card
-            var MasteryCardRef = configuration.GetSection("linked_mastery_card").ParseReference();
+            var MasteryCardRef = configuration.GetDeprecatedSection("mastery_card", "linked_mastery_card").ParseReference();
             if (
                 MasteryCardRef != null
                 && cardRegister.TryLookupName(
@@ -158,7 +158,7 @@ namespace TrainworksReloaded.Base.Card
             }
 
             //handle art
-            var cardArtReference = configuration.GetSection("card_art").ParseReference();
+            var cardArtReference = configuration.GetDeprecatedSection("card_art_reference", "card_art").ParseReference();
             if (cardArtReference != null)
             {
                 if (
@@ -264,7 +264,7 @@ namespace TrainworksReloaded.Base.Card
                     .Field(typeof(CardData), "effectTriggers")
                     .SetValue(data, effectTriggers);
 
-            var offCooldownVFXId = configuration.GetSection("off_cooldown_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx) ?? "";
+            var offCooldownVFXId = configuration.GetDeprecatedSection("vfx", "off_cooldown_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx) ?? "";
             if (
                 vfxRegister.TryLookupId(
                     offCooldownVFXId,

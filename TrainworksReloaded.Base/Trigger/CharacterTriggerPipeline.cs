@@ -83,7 +83,7 @@ namespace TrainworksReloaded.Base.Trigger
 
             //handle descriptions
             var localizationTrigger = configuration
-                .GetSection("additional_text_on_trigger")
+                .GetDeprecatedSection("text_on_trigger", "additional_text_on_trigger")
                 .ParseLocalizationTerm();
             if (localizationTrigger != null)
             {
@@ -100,7 +100,7 @@ namespace TrainworksReloaded.Base.Trigger
                 .Field(typeof(CharacterTriggerData), "showAdditionalTriggerTextOnSuccessOnly")
                 .SetValue(
                     data,
-                    configuration.GetSection("show_additional_text_on_trigger_success_only").ParseBool()
+                    configuration.GetDeprecatedSection("show_text_on_trigger_success_only", "show_additional_text_on_trigger_success_only").ParseBool()
                         ?? showAdditionalTriggerTextOnSuccessOnly
                 );
 
@@ -109,7 +109,7 @@ namespace TrainworksReloaded.Base.Trigger
                 .Field(typeof(CharacterTriggerData), "displayEffectHintText")
                 .SetValue(
                     data,
-                    configuration.GetSection("display_effect_hint_text").ParseBool()
+                    configuration.GetDeprecatedSection("display_hint_text", "display_effect_hint_text").ParseBool()
                         ?? displayEffectHintText
                 );
 
@@ -118,7 +118,7 @@ namespace TrainworksReloaded.Base.Trigger
                 .Field(typeof(CharacterTriggerData), "hideVisualAndIgnoreSilence")
                 .SetValue(
                     data,
-                    configuration.GetSection("hide_visual_and_ignore_silence").ParseBool()
+                    configuration.GetDeprecatedSection("hide_tooltip", "hide_visual_and_ignore_silence").ParseBool()
                         ?? hideVisualAndIgnoreSilence
                 );
 
@@ -127,7 +127,7 @@ namespace TrainworksReloaded.Base.Trigger
                 .Field(typeof(CharacterTriggerData), "allowAdditionalTooltipsWhenVisualIsHidden")
                 .SetValue(
                     data,
-                    configuration.GetSection("allow_additional_tooltips_when_visual_is_hidden").ParseBool()
+                    configuration.GetDeprecatedSection("allow_tooltips_when_hidden", "allow_additional_tooltips_when_visual_is_hidden").ParseBool()
                         ?? allowAdditionalTooltipsWhenVisualIsHidden
                 );
 

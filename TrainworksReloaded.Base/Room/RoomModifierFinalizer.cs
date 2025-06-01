@@ -121,7 +121,7 @@ namespace TrainworksReloaded.Base.Room
             }
 
             var cardEffectDatas = new List<CardEffectData>();
-            var effectReferences = configuration.GetSection("param_effects")
+            var effectReferences = configuration.GetDeprecatedSection("effects", "param_effects")
                .GetChildren()
                .Select(x => x.ParseReference())
                .Where(x => x != null)
@@ -163,7 +163,7 @@ namespace TrainworksReloaded.Base.Room
 
             //trigger
             var paramTrigger = CharacterTriggerData.Trigger.OnDeath;
-            var triggerReference = configuration.GetSection("trigger").ParseReference();
+            var triggerReference = configuration.GetDeprecatedSection("trigger", "param_trigger").ParseReference();
             if (triggerReference != null)
             {
                 if (

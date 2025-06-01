@@ -110,7 +110,7 @@ namespace TrainworksReloaded.Base.Reward
             //boolean
             AccessTools
                 .Field(typeof(RewardData), "_showRewardFlowInEvent")
-                .SetValue(data, configuration.GetSection("show_flow_in_event").ParseBool() ?? false);
+                .SetValue(data, configuration.GetDeprecatedSection("show_in_event", "show_flow_in_event").ParseBool() ?? false);
 
             AccessTools
                 .Field(typeof(RewardData), "ShowRewardAnimationInEvent")
@@ -127,7 +127,7 @@ namespace TrainworksReloaded.Base.Reward
                 .Field(typeof(RewardData), "isUniqueInEndlessMode")
                 .SetValue(
                     data,
-                    configuration.GetSection("is_unique_in_endless_mode").ParseBool() ?? false
+                    configuration.GetDeprecatedSection("endless_mode_unique", "is_unique_in_endless_mode").ParseBool() ?? false
                 );
 
             //string

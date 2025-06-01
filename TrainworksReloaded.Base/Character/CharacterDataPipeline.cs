@@ -136,7 +136,7 @@ namespace TrainworksReloaded.Base.Character
                 .Field(typeof(CharacterData), "blockVisualSizeIncrease")
                 .SetValue(
                     data,
-                    configuration.GetSection("block_visual_size_increase").ParseBool()
+                    configuration.GetDeprecatedSection("block_size_increase", "block_visual_size_increase").ParseBool()
                         ?? blockVisualSizeIncrease
                 );
 
@@ -199,7 +199,7 @@ namespace TrainworksReloaded.Base.Character
                 .Field(typeof(CharacterData), "loopsBetweenTrainFloors")
                 .SetValue(
                     data,
-                    configuration.GetSection("loops_between_train_floors").ParseBool()
+                    configuration.GetDeprecatedSection("loops_between_floors", "loops_between_train_floors").ParseBool()
                         ?? loopsBetweenTrainFloors
                 );
 
@@ -244,7 +244,7 @@ namespace TrainworksReloaded.Base.Character
                 && (bool)AccessTools.Field(typeof(CharacterData), "isPyreHeart").GetValue(data);
             AccessTools
                 .Field(typeof(CharacterData), "isPyreHeart")
-                .SetValue(data, configuration.GetSection("is_pyre_heart").ParseBool() ?? isPyreHeart);
+                .SetValue(data, configuration.GetDeprecatedSection("is_pyre", "is_pyre_heart").ParseBool() ?? isPyreHeart);
 
             var disableInDailyChallenges =
                 checkOverride
@@ -306,7 +306,7 @@ namespace TrainworksReloaded.Base.Character
                 .Field(typeof(CharacterData), "equipmentLimit")
                 .SetValue(
                     data,
-                    configuration.GetSection("equipment_limit").ParseInt() ?? equipmentLimit
+                    configuration.GetDeprecatedSection("equip_limit", "equipment_limit").ParseInt() ?? equipmentLimit
                 );
 
             //attack phase
@@ -318,7 +318,7 @@ namespace TrainworksReloaded.Base.Character
                 .Field(typeof(CharacterData), "validBossAttackPhase")
                 .SetValue(
                     data,
-                    configuration.GetSection("valid_boss_attack_phase").ParseAttackPhase()
+                    configuration.GetDeprecatedSection("valid_attack_phase", "valid_boss_attack_phase").ParseAttackPhase()
                         ?? validBossAttackPhase
                 );
 
@@ -353,7 +353,7 @@ namespace TrainworksReloaded.Base.Character
                 ? (List<String>)
                     AccessTools.Field(typeof(CharacterData), "characterLoreTooltipKeys").GetValue(data)
                 : [];
-            foreach (var tooltip in configuration.GetSection("lore_tooltips").GetChildren())
+            foreach (var tooltip in configuration.GetDeprecatedSection("character_lore_tooltips", "lore_tooltips").GetChildren())
             {
                 var localizationTooltipTerm = tooltip.ParseLocalizationTerm();
                 if (localizationTooltipTerm != null)

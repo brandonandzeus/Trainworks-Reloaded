@@ -65,7 +65,7 @@ namespace TrainworksReloaded.Base.Effect
             var key = definition.Key;
             var data = definition.Data;
 
-            var cardReference = configuration.GetSection("param_card").ParseReference();
+            var cardReference = configuration.GetDeprecatedSection("param_card_data", "param_card").ParseReference();
             if (
                 cardReference != null
                 && cardRegister.TryLookupName(
@@ -80,7 +80,7 @@ namespace TrainworksReloaded.Base.Effect
                     .SetValue(data, cardData);
             }
 
-            var characterReference = configuration.GetSection("param_character").ParseReference();
+            var characterReference = configuration.GetDeprecatedSection("param_character_data", "param_character").ParseReference();
             if (
                 characterReference != null
                 && characterDataRegister.TryLookupName(
@@ -95,7 +95,7 @@ namespace TrainworksReloaded.Base.Effect
                     .SetValue(data, characterData);
             }
 
-            var characterReference2 = configuration.GetSection("param_character_data_2").ParseReference();
+            var characterReference2 = configuration.GetDeprecatedSection("param_character_data_2", "param_character_2").ParseReference();
             if (
                 characterReference2 != null
                 && characterDataRegister.TryLookupName(
@@ -113,7 +113,7 @@ namespace TrainworksReloaded.Base.Effect
             //card pools
             var characterDataPool = new List<CharacterData>();
             var characterReferences = configuration
-                .GetSection("param_character_data_pool")
+                .GetDeprecatedSection("param_character_data_pool", "param_character_pool")
                 .GetChildren()
                 .Select(x => x.ParseReference())
                 .Where(x => x != null)
@@ -168,7 +168,7 @@ namespace TrainworksReloaded.Base.Effect
 
 
             //string[]
-            var targetModeStatusEffectsFilterReferences = configuration.GetSection("target_mode_status_effect_filter")
+            var targetModeStatusEffectsFilterReferences = configuration.GetDeprecatedSection("status_effect_filters", "target_mode_status_effect_filter")
                 .GetChildren()
                 .Select(x => x.ParseReference())
                 .Where(x => x != null)
@@ -208,7 +208,7 @@ namespace TrainworksReloaded.Base.Effect
 
             //trigger
             var paramTrigger = CharacterTriggerData.Trigger.OnDeath;
-            var triggerReference = configuration.GetSection("param_trigger").ParseReference();
+            var triggerReference = configuration.GetDeprecatedSection("trigger", "param_trigger").ParseReference();
             if (triggerReference != null)
             {
                 if (

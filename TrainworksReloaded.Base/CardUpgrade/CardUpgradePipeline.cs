@@ -219,7 +219,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 .Field(typeof(CardUpgradeData), "restrictSizeToRoomCapacity")
                 .SetValue(
                     data,
-                    configuration.GetSection("restrict_size_to_room_capacity").ParseBool()
+                    configuration.GetDeprecatedSection("restrict_to_room_capacity", "restrict_size_to_room_capacity").ParseBool()
                         ?? restrictSizeToRoomCapacity
                 );
 

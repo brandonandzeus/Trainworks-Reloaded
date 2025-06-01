@@ -84,7 +84,7 @@ namespace TrainworksReloaded.Base.Trigger
                 var triggerData = new CardTriggerData();
 
                 triggerData.persistenceMode =
-                    child.GetSection("persistence_mode").ParsePersistenceMode()
+                    child.GetDeprecatedSection("persistence", "persistence_mode").ParsePersistenceMode()
                     ?? PersistenceMode.SingleRun;
                 triggerData.paramInt = child.GetSection("param_int").ParseInt() ?? 0;
 

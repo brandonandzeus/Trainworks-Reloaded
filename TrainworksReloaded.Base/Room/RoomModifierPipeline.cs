@@ -110,7 +110,7 @@ namespace TrainworksReloaded.Base.Room
 
             //handle descriptions
             var descriptionKeyInPlayTerm = configuration
-                .GetSection("in_play_descriptions")
+                .GetDeprecatedSection("play_descriptions", "in_play_descriptions")
                 .ParseLocalizationTerm();
             if (descriptionKeyInPlayTerm != null)
             {
@@ -165,7 +165,7 @@ namespace TrainworksReloaded.Base.Room
                 .Field(typeof(RoomModifierData), "useTitleForCardDescription")
                 .SetValue(
                     data,
-                    configuration.GetSection("use_title_for_card_description").ParseBool()
+                    configuration.GetDeprecatedSection("use_name_as_description", "use_title_for_card_description").ParseBool()
                         ?? useTitleForCardDescription
                 );
 

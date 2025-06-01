@@ -56,7 +56,7 @@ namespace TrainworksReloaded.Base.Trait
             );
 
             // Card
-            var cardReference = configuration.GetSection("param_card").ParseReference();
+            var cardReference = configuration.GetDeprecatedSection("param_card_data", "param_card").ParseReference();
             CardData? card = null;
             if (cardReference != null)
             {

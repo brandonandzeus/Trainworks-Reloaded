@@ -97,7 +97,7 @@ namespace TrainworksReloaded.Base.Trait
                 .Field(typeof(CardTraitData), "paramTrackedValue")
                 .SetValue(
                     data,
-                    configuration.GetSection("param_tracked_value").ParseTrackedValueType()
+                    configuration.GetDeprecatedSection("track_type", "param_tracked_value").ParseTrackedValueType()
                         ?? paramTrackedValue
                 );
 
@@ -106,7 +106,7 @@ namespace TrainworksReloaded.Base.Trait
                 .Field(typeof(CardTraitData), "paramCardType")
                 .SetValue(
                     data,
-                    configuration.GetSection("param_card_type").ParseCardTypeTarget() ?? paramCardType
+                    configuration.GetDeprecatedSection("card_type", "param_card_type").ParseCardTypeTarget() ?? paramCardType
                 );
 
             var paramEntryDuration = CardStatistics.EntryDuration.ThisTurn;
@@ -114,7 +114,7 @@ namespace TrainworksReloaded.Base.Trait
                 .Field(typeof(CardTraitData), "paramEntryDuration")
                 .SetValue(
                     data,
-                    configuration.GetSection("param_entry_duration").ParseEntryDuration()
+                    configuration.GetDeprecatedSection("entry_duraction", "param_entry_duration").ParseEntryDuration()
                         ?? paramEntryDuration
                 );
 

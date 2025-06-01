@@ -102,7 +102,7 @@ namespace TrainworksReloaded.Base.Map
             }
 
             var mapNodes = new List<MapNodeData>();
-            var mapNodeReferences = configuration.GetSection("ignore_if_nodes_present")
+            var mapNodeReferences = configuration.GetDeprecatedSection("ignore_if_present", "ignore_if_nodes_present")
                 .GetChildren()
                 .Select(x => x.ParseReference())
                 .Where(x => x != null)
@@ -121,7 +121,7 @@ namespace TrainworksReloaded.Base.Map
             }
             AccessTools.Field(typeof(MapNodeData), "ignoreIfNodesPresent").SetValue(data, mapNodes);
 
-            var mapPoolReferences = configuration.GetSection("pools")
+            var mapPoolReferences = configuration.GetDeprecatedSection("map_pools", "pools")
                 .GetChildren()
                 .Select(x => x.ParseReference())
                 .Where(x => x != null)

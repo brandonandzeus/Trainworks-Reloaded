@@ -116,11 +116,11 @@ namespace TrainworksReloaded.Base.Map
             //boolean
             AccessTools
                 .Field(typeof(MapNodeData), "isBannerNode")
-                .SetValue(data, configuration.GetSection("is_banner_node").ParseBool() ?? false);
+                .SetValue(data, configuration.GetDeprecatedSection("is_banner", "is_banner_node").ParseBool() ?? false);
 
             AccessTools
                 .Field(typeof(MapNodeData), "usePyreHeartHpTooltipKey")
-                .SetValue(data, configuration.GetSection("use_pyre_hp_tooltip").ParseBool() ?? false);
+                .SetValue(data, configuration.GetDeprecatedSection("use_hp_tooltip", "use_pyre_hp_tooltip").ParseBool() ?? false);
 
             AccessTools
                 .Field(typeof(MapNodeData), "updateMapIconImmediatelyOnClick")
@@ -137,7 +137,7 @@ namespace TrainworksReloaded.Base.Map
             //dlc
             AccessTools
                 .Field(typeof(MapNodeData), "requiredDlc")
-                .SetValue(data, configuration.GetSection("required_dlc").ParseDLC() ?? ShinyShoe.DLC.None);
+                .SetValue(data, configuration.GetDeprecatedSection("dlc", "required_dlc").ParseDLC() ?? ShinyShoe.DLC.None);
 
             //skip settings
             AccessTools
