@@ -28,7 +28,7 @@
           },
           "param_effects": {
             "type": "array",
-            "description": "List of effects applied by this room modifier.",
+            "description": "List of card effects applied by this room modifier.",
             "items": {
               "$ref": "../definitions/reference.json"
             }
@@ -91,7 +91,7 @@
           },
           "use_title_for_card_description": {
             "type": "boolean",
-            "description": "Whether to use the name as the description."
+            "description": "Whether to use the title as the card description."
           }
         },
         "description": "A room modifier definition that specifies the properties and behaviors of a modifier that can be applied to rooms."

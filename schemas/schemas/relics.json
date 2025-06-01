@@ -47,7 +47,7 @@
           },
           "disallow_in_deployment": {
             "type": "boolean",
-            "description": "Whether the relic is not allowed during deployment phase"
+            "description": "Whether the relic is not allowed to activate during deployment phase"
           },
           "lore_style": {
             "$ref": "../definitions/lore_tooltip_style.json",
