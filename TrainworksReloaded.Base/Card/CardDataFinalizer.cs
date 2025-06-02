@@ -75,7 +75,7 @@ namespace TrainworksReloaded.Base.Card
             var data = definition.Data;
             var key = definition.Key;
 
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Finalizing Card {data.name}... ");
+            logger.Log(LogLevel.Debug, $"Finalizing Card {data.name}... ");
 
             //handle linked class
             var classfield = configuration.GetSection("class").ParseString();

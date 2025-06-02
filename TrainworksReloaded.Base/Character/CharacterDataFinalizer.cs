@@ -73,7 +73,7 @@ namespace TrainworksReloaded.Base.Character
             var data = definition.Data;
             var key = definition.Key;
 
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Finalizing Character {data.name}... ");
+            logger.Log(LogLevel.Debug, $"Finalizing Character {data.name}...");
 
             //handle art
             var characterArtReference = configuration.GetSection("character_art").ParseReference();

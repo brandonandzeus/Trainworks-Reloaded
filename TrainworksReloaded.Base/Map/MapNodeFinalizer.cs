@@ -56,10 +56,7 @@ namespace TrainworksReloaded.Base.Map
             var data = definition.Data;
             var key = definition.Key;
 
-            logger.Log(
-                Core.Interfaces.LogLevel.Info,
-                $"Finalizing Map Node Data {definition.Id.ToId(key, TemplateConstants.MapNode)}... "
-            );
+            logger.Log(LogLevel.Debug, $"Finalizing Map Node Data {definition.Id.ToId(key, TemplateConstants.MapNode)}...");
 
             var sprite = configuration.GetSection("map_icon").ParseReference();
             if (

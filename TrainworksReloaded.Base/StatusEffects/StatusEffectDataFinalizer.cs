@@ -45,7 +45,7 @@ namespace TrainworksReloaded.Base.StatusEffects
             var data = definition.Data;
             var key = definition.Key;
 
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Finalizing StatusEffect {data.GetStatusId()}... ");
+            logger.Log(LogLevel.Debug, $"Finalizing StatusEffect {data.GetStatusId()}... ");
 
             var icon = configuration.GetSection("icon").ParseReference();
             if (

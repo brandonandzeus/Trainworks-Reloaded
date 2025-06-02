@@ -44,7 +44,7 @@ namespace TrainworksReloaded.Base.Relic
             var data = definition.Data;
             var key = definition.Key;
 
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Finalizing Relic {data.name}... ");
+            logger.Log(LogLevel.Debug, $"Finalizing Relic {data.name}...");
             
             // Handle relic sprite
             var iconSprite = configuration.GetSection("icon").ParseReference();

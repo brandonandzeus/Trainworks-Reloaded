@@ -121,7 +121,7 @@ namespace TrainworksReloaded.Base.Prefab
                 throw new ArgumentNullException("gameobject");
             }
 
-            logger.Log(LogLevel.Info, $"Providing for {location.InternalId}");
+            logger.Log(LogLevel.Debug, $"Providing for {location.InternalId}");
             var obj = this[location.InternalId];
             // obj.SetActive(true);
             if (obj is TObject @object)
@@ -135,7 +135,7 @@ namespace TrainworksReloaded.Base.Prefab
             }
             else
             {
-                logger.Log(LogLevel.Info, $"Did not Find for {location.InternalId}");
+                logger.Log(LogLevel.Debug, $"Did not Find for {location.InternalId}");
                 return new CompletedOperation<TObject>().Start(
                     location,
                     location.InternalId,

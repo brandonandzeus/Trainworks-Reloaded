@@ -50,8 +50,7 @@ namespace TrainworksReloaded.Base.Trait
             var data = definition.Data;
             var key = definition.Key;
 
-            logger.Log(
-                Core.Interfaces.LogLevel.Info,
+            logger.Log(LogLevel.Debug, 
                 $"Finalizing Card Trait {definition.Id.ToId(key, TemplateConstants.Trait)}... "
             );
 

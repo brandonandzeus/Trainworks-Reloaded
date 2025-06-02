@@ -65,7 +65,7 @@ namespace TrainworksReloaded.Base.Class
             var data = definition.Data;
             var key = definition.Key;
 
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Finalizing Class {data.name}... ");
+            logger.Log(LogLevel.Debug, $"Finalizing Clan {data.name}...");
 
             var iconSet = AccessTools.Field(typeof(ClassData), "icons").GetValue(data);
             var iconSetType = typeof(ClassData).GetNestedType(

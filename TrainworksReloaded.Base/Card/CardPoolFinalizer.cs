@@ -45,7 +45,7 @@ namespace TrainworksReloaded.Base.Card
             var data = definition.Data;
             var key = definition.Key;
 
-            logger.Verbose($"Finalizing Card Pool {data.name}... ");
+            logger.Log(LogLevel.Debug, $"Finalizing Card Pool {data.name}... ");
 
             //handle cards
             var cardDatas = new List<CardData>();

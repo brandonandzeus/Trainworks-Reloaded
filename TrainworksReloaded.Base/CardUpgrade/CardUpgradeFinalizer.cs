@@ -73,7 +73,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
             var data = definition.Data;
             var key = definition.Key;
 
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Finalizing Upgrade {data.name}... ");
+            logger.Log(LogLevel.Debug, $"Finalizing Upgrade {data.name}...");
 
             //handle traits
             //traits do not default properly, if null, set to empty

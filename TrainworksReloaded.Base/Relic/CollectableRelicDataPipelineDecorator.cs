@@ -94,7 +94,7 @@ namespace TrainworksReloaded.Base.Relic
             var pool = configuration.GetSection("pool").ParseString();
             if (pool != null)
             {
-                logger.Log(LogLevel.Error, "[Deprecation] relics.pool is deprecated and will be removed soon use relics.pools instead.");
+                logger.Log(LogLevel.Warning, "[Deprecation] relics.pool is deprecated and will be removed soon use relics.pools instead.");
                 if (!relicPoolDelegator.RelicPoolToData.ContainsKey(pool))
                 {
                     relicPoolDelegator.RelicPoolToData[pool] = [];

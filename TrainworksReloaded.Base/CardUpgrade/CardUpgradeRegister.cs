@@ -38,7 +38,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
 
         public void Register(string key, CardUpgradeData item)
         {
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Registering Upgrade {key}... ");
+            logger.Log(LogLevel.Info, $"Registering Upgrade {key}...");
             var gamedata = SaveManager.Value.GetAllGameData();
             var CardUpgradeDatas =
                 (List<CardUpgradeData>)

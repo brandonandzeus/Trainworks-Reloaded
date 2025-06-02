@@ -31,7 +31,7 @@ namespace TrainworksReloaded.Base.Trigger
 
         public void Register(string key, CardTriggerEffectData item)
         {
-            logger.Log(LogLevel.Info, $"Register Card Trigger Effect ({key})");
+            logger.Log(LogLevel.Debug, $"Register Card Trigger Effect ({key})");
             Add(key, item);
         }
 

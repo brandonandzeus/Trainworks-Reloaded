@@ -35,7 +35,7 @@ namespace TrainworksReloaded.Base.Map
 
         public void Register(string key, MapNodeData item)
         {
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Register Map Node {key}... ");
+            logger.Log(LogLevel.Info, $"Register Map Node {key}...");
             var gamedata = SaveManager.Value.GetAllGameData();
             var MapNodeDatas =
                 (List<MapNodeData>)

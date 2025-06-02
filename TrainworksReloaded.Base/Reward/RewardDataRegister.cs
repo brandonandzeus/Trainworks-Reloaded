@@ -20,7 +20,7 @@ namespace TrainworksReloaded.Base.Reward
 
         public void Register(string key, RewardData item)
         {
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Register Reward {key}... ");
+            logger.Log(LogLevel.Info, $"Register Reward {key}...");
             Add(key, item);
         }
 

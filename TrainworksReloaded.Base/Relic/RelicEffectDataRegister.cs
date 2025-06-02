@@ -18,7 +18,7 @@ namespace TrainworksReloaded.Base.Relic
 
         public void Register(string key, RelicEffectData item)
         {
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Register RelicEffect {key}... ");
+            logger.Log(LogLevel.Debug, $"Register RelicEffect {key}... ");
             Add(key, item);
         }
 

@@ -33,7 +33,7 @@ namespace TrainworksReloaded.Base.Subtype
 
         public void Register(string key, SubtypeData item)
         {
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Register Subtype {key}... ");
+            logger.Log(LogLevel.Info, $"Register Subtype {key}...");
             Add(key, item);
             SubtypeManager.AllData.Add(item);
         }

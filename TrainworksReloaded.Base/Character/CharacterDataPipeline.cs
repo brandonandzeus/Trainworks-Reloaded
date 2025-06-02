@@ -92,7 +92,7 @@ namespace TrainworksReloaded.Base.Character
             string guid;
             if (checkOverride && service.TryLookupName(id, out CharacterData? data, out var _))
             {
-                logger.Log(Core.Interfaces.LogLevel.Info, $"Overriding Character {id}... ");
+                logger.Log(LogLevel.Info, $"Overriding Character {id}...");
                 namekey = data.GetNameKey();
                 guid = data.GetID();
             }
@@ -343,7 +343,7 @@ namespace TrainworksReloaded.Base.Character
                 .Field(typeof(CharacterData), "bossTitanAffinity")
                 .SetValue(
                     data,
-                    configuration.GetSection("boss_titan_affinity").ParseTitanAffinity()
+                    configuration.GetDeprecatedSection("titan_affinity", "boss_titan_affinity").ParseTitanAffinity()
                         ?? bossTitanAffinity
                 );
 

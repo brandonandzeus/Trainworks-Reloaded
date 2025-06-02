@@ -94,7 +94,7 @@ namespace TrainworksReloaded.Base.Card
             string guid;
             if (checkOverride && service.TryLookupName(id, out CardData? data, out var _))
             {
-                logger.Log(Core.Interfaces.LogLevel.Info, $"Overriding Card {id}... ");
+                logger.Log(LogLevel.Debug, $"Overriding Card {id}... ");
                 descriptionKey = data.GetOverrideDescriptionKey();
                 namekey = data.GetNameKey();
                 guid = data.GetID();

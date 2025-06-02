@@ -86,7 +86,7 @@ namespace TrainworksReloaded.Base.Effect
                 )
             )
             {
-                logger.Log(LogLevel.Error, $"Failed to load effect state name {effectStateName} in {name} with mod reference {modReference}");
+                logger.Log(LogLevel.Error, $"Failed to load effect state name {effectStateName} in {name} with mod reference {modReference}. Make sure it is a class inheriting from CardEffectBase.");
                 return null;
             }
             AccessTools

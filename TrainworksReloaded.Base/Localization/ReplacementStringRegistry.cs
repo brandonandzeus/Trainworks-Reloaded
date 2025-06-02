@@ -32,19 +32,19 @@ namespace TrainworksReloaded.Base.Localization
         {
             if (!gameDataClient.TryGetProvider<LanguageManager>(out var manager))
             {
-                logger.Log(LogLevel.Warning, "Unable to get replacement strings dictionary.");
+                logger.Log(LogLevel.Error, "Unable to get replacement strings dictionary. LangaugeManager not available.");
                 return;
             }
             var handler = AccessTools.Field(typeof(LanguageManager), "_paramHandler").GetValue(manager);
             var dict = AccessTools.Field(typeof(LocalizationGlobalParameterHandler), "_replacements").GetValue(handler) as Dictionary<string, ReplacementStringData>;
             if (dict == null)
             {
-                logger.Log(LogLevel.Warning, "Unable to get replacement strings dictionary.");
+                logger.Log(LogLevel.Error, "Unable to get replacement strings dictionary from Language Manager.");
                 return;
             }
             foreach (var replacement in this.Values)
-            {
-                logger.Log(LogLevel.Info, $"Adding Replacement ({replacement.Keyword}) -- ({replacement.ReplacementTextKey.LocalizeEnglish()})");
+            {   
+                logger.Log(LogLevel.Debug, $"Adding Replacement ({replacement.Keyword}) -- ({replacement.ReplacementTextKey.LocalizeEnglish()})");
                 dict.Add(replacement.Keyword, replacement);
             }
         }

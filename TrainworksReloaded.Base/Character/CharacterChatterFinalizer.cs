@@ -52,7 +52,7 @@ namespace TrainworksReloaded.Base.Character
             var key = definition.Key;
             var name = data.name;
 
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Finalizing Character Chatter {data.name}... ");
+            logger.Log(LogLevel.Debug, $"Finalizing Character Chatter {data.name}...");
 
             int i = 0;
             List<TriggerChatterExpressionData> triggerExpressions = [];

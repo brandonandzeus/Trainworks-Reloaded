@@ -7,9 +7,9 @@ using TrainworksReloaded.Core.Interfaces;
 
 namespace TrainworksReloaded.Base.Extensions
 {
-    public static class ConfiguirationExtensions
+    public static class ConfigurationExtensions
     {
-        internal static ManualLogSource Logger = BepInEx.Logging.Logger.CreateLogSource(nameof(ConfiguirationExtensions));
+        internal static ManualLogSource Logger = BepInEx.Logging.Logger.CreateLogSource(nameof(ConfigurationExtensions));
 
         public static IConfigurationSection GetDeprecatedSection(this IConfiguration configuration, string name, string newName)
         {

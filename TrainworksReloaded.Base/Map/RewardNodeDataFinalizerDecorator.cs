@@ -67,10 +67,7 @@ namespace TrainworksReloaded.Base.Map
             if (configuration == null)
                 return;
 
-            logger.Log(
-                Core.Interfaces.LogLevel.Info,
-                $"Finalizing Reward Node Data {definition.Id.ToId(key, TemplateConstants.RewardData)}... "
-            );
+            logger.Log(LogLevel.Debug, $"Finalizing Reward Node Data {definition.Data.name}...");
 
             //class
             var required_class = configuration.GetDeprecatedSection("required_class", "class").ParseReference();

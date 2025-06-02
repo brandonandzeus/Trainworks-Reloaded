@@ -70,8 +70,7 @@ namespace TrainworksReloaded.Base.Room
             var data = definition.Data;
             var key = definition.Key;
 
-            logger.Log(
-                Core.Interfaces.LogLevel.Info,
+            logger.Log(LogLevel.Debug, 
                 $"Finalizing Room Modifier {definition.Id.ToId(key, "RoomModifier")}... "
             );
 

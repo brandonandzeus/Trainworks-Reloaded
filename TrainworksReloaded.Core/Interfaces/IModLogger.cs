@@ -18,10 +18,5 @@ namespace TrainworksReloaded.Core.Interfaces
     public interface IModLogger<T>
     {
         void Log(LogLevel level, object data);
-        void Debug(string log);
-        void Error(string log);
-        void Info(string log);
-        void Verbose(string log);
-        void Warning(string log);
     }
 }

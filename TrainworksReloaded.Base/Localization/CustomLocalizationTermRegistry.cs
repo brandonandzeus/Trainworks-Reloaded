@@ -32,7 +32,7 @@ namespace TrainworksReloaded.Base.Localization
             );
             foreach (var term in this.Values)
             {
-                logger.Log(LogLevel.Info, $"Adding Term ({term.Key}) -- ({term.English})");
+                logger.Log(LogLevel.Debug, $"Adding Term ({term.Key}) -- ({term.English})");
                 builder.AppendLine(
                     $"{term.Key},{term.Type},{term.Desc},{term.Group},{term.Descriptions},{term.English},{term.French},{term.German},{term.Russian},{term.Portuguese},{term.Chinese},{term.Spanish},{term.ChineseTraditional},{term.Korean},{term.Japanese}"
                 );
