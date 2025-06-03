@@ -70,7 +70,7 @@ namespace TrainworksReloaded.Base.Reward
             );
 
             //cardpool
-            var cardpool = configuration.GetSection("cardpool").ParseString();
+            var cardpool = configuration.GetSection("cardpool").ParseReference();
             if (
                 cardpool != null
                 && cardPoolRegister.TryLookupId(

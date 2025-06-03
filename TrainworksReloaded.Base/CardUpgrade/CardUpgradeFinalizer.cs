@@ -10,6 +10,7 @@ using TrainworksReloaded.Base.Prefab;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
+using static TrainworksReloaded.Base.Extensions.ParseReferenceExtensions;
 
 namespace TrainworksReloaded.Base.CardUpgrade
 {
@@ -85,23 +86,17 @@ namespace TrainworksReloaded.Base.CardUpgrade
                     .SetValue(data, new List<CardTraitData>());
 
             var traitDataUpgrades = new List<CardTraitData>();
-            var traitDataUpgradesConfig = configuration.GetSection("trait_upgrades").GetChildren();
-            foreach (var traitDataUpgrade in traitDataUpgradesConfig)
+            var traitDataUpgradesReference = configuration.GetSection("trait_upgrades")
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var traitReference in traitDataUpgradesReference)
             {
-                if (traitDataUpgrade == null)
+                var id = traitReference.ToId(key, TemplateConstants.Trait);
+                if (traitRegister.TryLookupId(id, out var trait, out var _))
                 {
-                    continue;
-                }
-                var idConfig = traitDataUpgrade.GetSection("id").Value;
-                if (idConfig == null)
-                {
-                    continue;
-                }
-
-                var id = idConfig.ToId(key, TemplateConstants.Trait);
-                if (traitRegister.TryLookupId(id, out var card, out var _))
-                {
-                    traitDataUpgrades.Add(card);
+                    traitDataUpgrades.Add(trait);
                 }
             }
             if (traitDataUpgrades.Count != 0)
@@ -111,23 +106,17 @@ namespace TrainworksReloaded.Base.CardUpgrade
 
             //handle triggers
             var triggerUpgrades = new List<CharacterTriggerData>();
-            var triggerUpgradesConfig = configuration.GetSection("trigger_upgrades").GetChildren();
-            foreach (var triggerUpgrade in triggerUpgradesConfig)
+            var triggerUpgradeReferences = configuration.GetSection("trigger_upgrades")
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var triggerReference in triggerUpgradeReferences)
             {
-                if (triggerUpgrade == null)
+                var id = triggerReference.ToId(key, TemplateConstants.CharacterTrigger);
+                if (triggerRegister.TryLookupId(id, out var trigger, out var _))
                 {
-                    continue;
-                }
-                var idConfig = triggerUpgrade.GetSection("id").Value;
-                if (idConfig == null)
-                {
-                    continue;
-                }
-
-                var id = idConfig.ToId(key, TemplateConstants.CharacterTrigger);
-                if (triggerRegister.TryLookupId(id, out var card, out var _))
-                {
-                    triggerUpgrades.Add(card);
+                    triggerUpgrades.Add(trigger);
                 }
             }
             if (triggerUpgrades.Count != 0)
@@ -137,25 +126,18 @@ namespace TrainworksReloaded.Base.CardUpgrade
 
             //handle card triggers
             var cardTriggerUpgrades = new List<CardTriggerEffectData>();
-            var cardTriggerUpgradesConfig = configuration
+            var cardTriggerUpgradeReferences = configuration
                 .GetSection("card_trigger_upgrades")
-                .GetChildren();
-            foreach (var cardTriggerUpdate in cardTriggerUpgradesConfig)
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var cardTriggerReference in cardTriggerUpgradeReferences)
             {
-                if (cardTriggerUpdate == null)
+                var id = cardTriggerReference.ToId(key, TemplateConstants.CardTrigger);
+                if (cardTriggerRegister.TryLookupId(id, out var trigger, out var _))
                 {
-                    continue;
-                }
-                var idConfig = cardTriggerUpdate.GetSection("id").Value;
-                if (idConfig == null)
-                {
-                    continue;
-                }
-
-                var id = idConfig.ToId(key, TemplateConstants.CardTrigger);
-                if (cardTriggerRegister.TryLookupId(id, out var card, out var _))
-                {
-                    cardTriggerUpgrades.Add(card);
+                    cardTriggerUpgrades.Add(trigger);
                 }
             }
             if (cardTriggerUpgrades.Count != 0)
@@ -165,27 +147,20 @@ namespace TrainworksReloaded.Base.CardUpgrade
 
             //handle roomModifiers
             var roomModifierUpgrades = new List<RoomModifierData>();
-            var roomModifierUpgradesConfig = configuration
+            var roomModifierUpgradeReferences = configuration
                 .GetSection("room_modifier_upgrades")
-                .GetChildren();
-            foreach (var roomModifier in roomModifierUpgradesConfig)
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var roomModifierReference in roomModifierUpgradeReferences)
             {
-                if (roomModifier == null)
+                var id = roomModifierReference.ToId(key, TemplateConstants.RoomModifier);
+                if (roomModifierRegister.TryLookupId(id, out var roomModifier, out var _))
                 {
-                    continue;
-                }
-                var idConfig = roomModifier.GetSection("id").Value;
-                if (idConfig == null)
-                {
-                    continue;
-                }
-                var id = idConfig.ToId(key, TemplateConstants.RoomModifier);
-                if (roomModifierRegister.TryLookupId(id, out var card, out var _))
-                {
-                    roomModifierUpgrades.Add(card);
+                    roomModifierUpgrades.Add(roomModifier);
                 }
             }
-
             if (roomModifierUpgrades.Count != 0)
                 AccessTools
                     .Field(typeof(CardUpgradeData), "roomModifierUpgrades")
@@ -196,22 +171,21 @@ namespace TrainworksReloaded.Base.CardUpgrade
             var statusEffectUpgradesConfig = configuration.GetSection("status_effect_upgrades").GetChildren();
             foreach (var child in statusEffectUpgradesConfig)
             {
-                var idConfig = child?.GetSection("status").Value;
-                if (idConfig == null)
+                var statusReference = child.GetSection("status").ParseReference();
+                if (statusReference == null)
                     continue;
-                var statusEffectId = idConfig.ToId(key, TemplateConstants.StatusEffect);
-                string statusId = idConfig;
+
+                var statusEffectId = statusReference.ToId(key, TemplateConstants.StatusEffect);
                 // Make sure the status effect exists. If using @ notation.
                 // else it is a vanilla status effect.
                 if (statusRegister.TryLookupId(statusEffectId, out var statusEffectData, out var _))
                 {
-                    statusId = statusEffectData.GetStatusId();
+                    statusEffectUpgrades.Add(new StatusEffectStackData
+                    {
+                        statusId = statusEffectData.GetStatusId(),
+                        count = child.GetSection("count").ParseInt() ?? 0,
+                    });
                 }
-                statusEffectUpgrades.Add(new StatusEffectStackData()
-                {
-                    statusId = statusId,
-                    count = child?.GetSection("count").ParseInt() ?? 0,
-                });
             }
             AccessTools
                 .Field(typeof(CardUpgradeData), "statusEffectUpgrades")
@@ -219,66 +193,42 @@ namespace TrainworksReloaded.Base.CardUpgrade
 
             //handle upgrades to remove
             var upgradesToRemove = new List<CardUpgradeData>();
-            var upgradesToRemoveConfig = configuration.GetSection("remove_upgrades").GetChildren();
-            foreach (var removeUpgrade in upgradesToRemoveConfig)
+            var upgradesToRemoveReferences = configuration.GetSection("remove_upgrades")
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var removeUpgradeReference in upgradesToRemoveReferences)
             {
-                if (removeUpgrade == null)
+                var id = removeUpgradeReference.ToId(key, TemplateConstants.Upgrade);
+                if (upgradeRegister.TryLookupId(id, out var upgrade, out var _))
                 {
-                    continue;
-                }
-                var idConfig = removeUpgrade.GetSection("id").Value;
-                if (idConfig == null)
-                {
-                    continue;
-                }
-                var id = idConfig.ToId(key, TemplateConstants.Upgrade);
-                if (upgradeRegister.TryLookupId(id, out var card, out var _))
-                {
-                    upgradesToRemove.Add(card);
+                    upgradesToRemove.Add(upgrade);
                 }
             }
-
             if (upgradesToRemove.Count != 0)
                 AccessTools
                     .Field(typeof(CardUpgradeData), "upgradesToRemove")
                     .SetValue(data, upgradesToRemove);
 
-            var appliedVFX = configuration.GetSection("applied_vfx").ParseString() ?? "";
-            if (
-                vfxRegister.TryLookupId(
-                    appliedVFX.ToId(key, TemplateConstants.Vfx),
-                    out var applied_vfx,
-                    out var _
-                )
-            )
+            var appliedVFXId = configuration.GetSection("applied_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx) ?? "";
+            if (vfxRegister.TryLookupId(appliedVFXId, out var applied_vfx, out var _))
             {
                 AccessTools
                     .Field(typeof(CardUpgradeData), "appliedVFX")
                     .SetValue(data, applied_vfx);
             }
 
-            var removedVFX = configuration.GetSection("removed_vfx").ParseString() ?? "";
-            if (
-                vfxRegister.TryLookupId(
-                    removedVFX.ToId(key, TemplateConstants.Vfx),
-                    out var removed_vfx,
-                    out var _
-                )
-            )
+            var removedVFXId = configuration.GetSection("removed_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx) ?? "";
+            if (vfxRegister.TryLookupId(removedVFXId, out var removed_vfx, out var _))
             {
                 AccessTools
                     .Field(typeof(CardUpgradeData), "removedVFX")
                     .SetValue(data, removed_vfx);
             }
 
-            var persistentVFX = configuration.GetSection("persistent_vfx").ParseString() ?? "";
-            if (
-                vfxRegister.TryLookupId(
-                    persistentVFX.ToId(key, TemplateConstants.Vfx),
-                    out var persistent_vfx,
-                    out var _
-                )
-            )
+            var persistentVFXId = configuration.GetSection("persistent_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx) ?? "";
+            if (vfxRegister.TryLookupId(persistentVFXId, out var persistent_vfx, out var _))
             {
                 AccessTools
                     .Field(typeof(CardUpgradeData), "persistentVFX")
@@ -286,37 +236,32 @@ namespace TrainworksReloaded.Base.CardUpgrade
             }
 
             List<CardUpgradeMaskData> filters = [];
-            foreach (var child in configuration.GetSection("filters").GetChildren())
+            var filterReferences = configuration.GetSection("filters")
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var reference in filterReferences)
             {
-                var id = child?.GetSection("id").ParseString();
-                if (id == null ||
-                    !upgradeMaskRegister.TryLookupId(
-                        id.ToId(key, TemplateConstants.UpgradeMask),
-                        out var lookup,
-                        out var _))
+                var id = reference.ToId(key, TemplateConstants.UpgradeMask);
+                if (upgradeMaskRegister.TryLookupId(id, out var lookup, out var _))
                 {
-                    continue;
+                    filters.Add(lookup);
                 }
-                filters.Add(lookup);
             }
             AccessTools.Field(typeof(CardUpgradeData), "filters").SetValue(data, filters);
 
-            var ability = configuration.GetSection("ability_upgrade").ParseString() ?? "";
-            if (!ability.IsNullOrEmpty() && cardRegister.TryLookupName(ability.ToId(key, TemplateConstants.Card), out var abilityCard, out var _))
+            var abilityReference = configuration.GetSection("ability_upgrade").ParseReference();
+            if (abilityReference != null)
             {
+                cardRegister.TryLookupName(abilityReference.ToId(key, TemplateConstants.Card), out var abilityCard, out var _);
                 AccessTools.Field(typeof(CardUpgradeData), "unitAbilityUpgrade").SetValue(data, abilityCard);
             }
 
-            var sprite = configuration.GetSection("icon").ParseString();
-            if (
-                sprite != null
-                && spriteRegister.TryLookupId(
-                    sprite.ToId(key, TemplateConstants.Sprite),
-                    out var spriteLookup,
-                    out var _
-                )
-            )
+            var spriteReference = configuration.GetSection("icon").ParseReference();
+            if (spriteReference != null)
             {
+                spriteRegister.TryLookupId(spriteReference.ToId(key, TemplateConstants.Sprite), out var spriteLookup, out var _);
                 AccessTools.Field(typeof(CardUpgradeData), "upgradeIcon").SetValue(data, spriteLookup);
             }
         }

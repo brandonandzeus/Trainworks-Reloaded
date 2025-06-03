@@ -1,51 +1,51 @@
 {
-    "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/character_trigger_types.json",
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "properties": {
-        "character_trigger_types": {
-            "type": "array",
-            "uniqueItems": true,
-            "description": "A collection of trigger type definitions that specify how character triggers should behave and be displayed in the UI.",
-            "items": {
-                "properties": {
-                    "description": {
-                        "$ref": "../definitions/parse_term.json",
-                        "description": "Localized text descriptions for this trigger type's tooltip body."
-                    },
-                    "disallow_in_deployment": {
-                        "type": "boolean",
-                        "description": "Disallows the CharacterTrigger from firing during the Deployment phase."
-                    },
-                    "hidden": {
-                        "type": "boolean",
-                        "description": "Marks this CharacterTrigger as a hidden one, the trigger won't appear beneath a Character in battle."
-                    },
-                    "id": {
-                        "type": "string",
-                        "description": "Unique identifier for this CharacterTrigger. To associate with a CardTrigger provide the same id."
-                    },
-                    "is_state_modifier": {
-                        "type": "boolean",
-                        "description": "Marks this CharacterTrigger as a state modifier (will make its trigger tooltip and icon blue). The intended usage is for a conditional trigger whose effect granted is conditional and can be undone when the condition no longer holds. Example: OnDeathwish (Vanguard)/OnDeathwishLost"
-                    },
-                    "name": {
-                        "$ref": "../definitions/parse_term.json",
-                        "description": "Localized text for this trigger type's tooltip title."
-                    },
-                    "notification": {
-                        "$ref": "../definitions/parse_term.json",
-                        "description": "Localized text for this trigger type's notification message."
-                    },
-                    "sprite": {
-                        "type": "string",
-                        "description": "Identifier to a sprite (Ideally sized 50x50). This sprite will appear in the UI. An atlas_icon with the same id must be provided for use in tooltips."
-                    }
-                },
-                "required": [
-                    "id"
-                ],
-                "description": "A character trigger type definition that specifies how a trigger should be displayed and behave in the game."
-            }
-        }
+  "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/character_trigger_types.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "properties": {
+    "character_trigger_types": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "A collection of trigger type definitions that specify how character triggers should behave and be displayed in the UI.",
+      "items": {
+        "properties": {
+          "descriptions": {
+            "$ref": "../definitions/parse_term.json",
+            "description": "Localized text descriptions for this trigger type's tooltip body."
+          },
+          "disallow_in_deployment": {
+            "type": "boolean",
+            "description": "Disallows the CharacterTrigger from firing during the Deployment phase."
+          },
+          "hidden": {
+            "type": "boolean",
+            "description": "Marks this CharacterTrigger as a hidden one, the trigger won't appear beneath a Character in battle."
+          },
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for this CharacterTrigger. To associate with a CardTrigger provide the same id."
+          },
+          "is_state_modifier": {
+            "type": "boolean",
+            "description": "Marks this CharacterTrigger as a state modifier (will make its trigger tooltip and icon blue). The intended usage is for a conditional trigger whose effect granted is conditional and can be undone when the condition no longer holds. Example: OnDeathwish (Vanguard)/OnDeathwishLost"
+          },
+          "names": {
+            "$ref": "../definitions/parse_term.json",
+            "description": "Localized text for this trigger type's tooltip title."
+          },
+          "notifications": {
+            "$ref": "../definitions/parse_term.json",
+            "description": "Localized text for this trigger type's notification message."
+          },
+          "sprite": {
+            "type": "string",
+            "description": "Identifier to a sprite (Ideally sized 50x50). This sprite will appear in the UI. An atlas_icon with the same id must be provided for use in tooltips."
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "description": "A character trigger type definition that specifies how a trigger should be displayed and behave in the game."
+      }
     }
+  }
 }

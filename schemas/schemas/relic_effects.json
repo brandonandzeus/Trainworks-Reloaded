@@ -16,12 +16,13 @@
             }
           },
           "applied_vfx": {
-            "type": "string",
+            "$ref": "../definitions/vfx.json",
             "description": "Reference to VFX to use when applying the effect to a character"
           },
-          "card_rarity_type": {
+          "param_card_rarity_type": {
             "$ref": "../definitions/rarity.json",
-            "description": "Card rarity type parameter"
+            "description": "Card rarity type parameter",
+            "default": "common"
           },
           "card_triggers": {
             "type": "array",
@@ -30,50 +31,42 @@
             },
             "description": "Array of card triggers"
           },
-          "card_type": {
+          "param_card_type": {
             "$ref": "../definitions/card_type.json",
-            "description": "Card type parameter"
+            "description": "Card type parameter",
+            "default": "spell"
           },
-          "character_subtype": {
-            "type": "string",
-            "description": "Character subtype parameter"
+          "param_subtype": {
+            "$ref": "../definitions/subtype.json",
+            "description": "Character subtype parameter",
+            "default": "SubtypesData_None"
           },
-          "excluded_character_subtypes": {
+          "param_excluded_subtypes": {
             "type": "array",
             "items": {
-              "type": "string"
+              "$ref": "../definitions/subtype.json"
             },
             "description": "Array of excluded character subtypes"
           },
           "excluded_traits": {
             "type": "array",
             "items": {
-              "type": "object",
-              "required": [ "id" ],
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "description": "Trait identifier"
-                }
-              }
+              "$ref": "../definitions/reference.json"
             },
             "description": "Array of excluded traits"
           },
           "id": {
+            "minLength": 1,
             "type": "string",
             "description": "Unique identifier for the relic effect"
           },
-          "max_int": {
+          "param_max_int": {
             "type": "integer",
             "description": "When use_int_range is true. Maximum integer value for range"
           },
-          "min_int": {
+          "param_min_int": {
             "type": "integer",
             "description": "When use_int_range is true. Minimum integer value for range"
-          },
-          "mod_reference": {
-            "type": "string",
-            "description": "Mod GUID to search for a custom relic effect. If not specified then your Mod's assembly is searched."
           },
           "name": {
             "$ref": "../definitions/relic_effect.json",
@@ -95,57 +88,44 @@
             "type": "boolean",
             "description": "Tertiary boolean parameter"
           },
-          "param_card_data": {
-            "type": "string",
+          "param_card": {
+            "$ref": "../definitions/card.json",
             "description": "Card data identifier"
           },
-          "param_card_effects": {
+          "param_effects": {
             "type": "array",
             "items": {
-              "type": "object",
-              "required": [ "id" ],
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "description": "Card effect identifier"
-                }
-              }
+              "$ref": "../definitions/reference.json"
             },
             "description": "Array of card effects"
           },
           "param_card_filter": {
-            "type": "string",
-            "description": "Card filter identifier"
+            "$ref": "../definitions/reference.json",
+            "description": "Card filter identifier reference to an upgrade mask."
           },
-          "param_card_filter_secondary": {
-            "type": "string",
-            "description": "Secondary card filter identifier"
+          "param_card_filter_2": {
+            "$ref": "../definitions/reference.json",
+            "description": "Secondary card filter identifier reference to an upgrade mask."
           },
           "param_card_pool": {
-            "type": "string",
+            "$ref": "../definitions/card_pool.json",
             "description": "Card pool identifier"
           },
           "param_characters": {
             "type": "array",
             "items": {
-              "type": "object",
-              "required": [ "id" ],
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "description": "Character identifier"
-                }
-              }
+              "$ref": "../definitions/character.json"
             },
             "description": "Array of characters"
           },
           "param_enhancer_pool": {
-            "type": "string",
+            "$ref": "../definitions/enhancer_pool.json",
             "description": "Reference to EnhancerPool."
           },
           "param_float": {
             "type": "number",
-            "description": "Float parameter"
+            "description": "Float parameter",
+            "default": 0.0
           },
           "param_int": {
             "type": "integer",
@@ -156,15 +136,15 @@
             "description": "Secondary integer parameter"
           },
           "param_relic": {
-            "type": "string",
-            "description": "Relic data identifier"
+            "$ref": "../definitions/collectable_relic.json",
+            "description": "Relic data identifier, reference to a collectable relic"
           },
           "param_reward": {
-            "type": "string",
+            "$ref": "../definitions/reference.json",
             "description": "Reward identifier"
           },
           "param_reward_2": {
-            "type": "string",
+            "$ref": "../definitions/reference.json",
             "description": "Secondary reward identifier"
           },
           "param_status_effects": {
@@ -183,10 +163,10 @@
             "description": "Trigger parameter for the relic effect."
           },
           "param_upgrade": {
-            "type": "string",
+            "$ref": "../definitions/reference.json",
             "description": "Card upgrade data identifier"
           },
-          "rarity_ticket_type": {
+          "param_rarity_ticket_type": {
             "$ref": "../definitions/rarity_ticket.json",
             "description": "Rarity ticket type parameter"
           },
@@ -195,19 +175,20 @@
             "description": "Scaling count for the relic"
           },
           "source_card_trait": {
-            "type": "string",
+            "$ref": "../definitions/card_trait.json",
             "description": "Source card trait parameter"
           },
           "source_team": {
             "$ref": "../definitions/team.json",
-            "description": "Source team for the relic effect"
+            "description": "Source team for the relic effect",
+            "default": "none"
           },
-          "special_character_type": {
+          "param_special_character_type": {
             "$ref": "../definitions/special_character_type.json",
             "description": "Special character type parameter"
           },
           "target_card_trait": {
-            "type": "string",
+            "$ref": "../definitions/card_trait.json",
             "description": "Target card trait parameter"
           },
           "target_mode": {
@@ -225,14 +206,7 @@
           "traits": {
             "type": "array",
             "items": {
-              "type": "object",
-              "required": [ "id" ],
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "description": "Trait identifier"
-                }
-              }
+              "$ref": "../definitions/reference.json"
             },
             "description": "Array of traits"
           },
@@ -243,16 +217,9 @@
           "triggers": {
             "type": "array",
             "items": {
-              "type": "object",
-              "required": [ "id" ],
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "description": "Trigger identifier"
-                }
-              }
+              "$ref": "../definitions/reference.json"
             },
-            "description": "Array of triggers"
+            "description": "Array of character triggers"
           },
           "use_int_range": {
             "type": "boolean",

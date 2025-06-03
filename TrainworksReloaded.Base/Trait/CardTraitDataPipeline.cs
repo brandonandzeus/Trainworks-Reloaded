@@ -26,7 +26,6 @@ namespace TrainworksReloaded.Base.Trait
             this.atlas = atlas;
             this.logger = logger;
             this.localizationService = localizationService;
-            
         }
 
         public List<IDefinition<CardTraitData>> Run(IRegister<CardTraitData> service)
@@ -72,11 +71,12 @@ namespace TrainworksReloaded.Base.Trait
             var data = new CardTraitData();
 
             // TraitState
-            var traitStateName = configuration.GetSection("name").Value;
-            if (traitStateName == null)
+            var traitStateReference = configuration.GetSection("name").ParseReference();
+            if (traitStateReference == null)
                 return null;
 
-            var modReference = configuration.GetSection("mod_reference").Value ?? key;
+            var traitStateName = traitStateReference.id;
+            var modReference = traitStateReference.mod_reference ?? key;
             var assembly = atlas.PluginDefinitions.GetValueOrDefault(modReference)?.Assembly;
             if (
                 !traitStateName.GetFullyQualifiedName<CardTraitState>(
@@ -85,6 +85,7 @@ namespace TrainworksReloaded.Base.Trait
                 )
             )
             {
+                logger.Log(LogLevel.Error, $"Failed to load effect state name {traitStateName} in {name} with mod reference {modReference}");
                 return null;
             }
             AccessTools
@@ -96,7 +97,7 @@ namespace TrainworksReloaded.Base.Trait
                 .Field(typeof(CardTraitData), "paramTrackedValue")
                 .SetValue(
                     data,
-                    configuration.GetSection("track_type").ParseTrackedValueType()
+                    configuration.GetDeprecatedSection("track_type", "param_tracked_value").ParseTrackedValueType()
                         ?? paramTrackedValue
                 );
 
@@ -105,7 +106,7 @@ namespace TrainworksReloaded.Base.Trait
                 .Field(typeof(CardTraitData), "paramCardType")
                 .SetValue(
                     data,
-                    configuration.GetSection("card_type").ParseCardTypeTarget() ?? paramCardType
+                    configuration.GetDeprecatedSection("card_type", "param_card_type").ParseCardTypeTarget() ?? paramCardType
                 );
 
             var paramEntryDuration = CardStatistics.EntryDuration.ThisTurn;
@@ -113,7 +114,7 @@ namespace TrainworksReloaded.Base.Trait
                 .Field(typeof(CardTraitData), "paramEntryDuration")
                 .SetValue(
                     data,
-                    configuration.GetSection("entry_duration").ParseEntryDuration()
+                    configuration.GetDeprecatedSection("entry_duraction", "param_entry_duration").ParseEntryDuration()
                         ?? paramEntryDuration
                 );
 
@@ -132,7 +133,6 @@ namespace TrainworksReloaded.Base.Trait
                     .Field(typeof(CardTraitData), "paramDescription")
                     .SetValue(data, descriptionKey);
             }    
-
 
             var paramInt = 0;
             AccessTools

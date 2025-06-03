@@ -133,10 +133,10 @@ namespace TrainworksReloaded.Base.Relic
             var useIntRange = config.GetSection("use_int_range").ParseBool() ?? false;
             AccessTools.Field(typeof(RelicEffectData), "paramUseIntRange").SetValue(data, useIntRange);
 
-            var minInt = config.GetSection("min_int").ParseInt() ?? 0;
+            var minInt = config.GetDeprecatedSection("min_int", "param_min_int").ParseInt() ?? 0;
             AccessTools.Field(typeof(RelicEffectData), "paramMinInt").SetValue(data, minInt);
 
-            var maxInt = config.GetSection("max_int").ParseInt() ?? 0;
+            var maxInt = config.GetDeprecatedSection("max_int", "param_max_int").ParseInt() ?? 0;
             AccessTools.Field(typeof(RelicEffectData), "paramMaxInt").SetValue(data, maxInt);
 
             // Handle string parameter
@@ -144,7 +144,7 @@ namespace TrainworksReloaded.Base.Relic
             AccessTools.Field(typeof(RelicEffectData), "paramString").SetValue(data, paramString);
 
             // Handle special character type
-            var specialCharacterType = config.GetSection("special_character_type").ParseSpecialCharacterType() ?? SpecialCharacterType.None;
+            var specialCharacterType = config.GetDeprecatedSection("special_character_type", "param_special_character_type").ParseSpecialCharacterType() ?? SpecialCharacterType.None;
             AccessTools.Field(typeof(RelicEffectData), "paramSpecialCharacterType").SetValue(data, specialCharacterType);
 
             // Handle boolean parameters
@@ -162,7 +162,7 @@ namespace TrainworksReloaded.Base.Relic
             AccessTools.Field(typeof(RelicEffectData), "paramTargetMode").SetValue(data, targetMode);
 
             // Handle card type
-            var cardType = config.GetSection("card_type").ParseCardType() ?? CardType.Spell;
+            var cardType = config.GetDeprecatedSection("card_type", "param_card_type").ParseCardType() ?? CardType.Spell;
             AccessTools.Field(typeof(RelicEffectData), "paramCardType").SetValue(data, cardType);
 
 
@@ -208,15 +208,14 @@ namespace TrainworksReloaded.Base.Relic
             }
 
             // Handle rarity ticket type
-            var rarityTicketType = config.GetSection("rarity_ticket_type").ParseRarityTicketType() ?? RarityTicketType.None;
+            var rarityTicketType = config.GetDeprecatedSection("rarity_ticket_type", "param_rarity_ticket_type").ParseRarityTicketType() ?? RarityTicketType.None;
             AccessTools.Field(typeof(RelicEffectData), "paramRarityTicketType").SetValue(data, rarityTicketType);
 
             // Handle card rarity type
-            var cardRarityType = config.GetSection("card_rarity_type").ParseRarity() ?? CollectableRarity.Common;
+            var cardRarityType = config.GetDeprecatedSection("card_rarity_type", "param_card_rarity_type").ParseRarity() ?? CollectableRarity.Common;
             AccessTools.Field(typeof(RelicEffectData), "paramCardRarityType").SetValue(data, cardRarityType);
 
         
-
             //Handle cardTriggers
             var cardTriggers = config.GetSection("card_triggers").GetChildren()
                 .Select(x => x.ParseCardTriggerType())
@@ -246,7 +245,7 @@ namespace TrainworksReloaded.Base.Relic
                 var titleKey = $"RelicEffectDataTooltip_titleKey_{configCount}-{name}";
                 var descriptionTKey = $"RelicEffectDataTooltip_descriptionKey_{configCount}-{name}";
 
-                var titleKeyTerm = tooltipConfig.GetSection("titles").ParseLocalizationTerm();
+                var titleKeyTerm = tooltipConfig.GetDeprecatedSection("tooltip_titles", "titles").ParseLocalizationTerm();
                 if (titleKeyTerm != null)
                 {
                     tooltipData.titleKey = titleKey;
@@ -254,7 +253,7 @@ namespace TrainworksReloaded.Base.Relic
                     _termRegister.Register(titleKey, titleKeyTerm);
                 }
                 var descriptionTKeyTerm = tooltipConfig
-                    .GetSection("descriptions")
+                    .GetDeprecatedSection("tooltip_body", "descriptions")
                     .ParseLocalizationTerm();
                 if (descriptionTKeyTerm != null)
                 {

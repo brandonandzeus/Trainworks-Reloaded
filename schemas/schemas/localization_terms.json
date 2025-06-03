@@ -7,8 +7,10 @@
       "uniqueItems": true,
       "description": "Miscellaneous additional localizations for use in mods used for various effects traits etc.",
       "items": {
+        "required": ["key", "texts"],
         "properties": {
           "key": {
+            "minLength": 1,
             "type": "string",
             "description": "Localization key. Note this value must be unique across all mods otherwise the two mods using the key won't be compatible."
           },

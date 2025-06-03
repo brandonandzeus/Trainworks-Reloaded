@@ -261,7 +261,7 @@ namespace TrainworksReloaded.Base.StatusEffects
             var paramSecondaryInt = 0;
             AccessTools
                 .Field(typeof(StatusEffectData), "paramSecondaryInt")
-                .SetValue(data, configuration.GetSection("param_secondary_int").ParseInt() ?? paramSecondaryInt);
+                .SetValue(data, configuration.GetDeprecatedSection("param_secondary_int", "param_int_2").ParseInt() ?? paramSecondaryInt);
 
             var paramFloat = 0f;
             AccessTools

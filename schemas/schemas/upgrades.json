@@ -1,227 +1,174 @@
 {
-    "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/upgrades.json",
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "properties": {
-        "upgrades": {
+  "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/upgrades.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "properties": {
+    "upgrades": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "A collection of all card upgrades in the game, defining their properties and effects.",
+      "items": {
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "ability_upgrade": {
+            "$ref": "../definitions/card.json",
+            "description": "Reference to card specifiying the unit ability upgrade."
+          },
+          "allow_secondary_tooltip_placement": {
+            "type": "boolean",
+            "description": "Whether to allow secondary tooltip placement.",
+            "default": true
+          },
+          "applied_vfx": {
+            "$ref": "../definitions/vfx.json",
+            "description": "Reference to the VFX played when the upgrade is applied."
+          },
+          "bonus_damage": {
+            "type": "integer",
+            "description": "Amount of bonus damage to add."
+          },
+          "bonus_equipment": {
+            "type": "integer",
+            "description": "Amount of bonus equipment slots to add."
+          },
+          "bonus_heal": {
+            "type": "integer",
+            "description": "Amount of bonus healing to add."
+          },
+          "bonus_hp": {
+            "type": "integer",
+            "description": "Amount of bonus HP to add."
+          },
+          "bonus_size": {
+            "type": "integer",
+            "description": "Amount of bonus size to add."
+          },
+          "card_trigger_upgrades": {
             "type": "array",
-            "uniqueItems": true,
-            "description": "A collection of all card upgrades in the game, defining their properties and effects.",
+            "description": "List of card trigger upgrades to apply.",
             "items": {
-                "required": [
-                    "id"
-                ],
-                "properties": {
-                    "ability_upgrade": {
-                        "type": "string",
-                        "description": "Reference to card specifiying the unit ability upgrade."
-                    },
-                    "allow_secondary_tooltip_placement": {
-                        "type": "boolean",
-                        "description": "Whether to allow secondary tooltip placement."
-                    },
-                    "applied_vfx": {
-                        "type": "string",
-                        "description": "Reference to the VFX played when the upgrade is applied."
-                    },
-                    "bonus_damage": {
-                        "type": "integer",
-                        "description": "Amount of bonus damage to add."
-                    },
-                    "bonus_equipment": {
-                        "type": "integer",
-                        "description": "Amount of bonus equipment slots to add."
-                    },
-                    "bonus_heal": {
-                        "type": "integer",
-                        "description": "Amount of bonus healing to add."
-                    },
-                    "bonus_hp": {
-                        "type": "integer",
-                        "description": "Amount of bonus HP to add."
-                    },
-                    "bonus_size": {
-                        "type": "integer",
-                        "description": "Amount of bonus size to add."
-                    },
-                    "card_trigger_upgrades": {
-                        "type": "array",
-                        "description": "List of card trigger upgrades to apply.",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "id": {
-                                    "type": "string",
-                                    "description": "Reference to a card trigger upgrade."
-                                }
-                            }
-                        }
-                    },
-                    "cost_reduction": {
-                        "type": "integer",
-                        "description": "Amount to reduce the card's cost by."
-                    },
-                    "descriptions": {
-                        "$ref": "../definitions/parse_term.json",
-                        "description": "Localized text describing this upgrade."
-                    },
-                    "does_not_replace_ability": {
-                        "type": "boolean",
-                        "description": "Whether this upgrade should not replace the unit's ability."
-                    },
-                    "filters": {
-                        "type": "array",
-                        "description": "List of upgrade filters to apply.",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "id": {
-                                    "type": "string",
-                                    "description": "Reference to an upgrade filter."
-                                }
-                            }
-                        }
-                    },
-                    "hide_icon_on_card": {
-                        "type": "boolean",
-                        "description": "Whether to hide the upgrade icon on the card."
-                    },
-                    "icon": {
-                        "type": "string",
-                        "description": "Reference to the upgrade's icon sprite."
-                    },
-                    "id": {
-                        "type": "string",
-                        "description": "Unique identifier for this upgrade."
-                    },
-                    "is_unique": {
-                        "type": "boolean",
-                        "description": "Whether this upgrade is unique."
-                    },
-                    "notifications": {
-                        "$ref": "../definitions/parse_term.json",
-                        "description": "Notification text to display when the upgrade is applied."
-                    },
-                    "override": {
-                        "type": "boolean",
-                        "description": "Whether this upgrade should override existing upgrades."
-                    },
-                    "persistent_vfx": {
-                        "type": "string",
-                        "description": "Reference to the persistent VFX."
-                    },
-                    "remove_trait_upgrades": {
-                        "type": "array",
-                        "description": "List of trait class names to permanently remove.",
-                        "items": {
-                            "type": "object"
-                            "properties": {
-                                "name": {
-                                    "type": "string",
-                                    "description": "The TraitStateName, this should be the name of a Class inheriting from CardTraitState (preceeded by an @ if a custom modded class). Trainworks will search your mod for the class, then the base game."
-                                },
-                                "mod_reference": {
-                                    "type": "string",
-                                    "description": "Mod GUID to search for a custom trait. If not specified then your Mod's assembly is searched."
-                                }
-                            }
-                        }
-                    },
-                    "remove_upgrades": {
-                        "type": "array",
-                        "description": "List of upgrades to remove.",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "id": {
-                                    "type": "string",
-                                    "description": "Reference to an upgrade to remove."
-                                }
-                            }
-                        }
-                    },
-                    "remove_vfx": {
-                        "type": "string",
-                        "description": "Reference to the VFX played when the upgrade is removed."
-                    },
-                    "restrict_to_room_capacity": {
-                        "type": "boolean",
-                        "description": "Whether to restrict the upgrade to room capacity."
-                    },
-                    "room_modifier_upgrades": {
-                        "type": "array",
-                        "description": "List of room modifier upgrades to apply.",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "id": {
-                                    "type": "string",
-                                    "description": "Reference to a room modifier upgrade."
-                                }
-                            }
-                        }
-                    },
-                    "show_description_on_cards": {
-                        "type": "boolean",
-                        "description": "Whether to show the description on cards."
-                    },
-                    "status_effect_upgrades": {
-                        "type": "array",
-                        "description": "List of status effect upgrades to apply.",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "status": {
-                                    "type": "string",
-                                    "description": "Reference to a status effect."
-                                },
-                                "count": {
-                                    "type": "integer",
-                                    "description": "Number of stacks to add."
-                                }
-                            }
-                        }
-                    },
-                    "titles": {
-                        "$ref": "../definitions/parse_term.json",
-                        "description": "Localized text for this upgrade's title."
-                    },
-                    "trait_upgrades": {
-                        "type": "array",
-                        "description": "List of trait upgrades to apply.",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "id": {
-                                    "type": "string",
-                                    "description": "Reference to a trait upgrade."
-                                }
-                            }
-                        }
-                    },
-                    "trigger_upgrades": {
-                        "type": "array",
-                        "description": "List of trigger upgrades to apply.",
-                        "items": {
-                            "type": "object",
-                            "properties": {
-                                "id": {
-                                    "type": "string",
-                                    "description": "Reference to a trigger upgrade."
-                                }
-                            }
-                        }
-                    },
-                    "use_upgrade_hightlight_tags": {
-                        "type": "boolean",
-                        "description": "Whether to use upgrade highlight tags."
-                    },
-                    "x_cost_reduction": {
-                        "type": "integer",
-                        "description": "Amount to reduce X-cost cards by."
-                    }
-                },
-                "description": "An upgrade definition that specifies the properties and effects of a card upgrade."
+              "$ref": "../definitions/reference.json"
             }
-        }
+          },
+          "cost_reduction": {
+            "type": "integer",
+            "description": "Amount to reduce the card's cost by."
+          },
+          "descriptions": {
+            "$ref": "../definitions/parse_term.json",
+            "description": "Localized text describing this upgrade."
+          },
+          "does_not_replace_ability": {
+            "type": "boolean",
+            "description": "Whether this upgrade should not replace an existing unit ability."
+          },
+          "filters": {
+            "type": "array",
+            "description": "List of upgrade filters to apply.",
+            "items": {
+              "$ref": "../definitions/reference.json"
+            }
+          },
+          "hide_icon_on_card": {
+            "type": "boolean",
+            "description": "Whether to hide the upgrade icon on the card."
+          },
+          "icon": {
+            "type": "string",
+            "description": "Reference to the upgrade's icon sprite."
+          },
+          "id": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Unique identifier for this upgrade."
+          },
+          "is_unique": {
+            "type": "boolean",
+            "description": "Whether this upgrade is unique."
+          },
+          "notifications": {
+            "$ref": "../definitions/parse_term.json",
+            "description": "Notification text to display when the upgrade is applied."
+          },
+          "override": {
+            "type": "boolean",
+            "description": "Whether this upgrade should override an existing upgrade with the same id."
+          },
+          "persistent_vfx": {
+            "$ref": "../definitions/vfx.json",
+            "description": "Reference to the persistent VFX."
+          },
+          "remove_trait_upgrades": {
+            "type": "array",
+            "description": "List of trait class names to permanently remove.",
+            "items": {
+              "$ref": "../definitions/reference.json"
+            }
+          },
+          "remove_upgrades": {
+            "type": "array",
+            "description": "List of upgrades to remove.",
+            "items": {
+              "$ref": "../definitions/card_upgrade.json"
+            }
+          },
+          "remove_vfx": {
+            "$ref": "../definitions/vfx.json",
+            "description": "Reference to the VFX played when the upgrade is removed."
+          },
+          "restrict_size_to_room_capacity": {
+            "type": "boolean",
+            "description": "Whether to restrict the unit's size to room capacity."
+          },
+          "room_modifier_upgrades": {
+            "type": "array",
+            "description": "List of room modifier upgrades to apply.",
+            "items": {
+              "$ref": "../definitions/reference.json"
+            }
+          },
+          "show_description_on_cards": {
+            "type": "boolean",
+            "description": "Whether to show the upgrade's description on cards."
+          },
+          "status_effect_upgrades": {
+            "type": "array",
+            "description": "List of status effect upgrades to apply.",
+            "items": {
+              "$ref": "../definitions/status_effect.json"
+            }
+          },
+          "titles": {
+            "$ref": "../definitions/parse_term.json",
+            "description": "Localized text for this upgrade's title."
+          },
+          "trait_upgrades": {
+            "type": "array",
+            "description": "List of trait upgrades to apply.",
+            "items": {
+              "$ref": "../definitions/reference.json"
+            }
+          },
+          "trigger_upgrades": {
+            "type": "array",
+            "description": "List of trigger upgrades to apply to character.",
+            "items": {
+              "$ref": "../definitions/reference.json"
+            }
+          },
+          "use_upgrade_hightlight_tags": {
+            "type": "boolean",
+            "description": "Whether to use upgrade highlight tags.",
+            "default": true
+          },
+          "x_cost_reduction": {
+            "type": "integer",
+            "description": "Amount to reduce X-cost cards by."
+          }
+        },
+        "description": "An upgrade definition that specifies the properties and effects of a card upgrade."
+      }
     }
+  }
 }

@@ -68,15 +68,16 @@ namespace TrainworksReloaded.Base.Effect
             {
                 return null;
             }
-            var name = key.GetId("Effect", id);
+            var name = key.GetId(TemplateConstants.Effect, id);
             var data = new CardEffectData();
 
             // EffectClass
-            var effectStateName = configuration.GetSection("name").Value;
-            if (effectStateName == null)
+            var effectStateReference = configuration.GetSection("name").ParseReference();
+            if (effectStateReference == null)
                 return null;
 
-            var modReference = configuration.GetSection("mod_reference").Value ?? key;
+            var effectStateName = effectStateReference.id;
+            var modReference = effectStateReference.mod_reference ?? key;
             var assembly = atlas.PluginDefinitions.GetValueOrDefault(modReference)?.Assembly;
             if (
                 !effectStateName.GetFullyQualifiedName<CardEffectBase>(
@@ -122,7 +123,7 @@ namespace TrainworksReloaded.Base.Effect
                 .Field(typeof(CardEffectData), "filterBasedOnMainSubClass")
                 .SetValue(
                     data,
-                    configuration.GetSection("filter_on_main_subclass").ParseBool()
+                    configuration.GetDeprecatedSection("filter_based_on_main_subclass", "filter_based_on_main_sub_class").ParseBool()
                         ?? filterBasedOnMainSubClass
                 );
 
@@ -131,7 +132,7 @@ namespace TrainworksReloaded.Base.Effect
                 .Field(typeof(CardEffectData), "copyModifiersFromSource")
                 .SetValue(
                     data,
-                    configuration.GetSection("copy_modifiers").ParseBool()
+                    configuration.GetDeprecatedSection("copy_modifiers", "copy_modifiers_from_source").ParseBool()
                         ?? copyModifiersFromSource
                 );
 
@@ -140,7 +141,7 @@ namespace TrainworksReloaded.Base.Effect
                 .Field(typeof(CardEffectData), "ignoreTemporaryModifiersFromSource")
                 .SetValue(
                     data,
-                    configuration.GetSection("ignore_temporary_modifiers").ParseBool()
+                    configuration.GetDeprecatedSection("ignore_temporary_modifiers", "ignore_temporary_modifiers_from_source").ParseBool()
                         ?? ignoreTemporaryModifiersFromSource
                 );
 
@@ -172,7 +173,7 @@ namespace TrainworksReloaded.Base.Effect
                 .Field(typeof(CardEffectData), "shouldCancelSubsequentEffectsIfTestFails")
                 .SetValue(
                     data,
-                    configuration.GetSection("cancel_subsequent_effects_on_failure").ParseBool()
+                    configuration.GetDeprecatedSection("cancel_subsequent_effects_on_failure", "should_cancel_subsequent_effects_if_test_fails").ParseBool()
                         ?? shouldCancelSubsequentEffectsIfTestFails
                 );
 
@@ -181,7 +182,7 @@ namespace TrainworksReloaded.Base.Effect
                 .Field(typeof(CardEffectData), "shouldFailToCastIfTestFails")
                 .SetValue(
                     data,
-                    configuration.GetSection("fail_to_cast_on_failure").ParseBool()
+                    configuration.GetDeprecatedSection("fail_to_cast_on_failure", "should_fail_to_cast_if_test_fails").ParseBool()
                         ?? shouldFailToCastIfTestFails
                 );
 
@@ -366,7 +367,7 @@ namespace TrainworksReloaded.Base.Effect
                 }
 
                 tooltipData.style =
-                    configuration.GetSection("param_trigger").ParseTooltipDesignType()
+                    configuration.GetSection("style").ParseTooltipDesignType()
                     ?? TooltipDesigner.TooltipDesignType.Default;
                 tooltipData.isStatusTooltip =
                     configuration.GetSection("is_status").ParseBool() ?? false;

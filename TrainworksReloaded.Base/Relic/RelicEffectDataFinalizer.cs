@@ -5,6 +5,7 @@ using TrainworksReloaded.Core.Interfaces;
 using TrainworksReloaded.Base.Extensions;
 using Microsoft.Extensions.Configuration;
 using TrainworksReloaded.Core.Extensions;
+using static TrainworksReloaded.Base.Extensions.ParseReferenceExtensions;
 
 namespace TrainworksReloaded.Base.Relic
 {
@@ -102,20 +103,20 @@ namespace TrainworksReloaded.Base.Relic
             var statusEffectsConfig = configuration.GetSection("param_status_effects").GetChildren();
             foreach (var child in statusEffectsConfig)
             {
-                var idConfig = child?.GetSection("status").Value;
-                if (idConfig == null)
+                var statusReference = child.GetSection("status").ParseReference();
+                if (statusReference == null)
+                {
                     continue;
-                var statusEffectId = idConfig.ToId(key, TemplateConstants.StatusEffect);
-                string statusId = idConfig;
+                }
+                var statusEffectId = statusReference.ToId(key, TemplateConstants.StatusEffect);
                 if (statusEffectRegister.TryLookupId(statusEffectId, out var statusEffectData, out var _))
                 {
-                    statusId = statusEffectData.GetStatusId();
+                    statusEffects.Add(new StatusEffectStackData()
+                    {
+                        statusId = statusEffectData.GetStatusId(),
+                        count = child?.GetSection("count").ParseInt() ?? 0,
+                    });
                 }
-                statusEffects.Add(new StatusEffectStackData()
-                {
-                    statusId = statusId,
-                    count = child?.GetSection("count").ParseInt() ?? 0,
-                });
             }
             AccessTools
                 .Field(typeof(RelicEffectData), "paramStatusEffects")
@@ -123,15 +124,15 @@ namespace TrainworksReloaded.Base.Relic
 
             // Handle card effects
             var cardEffects = new List<CardEffectData>();
-            var cardEffectsConfig = configuration.GetSection("param_card_effects").GetChildren();
-            foreach (var cardEffectConfig in cardEffectsConfig)
+            var cardEffectsReferences = configuration.GetDeprecatedSection("param_card_effects", "param_effects")
+               .GetChildren()
+               .Select(x => x.ParseReference())
+               .Where(x => x != null)
+               .Cast<ReferencedObject>();
+            foreach (var reference in cardEffectsReferences)
             {
-                if (cardEffectConfig == null) continue;
                 
-                var idConfig = cardEffectConfig.GetSection("id").Value;
-                if (idConfig == null) continue;
-
-                var id = idConfig.ToId(key, TemplateConstants.Effect);
+                var id = reference.ToId(key, TemplateConstants.Effect);
                 if (cardEffectRegister.TryLookupId(id, out var cardEffect, out var _))
                 {
                     cardEffects.Add(cardEffect);
@@ -143,23 +144,22 @@ namespace TrainworksReloaded.Base.Relic
             }
 
             // Handle card pool
-            var cardPoolId = configuration.GetSection("param_card_pool").ParseString();
-            if (cardPoolId != null && cardPoolRegister.TryLookupId(cardPoolId.ToId(key, TemplateConstants.CardPool), out var cardPool, out var _))
+            var cardPoolReference = configuration.GetSection("param_card_pool").ParseReference();
+            if (cardPoolReference != null && cardPoolRegister.TryLookupId(cardPoolReference.ToId(key, TemplateConstants.CardPool), out var cardPool, out var _))
             {
                 AccessTools.Field(typeof(RelicEffectData), "paramCardPool").SetValue(data, cardPool);
             }
 
             // Handle characters
             var characters = new List<CharacterData>();
-            var charactersConfig = configuration.GetSection("param_characters").GetChildren();
-            foreach (var characterConfig in charactersConfig)
+            var characterReferences = configuration.GetSection("param_characters")
+               .GetChildren()
+               .Select(x => x.ParseReference())
+               .Where(x => x != null)
+               .Cast<ReferencedObject>();
+            foreach (var reference in characterReferences)
             {
-                if (characterConfig == null) continue;
-                
-                var idConfig = characterConfig.GetSection("id").Value;
-                if (idConfig == null) continue;
-
-                var id = idConfig.ToId(key, TemplateConstants.Character);
+                var id = reference.ToId(key, TemplateConstants.Character);
                 if (characterRegister.TryLookupName(id, out var character, out var _))
                 {
                     characters.Add(character);
@@ -169,15 +169,14 @@ namespace TrainworksReloaded.Base.Relic
 
             // Handle traits
             var traits = new List<CardTraitData>();
-            var traitsConfig = configuration.GetSection("traits").GetChildren();
-            foreach (var traitConfig in traitsConfig)
+            var traitsReferences = configuration.GetSection("traits")
+               .GetChildren()
+               .Select(x => x.ParseReference())
+               .Where(x => x != null)
+               .Cast<ReferencedObject>();
+            foreach (var reference in traitsReferences)
             {
-                if (traitConfig == null) continue;
-                
-                var idConfig = traitConfig.GetSection("id").Value;
-                if (idConfig == null) continue;
-
-                var id = idConfig.ToId(key, TemplateConstants.Trait);
+                var id = reference.ToId(key, TemplateConstants.Trait);
                 if (traitRegister.TryLookupId(id, out var trait, out var _))
                 {
                     traits.Add(trait);
@@ -190,15 +189,14 @@ namespace TrainworksReloaded.Base.Relic
 
             // Handle excluded traits
             var excludedTraits = new List<CardTraitData>();
-            var excludedTraitsConfig = configuration.GetSection("excluded_traits").GetChildren();
-            foreach (var traitConfig in excludedTraitsConfig)
+            var excludedTraitsReference = configuration.GetSection("excluded_traits")
+               .GetChildren()
+               .Select(x => x.ParseReference())
+               .Where(x => x != null)
+               .Cast<ReferencedObject>();
+            foreach (var reference in excludedTraitsReference)
             {
-                if (traitConfig == null) continue;
-                
-                var idConfig = traitConfig.GetSection("id").Value;
-                if (idConfig == null) continue;
-
-                var id = idConfig.ToId(key, TemplateConstants.Trait);
+                var id = reference.ToId(key, TemplateConstants.Trait);
                 if (traitRegister.TryLookupId(id, out var trait, out var _))
                 {
                     excludedTraits.Add(trait);
@@ -211,15 +209,14 @@ namespace TrainworksReloaded.Base.Relic
 
             // Handle triggers
             var triggers = new List<CharacterTriggerData>();
-            var triggersConfig = configuration.GetSection("triggers").GetChildren();
-            foreach (var triggerConfig in triggersConfig)
-            {
-                if (triggerConfig == null) continue;
-                
-                var idConfig = triggerConfig.GetSection("id").Value;
-                if (idConfig == null) continue;
-
-                var id = idConfig.ToId(key, TemplateConstants.CharacterTrigger);
+            var triggerReferences = configuration.GetSection("triggers")
+               .GetChildren()
+               .Select(x => x.ParseReference())
+               .Where(x => x != null)
+               .Cast<ReferencedObject>();
+            foreach (var reference in triggerReferences)
+            {   
+                var id = reference.ToId(key, TemplateConstants.CharacterTrigger);
                 if (triggerRegister.TryLookupId(id, out var trigger, out var _))
                 {
                     triggers.Add(trigger);
@@ -231,42 +228,42 @@ namespace TrainworksReloaded.Base.Relic
             }
 
             // Handle card data
-            var cardDataId = configuration.GetSection("param_card_data").ParseString();
-            if (cardDataId != null && cardRegister.TryLookupId(cardDataId.ToId(key, TemplateConstants.Card), out var cardData, out var _))
+            var cardReference = configuration.GetDeprecatedSection("param_card_data", "param_card").ParseReference();
+            if (cardReference != null && cardRegister.TryLookupId(cardReference.ToId(key, TemplateConstants.Card), out var cardData, out var _))
             {
                 AccessTools.Field(typeof(RelicEffectData), "paramCardData").SetValue(data, cardData);
             }
 
             // Handle card upgrade data
-            var cardUpgradeDataId = configuration.GetSection("param_upgrade").ParseString();
-            if (cardUpgradeDataId != null && upgradeRegister.TryLookupName(cardUpgradeDataId.ToId(key, TemplateConstants.Upgrade), out var cardUpgradeData, out var _))
+            var upgradeReference = configuration.GetSection("param_upgrade").ParseReference();
+            if (upgradeReference != null && upgradeRegister.TryLookupName(upgradeReference.ToId(key, TemplateConstants.Upgrade), out var cardUpgradeData, out var _))
             {
                 AccessTools.Field(typeof(RelicEffectData), "paramCardUpgradeData").SetValue(data, cardUpgradeData);
             }
 
             //handle paramReward 
-            var paramReward = configuration.GetSection("param_reward").ParseString();
-            if (paramReward != null && rewardRegister.TryLookupId(paramReward.ToId(key, TemplateConstants.RewardData), out var reward, out var _))
+            var rewardReference = configuration.GetSection("param_reward").ParseReference();
+            if (rewardReference != null && rewardRegister.TryLookupId(rewardReference.ToId(key, TemplateConstants.RewardData), out var reward, out var _))
             {
                 AccessTools.Field(typeof(RelicEffectData), "paramReward").SetValue(data, reward);
             }
 
             //handle paramReward 2
-            var paramReward2 = configuration.GetSection("param_reward_2").ParseString();
-            if (paramReward2 != null && rewardRegister.TryLookupId(paramReward2.ToId(key, TemplateConstants.RewardData), out var reward2, out var _))
+            var rewardReference2 = configuration.GetSection("param_reward_2").ParseReference();
+            if (rewardReference2 != null && rewardRegister.TryLookupId(rewardReference2.ToId(key, TemplateConstants.RewardData), out var reward2, out var _))
             {
                 AccessTools.Field(typeof(RelicEffectData), "paramReward2").SetValue(data, reward2);
             }
 
             //handle paramCardFilter
-            var paramCardFilter = configuration.GetSection("param_card_filter").ParseString();
+            var paramCardFilter = configuration.GetSection("param_card_filter").ParseReference();
             if (paramCardFilter != null && cardUpgradeMaskRegister.TryLookupId(paramCardFilter.ToId(key, TemplateConstants.UpgradeMask), out var cardFilter, out var _))
             {
                 AccessTools.Field(typeof(RelicEffectData), "paramCardFilter").SetValue(data, cardFilter);
             }
             
             //handle paramCardFilterSecondary
-            var paramCardFilterSecondary = configuration.GetSection("param_card_filter_secondary").ParseString();
+            var paramCardFilterSecondary = configuration.GetDeprecatedSection("param_card_filter_secondary", "param_card_filter_2").ParseReference();
             if (paramCardFilterSecondary != null && cardUpgradeMaskRegister.TryLookupId(paramCardFilterSecondary.ToId(key, TemplateConstants.UpgradeMask), out var cardFilterSecondary, out var _))
             {
                 AccessTools.Field(typeof(RelicEffectData), "paramCardFilterSecondary").SetValue(data, cardFilterSecondary);
@@ -274,11 +271,11 @@ namespace TrainworksReloaded.Base.Relic
 
             // Handle character subtype
             var characterSubtype = "SubtypesData_None";
-            var characterSubtypeId = configuration.GetSection("character_subtype").ParseString();
-            if (characterSubtypeId != null)
+            var characterSubtypeReference = configuration.GetDeprecatedSection("character_subtype", "param_subtype").ParseReference();
+            if (characterSubtypeReference != null)
             {
                 if (subtypeRegister.TryLookupId(
-                    characterSubtypeId.ToId(key, TemplateConstants.Subtype),
+                    characterSubtypeReference.ToId(key, TemplateConstants.Subtype),
                     out var lookup,
                     out var _))
                 {
@@ -289,36 +286,34 @@ namespace TrainworksReloaded.Base.Relic
 
             // Handle excluded character subtypes
             List<string> excludedSubtypes = [];
-            foreach (var id in configuration.GetSection("excluded_character_subtypes").GetChildren())
+            var subtypeReferences = configuration.GetDeprecatedSection("excluded_character_subtypes", "param_excluded_subtypes")
+               .GetChildren()
+               .Select(x => x.ParseReference())
+               .Where(x => x != null)
+               .Cast<ReferencedObject>();
+            foreach (var reference in subtypeReferences)
             {
-                var idConfig = id?.ParseString();
-                if (idConfig == null || !subtypeRegister.TryLookupId(
-                    idConfig.ToId(key, TemplateConstants.Subtype),
+                if (subtypeRegister.TryLookupId(
+                    reference.ToId(key, TemplateConstants.Subtype),
                     out var lookup,
                     out var _))
                 {
-                    continue;
+                    excludedSubtypes.Add(lookup.Key);
                 }
-                excludedSubtypes.Add(lookup.Key);
+               
             }
             AccessTools.Field(typeof(RelicEffectData), "paramExcludeCharacterSubtypes").SetValue(data, excludedSubtypes.ToArray());
 
-            var appliedVFXId = configuration.GetSection("applied_vfx").ParseString() ?? "";
-            if (
-                vfxRegister.TryLookupId(
-                    appliedVFXId.ToId(key, TemplateConstants.Vfx),
-                    out var appliedVFX,
-                    out var _
-                )
-            )
+            var appliedVFXId = configuration.GetSection("applied_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx) ?? "";
+            if (vfxRegister.TryLookupId(appliedVFXId, out var appliedVFX, out var _))
             {
                 AccessTools.Field(typeof(RelicEffectData), "appliedVfx").SetValue(data, appliedVFX);
             }
 
-            var relicId = configuration.GetSection("param_relic").ParseString() ?? "";
-            if (
+            var relicReference = configuration.GetSection("param_relic").ParseReference();
+            if (relicReference != null &&
                 relicRegister.TryLookupId(
-                    relicId.ToId(key, TemplateConstants.RelicData),
+                    relicReference.ToId(key, TemplateConstants.RelicData),
                     out var relic,
                     out var _
                 )
@@ -328,13 +323,12 @@ namespace TrainworksReloaded.Base.Relic
             }
 
             var paramTrigger = CharacterTriggerData.Trigger.OnDeath;
-            var triggerSection = configuration.GetSection("param_trigger");
-            if (triggerSection.Value != null)
+            var triggerReference = configuration.GetSection("param_trigger").ParseReference();
+            if (triggerReference != null)
             {
-                var value = triggerSection.Value;
                 if (
                     triggerEnumRegister.TryLookupId(
-                        value.ToId(key, TemplateConstants.CharacterTriggerEnum),
+                        triggerReference.ToId(key, TemplateConstants.CharacterTriggerEnum),
                         out var triggerFound,
                         out var _
                     )
@@ -342,21 +336,17 @@ namespace TrainworksReloaded.Base.Relic
                 {
                     paramTrigger = triggerFound;
                 }
-                else
-                {
-                    paramTrigger = triggerSection.ParseTrigger() ?? default;
-                }
             }
             AccessTools
                 .Field(typeof(RelicEffectData), "paramTrigger")
                 .SetValue(data, paramTrigger);
 
-            var enhancerPoolId = configuration.GetSection("param_enhancer_pool")?.ParseString();
-            if (enhancerPoolId != null)
+            var enhancerPoolReference = configuration.GetSection("param_enhancer_pool").ParseReference();
+            if (enhancerPoolReference != null)
             {
                 if (
                     enhancerPoolRegister.TryLookupId(
-                        enhancerPoolId.ToId(key, TemplateConstants.EnhancerPool),
+                        enhancerPoolReference.ToId(key, TemplateConstants.EnhancerPool),
                         out var enhancerPool,
                         out var _
                     )

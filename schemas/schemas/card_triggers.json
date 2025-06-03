@@ -1,75 +1,69 @@
 {
-    "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/card_triggers.json",
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "properties": {
-        "card_triggers": {
+  "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/card_triggers.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "properties": {
+    "card_triggers": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "A collection of triggers that define when and how cards can activate special effects or abilities.",
+      "items": {
+        "properties": {
+          "descriptions": {
+            "$ref": "../definitions/parse_term.json",
+            "description": "Localized text descriptions for this trigger's effect."
+          },
+          "effects": {
             "type": "array",
-            "uniqueItems": true,
-            "description": "A collection of triggers that define when and how cards can activate special effects or abilities.",
+            "description": "List of effects that are associated with this trigger.",
             "items": {
-                "properties": {
-                    "descriptions": {
-                        "$ref": "../definitions/parse_term.json",
-                        "description": "Localized text descriptions for this trigger's effect."
-                    },
-                    "effects": {
-                        "type": "array",
-                        "description": "List of effects that are associated with this trigger.",
-                        "items": {
-                            "required": [
-                                "id"
-                            ],
-                            "properties": {
-                                "id": {
-                                    "type": "string",
-                                    "description": "Reference to an effect's unique identifier."
-                                }
-                            }
-                        }
-                    },
-                    "id": {
-                        "type": "string",
-                        "description": "Unique identifier for this card trigger. Used to reference this trigger from cards."
-                    },
-                    "trigger": {
-                        "$ref": "../definitions/card_trigger.json",
-                        "description": "The type of event that activates this trigger."
-                    },
-                    "trigger_effects": {
-                        "items": {
-                            "buff_effect": {
-                                "type": "string",
-                                "description": "Required param only for CardTriggerBuffEffect, this references which CardEffect in Card.effects is the target of the \"buff\" the param_int of that card effect will be modified with the value given in this CardTrigger. This also resets the CardEffect at the end of battle (The card must have only 1 effect)."
-                            },
-                            "param_int": {
-                                "type": "number",
-                                "description": "Integer parameter for the trigger effect."
-                            },
-                            "param_upgrade": {
-                                "type": "string",
-                                "description": "Reference to an upgrade that should be applied."
-                            },
-                            "persistence": {
-                                "$ref": "../definitions/persistence.json",
-                                "description": "How long the trigger effect persists."
-                            },
-                            "trigger_effect": {
-                                "type": "string",
-                                "description": "Reference to ICardTriggerEffect to be played when triggered."
-                            }
-                        },
-                        "required": [
-                            "trigger_effect"
-                        ],
-                        "type": "array",
-                        "description": "List of effects that occur when this trigger is activated."
-                    }
-                },
-                "required": [
-                    "id"
-                ],
-                "description": "A card trigger definition that specifies when and how a card can activate special effects."
+              "$ref": "../definitions/reference.json",
+              "description": "Reference to an effect's unique identifier."
             }
-        }
+          },
+          "id": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Unique identifier for this card trigger. Used to reference this trigger from cards."
+          },
+          "trigger": {
+            "$ref": "../definitions/card_trigger.json",
+            "description": "The type of event that activates this trigger."
+          },
+          "trigger_effects": {
+            "items": {
+              "buff_effect": {
+                "$ref": "../definitions/card_effect.json",
+                "description": "Required param only for CardTriggerBuffEffect, this references which CardEffect in Card.effects is the target of the \"buff\" the param_int of that card effect will be modified with the value given in this CardTrigger. This also resets the CardEffect at the end of battle (The card must have only 1 effect)."
+              },
+              "param_int": {
+                "type": "integer",
+                "description": "Integer parameter for the trigger effect."
+              },
+              "param_upgrade": {
+                "$ref": "../defintions/card_upgrade.json",
+                "description": "Reference to an upgrade that should be applied."
+              },
+              "persistence_mode": {
+                "$ref": "../definitions/persistence.json",
+                "description": "How long the trigger effect persists."
+              },
+              "trigger_effect": {
+                "type": "../definitions/card_trigger_effect.json",
+                "description": "Specify a class name implementing the ICardTriggerEffect interface to be played when triggered."
+              }
+            },
+            "required": [
+              "trigger_effect"
+            ],
+            "type": "array",
+            "description": "List of effects that occur when this trigger is activated."
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "description": "A card trigger definition that specifies when and how a card can activate special effects."
+      }
     }
+  }
 }

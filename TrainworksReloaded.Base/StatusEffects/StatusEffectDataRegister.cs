@@ -34,8 +34,8 @@ namespace TrainworksReloaded.Base.StatusEffects
         {
             return identifierType switch
             {
-                RegisterIdentifierType.ReadableID => [.. this.Values.Select(effect => effect.GetStatusId())],
-                RegisterIdentifierType.GUID => [.. this.Keys],
+                RegisterIdentifierType.ReadableID => [.. StatusEffectManager.Instance.GetAllStatusEffectsData().GetStatusEffectData().Select(effect => effect.GetStatusId())],
+                RegisterIdentifierType.GUID => [.. StatusEffectManager.Instance.GetAllStatusEffectsData().GetStatusEffectData().Select(effect => effect.GetStatusId())],
                 _ => [],
             };
         }
@@ -44,11 +44,13 @@ namespace TrainworksReloaded.Base.StatusEffects
         public bool TryLookupIdentifier(string identifier, RegisterIdentifierType identifierType, [NotNullWhen(true)] out StatusEffectData? lookup, [NotNullWhen(true)] out bool? IsModded)
         {
             lookup = null;
-            IsModded = true;
+            // StatusIDs are all lowercase.
+            identifier = identifier.ToLowerInvariant();
+            IsModded = ContainsKey(identifier);
             switch (identifierType)
             {
                 case RegisterIdentifierType.ReadableID:
-                    foreach (var effect in this.Values)
+                    foreach (var effect in StatusEffectManager.Instance.GetAllStatusEffectsData().GetStatusEffectData())
                     {
                         if (effect.GetStatusId() == identifier)
                         {
@@ -58,7 +60,15 @@ namespace TrainworksReloaded.Base.StatusEffects
                     }
                     return false;
                 case RegisterIdentifierType.GUID:
-                    return this.TryGetValue(identifier, out lookup);
+                    foreach (var effect in StatusEffectManager.Instance.GetAllStatusEffectsData().GetStatusEffectData())
+                    {
+                        if (effect.GetStatusId() == identifier)
+                        {
+                            lookup = effect;
+                            return true;
+                        }
+                    }
+                    return false;
                 default:
                     return false;
             }

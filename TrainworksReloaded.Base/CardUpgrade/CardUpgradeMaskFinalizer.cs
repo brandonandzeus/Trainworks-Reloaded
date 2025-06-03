@@ -7,6 +7,7 @@ using System.Text;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
+using static TrainworksReloaded.Base.Extensions.ParseReferenceExtensions;
 
 namespace TrainworksReloaded.Base.CardUpgrade
 {
@@ -57,170 +58,158 @@ namespace TrainworksReloaded.Base.CardUpgrade
             logger.Log(Core.Interfaces.LogLevel.Info, $"Finalizing Upgrade Mask {data.name}... ");
 
             List<ClassData> requiredClasses = [];
-            foreach (var child in configuration.GetSection("required_class").GetChildren())
+            var classReferences = configuration.GetSection("required_class")
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var reference in classReferences)
             {
-                var id = child?.ParseString();
-                if (id == null || 
-                    !classRegister.TryLookupName(
-                        id.ToId(key, TemplateConstants.Class),
-                        out var lookup,
-                        out var _))
+                if (classRegister.TryLookupName(reference.ToId(key, TemplateConstants.Class), out var lookup, out var _))
                 {
-                    continue;
+                    requiredClasses.Add(lookup);
                 }
-                requiredClasses.Add(lookup);
             }
             AccessTools.Field(typeof(CardUpgradeMaskData), "requiredLinkedClans").SetValue(data, requiredClasses);
 
             List<ClassData> excludedClasses = [];
-            foreach (var child in configuration.GetSection("excluded_class").GetChildren())
+            var excludedClassReferences = configuration.GetSection("excluded_class")
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var reference in excludedClassReferences)
             {
-                var id = child?.ParseString();
-                if (id == null ||
-                    !classRegister.TryLookupName(
-                        id.ToId(key, TemplateConstants.Class),
-                        out var lookup,
-                        out var _))
+                if (classRegister.TryLookupName(reference.ToId(key, TemplateConstants.Class), out var lookup, out var _))
                 {
-                    continue;
+                    excludedClasses.Add(lookup);
                 }
-                excludedClasses.Add(lookup);
             }
             AccessTools.Field(typeof(CardUpgradeMaskData), "excludedLinkedClans").SetValue(data, excludedClasses);
 
             List<StatusEffectStackData> requiredStatus = [];
             foreach (var child in configuration.GetSection("required_status").GetChildren())
             {
-                var idConfig = child?.GetSection("status").Value;
-                if (idConfig == null)
+                var statusReference = child.GetSection("status").ParseReference();
+                if (statusReference == null)
                     continue;
-                var statusEffectId = idConfig.ToId(key, TemplateConstants.StatusEffect);
-                string statusId = idConfig;
+                var statusEffectId = statusReference.ToId(key, TemplateConstants.StatusEffect);
                 if (statusRegister.TryLookupId(statusEffectId, out var statusEffectData, out var _))
                 {
-                    statusId = statusEffectData.GetStatusId();
+                    requiredStatus.Add(new StatusEffectStackData
+                    {
+                        statusId = statusEffectData.GetStatusId(),
+                        count = child.GetSection("count").ParseInt() ?? 0,
+                    });
                 }
-                requiredStatus.Add(new StatusEffectStackData()
-                {
-                    statusId = statusId,
-                    count = child?.GetSection("count").ParseInt() ?? 0,
-                });
             }
             AccessTools.Field(typeof(CardUpgradeMaskData), "requiredStatusEffects").SetValue(data, requiredStatus);
 
             List<StatusEffectStackData> excludedStatus = [];
             foreach (var child in configuration.GetSection("excluded_status").GetChildren())
             {
-                var idConfig = child?.GetSection("status").Value;
-                if (idConfig == null)
+                var statusReference = child.GetSection("status").ParseReference();
+                if (statusReference == null)
                     continue;
-                var statusEffectId = idConfig.ToId(key, TemplateConstants.StatusEffect);
-                string statusId = idConfig;
+                var statusEffectId = statusReference.ToId(key, TemplateConstants.StatusEffect);
                 if (statusRegister.TryLookupId(statusEffectId, out var statusEffectData, out var _))
                 {
-                    statusId = statusEffectData.GetStatusId();
+                    excludedStatus.Add(new StatusEffectStackData
+                    {
+                        statusId = statusEffectData.GetStatusId(),
+                        count = child.GetSection("count").ParseInt() ?? 0,
+                    });
                 }
-                excludedStatus.Add(new StatusEffectStackData()
-                {
-                    statusId = statusId,
-                    count = child?.GetSection("count").ParseInt() ?? 0,
-                });
             }
             AccessTools.Field(typeof(CardUpgradeMaskData), "excludedStatusEffects").SetValue(data, excludedStatus);
 
             List<CardPool> allowedPools = [];
-            foreach (var child in configuration.GetSection("allowed_pools").GetChildren())
+            var allowedPoolReferences = configuration.GetSection("allowed_pools")
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var poolReference in allowedPoolReferences)
             {
-                var id = child?.ParseString();
-                if (id == null ||
-                    !poolRegister.TryLookupId(
-                        id.ToId(key, TemplateConstants.CardPool),
-                        out var lookup,
-                        out var _))
+                if (poolRegister.TryLookupId(poolReference.ToId(key, TemplateConstants.CardPool), out var lookup, out var _))
                 {
-                    continue;
+                    allowedPools.Add(lookup);
                 }
-                allowedPools.Add(lookup);
             }
             AccessTools.Field(typeof(CardUpgradeMaskData), "allowedCardPools").SetValue(data, allowedPools);
 
             List<CardPool> disallowedPools = [];
-            foreach (var child in configuration.GetSection("disallowed_pools").GetChildren())
+            var disallowedPoolReferences = configuration.GetSection("disallowed_pools")
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var poolReference in disallowedPoolReferences)
             {
-                var id = child?.ParseString();
-                if (id == null ||
-                    !poolRegister.TryLookupId(
-                        id.ToId(key, TemplateConstants.CardPool),
-                        out var lookup,
-                        out var _))
+                if (poolRegister.TryLookupId(poolReference.ToId(key, TemplateConstants.CardPool), out var lookup,out var _))
                 {
-                    continue;
+                    disallowedPools.Add(lookup);
                 }
-                disallowedPools.Add(lookup);
             }
             AccessTools.Field(typeof(CardUpgradeMaskData), "disallowedCardPools").SetValue(data, disallowedPools);
 
             List<CardUpgradeData> requiredUpgrades = [];
-            foreach (var child in configuration.GetSection("required_upgrade").GetChildren())
+            var requiredUpgradeReferences = configuration.GetSection("required_upgrade")
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var upgradeReference in requiredUpgradeReferences)
             {
-                var id = child?.ParseString();
-                if (id == null ||
-                    !upgradeRegister.TryLookupId(
-                        id.ToId(key, TemplateConstants.Upgrade),
-                        out var lookup,
-                        out var _))
+                if (upgradeRegister.TryLookupName(upgradeReference.ToId(key, TemplateConstants.Upgrade), out var lookup, out var _))
                 {
-                    continue;
+                    requiredUpgrades.Add(lookup);
                 }
-                requiredUpgrades.Add(lookup);
             }
             AccessTools.Field(typeof(CardUpgradeMaskData), "requiredCardUpgrades").SetValue(data, requiredUpgrades);
             
             List<CardUpgradeData> excludedUpgrades = [];
-            foreach (var child in configuration.GetSection("excluded_upgrade").GetChildren())
-            {
-                var id = child?.ParseString();
-                if (id == null ||
-                    !upgradeRegister.TryLookupId(
-                        id.ToId(key, TemplateConstants.Upgrade),
-                        out var lookup,
-                        out var _))
+            var excludedUpgradeReferences = configuration.GetSection("excluded_upgrade")
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var upgradeReferences in excludedUpgradeReferences)
+            {   
+                if (upgradeRegister.TryLookupName(upgradeReferences.ToId(key, TemplateConstants.Upgrade), out var lookup, out var _))
                 {
-                    continue;
+                    excludedUpgrades.Add(lookup);
                 }
-                excludedUpgrades.Add(lookup);
             }
             AccessTools.Field(typeof(CardUpgradeMaskData), "excludedCardUpgrades").SetValue(data, excludedUpgrades);
 
             List<string> subtypesRequired = [];
-            foreach (var child in configuration.GetSection("required_subtypes").GetChildren())
+            var requiredSubtypesReferences = configuration.GetSection("required_subtypes")
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var subtypeReference in requiredSubtypesReferences)
             {
-                var id = child?.ParseString();
-                if (id == null ||
-                    !subtypeRegister.TryLookupId(
-                        id.ToId(key, TemplateConstants.Subtype),
-                        out var lookup,
-                        out var _))
+                if (subtypeRegister.TryLookupId(subtypeReference.ToId(key, TemplateConstants.Subtype), out var lookup, out var _))
                 {
-                    continue;
+                    subtypesRequired.Add(lookup.Key);
                 }
-                subtypesRequired.Add(lookup.Key);
             }
             AccessTools.Field(typeof(CardUpgradeMaskData), "requiredSubtypes").SetValue(data, subtypesRequired);
 
             List<string> subtypesExcluded = [];
-            foreach (var child in configuration.GetSection("excluded_subtypes").GetChildren())
+            var excludedSubtypesReferences = configuration.GetSection("excluded_subtypes")
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var subtypeReference in excludedSubtypesReferences)
             {
-                var id = child?.ParseString();
-                if (id == null ||
-                    !subtypeRegister.TryLookupId(
-                        id.ToId(key, TemplateConstants.Subtype),
-                        out var lookup,
-                        out var _))
+                if (subtypeRegister.TryLookupId(subtypeReference.ToId(key, TemplateConstants.Subtype), out var lookup, out var _))
                 {
-                    continue;
+                    subtypesExcluded.Add(lookup.Key);
                 }
-                subtypesExcluded.Add(lookup.Key);
             }
             AccessTools.Field(typeof(CardUpgradeMaskData), "excludedSubtypes").SetValue(data, subtypesExcluded);
         }

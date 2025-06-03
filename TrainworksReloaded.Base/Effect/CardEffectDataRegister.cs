@@ -45,13 +45,11 @@ namespace TrainworksReloaded.Base.Effect
                         if (effect.GetEffectStateName() == identifier)
                         {
                             lookup = effect;
-                            IsModded = true;
                             return true;
                         }
                     }
                     return false;
                 case RegisterIdentifierType.GUID:
-                    IsModded = true;
                     return this.TryGetValue(identifier, out lookup);
             }
             return false;

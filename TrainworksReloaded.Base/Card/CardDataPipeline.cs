@@ -183,7 +183,7 @@ namespace TrainworksReloaded.Base.Card
                 .Field(typeof(CardData), "cardType")
                 .SetValue(
                     data,
-                    configuration.GetSection("type").ParseCardType() ?? defaultCardType
+                    configuration.GetDeprecatedSection("type", "card_type").ParseCardType() ?? defaultCardType
                 );
 
             var defaultInitCooldown = checkOverride
@@ -208,7 +208,7 @@ namespace TrainworksReloaded.Base.Card
                 && (bool)AccessTools.Field(typeof(CardData), "isUnitAbility").GetValue(data);
             AccessTools
                 .Field(typeof(CardData), "isUnitAbility")
-                .SetValue(data, configuration.GetSection("ability").ParseBool() ?? defaultAbility);
+                .SetValue(data, configuration.GetDeprecatedSection("ability", "is_an_ability").ParseBool() ?? defaultAbility);
 
             var defaultTargetsRoom =
                 checkOverride ? (bool)AccessTools.Field(typeof(CardData), "targetsRoom").GetValue(data) : true;
@@ -241,7 +241,7 @@ namespace TrainworksReloaded.Base.Card
                 : DLC.None;
             AccessTools
                 .Field(typeof(CardData), "requiredDLC")
-                .SetValue(data, configuration.GetSection("dlc").ParseDLC() ?? defaultDLC);
+                .SetValue(data, configuration.GetDeprecatedSection("dlc", "required_dlc").ParseDLC() ?? defaultDLC);
 
             var defaultUnlockLevel = checkOverride
                 ? (int)AccessTools.Field(typeof(CardData), "unlockLevel").GetValue(data)
@@ -261,7 +261,7 @@ namespace TrainworksReloaded.Base.Card
                 .Field(typeof(CardData), "ignoreWhenCountingMastery")
                 .SetValue(
                     data,
-                    configuration.GetSection("count_for_mastery").ParseBool()
+                    configuration.GetDeprecatedSection("count_for_mastery", "ignore_when_counting_mastery").ParseBool()
                         ?? ignoreWhenCountingMastery
                 );
 
@@ -283,7 +283,7 @@ namespace TrainworksReloaded.Base.Card
                 .Field(typeof(CardData), "initialKeyboardTarget")
                 .SetValue(
                     data,
-                    configuration.GetSection("target_assist").ParseKeyboardTarget()
+                    configuration.GetDeprecatedSection("target_assist", "initial_keyboard_target").ParseKeyboardTarget()
                         ?? initialKeyboardTarget
                 );
 
@@ -297,7 +297,7 @@ namespace TrainworksReloaded.Base.Card
                 .Field(typeof(CardData), "canAbilityTargetOtherFloors")
                 .SetValue(
                     data,
-                    configuration.GetSection("ability_effects_other_floors").ParseBool()
+                    configuration.GetDeprecatedSection("ability_effects_other_floors", "can_ability_target_other_floors").ParseBool()
                         ?? canAbilityTargetOtherFloors
                 );
 

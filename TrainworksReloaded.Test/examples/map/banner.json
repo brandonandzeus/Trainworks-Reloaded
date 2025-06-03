@@ -19,7 +19,7 @@
           "bucket": "Banners Ring 1"
         }
       ],
-      "map_pools": [
+      "pools": [
         "RandomChosenMainClassUnit",
         "RandomChosenSubClassUnit"
       ],

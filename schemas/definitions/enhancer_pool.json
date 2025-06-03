@@ -1,0 +1,22 @@
+{
+  "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/definitions/enhancer_pool.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "anyOf": [
+    {
+      "type": "string",
+      "enum": [
+        "unit_upgrade_common",
+        "unit_upgrade_rare",
+        "spell_upgrade_cost_reduction",
+        "spell_upgrade_common",
+        "spell_upgrade_rare",
+        "draft_upgrade",
+        null
+      ]
+    },
+    {
+      "$ref": "../definitions/reference.json"
+    }
+  ],
+  "description": "A predefined set of enhancer pools that determine where enhancers can appear in the game."
+}

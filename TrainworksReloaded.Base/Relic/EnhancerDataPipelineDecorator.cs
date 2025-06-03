@@ -66,6 +66,7 @@ namespace TrainworksReloaded.Base.Relic
             AccessTools.Field(typeof(EnhancerData), "numCardsToShowInUpgradeScreen").SetValue(enhancer, numCardsToShowInUpgradeScreen);
 
             // Handle pools
+            // TODO move to the finalizer and directly add to the EnhancerPool
             foreach (var child in configuration.GetSection("pools").GetChildren())
             {
                 var pool = child?.ParseString();

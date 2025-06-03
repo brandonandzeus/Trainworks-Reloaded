@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using HarmonyLib;
 using Malee;
@@ -8,6 +9,7 @@ using TrainworksReloaded.Base.Room;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
+using static TrainworksReloaded.Base.Extensions.ParseReferenceExtensions;
 
 namespace TrainworksReloaded.Base.Map
 {
@@ -59,7 +61,7 @@ namespace TrainworksReloaded.Base.Map
                 $"Finalizing Map Node Data {definition.Id.ToId(key, TemplateConstants.MapNode)}... "
             );
 
-            var sprite = configuration.GetSection("map_icon").ParseString();
+            var sprite = configuration.GetSection("map_icon").ParseReference();
             if (
                 sprite != null
                 && spriteRegister.TryLookupId(
@@ -72,7 +74,7 @@ namespace TrainworksReloaded.Base.Map
                 AccessTools.Field(typeof(MapNodeData), "mapIcon").SetValue(data, spriteLookup);
             }
 
-            var sprite2 = configuration.GetSection("minimap_icon").ParseString();
+            var sprite2 = configuration.GetSection("minimap_icon").ParseReference();
             if (
                 sprite2 != null
                 && spriteRegister.TryLookupId(
@@ -85,7 +87,7 @@ namespace TrainworksReloaded.Base.Map
                 AccessTools.Field(typeof(MapNodeData), "minimapIcon").SetValue(data, spriteLookup2);
             }
 
-            var gameobject = configuration.GetSection("prefab").ParseString();
+            var gameobject = configuration.GetSection("prefab").ParseReference();
             if (
                 gameobject != null
                 && gameObjectRegister.TryLookupId(
@@ -100,13 +102,15 @@ namespace TrainworksReloaded.Base.Map
             }
 
             var mapNodes = new List<MapNodeData>();
-            foreach (var config in configuration.GetSection("ignore_if_present").GetChildren())
+            var mapNodeReferences = configuration.GetDeprecatedSection("ignore_if_present", "ignore_if_nodes_present")
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var reference in mapNodeReferences)
             {
-                var mapNode = config.ParseString();
-                if (
-                    mapNode != null
-                    && mapNodeRegister.TryLookupId(
-                        mapNode.ToId(key, TemplateConstants.MapNode),
+                if (mapNodeRegister.TryLookupId(
+                        reference.ToId(key, TemplateConstants.MapNode),
                         out var mapLookup,
                         out var _
                     )
@@ -117,16 +121,19 @@ namespace TrainworksReloaded.Base.Map
             }
             AccessTools.Field(typeof(MapNodeData), "ignoreIfNodesPresent").SetValue(data, mapNodes);
 
-            foreach (var config in configuration.GetSection("map_pools").GetChildren())
+            var mapPoolReferences = configuration.GetDeprecatedSection("map_pools", "pools")
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var mapPoolReference in mapPoolReferences)
             {
-                var mapNode = config.ParseString();
-                if (
-                    mapNode != null
-                    && mapNodeRegister.TryLookupName(
-                        mapNode.ToId(key, TemplateConstants.MapNode),
+                if (mapNodeRegister.TryLookupName(
+                        mapPoolReference.ToId(key, TemplateConstants.MapNode),
                         out var mapLookup,
                         out var _
                     )
+                    // TODO this is questionable. MapNodePools are RandomMapDataContainers or MapNodeBucketContainer.
                     && mapLookup is RandomMapDataContainer mapContainer
                 )
                 {
@@ -135,8 +142,8 @@ namespace TrainworksReloaded.Base.Map
                             AccessTools
                                 .Field(typeof(RandomMapDataContainer), "mapNodeDataList")
                                 .GetValue(mapContainer);
-                    if (mapData != null)
-                        mapData.Add(data);
+                    // Shouldn't be null, but just in case.
+                    mapData?.Add(data);
                 }
             }
         }

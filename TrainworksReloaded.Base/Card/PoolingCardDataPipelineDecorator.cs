@@ -24,6 +24,7 @@ namespace TrainworksReloaded.Base.Card
             foreach (var definition in definitions)
             {
                 var data = definition.Data;
+                // TODO remove this class and add to the CardDatafinalizer and directly add to the CardPool
                 var pools = definition
                     .Configuration.GetSection("pools")
                     .GetChildren()

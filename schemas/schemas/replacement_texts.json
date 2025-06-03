@@ -7,8 +7,10 @@
       "uniqueItems": true,
       "description": "A collection of all miscellaneous replacement texts for use in mods. To use, within a description use the text [modguid_key]. This is not needed for status effects which are auto added.",
       "items": {
+        "required": ["key", "texts"],
         "properties": {
           "key": {
+            "minLength": 1,
             "type": "string",
             "description": "Key for the replacement text."
           },

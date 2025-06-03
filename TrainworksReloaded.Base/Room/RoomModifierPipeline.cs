@@ -77,14 +77,14 @@ namespace TrainworksReloaded.Base.Room
             var data = new RoomModifierData();
 
             //handle names
-            var nameClass = configuration.GetSection("name").Value;
+            var nameClass = configuration.GetSection("name").ParseReference();
             if (nameClass == null)
                 return null;
 
-            var modReference = configuration.GetSection("mod_reference").Value ?? key;
+            var modReference = nameClass.mod_reference ?? key;
             var assembly = atlas.PluginDefinitions.GetValueOrDefault(modReference)?.Assembly;
             if (
-                !nameClass.GetFullyQualifiedName<RoomStateModifierBase>(
+                !nameClass.id.GetFullyQualifiedName<RoomStateModifierBase>(
                     assembly,
                     out string? fullyQualifiedName
                 )
@@ -110,7 +110,7 @@ namespace TrainworksReloaded.Base.Room
 
             //handle descriptions
             var descriptionKeyInPlayTerm = configuration
-                .GetSection("play_descriptions")
+                .GetDeprecatedSection("play_descriptions", "in_play_descriptions")
                 .ParseLocalizationTerm();
             if (descriptionKeyInPlayTerm != null)
             {
@@ -165,7 +165,7 @@ namespace TrainworksReloaded.Base.Room
                 .Field(typeof(RoomModifierData), "useTitleForCardDescription")
                 .SetValue(
                     data,
-                    configuration.GetSection("use_name_as_description").ParseBool()
+                    configuration.GetDeprecatedSection("use_name_as_description", "use_title_for_card_description").ParseBool()
                         ?? useTitleForCardDescription
                 );
 

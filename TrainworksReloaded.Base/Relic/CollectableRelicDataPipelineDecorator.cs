@@ -104,7 +104,7 @@ namespace TrainworksReloaded.Base.Relic
             }
 
             // Handle pools
-            // TODO this should be handled in the finalizer.
+            // TODO move to the finalizer and directly add to the RelicPool
             foreach (var child in configuration.GetSection("pools").GetChildren())
             {
                 var relicPool = child?.ParseString();

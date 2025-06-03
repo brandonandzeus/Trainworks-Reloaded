@@ -11,6 +11,7 @@ using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
+using static TrainworksReloaded.Base.Extensions.ParseReferenceExtensions;
 
 namespace TrainworksReloaded.Base.CardUpgrade
 {
@@ -218,7 +219,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 .Field(typeof(CardUpgradeData), "restrictSizeToRoomCapacity")
                 .SetValue(
                     data,
-                    configuration.GetSection("restrict_to_room_capacity").ParseBool()
+                    configuration.GetDeprecatedSection("restrict_to_room_capacity", "restrict_size_to_room_capacity").ParseBool()
                         ?? restrictSizeToRoomCapacity
                 );
 
@@ -310,18 +311,22 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 (List<string>)
                     AccessTools.Field(typeof(CardUpgradeData), "removeTraitUpgrades").GetValue(data)
                 ?? [];
-            var upgrades = configuration.GetSection("remove_trait_upgrades").GetChildren();
-            if (upgrades.Count() > 0)
+            var upgradeReferences = configuration.GetSection("remove_trait_upgrades")
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            if (upgradeReferences.Count() > 0)
             {
                 removeTraitUpgrades.Clear();
             }
-            foreach (var upgrade in upgrades)
+            foreach (var reference in upgradeReferences)
             {
-                var traitStateName = upgrade.GetSection("name").Value;
+                var traitStateName = reference.id;
                 if (traitStateName == null)
                     continue;
 
-                var modReference = upgrade.GetSection("mod_reference").Value ?? key;
+                var modReference = reference.mod_reference ?? key;
                 var assembly = atlas.PluginDefinitions.GetValueOrDefault(modReference)?.Assembly;
                 if (
                     !traitStateName.GetFullyQualifiedName<CardTraitState>(

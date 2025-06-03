@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using MonoMod.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -16,10 +17,28 @@ namespace TrainworksReloaded.Base.Enums
             IRegister<CardTriggerType>
     {
         private readonly IModLogger<CardTriggerTypeRegister> logger;
+        private static readonly Dictionary<string, CardTriggerType> VanillaCardTriggerToEnum = new()
+        {
+            ["on_cast"] = CardTriggerType.OnCast,
+            ["on_kill"] = CardTriggerType.OnKill,
+            ["on_discard"] = CardTriggerType.OnDiscard,
+            ["on_monster_death"] = CardTriggerType.OnMonsterDeath,
+            ["on_any_monster_death_on_floor"] = CardTriggerType.OnAnyMonsterDeathOnFloor,
+            ["on_any_hero_death_on_floor"] = CardTriggerType.OnAnyHeroDeathOnFloor,
+            ["on_healed"] = CardTriggerType.OnHealed,
+            ["on_player_damage_taken"] = CardTriggerType.OnPlayerDamageTaken,
+            ["on_any_unit_death_on_floor"] = CardTriggerType.OnAnyUnitDeathOnFloor,
+            ["on_treasure"] = CardTriggerType.OnTreasure,
+            ["on_unplayed_negative"] = CardTriggerType.OnUnplayedNegative,
+            ["on_feed"] = CardTriggerType.OnFeed,
+            ["on_exhausted"] = CardTriggerType.OnExhausted,
+            ["on_unplayed_positive"] = CardTriggerType.OnUnplayedPositive,
+        };
 
         public CardTriggerTypeRegister(IModLogger<CardTriggerTypeRegister> logger)
         {
             this.logger = logger;
+            this.AddRange(VanillaCardTriggerToEnum);
         }
 
         public List<string> GetAllIdentifiers(RegisterIdentifierType identifierType)
@@ -41,7 +60,7 @@ namespace TrainworksReloaded.Base.Enums
         public bool TryLookupIdentifier(string identifier, RegisterIdentifierType identifierType, [NotNullWhen(true)] out CardTriggerType lookup, [NotNullWhen(true)] out bool? IsModded)
         {
             lookup = default;
-            IsModded = true;
+            IsModded = !VanillaCardTriggerToEnum.ContainsKey(identifier);
             switch (identifierType)
             {
                 case RegisterIdentifierType.ReadableID:
@@ -52,6 +71,5 @@ namespace TrainworksReloaded.Base.Enums
                     return false;
             }
         }
-
     }
 }

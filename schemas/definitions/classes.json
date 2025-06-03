@@ -1,0 +1,24 @@
+{
+  "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/definitions/classes.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "anyOf": [
+    {
+      "type": "string",
+      "enum": [
+        "ClassBanished",
+        "ClassPyreborne",
+        "ClassLunaCoven",
+        "ClassUnderlegion",
+        "ClassLazarusLeague",
+        "ClassHellhorned",
+        "ClassAwoken",
+        "ClassStygian",
+        "ClassUmbra",
+        "ClassRemnant"
+      ]
+    },
+    {
+      "$ref": "../definitions/reference.json"
+    }
+  ],
+}

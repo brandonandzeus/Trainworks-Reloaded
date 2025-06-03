@@ -65,8 +65,8 @@ namespace TrainworksReloaded.Base.Relic
             );
 
             // Handle linked class
-            var linkedClassId = configuration.GetSection("class").ParseString();
-            if (linkedClassId != null && classRegister.TryLookupName(linkedClassId.ToId(key, TemplateConstants.Class), out var linkedClass, out var _))
+            var linkedClassReference = configuration.GetSection("class").ParseReference();
+            if (linkedClassReference != null && classRegister.TryLookupName(linkedClassReference.ToId(key, TemplateConstants.Class), out var linkedClass, out var _))
             {
                 AccessTools.Field(typeof(CollectableRelicData), "linkedClass").SetValue(collectableRelic, linkedClass);
             }

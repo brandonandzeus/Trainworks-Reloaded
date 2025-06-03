@@ -169,7 +169,7 @@ namespace TrainworksReloaded.Base.Class
                 .Field(typeof(ClassData), "clanSelectSfxCue")
                 .SetValue(
                     data,
-                    configuration.GetSection("sfx_cue").ParseString() ?? clanSelectSfxCue
+                    configuration.GetDeprecatedSection("sfx_cue", "clan_select_sfx_cue").ParseString() ?? clanSelectSfxCue
                 );
 
             //handle color
@@ -214,7 +214,7 @@ namespace TrainworksReloaded.Base.Class
             var classUnlockPreviewTexts =
                 (List<string>)
                     AccessTools.Field(typeof(ClassData), "classUnlockPreviewTexts").GetValue(data);
-            var previews = configuration.GetSection("class_preview_texts").GetChildren();
+            var previews = configuration.GetDeprecatedSection("class_preview_texts", "class_unlock_preview_texts").GetChildren();
             if (previews.Count() > 0)
             {
                 classUnlockPreviewTexts.Clear();
