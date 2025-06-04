@@ -5,12 +5,12 @@
     {
       "type": "string",
       "enum": [
-        "unit_upgrade_common",
-        "unit_upgrade_rare",
-        "spell_upgrade_cost_reduction",
-        "spell_upgrade_common",
-        "spell_upgrade_rare",
-        "draft_upgrade",
+        "UnitUpgradePoolCommon",
+        "UnitUpgradePoolRare",
+        "SpellUpgradePoolCostReduction",
+        "SpellUpgradePoolCommon",
+        "SpellUpgradePoolRare",
+        "DraftUpgradePool",
         null
       ]
     },
