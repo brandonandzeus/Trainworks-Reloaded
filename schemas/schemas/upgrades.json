@@ -65,9 +65,9 @@
           },
           "filters": {
             "type": "array",
-            "description": "List of upgrade filters to apply.",
+            "description": "List of upgrade filters to apply. Reference to an upgrade mask.",
             "items": {
-              "$ref": "../definitions/reference.json"
+              "$ref": "../definitions/card_upgrade_mask.json"
             }
           },
           "hide_icon_on_card": {

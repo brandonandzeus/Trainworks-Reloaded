@@ -1,0 +1,46 @@
+{
+  "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/definitions/card_upgrade_mask.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "anyOf": [
+    {
+      "$ref": "../definitions/reference.json"
+    },
+    {
+      "type": "string",
+      "enum": [
+        "ExcludeCardsFromJuice",
+        "ExcludeChampions",
+        "ExcludeConsume",
+        "ExcludeDoublestack",
+        "ExcludedSpellsFromMagicPower",
+        "ExcludeDualism",
+        "ExcludeEelGorgon",
+        "ExcludeEndless",
+        "ExcludeHolystone",
+        "ExcludeNonstackableStatusEffects",
+        "ExcludePermafrost",
+        "ExcludeQuick",
+        "ExcludeRetain",
+        "ExcludeSelfDestruct",
+        "ExcludeSmallest",
+        "ExcludeSpellchain",
+        "ExcludeTitanite",
+        "ExcludeUnitsWithAbilities",
+        "ExcludeUnplayable",
+        "ExcludeUpgrade_CorpseEater",
+        "ExcludeUpgrade_ManyLives",
+        "ExcludeUpgrade_WorthySacrifice",
+        "ExcludeZeroCost",
+        "MagicPowerSpells",
+        "OnlyAttackingUnits",
+        "OnlyConsume",
+        "OnlyMajorPenanceCardUpgrade",
+        "OnlyMinorPenanceCardUpgrade",
+        "OnlySpells",
+        "OnlyStatusEffectSetting",
+        "OnlyUngraftedUnits",
+        "OnlyUnit"
+      ]
+    }
+  ]
+}

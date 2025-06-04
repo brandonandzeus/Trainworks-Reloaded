@@ -100,11 +100,11 @@
             "description": "Array of card effects"
           },
           "param_card_filter": {
-            "$ref": "../definitions/reference.json",
+            "$ref": "../definitions/card_upgrade_mask.json",
             "description": "Card filter identifier reference to an upgrade mask."
           },
           "param_card_filter_2": {
-            "$ref": "../definitions/reference.json",
+            "$ref": "../definitions/card_upgrade_mask.json",
             "description": "Secondary card filter identifier reference to an upgrade mask."
           },
           "param_card_pool": {
