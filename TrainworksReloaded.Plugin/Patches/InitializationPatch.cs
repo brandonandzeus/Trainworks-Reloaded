@@ -57,24 +57,30 @@ namespace TrainworksReloaded.Plugin.Patches
 
             //add relic data to megapool
             var relicDelegator = container.GetInstance<VanillaRelicPoolDelegator>();
-            if (relicDelegator.RelicPoolToData.ContainsKey("megapool"))
+            logger.Log(LogLevel.Info, "Processing relic pools...");
+            foreach (var poolName in relicDelegator.RelicPoolToData.Keys)
             {
-                logger.Log(LogLevel.Info, "Processing relic pools...");
-                var ftueBlessingPool = ____assetLoadingData.BalanceData.GetFtueBlessingPool();
+                var relicPool = RelicPoolRegister.GetVanillaRelicPool(____assetLoadingData.AllGameData, poolName);
+                if (relicPool == null)
+                {
+                    logger.Log(LogLevel.Warning, $"Could not find relic pool associated with {poolName}!");
+                    continue;
+                }
                 var dataList =
                     (ReorderableArray<CollectableRelicData>)
                         AccessTools
                             .Field(typeof(RelicPool), "relicDataList")
-                            .GetValue(ftueBlessingPool);
-                foreach (var relic in relicDelegator.RelicPoolToData["megapool"])
+                            .GetValue(relicPool);
+                foreach (var relic in relicDelegator.RelicPoolToData[poolName])
                 {
                     dataList.Add(relic);
                 }
-                logger.Log(LogLevel.Debug, $"Added {relicDelegator.RelicPoolToData["megapool"].Count} relics to megapool");
+                logger.Log(LogLevel.Debug, $"Added {relicDelegator.RelicPoolToData[poolName].Count} relics to {poolName}");
             }
             relicDelegator.RelicPoolToData.Clear();
             logger.Log(LogLevel.Info, "Relic pool processing complete");
 
+            logger.Log(LogLevel.Info, "Processing enhacer pools...");
             var enhancerDelegator = container.GetInstance<VanillaEnhancerPoolDelegator>();
             foreach (var poolName in enhancerDelegator.EnhancerPoolToData.Keys)
             {

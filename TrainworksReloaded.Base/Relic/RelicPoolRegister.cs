@@ -5,6 +5,7 @@ using System.Text;
 using TrainworksReloaded.Base.CardUpgrade;
 using TrainworksReloaded.Core.Interfaces;
 using TrainworksReloaded.Core.Enum;
+using BepInEx.Logging;
 
 namespace TrainworksReloaded.Base.Relic
 {
@@ -38,6 +39,15 @@ namespace TrainworksReloaded.Base.Relic
         {
             IsModded = true;
             return this.TryGetValue(identifier, out lookup);
+        }
+
+        public static RelicPool? GetVanillaRelicPool(AllGameData allGameData, string poolName)
+        {
+            if (poolName == "megapool" || poolName == "MegaRelicPool")
+            {
+                return allGameData.GetBalanceData().GetFtueBlessingPool();
+            }
+            return null;
         }
     }
 }
