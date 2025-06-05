@@ -203,15 +203,12 @@ namespace TrainworksReloaded.Base.Card
                 .Field(typeof(CardData), "cooldownAfterActivated")
                 .SetValue(data, configuration.GetSection("cooldown").ParseInt() ?? defaultCooldown);
 
-            var defaultAbility =
-                checkOverride
-                && (bool)AccessTools.Field(typeof(CardData), "isUnitAbility").GetValue(data);
+            var defaultAbility = (bool)AccessTools.Field(typeof(CardData), "isUnitAbility").GetValue(data);
             AccessTools
                 .Field(typeof(CardData), "isUnitAbility")
                 .SetValue(data, configuration.GetDeprecatedSection("ability", "is_an_ability").ParseBool() ?? defaultAbility);
 
-            var defaultTargetsRoom =
-                checkOverride ? (bool)AccessTools.Field(typeof(CardData), "targetsRoom").GetValue(data) : true;
+            var defaultTargetsRoom = (bool)AccessTools.Field(typeof(CardData), "targetsRoom").GetValue(data);
             AccessTools
                 .Field(typeof(CardData), "targetsRoom")
                 .SetValue(
@@ -219,9 +216,7 @@ namespace TrainworksReloaded.Base.Card
                     configuration.GetSection("targets_room").ParseBool() ?? defaultTargetsRoom
                 );
 
-            var defaultTargetless =
-                checkOverride
-                && (bool)AccessTools.Field(typeof(CardData), "targetless").GetValue(data);
+            var defaultTargetless = (bool)AccessTools.Field(typeof(CardData), "targetless").GetValue(data);
             AccessTools
                 .Field(typeof(CardData), "targetless")
                 .SetValue(
@@ -253,10 +248,7 @@ namespace TrainworksReloaded.Base.Card
                     configuration.GetSection("unlock_level").ParseInt() ?? defaultUnlockLevel
                 );
 
-            var ignoreWhenCountingMastery =
-                checkOverride
-                && (bool)
-                    AccessTools.Field(typeof(CardData), "ignoreWhenCountingMastery").GetValue(data);
+            var ignoreWhenCountingMastery = (bool)AccessTools.Field(typeof(CardData), "ignoreWhenCountingMastery").GetValue(data);
             AccessTools
                 .Field(typeof(CardData), "ignoreWhenCountingMastery")
                 .SetValue(
@@ -265,9 +257,7 @@ namespace TrainworksReloaded.Base.Card
                         ?? ignoreWhenCountingMastery
                 );
 
-            var hideInLogbook =
-                checkOverride
-                && (bool)AccessTools.Field(typeof(CardData), "hideInLogbook").GetValue(data);
+            var hideInLogbook = (bool)AccessTools.Field(typeof(CardData), "hideInLogbook").GetValue(data);
             AccessTools
                 .Field(typeof(CardData), "hideInLogbook")
                 .SetValue(
@@ -287,12 +277,7 @@ namespace TrainworksReloaded.Base.Card
                         ?? initialKeyboardTarget
                 );
 
-            var canAbilityTargetOtherFloors =
-                checkOverride
-                && (bool)
-                    AccessTools
-                        .Field(typeof(CardData), "canAbilityTargetOtherFloors")
-                        .GetValue(data);
+            var canAbilityTargetOtherFloors = (bool)AccessTools.Field(typeof(CardData), "canAbilityTargetOtherFloors").GetValue(data);
             AccessTools
                 .Field(typeof(CardData), "canAbilityTargetOtherFloors")
                 .SetValue(
