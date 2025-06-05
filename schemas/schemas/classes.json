@@ -143,11 +143,23 @@
           },
           "ui_color": {
             "$ref": "../definitions/color.json",
-            "description": "Primary color used in the UI for this class."
+            "description": "Primary color used in the UI for this class.",
+            "default": {
+              "r": 1.0,
+              "g": 1.0,
+              "b": 1.0,
+              "a": 1.0
+            }
           },
           "ui_color_dark": {
             "$ref": "../definitions/color.json",
-            "description": "Dark variant of the UI color for this class."
+            "description": "Dark variant of the UI color for this class.",
+            "default": {
+              "r": 0.0,
+              "g": 0.0,
+              "b": 0.0,
+              "a": 1.0
+            }
           },
           "ui_gradient": {
             "type": "array",
