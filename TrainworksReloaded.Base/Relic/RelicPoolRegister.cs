@@ -5,7 +5,6 @@ using System.Text;
 using TrainworksReloaded.Base.CardUpgrade;
 using TrainworksReloaded.Core.Interfaces;
 using TrainworksReloaded.Core.Enum;
-using BepInEx.Logging;
 
 namespace TrainworksReloaded.Base.Relic
 {

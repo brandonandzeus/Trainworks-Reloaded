@@ -21,7 +21,7 @@ namespace TrainworksReloaded.Base.Character
 
         public void Register(string key, CharacterChatterData item)
         {
-            logger.Log(LogLevel.Info, $"Register Character Chatter {key}...");
+            logger.Log(LogLevel.Debug, $"Register Character Chatter {key}...");
             Add(key, item);
         }
         

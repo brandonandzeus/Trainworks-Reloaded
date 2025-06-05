@@ -156,7 +156,7 @@ namespace TrainworksReloaded.Base.Prefab
         public void Register(string key, GameObject item)
         {
             var hash = Hash128.Compute(key);
-            logger.Log(LogLevel.Info, $"Register GameObject ({key}) -- ({hash})");
+            logger.Log(LogLevel.Debug, $"Register GameObject ({key}) -- ({hash})");
             item.name = key;
             HashToObjectMap.Add(hash, (key, item));
             item.transform.SetParent(hiddenRoot.transform, false);

@@ -23,7 +23,7 @@ namespace TrainworksReloaded.Base.Prefab
 
         public void Register(string key, Sprite item)
         {
-            logger.Log(LogLevel.Info, $"Register Sprite ({key})");
+            logger.Log(LogLevel.Debug, $"Register Sprite ({key})");
             this.Add(key, item);
         }
 
