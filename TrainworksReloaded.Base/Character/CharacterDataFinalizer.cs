@@ -72,6 +72,7 @@ namespace TrainworksReloaded.Base.Character
             var configuration = definition.Configuration;
             var data = definition.Data;
             var key = definition.Key;
+            var checkOverride = configuration.GetSection("override").ParseBool() ?? false;
 
             logger.Log(LogLevel.Debug, $"Finalizing Character {data.name}...");
 
@@ -109,49 +110,53 @@ namespace TrainworksReloaded.Base.Character
                 AccessTools.Field(typeof(CharacterData), "graftedEquipment").SetValue(data, equipmentCard);
             }
 
-            var projectilePrefabId = configuration.GetSection("projectile_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx) ?? "";
-            if (vfxRegister.TryLookupId(projectilePrefabId, out var projectile_vfx, out var _))
+            var projectilePrefabId = configuration.GetSection("projectile_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx);
+            if (!checkOverride || projectilePrefabId != null)
             {
+                vfxRegister.TryLookupId(projectilePrefabId ?? "", out var projectile_vfx, out var _);
                 AccessTools
                     .Field(typeof(CharacterData), "projectilePrefab")
                     .SetValue(data, projectile_vfx);
             }
 
-            var attackVFXId = configuration.GetSection("attack_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx) ?? "";
-            if (vfxRegister.TryLookupId(attackVFXId, out var attack_vfx, out var _))
+            var attackVFXId = configuration.GetSection("attack_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx);
+            if (!checkOverride || attackVFXId != null)
             {
+                vfxRegister.TryLookupId(attackVFXId ?? "", out var attack_vfx, out var _);
                 AccessTools.Field(typeof(CharacterData), "attackVFX").SetValue(data, attack_vfx);
             }
 
-            var impactVFXId = configuration.GetSection("impact_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx) ?? "";
-            if (vfxRegister.TryLookupId(impactVFXId, out var impact_vfx, out var _))
+            var impactVFXId = configuration.GetSection("impact_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx);
+            if (!checkOverride || impactVFXId != null)
             {
+                vfxRegister.TryLookupId(impactVFXId ?? "", out var impact_vfx, out var _)
                 AccessTools.Field(typeof(CharacterData), "impactVFX").SetValue(data, impact_vfx);
             }
 
-            var deathVFXId = configuration.GetSection("death_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx) ?? "";
-            if (vfxRegister.TryLookupId(deathVFXId, out var death_vfx, out var _))
+            var deathVFXId = configuration.GetSection("death_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx);
+            if (!checkOverride || deathVFXId != null)
             {
+                vfxRegister.TryLookupId(deathVFXId ?? "", out var death_vfx, out var _);
                 AccessTools.Field(typeof(CharacterData), "deathVFX").SetValue(data, death_vfx);
             }
 
-            var bossSpellCastVFXId = configuration.GetDeprecatedSection("boss_cast_vfx", "boss_spell_cast_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx) ?? "";
-            if (vfxRegister.TryLookupId(bossSpellCastVFXId, out var boss_cast_vfx, out var _))
+            var bossSpellCastVFXId = configuration.GetDeprecatedSection("boss_cast_vfx", "boss_spell_cast_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx);
+            if (!checkOverride || bossSpellCastVFXId != null)
             {
+                vfxRegister.TryLookupId(bossSpellCastVFXId ?? "", out var boss_cast_vfx, out var _);
                 AccessTools
                     .Field(typeof(CharacterData), "bossSpellCastVFX")
                     .SetValue(data, boss_cast_vfx);
             }
 
-            var bossRoomSpellCastVFXId = configuration.GetSection("boss_room_cast_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx) ?? "";
-            if (vfxRegister.TryLookupId(bossRoomSpellCastVFXId, out var boss_room_cast_vfx, out var _))
+            var bossRoomSpellCastVFXId = configuration.GetSection("boss_room_cast_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx);
+            if (!checkOverride || bossRoomSpellCastVFXId != null)
             {
+                vfxRegister.TryLookupId(bossRoomSpellCastVFXId ?? "", out var boss_room_cast_vfx, out var _);
                 AccessTools
                     .Field(typeof(CharacterData), "bossRoomSpellCastVFX")
                     .SetValue(data, boss_room_cast_vfx);
             }
-
-            var checkOverride = configuration.GetSection("override").ParseBool() ?? false;
 
             //handle triggers
             var triggerDatas = data.GetTriggers().ToList() ?? [];
