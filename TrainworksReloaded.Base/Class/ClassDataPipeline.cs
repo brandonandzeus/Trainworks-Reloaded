@@ -145,8 +145,7 @@ namespace TrainworksReloaded.Base.Class
 
             //handel bool
             var corruptionEnabled =
-                checkOverride
-                && (bool)AccessTools.Field(typeof(ClassData), "corruptionEnabled").GetValue(data);
+                (bool)AccessTools.Field(typeof(ClassData), "corruptionEnabled").GetValue(data);
             AccessTools
                 .Field(typeof(ClassData), "corruptionEnabled")
                 .SetValue(
@@ -155,8 +154,7 @@ namespace TrainworksReloaded.Base.Class
                 );
 
             var isCrew =
-                checkOverride
-                && (bool)AccessTools.Field(typeof(ClassData), "isCrew").GetValue(data);
+                (bool)AccessTools.Field(typeof(ClassData), "isCrew").GetValue(data);
             AccessTools
                 .Field(typeof(ClassData), "isCrew")
                 .SetValue(data, configuration.GetSection("is_crew").ParseBool() ?? isCrew);

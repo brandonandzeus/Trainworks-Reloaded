@@ -120,7 +120,7 @@
           },
           "endless_stats": {
             "type": "object",
-            "description": "Stats for this character in endless mode.",
+            "description": "Stats for this character in endless mode (This is only used by enemy units).",
             "properties": {
               "health": {
                 "type": "integer",

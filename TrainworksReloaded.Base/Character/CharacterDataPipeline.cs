@@ -116,9 +116,7 @@ namespace TrainworksReloaded.Base.Character
             }
 
             //bools
-            var hideInLogbook =
-                checkOverride
-                && (bool)AccessTools.Field(typeof(CharacterData), "hideInLogbook").GetValue(data);
+            var hideInLogbook = (bool)AccessTools.Field(typeof(CharacterData), "hideInLogbook").GetValue(data);
             AccessTools
                 .Field(typeof(CharacterData), "hideInLogbook")
                 .SetValue(
@@ -126,9 +124,7 @@ namespace TrainworksReloaded.Base.Character
                     configuration.GetSection("hide_in_logbook").ParseBool() ?? hideInLogbook
                 );
 
-            var blockVisualSizeIncrease =
-                checkOverride
-                && (bool)
+            var blockVisualSizeIncrease = (bool)
                     AccessTools
                         .Field(typeof(CharacterData), "blockVisualSizeIncrease")
                         .GetValue(data);
@@ -140,9 +136,7 @@ namespace TrainworksReloaded.Base.Character
                         ?? blockVisualSizeIncrease
                 );
 
-            var canBeHealed =
-                checkOverride
-                && (bool)AccessTools.Field(typeof(CharacterData), "canBeHealed").GetValue(data);
+            var canBeHealed = (bool)AccessTools.Field(typeof(CharacterData), "canBeHealed").GetValue(data);
             AccessTools
                 .Field(typeof(CharacterData), "canBeHealed")
                 .SetValue(
@@ -150,10 +144,7 @@ namespace TrainworksReloaded.Base.Character
                     configuration.GetSection("can_be_healed").ParseBool() ?? canBeHealed
                 );
 
-            var isOuterTrainBoss =
-                checkOverride
-                && (bool)
-                    AccessTools.Field(typeof(CharacterData), "isOuterTrainBoss").GetValue(data);
+            var isOuterTrainBoss = (bool) AccessTools.Field(typeof(CharacterData), "isOuterTrainBoss").GetValue(data);
             AccessTools
                 .Field(typeof(CharacterData), "isOuterTrainBoss")
                 .SetValue(
@@ -161,26 +152,17 @@ namespace TrainworksReloaded.Base.Character
                     configuration.GetSection("is_outer_train_boss").ParseBool() ?? isOuterTrainBoss
                 );
 
-            var isMiniboss =
-                checkOverride
-                && (bool)AccessTools.Field(typeof(CharacterData), "isMiniboss").GetValue(data);
+            var isMiniboss = (bool)AccessTools.Field(typeof(CharacterData), "isMiniboss").GetValue(data);
             AccessTools
                 .Field(typeof(CharacterData), "isMiniboss")
                 .SetValue(data, configuration.GetSection("is_mini_boss").ParseBool() ?? isMiniboss);
 
-            var canAttack =
-                checkOverride
-                && (bool)AccessTools.Field(typeof(CharacterData), "canAttack").GetValue(data);
+            var canAttack = (bool)AccessTools.Field(typeof(CharacterData), "canAttack").GetValue(data);
             AccessTools
                 .Field(typeof(CharacterData), "canAttack")
                 .SetValue(data, configuration.GetSection("can_attack").ParseBool() ?? canAttack);
 
-            var ascendsTrainAutomatically =
-                checkOverride
-                && (bool)
-                    AccessTools
-                        .Field(typeof(CharacterData), "ascendsTrainAutomatically")
-                        .GetValue(data);
+            var ascendsTrainAutomatically = (bool) AccessTools.Field(typeof(CharacterData), "ascendsTrainAutomatically").GetValue(data);
             AccessTools
                 .Field(typeof(CharacterData), "ascendsTrainAutomatically")
                 .SetValue(
@@ -189,12 +171,7 @@ namespace TrainworksReloaded.Base.Character
                         ?? ascendsTrainAutomatically
                 );
 
-            var loopsBetweenTrainFloors =
-                checkOverride
-                && (bool)
-                    AccessTools
-                        .Field(typeof(CharacterData), "loopsBetweenTrainFloors")
-                        .GetValue(data);
+            var loopsBetweenTrainFloors = (bool)AccessTools.Field(typeof(CharacterData), "loopsBetweenTrainFloors").GetValue(data);
             AccessTools
                 .Field(typeof(CharacterData), "loopsBetweenTrainFloors")
                 .SetValue(
@@ -203,12 +180,7 @@ namespace TrainworksReloaded.Base.Character
                         ?? loopsBetweenTrainFloors
                 );
 
-            var attackTeleportsToDefender =
-                checkOverride
-                && (bool)
-                    AccessTools
-                        .Field(typeof(CharacterData), "attackTeleportsToDefender")
-                        .GetValue(data);
+            var attackTeleportsToDefender = (bool)AccessTools.Field(typeof(CharacterData), "attackTeleportsToDefender").GetValue(data);
             AccessTools
                 .Field(typeof(CharacterData), "attackTeleportsToDefender")
                 .SetValue(
@@ -217,10 +189,7 @@ namespace TrainworksReloaded.Base.Character
                         ?? attackTeleportsToDefender
                 );
 
-            var deathSlidesBackwards =
-                checkOverride
-                && (bool)
-                    AccessTools.Field(typeof(CharacterData), "deathSlidesBackwards").GetValue(data);
+            var deathSlidesBackwards = (bool)AccessTools.Field(typeof(CharacterData), "deathSlidesBackwards").GetValue(data);
             AccessTools
                 .Field(typeof(CharacterData), "deathSlidesBackwards")
                 .SetValue(
@@ -229,9 +198,7 @@ namespace TrainworksReloaded.Base.Character
                         ?? deathSlidesBackwards
                 );
 
-            var chosenVariant =
-                checkOverride
-                && (bool)AccessTools.Field(typeof(CharacterData), "chosenVariant").GetValue(data);
+            var chosenVariant = (bool)AccessTools.Field(typeof(CharacterData), "chosenVariant").GetValue(data);
             AccessTools
                 .Field(typeof(CharacterData), "chosenVariant")
                 .SetValue(
@@ -239,19 +206,12 @@ namespace TrainworksReloaded.Base.Character
                     configuration.GetSection("chosen_variant").ParseBool() ?? chosenVariant
                 );
 
-            var isPyreHeart =
-                checkOverride
-                && (bool)AccessTools.Field(typeof(CharacterData), "isPyreHeart").GetValue(data);
+            var isPyreHeart = (bool)AccessTools.Field(typeof(CharacterData), "isPyreHeart").GetValue(data);
             AccessTools
                 .Field(typeof(CharacterData), "isPyreHeart")
                 .SetValue(data, configuration.GetDeprecatedSection("is_pyre", "is_pyre_heart").ParseBool() ?? isPyreHeart);
 
-            var disableInDailyChallenges =
-                checkOverride
-                && (bool)
-                    AccessTools
-                        .Field(typeof(CharacterData), "disableInDailyChallenges")
-                        .GetValue(data);
+            var disableInDailyChallenges = (bool)AccessTools.Field(typeof(CharacterData), "disableInDailyChallenges").GetValue(data);
             AccessTools
                 .Field(typeof(CharacterData), "disableInDailyChallenges")
                 .SetValue(
@@ -260,12 +220,7 @@ namespace TrainworksReloaded.Base.Character
                         ?? disableInDailyChallenges
                 );
 
-            var preventAbilitiesFromEquipment =
-                checkOverride
-                && (bool)
-                    AccessTools
-                        .Field(typeof(CharacterData), "preventAbilitiesFromEquipment")
-                        .GetValue(data);
+            var preventAbilitiesFromEquipment = (bool)AccessTools.Field(typeof(CharacterData), "preventAbilitiesFromEquipment").GetValue(data);
             AccessTools
                 .Field(typeof(CharacterData), "preventAbilitiesFromEquipment")
                 .SetValue(

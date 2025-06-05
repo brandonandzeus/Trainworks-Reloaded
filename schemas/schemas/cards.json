@@ -92,7 +92,7 @@
           },
           "initial_cooldown": {
             "type": "integer",
-            "description": "Initial cooldown value when the card is first added to the deck."
+            "description": "For abilities only. The initial cooldown when the ability is first given to a character."
           },
           "initial_keyboard_target": {
             "$ref": "../definitions/target_assist.json",

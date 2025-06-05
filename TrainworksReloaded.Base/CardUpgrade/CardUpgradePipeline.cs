@@ -147,9 +147,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
 
             //bools
             var allowSecondaryTooltipPlacement =
-                checkOverride
-                && (bool)
-                    AccessTools
+                    (bool)AccessTools
                         .Field(typeof(CardUpgradeData), "allowSecondaryTooltipPlacement")
                         .GetValue(data);
             AccessTools
@@ -161,9 +159,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 );
 
             var hideUpgradeIconOnCard =
-                checkOverride
-                && (bool)
-                    AccessTools
+                (bool)AccessTools
                         .Field(typeof(CardUpgradeData), "hideUpgradeIconOnCard")
                         .GetValue(data);
             AccessTools
@@ -175,9 +171,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 );
 
             var useUpgradeHighlightTextTags =
-                checkOverride
-                || (bool)
-                    AccessTools
+                (bool)AccessTools
                         .Field(typeof(CardUpgradeData), "useUpgradeHighlightTextTags")
                         .GetValue(data);
             AccessTools
@@ -189,9 +183,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 );
 
             var showUpgradeDescriptionOnCards =
-                checkOverride
-                && (bool)
-                    AccessTools
+                (bool)AccessTools
                         .Field(typeof(CardUpgradeData), "showUpgradeDescriptionOnCards")
                         .GetValue(data);
             AccessTools
@@ -202,17 +194,13 @@ namespace TrainworksReloaded.Base.CardUpgrade
                         ?? showUpgradeDescriptionOnCards
                 );
 
-            var isUnique =
-                checkOverride
-                && (bool)AccessTools.Field(typeof(CardUpgradeData), "isUnique").GetValue(data);
+            var isUnique = (bool)AccessTools.Field(typeof(CardUpgradeData), "isUnique").GetValue(data);
             AccessTools
                 .Field(typeof(CardUpgradeData), "isUnique")
                 .SetValue(data, configuration.GetSection("is_unique").ParseBool() ?? isUnique);
 
             var restrictSizeToRoomCapacity =
-                checkOverride
-                && (bool)
-                    AccessTools
+                   (bool)AccessTools
                         .Field(typeof(CardUpgradeData), "restrictSizeToRoomCapacity")
                         .GetValue(data);
             AccessTools
@@ -224,9 +212,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 );
 
             var doNotReplaceExistingUnitAbility =
-                checkOverride
-                && (bool)
-                    AccessTools
+                (bool)AccessTools
                         .Field(typeof(CardUpgradeData), "doNotReplaceExistingUnitAbility")
                         .GetValue(data);
             AccessTools
@@ -323,9 +309,6 @@ namespace TrainworksReloaded.Base.CardUpgrade
             foreach (var reference in upgradeReferences)
             {
                 var traitStateName = reference.id;
-                if (traitStateName == null)
-                    continue;
-
                 var modReference = reference.mod_reference ?? key;
                 var assembly = atlas.PluginDefinitions.GetValueOrDefault(modReference)?.Assembly;
                 if (
@@ -335,6 +318,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
                     )
                 )
                 {
+                    logger.Log(LogLevel.Warning, $"Failed to load trait state name {traitStateName} in upgrade {id} with mod reference {modReference}, Note that this isn't a reference to a CardTraitData, but a class that inherits from CardTraitState.");
                     continue;
                 }
                 removeTraitUpgrades.Add(fullyQualifiedName);
