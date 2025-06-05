@@ -6,7 +6,6 @@ using HarmonyLib;
 using Microsoft.Extensions.Configuration;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Base.Reward;
-using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using static TrainworksReloaded.Base.Extensions.ParseReferenceExtensions;
 

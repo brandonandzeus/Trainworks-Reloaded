@@ -129,7 +129,7 @@ namespace TrainworksReloaded.Base.Character
             var impactVFXId = configuration.GetSection("impact_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx);
             if (!checkOverride || impactVFXId != null)
             {
-                vfxRegister.TryLookupId(impactVFXId ?? "", out var impact_vfx, out var _)
+                vfxRegister.TryLookupId(impactVFXId ?? "", out var impact_vfx, out var _);
                 AccessTools.Field(typeof(CharacterData), "impactVFX").SetValue(data, impact_vfx);
             }
 

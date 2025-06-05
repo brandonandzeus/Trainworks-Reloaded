@@ -251,7 +251,7 @@ namespace TrainworksReloaded.Base.Card
                 .Select(x => x.ParseReference())
                 .Where(x => x != null)
                 .Cast<ReferencedObject>();
-            foreach (var characterTriggerReference in cardEffectDatasConfig)
+            foreach (var characterTriggerReference in effectTriggersConfig)
             {
                 var id = characterTriggerReference.ToId(key, TemplateConstants.CharacterTrigger);
                 if (triggerDataRegister.TryLookupId(id, out var trigger, out var _))

@@ -6,7 +6,6 @@ using System.Text;
 using HarmonyLib;
 using Malee;
 using TrainworksReloaded.Base.Extensions;
-using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine.UIElements;
 using static TrainworksReloaded.Base.Extensions.ParseReferenceExtensions;

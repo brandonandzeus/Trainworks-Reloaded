@@ -7,7 +7,6 @@ using System.Text;
 using TrainworksReloaded.Base.Character;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Base.Prefab;
-using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
 using UnityEngine.AddressableAssets;

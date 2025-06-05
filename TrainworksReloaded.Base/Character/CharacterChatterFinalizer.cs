@@ -6,7 +6,6 @@ using System.Xml.Linq;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Base.Localization;
 using TrainworksReloaded.Base.Prefab;
-using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine.AddressableAssets;
 using static CharacterChatterData;
