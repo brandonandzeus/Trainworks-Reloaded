@@ -18,7 +18,7 @@ namespace TrainworksReloaded.Base.Trait
 
         public void Register(string key, CardTraitData item)
         {
-            logger.Log(LogLevel.Info, $"Register Trait ({key})");
+            logger.Log(LogLevel.Debug, $"Register Trait {key}");
             Add(key, item);
         }
 

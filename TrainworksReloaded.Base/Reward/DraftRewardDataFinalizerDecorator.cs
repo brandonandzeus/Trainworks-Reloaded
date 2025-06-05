@@ -66,9 +66,8 @@ namespace TrainworksReloaded.Base.Reward
             if (draftConfiguration == null)
                 return;
 
-            logger.Log(
-                Core.Interfaces.LogLevel.Info,
-                $"Finalizing Draft Reward Data {definition.Id.ToId(key, TemplateConstants.RewardData)}... "
+            logger.Log(LogLevel.Debug, 
+                $"Finalizing Draft Reward Data {definition.Id.ToId(key, TemplateConstants.RewardData)}..."
             );
 
             // Set draft pool

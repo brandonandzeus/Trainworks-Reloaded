@@ -75,7 +75,7 @@ namespace TrainworksReloaded.Base.Card
             var data = definition.Data;
             var key = definition.Key;
 
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Finalizing Card {data.name}... ");
+            logger.Log(LogLevel.Debug, $"Finalizing Card {data.name}... ");
 
             //handle linked class
             var classfield = configuration.GetSection("class").ParseString();
@@ -251,7 +251,7 @@ namespace TrainworksReloaded.Base.Card
                 .Select(x => x.ParseReference())
                 .Where(x => x != null)
                 .Cast<ReferencedObject>();
-            foreach (var characterTriggerReference in cardEffectDatasConfig)
+            foreach (var characterTriggerReference in effectTriggersConfig)
             {
                 var id = characterTriggerReference.ToId(key, TemplateConstants.CharacterTrigger);
                 if (triggerDataRegister.TryLookupId(id, out var trigger, out var _))

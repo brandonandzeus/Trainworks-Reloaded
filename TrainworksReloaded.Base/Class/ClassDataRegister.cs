@@ -32,7 +32,7 @@ namespace TrainworksReloaded.Base.Class
 
         public void Register(string key, ClassData item)
         {
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Register Class {key}... ");
+            logger.Log(LogLevel.Info, $"Register Clan {key}...");
             var gamedata = SaveManager.Value.GetAllGameData();
             var ClassDatas =
                 (List<ClassData>)

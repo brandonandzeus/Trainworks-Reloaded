@@ -19,7 +19,7 @@ namespace TrainworksReloaded.Base.Card
 
         public void Register(string key, CardPool item)
         {
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Register Card Pool {key}... ");
+            logger.Log(LogLevel.Info, $"Register Card Pool {key}...");
             Add(key, item);
         }
 

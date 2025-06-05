@@ -6,7 +6,6 @@ using HarmonyLib;
 using Malee;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Base.Room;
-using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
 using static TrainworksReloaded.Base.Extensions.ParseReferenceExtensions;
@@ -56,10 +55,7 @@ namespace TrainworksReloaded.Base.Map
             var data = definition.Data;
             var key = definition.Key;
 
-            logger.Log(
-                Core.Interfaces.LogLevel.Info,
-                $"Finalizing Map Node Data {definition.Id.ToId(key, TemplateConstants.MapNode)}... "
-            );
+            logger.Log(LogLevel.Debug, $"Finalizing Map Node Data {definition.Id.ToId(key, TemplateConstants.MapNode)}...");
 
             var sprite = configuration.GetSection("map_icon").ParseReference();
             if (

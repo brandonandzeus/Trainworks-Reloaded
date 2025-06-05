@@ -55,7 +55,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
             var data = definition.Data;
             var key = definition.Key;
 
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Finalizing Upgrade Mask {data.name}... ");
+            logger.Log(LogLevel.Debug, $"Finalizing Upgrade Mask {data.name}...");
 
             List<ClassData> requiredClasses = [];
             var classReferences = configuration.GetSection("required_class")

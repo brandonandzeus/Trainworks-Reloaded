@@ -121,7 +121,7 @@ namespace TrainworksReloaded.Base.Prefab
                 throw new ArgumentNullException("gameobject");
             }
 
-            logger.Log(LogLevel.Info, $"Providing for {location.InternalId}");
+            logger.Log(LogLevel.Debug, $"Providing for {location.InternalId}");
             var obj = this[location.InternalId];
             // obj.SetActive(true);
             if (obj is TObject @object)
@@ -135,7 +135,7 @@ namespace TrainworksReloaded.Base.Prefab
             }
             else
             {
-                logger.Log(LogLevel.Info, $"Did not Find for {location.InternalId}");
+                logger.Log(LogLevel.Debug, $"Did not Find for {location.InternalId}");
                 return new CompletedOperation<TObject>().Start(
                     location,
                     location.InternalId,
@@ -156,7 +156,7 @@ namespace TrainworksReloaded.Base.Prefab
         public void Register(string key, GameObject item)
         {
             var hash = Hash128.Compute(key);
-            logger.Log(LogLevel.Info, $"Register GameObject ({key}) -- ({hash})");
+            logger.Log(LogLevel.Debug, $"Register GameObject ({key}) -- ({hash})");
             item.name = key;
             HashToObjectMap.Add(hash, (key, item));
             item.transform.SetParent(hiddenRoot.transform, false);

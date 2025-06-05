@@ -92,7 +92,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
             string guid;
             if (checkOverride && service.TryLookupName(id, out CardUpgradeData? data, out var _))
             {
-                logger.Log(Core.Interfaces.LogLevel.Info, $"Overriding Upgrade {id}... ");
+                logger.Log(LogLevel.Info, $"Overriding Upgrade {id}...");
                 titleKey = data.GetUpgradeTitleKey();
                 descriptionKey = data.GetUpgradeDescriptionKey();
                 notificationKey = data.GetUpgradeNotificationKey();

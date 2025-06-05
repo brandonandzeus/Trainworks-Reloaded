@@ -1,12 +1,15 @@
-
+using BepInEx.Logging;
+using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Xml.Linq;
 using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Interfaces;
 
-namespace TrainworksReloaded.Core.Extensions
+namespace TrainworksReloaded.Base.Extensions
 {
     public static class RegisterExtensions
     {
+        internal static ManualLogSource Logger = BepInEx.Logging.Logger.CreateLogSource(nameof(RegisterExtensions));
         /// <summary>
         /// Try to lookup an item by name
         /// A Name is a human readable identifier for an item
@@ -21,7 +24,13 @@ namespace TrainworksReloaded.Core.Extensions
             [NotNullWhen(true)] out bool? IsModded
         )
         {
-            return register.TryLookupIdentifier(name, RegisterIdentifierType.ReadableID, out lookup, out IsModded);
+            bool ret = register.TryLookupIdentifier(name, RegisterIdentifierType.ReadableID, out lookup, out IsModded);
+            if (!ret)
+            {
+                Logger.LogWarning($"Could not find identifier in {typeof(T).Name} Register with id (name) {name}. Some data may not be present on {typeof(T).Name}");
+                Logger.LogDebug($"{Environment.StackTrace}");
+            }
+            return ret;
         }
         /// <summary>
         /// Try to lookup an item by id
@@ -37,7 +46,13 @@ namespace TrainworksReloaded.Core.Extensions
             [NotNullWhen(true)] out bool? IsModded
         )
         {
-            return register.TryLookupIdentifier(id, RegisterIdentifierType.GUID, out lookup, out IsModded);
+            bool ret = register.TryLookupIdentifier(id, RegisterIdentifierType.GUID, out lookup, out IsModded);
+            if (!ret)
+            {
+                Logger.LogWarning($"Could not find identifier in {typeof(T).Name} Register with id (guid) {id}. Some data may not be present on {typeof(T).Name}");
+                Logger.LogDebug($"{Environment.StackTrace}");
+            }
+            return ret;
         }
     }
 }

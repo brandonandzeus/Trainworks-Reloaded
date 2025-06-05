@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
 using TrainworksReloaded.Base.Extensions;
-using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
 using static TrainworksReloaded.Base.Extensions.ParseReferenceExtensions;
@@ -44,7 +43,7 @@ namespace TrainworksReloaded.Base.Relic
             var data = definition.Data;
             var key = definition.Key;
 
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Finalizing Relic {data.name}... ");
+            logger.Log(LogLevel.Debug, $"Finalizing Relic {data.name}...");
             
             // Handle relic sprite
             var iconSprite = configuration.GetSection("icon").ParseReference();

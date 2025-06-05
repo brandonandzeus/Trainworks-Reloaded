@@ -42,7 +42,7 @@ namespace TrainworksReloaded.Base.Prefab
 
         public void Register(string key, VfxAtLoc item)
         {
-            logger.Log(LogLevel.Info, $"Register VFX ({key})");
+            logger.Log(LogLevel.Info, $"Register VFX {key}");
             this.Add(key, item);
         }
 

@@ -32,7 +32,7 @@ namespace TrainworksReloaded.Base.Relic
 
         public void Register(string key, EnhancerPool item)
         {
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Register Enhancer Pool {key}... ");
+            logger.Log(LogLevel.Info, $"Register Enhancer Pool {key}...");
             Add(key, item);
         }
 

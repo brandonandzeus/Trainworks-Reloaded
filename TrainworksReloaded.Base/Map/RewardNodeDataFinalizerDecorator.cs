@@ -6,7 +6,6 @@ using HarmonyLib;
 using Microsoft.Extensions.Configuration;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Base.Reward;
-using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using static TrainworksReloaded.Base.Extensions.ParseReferenceExtensions;
 
@@ -67,10 +66,7 @@ namespace TrainworksReloaded.Base.Map
             if (configuration == null)
                 return;
 
-            logger.Log(
-                Core.Interfaces.LogLevel.Info,
-                $"Finalizing Reward Node Data {definition.Id.ToId(key, TemplateConstants.RewardData)}... "
-            );
+            logger.Log(LogLevel.Debug, $"Finalizing Reward Node Data {definition.Data.name}...");
 
             //class
             var required_class = configuration.GetDeprecatedSection("required_class", "class").ParseReference();

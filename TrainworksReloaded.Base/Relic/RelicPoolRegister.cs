@@ -5,7 +5,6 @@ using System.Text;
 using TrainworksReloaded.Base.CardUpgrade;
 using TrainworksReloaded.Core.Interfaces;
 using TrainworksReloaded.Core.Enum;
-using BepInEx.Logging;
 
 namespace TrainworksReloaded.Base.Relic
 {
@@ -20,7 +19,7 @@ namespace TrainworksReloaded.Base.Relic
 
         public void Register(string key, RelicPool item)
         {
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Register Relic Pool {key}... ");
+            logger.Log(LogLevel.Info, $"Register Relic Pool {key}... ");
             Add(key, item);
         }
 

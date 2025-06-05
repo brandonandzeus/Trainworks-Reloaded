@@ -6,7 +6,6 @@ using System.Text;
 using HarmonyLib;
 using Malee;
 using TrainworksReloaded.Base.Extensions;
-using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine.UIElements;
 using static TrainworksReloaded.Base.Extensions.ParseReferenceExtensions;
@@ -45,7 +44,7 @@ namespace TrainworksReloaded.Base.Relic
             var data = definition.Data;
             var key = definition.Key;
 
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Finalizing Relic Pool {data.name}... ");
+            logger.Log(LogLevel.Debug, $"Finalizing Relic Pool {data.name}... ");
 
             var relicDatas = new List<CollectableRelicData>();
             var relicReferences = configuration.GetSection("relics")

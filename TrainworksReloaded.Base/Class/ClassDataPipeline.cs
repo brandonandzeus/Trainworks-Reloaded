@@ -92,7 +92,7 @@ namespace TrainworksReloaded.Base.Class
             string guid;
             if (checkOverride && service.TryLookupName(id, out ClassData? data, out var _))
             {
-                logger.Log(Core.Interfaces.LogLevel.Info, $"Overriding Class {id}... ");
+                logger.Log(LogLevel.Info, $"Overriding Clan {id}...");
                 titleKey = data.GetTitleKey();
                 descriptionKey = data.GetDescriptionKey();
                 subclassDescriptionKey = data.GetSubclassDescriptionKey();

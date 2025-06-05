@@ -52,7 +52,7 @@
             "type": "boolean",
             "description": "Whether to show a cancel option for this reward."
           },
-          "show_flow_in_event": {
+          "show_reward_flow_in_event": {
             "type": "boolean",
             "description": "Whether to show this reward flow in events."
           },

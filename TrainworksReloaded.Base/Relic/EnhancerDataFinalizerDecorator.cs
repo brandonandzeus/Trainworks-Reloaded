@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TrainworksReloaded.Base.Extensions;
-using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 
 namespace TrainworksReloaded.Base.Relic
@@ -59,10 +58,7 @@ namespace TrainworksReloaded.Base.Relic
             if (configuration == null)
                 return;
 
-            logger.Log(
-                Core.Interfaces.LogLevel.Info,
-                $"Finalizing Enhancer Data {relicId}... "
-            );
+            logger.Log(LogLevel.Debug, $"Finalizing Enhancer Data {relicId}...");
 
             // Handle linked class
             var linkedClassReference = configuration.GetSection("class").ParseReference();

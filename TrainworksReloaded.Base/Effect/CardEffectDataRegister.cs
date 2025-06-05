@@ -20,7 +20,7 @@ namespace TrainworksReloaded.Base.Effect
 
         public void Register(string key, CardEffectData item)
         {
-            logger.Log(LogLevel.Info, $"Register Effect ({key})");
+            logger.Log(LogLevel.Debug, $"Register Effect ({key})");
             Add(key, item);
         }
 

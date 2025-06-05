@@ -38,7 +38,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
 
         public void Register(string key, CardUpgradeMaskData item)
         {
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Registering Upgrade Mask {key}... ");
+            logger.Log(LogLevel.Debug, $"Registering Upgrade Mask {key}...");
             Add(key, item);
         }
 

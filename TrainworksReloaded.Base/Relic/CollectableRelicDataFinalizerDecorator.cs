@@ -3,7 +3,6 @@ using System.Linq;
 using HarmonyLib;
 using Microsoft.Extensions.Configuration;
 using TrainworksReloaded.Base.Extensions;
-using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
 using static ShinyShoe.DLC;
@@ -59,10 +58,7 @@ namespace TrainworksReloaded.Base.Relic
             if (configuration == null)
                 return;
 
-            logger.Log(
-                Core.Interfaces.LogLevel.Info,
-                $"Finalizing Collectable Relic Data {relicId}... "
-            );
+            logger.Log(LogLevel.Debug, $"Finalizing Collectable Relic Data {relicId}...");
 
             // Handle linked class
             var linkedClassReference = configuration.GetSection("class").ParseReference();

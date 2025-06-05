@@ -52,8 +52,7 @@ namespace TrainworksReloaded.Base.Trigger
             var key = definition.Key;
             var data = definition.Data;
 
-            logger.Log(
-                Core.Interfaces.LogLevel.Info,
+            logger.Log(LogLevel.Debug, 
                 $"Finalizing Card Trigger {key.GetId(TemplateConstants.CardTrigger, definition.Id)}... "
             );
 
@@ -103,7 +102,7 @@ namespace TrainworksReloaded.Base.Trigger
                     )
                 )
                 {
-                    logger.Log(LogLevel.Error, $"Failed to load effect state name {triggerEffectName} in {definition.Id} with mod reference {modReference}");
+                    logger.Log(LogLevel.Error, $"Failed to load trigger effect state name {triggerEffectName} in {definition.Id} with mod reference {modReference}. Make sure the class implements interface ICardTriggerEffect.");
                     continue;
                 }
                 triggerData.cardTriggerEffect = fullyQualifiedName;
@@ -123,7 +122,7 @@ namespace TrainworksReloaded.Base.Trigger
                     )
                 )
                 {
-                    logger.Log(LogLevel.Error, $"Failed to load effect state name {effectStateName} in {definition.Id} with mod reference {modReference}");
+                    logger.Log(LogLevel.Error, $"Failed to load effect state name {effectStateName} in {definition.Id} with mod reference {modReference}. Make sure the class inherits from CardEffectBase.");
                     continue;
                 }
                 triggerData.buffEffectType = fullyQualifiedName;

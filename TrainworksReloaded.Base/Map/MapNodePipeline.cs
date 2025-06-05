@@ -126,13 +126,13 @@ namespace TrainworksReloaded.Base.Map
                 .Field(typeof(MapNodeData), "updateMapIconImmediatelyOnClick")
                 .SetValue(
                     data,
-                    configuration.GetSection("update_map_icon_immediately_on_click").ParseBool() ?? false
+                    configuration.GetDeprecatedSection("updated_map_icon_on_click", "update_map_icon_immediately_on_click").ParseBool() ?? false
                 );
 
             //string
             AccessTools
                 .Field(typeof(MapNodeData), "nodeSelectedSfxCue")
-                .SetValue(data, configuration.GetSection("node_selected_sfx_cue").ParseString() ?? "");
+                .SetValue(data, configuration.GetDeprecatedSection("node_selection_cue", "node_selected_sfx_cue").ParseString() ?? "");
 
             //dlc
             AccessTools
@@ -142,7 +142,7 @@ namespace TrainworksReloaded.Base.Map
             //skip settings
             AccessTools
                 .Field(typeof(MapNodeData), "skipCheckSettings")
-                .SetValue(data, configuration.GetSection("skip_check_settings").ParseSkipSettings() ?? 0);
+                .SetValue(data, configuration.GetDeprecatedSection("skip_settings", "skip_check_settings").ParseSkipSettings() ?? 0);
 
             service.Register(name, data);
 

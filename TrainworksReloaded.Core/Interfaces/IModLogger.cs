@@ -1,4 +1,6 @@
-﻿namespace TrainworksReloaded.Core.Interfaces
+﻿using System.Xml.Linq;
+
+namespace TrainworksReloaded.Core.Interfaces
 {
     [Flags]
     public enum LogLevel
