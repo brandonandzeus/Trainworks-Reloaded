@@ -323,9 +323,6 @@ namespace TrainworksReloaded.Base.CardUpgrade
             foreach (var reference in upgradeReferences)
             {
                 var traitStateName = reference.id;
-                if (traitStateName == null)
-                    continue;
-
                 var modReference = reference.mod_reference ?? key;
                 var assembly = atlas.PluginDefinitions.GetValueOrDefault(modReference)?.Assembly;
                 if (
@@ -335,6 +332,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
                     )
                 )
                 {
+                    logger.Log(LogLevel.Warning, $"Failed to load trait state name {traitStateName} in upgrade {id} with mod reference {modReference}, Note that this isn't a reference to a CardTraitData, but a class that inherits from CardTraitState.");
                     continue;
                 }
                 removeTraitUpgrades.Add(fullyQualifiedName);

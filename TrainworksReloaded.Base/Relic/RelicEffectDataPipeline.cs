@@ -87,6 +87,7 @@ namespace TrainworksReloaded.Base.Relic
                 )
             )
             {
+                _logger.Log(LogLevel.Error, $"Failed to load relic effect class name {effectStateName} in {name} with mod reference {modReference}. Make sure it is a class inheriting from relicEffectBase.");
                 return null;
             }
             AccessTools.Field(typeof(RelicEffectData), "relicEffectClassName").SetValue(data, fullyQualifiedName);
@@ -180,32 +181,14 @@ namespace TrainworksReloaded.Base.Relic
 
 
             // Handle source card trait
-            var sourceCardTrait = config.GetSection("source_card_trait").ParseString();
-            if (sourceCardTrait != null && sourceCardTrait.GetFullyQualifiedName<CardTraitState>(
-                    assembly,
-                    out string? sourceCardTraitName
-                ))
-            {
-                AccessTools.Field(typeof(RelicEffectData), "sourceCardTraitParam").SetValue(data, sourceCardTraitName);
-            }
-            else
-            {
-                AccessTools.Field(typeof(RelicEffectData), "sourceCardTraitParam").SetValue(data, "");
-            }
+            var sourceCardTraitConfig = config.GetSection("source_card_trait");
+            var sourceCardTraitName = ParseEffectType<CardTraitState>(sourceCardTraitConfig, key, _atlas, effectId);
+            AccessTools.Field(typeof(RelicEffectData), "sourceCardTraitParam").SetValue(data, sourceCardTraitName ?? "");
 
             // Handle target card trait
-            var targetCardTrait = config.GetSection("target_card_trait").ParseString();
-            if (targetCardTrait != null && targetCardTrait.GetFullyQualifiedName<CardTraitState>(
-                    assembly,
-                    out string? targetCardTraitName
-                ))
-            {
-                AccessTools.Field(typeof(RelicEffectData), "targetCardTraitParam").SetValue(data, targetCardTraitName);
-            }
-            else
-            {
-                AccessTools.Field(typeof(RelicEffectData), "targetCardTraitParam").SetValue(data, "");
-            }
+            var targetCardTraitConfig = config.GetSection("target_card_trait");
+            var targetCardTraitName = ParseEffectType<CardTraitState>(targetCardTraitConfig, key, _atlas, effectId);
+            AccessTools.Field(typeof(RelicEffectData), "targetCardTraitParam").SetValue(data, targetCardTraitName ?? "");
 
             // Handle rarity ticket type
             var rarityTicketType = config.GetDeprecatedSection("rarity_ticket_type", "param_rarity_ticket_type").ParseRarityTicketType() ?? RarityTicketType.None;
@@ -286,6 +269,22 @@ namespace TrainworksReloaded.Base.Relic
             return new RelicEffectDataDefinition(key, data, config){
                 Id = effectId
             };
+        }
+
+        private string? ParseEffectType<T>(IConfigurationSection configuration, string key, PluginAtlas atlas, string id)
+        {
+            var reference = configuration.ParseReference();
+            if (reference == null)
+                return null;
+            var name = reference.id;
+            var modReference = reference.mod_reference ?? key;
+            var assembly = atlas.PluginDefinitions.GetValueOrDefault(modReference)?.Assembly;
+            if (name.GetFullyQualifiedName<T>(assembly, out string? fullyQualifiedName))
+            {
+                return fullyQualifiedName;
+            }
+            _logger.Log(LogLevel.Warning, $"Failed to load class name {name} in relic_effect {id} with mod reference {modReference}, Note that this isn't a reference to a CardTraitData, but a class that inherits from {typeof(T).Name}.");
+            return null;
         }
     }
 }
