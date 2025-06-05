@@ -112,7 +112,7 @@
             "description": "The tracked variable statistic to get for the trait. Usually used for scaling card traits.",
             "default": "subtype_in_deck"
           },
-          "trait_is_removable" {
+          "trait_is_removable": {
             "type": "boolean",
             "description": "Determines if the trait can be removed via a CardUpgrade (remove_trait_upgrades).",
             "default": true

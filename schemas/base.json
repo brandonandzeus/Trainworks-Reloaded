@@ -49,7 +49,7 @@
         },
         "localization_terms": {
             "$ref": "schemas/localization_terms.json#/properties/localization_terms"
-        }
+        },
         "map_nodes": {
             "$ref": "schemas/map_nodes.json#/properties/map_nodes"
         },

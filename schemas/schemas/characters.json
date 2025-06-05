@@ -194,6 +194,11 @@
             "$ref": "../definitions/parse_term.json",
             "description": "Localized text for this character's name."
           },
+          "override": {
+            "type": "boolean",
+            "description": "Whether this character overrides an existing character with the same ID.",
+            "default": false
+          },
           "prevent_abilities_from_equipment": {
             "type": "boolean",
             "description": "Prevents ability from being overwritten by equipment"

@@ -66,8 +66,8 @@ namespace TrainworksReloaded.Base.StatusEffects
             {
                 return null;
             }
-            var internalID = key.GetId(TemplateConstants.StatusEffect, id);
-            var statusId = internalID.ToLowerInvariant();
+            // modguid_statusid
+            var statusId = key.GetId(TemplateConstants.StatusEffect, id);
 
             var data = new StatusEffectData();
             AccessTools.Field(typeof(StatusEffectData), "statusId").SetValue(data, statusId);
@@ -279,7 +279,7 @@ namespace TrainworksReloaded.Base.StatusEffects
                 .Field(typeof(StatusEffectData), "allowSecondaryUIPlacement")
                 .SetValue(data, configuration.GetSection("allow_secondary_ui_placement").ParseBool() ?? allowSecondaryUIPlacement);
 
-            service.Register(internalID, data);
+            service.Register(statusId, data);
             return new StatusEffectDataDefinition(key, data, configuration)
             {
                 Id = statusId,

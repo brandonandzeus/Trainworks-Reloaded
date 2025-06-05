@@ -17,7 +17,7 @@
           },
           "additional_trigger_stages": {
             "type": "array",
-            "description": "Additional stages when the status effect can trigger. Controls when the game calls TestTrigger/OnTriggered on your status effect class."",
+            "description": "Additional stages when the status effect can trigger. Controls when the game calls TestTrigger/OnTriggered on your status effect class.",
             "items": {
               "$ref": "../definitions/trigger_stage.json"
             }

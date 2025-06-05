@@ -8,7 +8,7 @@
     {
       "id": "@MyBossAction",
       "mod_reference": "mypluginguid"
-    },
+    }
   ],
   "anyOf": [
     {

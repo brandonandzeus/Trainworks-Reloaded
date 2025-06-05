@@ -71,12 +71,12 @@
             "description": "Second boolean parameter for the effect."
           },
           "param_card_filter": {
-            "$ref": "../definitions/reference.json",
-            "description": "Reference to a CardUpgradeMaskData. Used in certain effects to filter out target cards."
+            "$ref": "../definitions/card_upgrade_mask.json",
+            "description": "Reference to an upgrade mask. Used in certain effects to filter out target cards."
           },
           "param_card_filter_2": {
-            "$ref": "../definitions/reference.json",
-            "description": "Reference to a CardUpgradeMaskData. A Secondary filter used in certain effects to filter out target cards (Currently only used by CardEffectDrawType)."
+            "$ref": "../definitions/card_upgrade_mask.json",
+            "description": "Reference to an upgrade mask. A Secondary filter used in certain effects to filter out target cards (Currently only used by CardEffectDrawType)."
           },
           "param_card": {
             "$ref": "../definitions/card.json",
