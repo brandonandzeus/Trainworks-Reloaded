@@ -20,7 +20,7 @@
         "items": {
           "$ref": "../definitions/parse_term.json"
         },
-        "description": "Chatter when the character is attacking.",
+        "description": "Chatter when the character is attacking."
       },
       "gender": {
         "type": "string",

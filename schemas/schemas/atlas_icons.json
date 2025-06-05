@@ -18,7 +18,7 @@
           },
           "path": {
             "type": "string",
-            "description": "The path to the image file.",
+            "description": "The path to the image file."
           }
         }
       }
