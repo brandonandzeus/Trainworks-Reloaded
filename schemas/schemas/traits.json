@@ -34,7 +34,7 @@
             "description": "Unique identifier for this trait."
           },
           "name": {
-            "$ref": "../defintions/card_trait.json",
+            "$ref": "../definitions/card_trait.json",
             "description": "The TraitStateName, this should be the name of a Class inheriting from CardTraitBase. This can be a class from the base game, a class from your Plugin (preceded by an @), or an object with id and mod_reference to refer to a class in someone else's mod."
           },
           "param_bool": {

@@ -103,7 +103,7 @@
             "type": "array",
             "description": "List of upgrades that are applied when the card is first added to the deck.",
             "items": {
-              "$ref": "../defintions/card_upgrade.json",
+              "$ref": "../definitions/card_upgrade.json",
               "description": "Reference to an upgrade's unique identifier."
             }
           },
@@ -113,7 +113,7 @@
             "default": false
           },
           "linked_mastery_card": {
-            "$ref": "../defintions/card.json",
+            "$ref": "../definitions/card.json",
             "description": "Used when a card has different variations (Think Blazing Bolts from MT1) the masteries are all linked to the original variation."
           },
           "lore_tooltips": {
@@ -129,7 +129,7 @@
             "description": "Localized text for this card's name."
           },
           "off_cooldown_vfx": {
-            "$ref": "../defintions/vfx.json",
+            "$ref": "../definitions/vfx.json",
             "description": "Vfx used when card is off cooldown."
           },
           "override": {
@@ -158,7 +158,7 @@
             "type": "array",
             "description": "List of cards that are discovered together with this card.",
             "items": {
-              "$ref": "../defintions/card.json",
+              "$ref": "../definitions/card.json",
               "description": "Reference to a card's id"
             }
           },
@@ -166,12 +166,12 @@
             "type": "array",
             "description": "List of cards that share mastery progress with this card.",
             "items": {
-              "$ref": "../defintions/card.json",
+              "$ref": "../definitions/card.json",
               "description": "Reference to a card's id"
             }
           },
           "special_edge_vfx": {
-            "$ref": "../defintions/vfx.json",
+            "$ref": "../definitions/vfx.json",
             "description": "VFX used on the edge of the card."
           },
           "targetless": {
@@ -188,7 +188,7 @@
             "type": "array",
             "description": "List of traits this card has.",
             "items": {
-              "$ref": "../defintions/reference.json",
+              "$ref": "../definitions/reference.json",
               "description": "Reference to a trait's unique identifier."
             }
           },
@@ -196,7 +196,7 @@
             "type": "array",
             "description": "List of triggers this card has.",
             "items": {
-              "$ref": "../defintions/reference.json",
+              "$ref": "../definitions/reference.json",
               "description": "Reference to a trigger's unique identifier."
             }
           },
