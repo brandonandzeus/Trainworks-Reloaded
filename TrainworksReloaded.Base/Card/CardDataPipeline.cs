@@ -7,6 +7,7 @@ using ShinyShoe;
 using SimpleInjector;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Base.Localization;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
@@ -89,10 +90,10 @@ namespace TrainworksReloaded.Base.Card
             var name = key.GetId("Card", id);
             var namekey = $"CardData_nameKey-{name}";
             var descriptionKey = $"CardData_descriptionKey-{name}";
-            var checkOverride = configuration.GetSection("override").ParseBool() ?? false;
+            var overrideMode = configuration.GetSection("override").ParseOverrideMode();
 
             string guid;
-            if (checkOverride && service.TryLookupName(id, out CardData? data, out var _))
+            if (overrideMode.IsOverriding() && service.TryLookupName(id, out CardData? data, out var _))
             {
                 logger.Log(LogLevel.Info, $"Overriding Card {id}... ");
                 descriptionKey = data.GetOverrideDescriptionKey();
@@ -132,26 +133,22 @@ namespace TrainworksReloaded.Base.Card
             }
 
             //handle tooltips
-            int tooltip_count = 0;
-            var tooltips = checkOverride
-                ? (List<String>)
-                    AccessTools.Field(typeof(CardData), "cardLoreTooltipKeys").GetValue(data)
-                : [];
-            foreach (var tooltip in configuration.GetSection("lore_tooltips").GetChildren())
+            var tooltips = (List<String>)
+                    AccessTools.Field(typeof(CardData), "cardLoreTooltipKeys").GetValue(data);
+            var loreTooltipsSection = configuration.GetSection("lore_tooltips");
+            if (overrideMode == OverrideMode.Replace && loreTooltipsSection.Exists())
+            {
+                tooltips.Clear();
+            }
+            int tooltip_count = tooltips.Count;
+            foreach (var tooltip in loreTooltipsSection.GetChildren())
             {
                 var localizationTooltipTerm = tooltip.ParseLocalizationTerm();
                 if (localizationTooltipTerm != null)
                 {
                     string tooltipKey = $"CardData_tooltipKey{tooltip_count}-{name}";
-                    if (checkOverride && tooltips.Contains(localizationTooltipTerm.Key))
-                    {
-                        tooltipKey = localizationTooltipTerm.Key;
-                    }
-                    else
-                    {
-                        localizationTooltipTerm.Key = tooltipKey;
-                        tooltips.Add(localizationTooltipTerm.Key);
-                    }
+                    localizationTooltipTerm.Key = localizationTooltipTerm.Key ?? tooltipKey;    
+                    tooltips.Add(tooltipKey);
                     termRegister.Register(tooltipKey, localizationTooltipTerm);
                     tooltip_count++;
                 }
@@ -159,16 +156,12 @@ namespace TrainworksReloaded.Base.Card
             AccessTools.Field(typeof(CardData), "cardLoreTooltipKeys").SetValue(data, tooltips);
 
             //handle one-to-one values
-            var defaultCost = checkOverride
-                ? (int)AccessTools.Field(typeof(CardData), "cost").GetValue(data)
-                : 0;
+            var defaultCost = (int)AccessTools.Field(typeof(CardData), "cost").GetValue(data);
             AccessTools
                 .Field(typeof(CardData), "cost")
                 .SetValue(data, configuration.GetSection("cost").ParseInt() ?? defaultCost);
 
-            var defaultCostType = checkOverride
-                ? (CardData.CostType)AccessTools.Field(typeof(CardData), "costType").GetValue(data)
-                : CardData.CostType.Default;
+            var defaultCostType = overrideMode.IsNewContent() ? CardData.CostType.Default : (CardData.CostType)AccessTools.Field(typeof(CardData), "costType").GetValue(data);
             AccessTools
                 .Field(typeof(CardData), "costType")
                 .SetValue(
@@ -176,9 +169,7 @@ namespace TrainworksReloaded.Base.Card
                     configuration.GetSection("cost_type").ParseCostType() ?? defaultCostType
                 );
 
-            var defaultCardType = checkOverride
-                ? (CardType)AccessTools.Field(typeof(CardData), "cardType").GetValue(data)
-                : CardType.Spell;
+            var defaultCardType = overrideMode.IsNewContent() ? CardType.Spell : (CardType)AccessTools.Field(typeof(CardData), "cardType").GetValue(data);
             AccessTools
                 .Field(typeof(CardData), "cardType")
                 .SetValue(
@@ -186,9 +177,7 @@ namespace TrainworksReloaded.Base.Card
                     configuration.GetDeprecatedSection("type", "card_type").ParseCardType() ?? defaultCardType
                 );
 
-            var defaultInitCooldown = checkOverride
-                ? (int)AccessTools.Field(typeof(CardData), "cooldownAtSpawn").GetValue(data)
-                : 0;
+            var defaultInitCooldown = overrideMode.IsNewContent() ? 0 : (int)AccessTools.Field(typeof(CardData), "cooldownAtSpawn").GetValue(data);
             AccessTools
                 .Field(typeof(CardData), "cooldownAtSpawn")
                 .SetValue(
@@ -196,9 +185,7 @@ namespace TrainworksReloaded.Base.Card
                     configuration.GetSection("initial_cooldown").ParseInt() ?? defaultInitCooldown
                 );
 
-            var defaultCooldown = checkOverride
-                ? (int)AccessTools.Field(typeof(CardData), "cooldownAfterActivated").GetValue(data)
-                : 0;
+            var defaultCooldown = overrideMode.IsNewContent() ? 0 : (int)AccessTools.Field(typeof(CardData), "cooldownAfterActivated").GetValue(data);
             AccessTools
                 .Field(typeof(CardData), "cooldownAfterActivated")
                 .SetValue(data, configuration.GetSection("cooldown").ParseInt() ?? defaultCooldown);
@@ -224,23 +211,20 @@ namespace TrainworksReloaded.Base.Card
                     configuration.GetSection("targetless").ParseBool() ?? defaultTargetless
                 );
 
-            var defaultRarity = checkOverride
-                ? (CollectableRarity)AccessTools.Field(typeof(CardData), "rarity").GetValue(data)
-                : CollectableRarity.Common;
+            var defaultRarity = overrideMode.IsNewContent() ? CollectableRarity.Common :
+                 (CollectableRarity)AccessTools.Field(typeof(CardData), "rarity").GetValue(data);
             AccessTools
                 .Field(typeof(CardData), "rarity")
                 .SetValue(data, configuration.GetSection("rarity").ParseRarity() ?? defaultRarity);
 
-            var defaultDLC = checkOverride
-                ? (DLC)AccessTools.Field(typeof(CardData), "requiredDLC").GetValue(data)
-                : DLC.None;
+            var defaultDLC = overrideMode.IsNewContent() ? DLC.None :
+                (DLC)AccessTools.Field(typeof(CardData), "requiredDLC").GetValue(data);
             AccessTools
                 .Field(typeof(CardData), "requiredDLC")
                 .SetValue(data, configuration.GetDeprecatedSection("dlc", "required_dlc").ParseDLC() ?? defaultDLC);
 
-            var defaultUnlockLevel = checkOverride
-                ? (int)AccessTools.Field(typeof(CardData), "unlockLevel").GetValue(data)
-                : 0;
+            var defaultUnlockLevel = overrideMode.IsNewContent() ? 0 :
+                (int)AccessTools.Field(typeof(CardData), "unlockLevel").GetValue(data);
             AccessTools
                 .Field(typeof(CardData), "unlockLevel")
                 .SetValue(
@@ -265,10 +249,8 @@ namespace TrainworksReloaded.Base.Card
                     configuration.GetSection("hide_in_logbook").ParseBool() ?? hideInLogbook
                 );
 
-            var initialKeyboardTarget = checkOverride
-                ? (CardInitialKeyboardTarget)
-                    AccessTools.Field(typeof(CardData), "initialKeyboardTarget").GetValue(data)
-                : CardInitialKeyboardTarget.FrontFriendly;
+            var initialKeyboardTarget = overrideMode.IsNewContent() ? CardInitialKeyboardTarget.FrontFriendly :
+                 (CardInitialKeyboardTarget) AccessTools.Field(typeof(CardData), "initialKeyboardTarget").GetValue(data);
             AccessTools
                 .Field(typeof(CardData), "initialKeyboardTarget")
                 .SetValue(
@@ -286,9 +268,8 @@ namespace TrainworksReloaded.Base.Card
                         ?? canAbilityTargetOtherFloors
                 );
 
-            var artistAttribution = checkOverride
-                ? (string)AccessTools.Field(typeof(CardData), "artistAttribution").GetValue(data)
-                : "";
+            var artistAttribution = overrideMode.IsNewContent() ? "" :
+                (string)AccessTools.Field(typeof(CardData), "artistAttribution").GetValue(data);
             AccessTools
                 .Field(typeof(CardData), "artistAttribution")
                 .SetValue(
@@ -297,10 +278,11 @@ namespace TrainworksReloaded.Base.Card
                 );
 
             //register before filling in data using
-            if (!checkOverride)
+            var modded = overrideMode.IsCloning() || overrideMode.IsNewContent();
+            if (modded)
                 service.Register(name, data);
 
-            return new CardDataDefinition(key, data, configuration, checkOverride) { Id = id };
+            return new CardDataDefinition(key, data, configuration, modded) { Id = id };
         }
     }
 }
