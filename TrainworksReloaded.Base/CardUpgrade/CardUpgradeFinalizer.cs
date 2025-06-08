@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using HarmonyLib;
+using Microsoft.Extensions.Configuration;
 using TrainworksReloaded.Base.Character;
 using TrainworksReloaded.Base.Effect;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Base.Prefab;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
@@ -72,21 +74,20 @@ namespace TrainworksReloaded.Base.CardUpgrade
             var configuration = definition.Configuration;
             var data = definition.Data;
             var key = definition.Key;
+            var overrideMode = configuration.GetSection("override").ParseOverrideMode();
+            var newlyCreatedContent = overrideMode.IsCloning() || overrideMode.IsNewContent();
 
             logger.Log(LogLevel.Debug, $"Finalizing Upgrade {data.name}...");
 
             //handle traits
             //traits do not default properly, if null, set to empty
-            var traitDataUpgradesVal =
-                (List<CardTraitData>)
-                    AccessTools.Field(typeof(CardUpgradeData), "traitDataUpgrades").GetValue(data);
-            if (traitDataUpgradesVal == null)
-                AccessTools
-                    .Field(typeof(CardUpgradeData), "traitDataUpgrades")
-                    .SetValue(data, new List<CardTraitData>());
-
-            var traitDataUpgrades = new List<CardTraitData>();
-            var traitDataUpgradesReference = configuration.GetSection("trait_upgrades")
+            var traitDataUpgrades = data.GetTraitDataUpgrades() ?? [];
+            var traitDataUpgradeConfig = configuration.GetSection("trait_upgrades");
+            if (overrideMode == OverrideMode.Replace && traitDataUpgradeConfig.Exists())
+            {
+                traitDataUpgrades.Clear();
+            }
+            var traitDataUpgradesReference = traitDataUpgradeConfig
                 .GetChildren()
                 .Select(x => x.ParseReference())
                 .Where(x => x != null)
@@ -99,14 +100,16 @@ namespace TrainworksReloaded.Base.CardUpgrade
                     traitDataUpgrades.Add(trait);
                 }
             }
-            if (traitDataUpgrades.Count != 0)
-                AccessTools
-                    .Field(typeof(CardUpgradeData), "traitDataUpgrades")
-                    .SetValue(data, traitDataUpgrades);
+            AccessTools.Field(typeof(CardUpgradeData), "traitDataUpgrades").SetValue(data, traitDataUpgrades);
 
             //handle triggers
-            var triggerUpgrades = new List<CharacterTriggerData>();
-            var triggerUpgradeReferences = configuration.GetSection("trigger_upgrades")
+            var triggerUpgrades = data.GetCharacterTriggerUpgrades();
+            var triggerUpgradeConfig = configuration.GetSection("trigger_upgrades");
+            if (overrideMode == OverrideMode.Replace && triggerUpgradeConfig.Exists())
+            {
+                triggerUpgrades.Clear();
+            }
+            var triggerUpgradeReferences = triggerUpgradeConfig
                 .GetChildren()
                 .Select(x => x.ParseReference())
                 .Where(x => x != null)
@@ -119,15 +122,16 @@ namespace TrainworksReloaded.Base.CardUpgrade
                     triggerUpgrades.Add(trigger);
                 }
             }
-            if (triggerUpgrades.Count != 0)
-                AccessTools
-                    .Field(typeof(CardUpgradeData), "triggerUpgrades")
-                    .SetValue(data, triggerUpgrades);
+            AccessTools.Field(typeof(CardUpgradeData), "triggerUpgrades").SetValue(data, triggerUpgrades);
 
             //handle card triggers
-            var cardTriggerUpgrades = new List<CardTriggerEffectData>();
-            var cardTriggerUpgradeReferences = configuration
-                .GetSection("card_trigger_upgrades")
+            var cardTriggerUpgrades = data.GetCardTriggerUpgrades();
+            var cardTriggerConfig = configuration.GetSection("card_trigger_upgrades");
+            if (overrideMode == OverrideMode.Replace && cardTriggerConfig.Exists()) 
+            {
+                cardTriggerUpgrades.Clear();
+            }
+            var cardTriggerUpgradeReferences = cardTriggerConfig
                 .GetChildren()
                 .Select(x => x.ParseReference())
                 .Where(x => x != null)
@@ -140,15 +144,16 @@ namespace TrainworksReloaded.Base.CardUpgrade
                     cardTriggerUpgrades.Add(trigger);
                 }
             }
-            if (cardTriggerUpgrades.Count != 0)
-                AccessTools
-                    .Field(typeof(CardUpgradeData), "cardTriggerUpgrades")
-                    .SetValue(data, cardTriggerUpgrades);
+            AccessTools.Field(typeof(CardUpgradeData), "cardTriggerUpgrades").SetValue(data, cardTriggerUpgrades);
 
             //handle roomModifiers
-            var roomModifierUpgrades = new List<RoomModifierData>();
-            var roomModifierUpgradeReferences = configuration
-                .GetSection("room_modifier_upgrades")
+            var roomModifierUpgrades = data.GetRoomModifierUpgrades();
+            var roomModifierConfig = configuration.GetSection("room_modifier_upgrades");
+            if (overrideMode == OverrideMode.Replace && roomModifierConfig.Exists())
+            {
+                roomModifierUpgrades.Clear();
+            }
+            var roomModifierUpgradeReferences = roomModifierConfig
                 .GetChildren()
                 .Select(x => x.ParseReference())
                 .Where(x => x != null)
@@ -161,15 +166,16 @@ namespace TrainworksReloaded.Base.CardUpgrade
                     roomModifierUpgrades.Add(roomModifier);
                 }
             }
-            if (roomModifierUpgrades.Count != 0)
-                AccessTools
-                    .Field(typeof(CardUpgradeData), "roomModifierUpgrades")
-                    .SetValue(data, roomModifierUpgrades);
+            AccessTools.Field(typeof(CardUpgradeData), "roomModifierUpgrades").SetValue(data, roomModifierUpgrades);
 
             //status
-            var statusEffectUpgrades = new List<StatusEffectStackData>();
-            var statusEffectUpgradesConfig = configuration.GetSection("status_effect_upgrades").GetChildren();
-            foreach (var child in statusEffectUpgradesConfig)
+            var statusEffectUpgrades = data.GetStatusEffectUpgrades();
+            var statusEffectUpgradesConfig = configuration.GetSection("status_effect_upgrades");
+            if (overrideMode == OverrideMode.Replace && statusEffectUpgradesConfig.Exists())
+            {
+                statusEffectUpgrades.Clear();
+            }
+            foreach (var child in statusEffectUpgradesConfig.GetChildren())
             {
                 var statusReference = child.GetSection("status").ParseReference();
                 if (statusReference == null)
@@ -192,8 +198,13 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 .SetValue(data, statusEffectUpgrades);
 
             //handle upgrades to remove
-            var upgradesToRemove = new List<CardUpgradeData>();
-            var upgradesToRemoveReferences = configuration.GetSection("remove_upgrades")
+            var upgradesToRemove = data.GetUpgradesToRemove();
+            var upgradesToRemoveConfig = configuration.GetSection("remove_upgrades");
+            if (overrideMode == OverrideMode.Replace && upgradesToRemoveConfig.Exists())
+            {
+                upgradesToRemove.Clear();
+            }
+            var upgradesToRemoveReferences = upgradesToRemoveConfig
                 .GetChildren()
                 .Select(x => x.ParseReference())
                 .Where(x => x != null)
@@ -206,37 +217,42 @@ namespace TrainworksReloaded.Base.CardUpgrade
                     upgradesToRemove.Add(upgrade);
                 }
             }
-            if (upgradesToRemove.Count != 0)
-                AccessTools
-                    .Field(typeof(CardUpgradeData), "upgradesToRemove")
-                    .SetValue(data, upgradesToRemove);
+            AccessTools.Field(typeof(CardUpgradeData), "upgradesToRemove").SetValue(data, upgradesToRemove);
 
-            var appliedVFXId = configuration.GetSection("applied_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx) ?? "";
-            if (vfxRegister.TryLookupId(appliedVFXId, out var applied_vfx, out var _))
+            var appliedVFXId = configuration.GetSection("applied_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx);
+            if (newlyCreatedContent || appliedVFXId != null)
             {
+                vfxRegister.TryLookupId(appliedVFXId ?? "", out var applied_vfx, out var _);
                 AccessTools
                     .Field(typeof(CardUpgradeData), "appliedVFX")
                     .SetValue(data, applied_vfx);
             }
 
-            var removedVFXId = configuration.GetSection("removed_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx) ?? "";
-            if (vfxRegister.TryLookupId(removedVFXId, out var removed_vfx, out var _))
+            var removedVFXId = configuration.GetSection("removed_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx);
+            if (newlyCreatedContent || removedVFXId != null)
             {
+                vfxRegister.TryLookupId(removedVFXId ?? "", out var removed_vfx, out var _);
                 AccessTools
                     .Field(typeof(CardUpgradeData), "removedVFX")
                     .SetValue(data, removed_vfx);
             }
 
-            var persistentVFXId = configuration.GetSection("persistent_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx) ?? "";
-            if (vfxRegister.TryLookupId(persistentVFXId, out var persistent_vfx, out var _))
+            var persistentVFXId = configuration.GetSection("persistent_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx);
+            if (newlyCreatedContent || persistentVFXId != null)
             {
+                vfxRegister.TryLookupId(persistentVFXId ?? "", out var persistent_vfx, out var _);
                 AccessTools
                     .Field(typeof(CardUpgradeData), "persistentVFX")
                     .SetValue(data, persistent_vfx);
             }
 
-            List<CardUpgradeMaskData> filters = [];
-            var filterReferences = configuration.GetSection("filters")
+            List<CardUpgradeMaskData> filters = data.GetFilters();
+            var filterConfig = configuration.GetSection("filters");
+            if (overrideMode == OverrideMode.Replace && filterConfig.Exists())
+            {
+                filters.Clear();
+            }
+            var filterReferences = filterConfig
                 .GetChildren()
                 .Select(x => x.ParseReference())
                 .Where(x => x != null)
@@ -251,13 +267,19 @@ namespace TrainworksReloaded.Base.CardUpgrade
             }
             AccessTools.Field(typeof(CardUpgradeData), "filters").SetValue(data, filters);
 
-            var abilityReference = configuration.GetSection("ability_upgrade").ParseReference();
+            var abilityConfig = configuration.GetSection("ability_upgrade");
+            var abilityReference = abilityConfig.ParseReference();
             if (abilityReference != null)
             {
                 cardRegister.TryLookupName(abilityReference.ToId(key, TemplateConstants.Card), out var abilityCard, out var _);
                 AccessTools.Field(typeof(CardUpgradeData), "unitAbilityUpgrade").SetValue(data, abilityCard);
             }
+            if (overrideMode == OverrideMode.Replace && abilityReference == null && abilityConfig.Exists())
+            {
+                AccessTools.Field(typeof(CardUpgradeData), "unitAbilityUpgrade").SetValue(data, null);
+            }
 
+            // Setting an icon already set to null isn't useful so not supporting it.
             var spriteReference = configuration.GetSection("icon").ParseReference();
             if (spriteReference != null)
             {

@@ -77,6 +77,7 @@ namespace TrainworksReloaded.Base.Card
             var data = definition.Data;
             var key = definition.Key;
             var overrideMode = configuration.GetSection("override").ParseOverrideMode();
+            var newlyCreatedContent = overrideMode.IsCloning() || overrideMode.IsNewContent();
 
             logger.Log(LogLevel.Debug, $"Finalizing Card {data.name}... ");
 
@@ -153,22 +154,23 @@ namespace TrainworksReloaded.Base.Card
                 .SetValue(data, SharedMasteryCards);
 
             //handle linked mastery card
-            var MasteryCardRef = configuration.GetDeprecatedSection("mastery_card", "linked_mastery_card").ParseReference();
-            if (
-                MasteryCardRef != null
-                && cardRegister.TryLookupName(
-                    MasteryCardRef.ToId(key, TemplateConstants.Card),
-                    out var MasteryCard,
-                    out var _
-                )
-            )
+            var MasteryCardConfig = configuration.GetDeprecatedSection("mastery_card", "linked_mastery_card");
+            var MasteryCardRef = MasteryCardConfig.ParseReference();
+            if (MasteryCardRef != null)
             {
+                cardRegister.TryLookupName(MasteryCardRef.ToId(key, TemplateConstants.Card), out var MasteryCard, out var _);
                 AccessTools
                     .Field(typeof(CardData), "linkedMasteryCard")
                     .SetValue(data, MasteryCard);
             }
+            if (overrideMode == OverrideMode.Replace && MasteryCardConfig.Exists() && MasteryCardRef == null)
+            {
+                AccessTools
+                    .Field(typeof(CardData), "linkedMasteryCard")
+                    .SetValue(data, null);
+            }
 
-            //handle art
+            //handle art (required field so don't allow override with null)
             var cardArtReference = configuration.GetDeprecatedSection("card_art_reference", "card_art").ParseReference();
             if (cardArtReference != null)
             {
@@ -292,32 +294,20 @@ namespace TrainworksReloaded.Base.Card
                     effectTriggers.Add(trigger);
                 }
             }
-            if (effectTriggers.Count != 0)
-                AccessTools
-                    .Field(typeof(CardData), "effectTriggers")
-                    .SetValue(data, effectTriggers);
+            AccessTools.Field(typeof(CardData), "effectTriggers").SetValue(data, effectTriggers);
 
-            var offCooldownVFXId = configuration.GetDeprecatedSection("vfx", "off_cooldown_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx) ?? "";
-            if (
-                vfxRegister.TryLookupId(
-                    offCooldownVFXId,
-                    out var offCooldownVfx,
-                    out var _
-                )
-            )
+            // Do not allow the vfx to be set to null. As they are soft required. If not set then they are set to a Default VFX. Setting to null will crash the game.
+            var offCooldownVFXId = configuration.GetDeprecatedSection("vfx", "off_cooldown_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx);
+            if (newlyCreatedContent || offCooldownVFXId != null)
             {
+                vfxRegister.TryLookupId(offCooldownVFXId ?? "", out var offCooldownVfx, out var _);
                 AccessTools.Field(typeof(CardData), "offCooldownVFX").SetValue(data, offCooldownVfx);
             }
 
-            var specialEdgeVFXId = configuration.GetSection("special_edge_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx) ?? "";
-            if (
-                vfxRegister.TryLookupId(
-                    specialEdgeVFXId,
-                    out var specialEdgeVfx,
-                    out var _
-                )
-            )
+            var specialEdgeVFXId = configuration.GetSection("special_edge_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx);
+            if (newlyCreatedContent || specialEdgeVFXId != null)
             {
+                vfxRegister.TryLookupId(specialEdgeVFXId ?? "", out var specialEdgeVfx, out var _);
                 AccessTools.Field(typeof(CardData), "specialEdgeVFX").SetValue(data, specialEdgeVfx);
             }
 

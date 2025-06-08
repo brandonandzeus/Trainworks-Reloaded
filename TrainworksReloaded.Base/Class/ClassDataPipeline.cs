@@ -8,6 +8,7 @@ using SimpleInjector;
 using TrainworksReloaded.Base.Class;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Base.Localization;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
@@ -87,10 +88,10 @@ namespace TrainworksReloaded.Base.Class
             var titleKey = $"ClassData_titleKey-{name}";
             var descriptionKey = $"ClassData_descriptionKey-{name}";
             var subclassDescriptionKey = $"ClassData_subclassDescriptionKey-{name}";
-            var checkOverride = configuration.GetSection("override").ParseBool() ?? false;
+            var overrideMode = configuration.GetSection("override").ParseOverrideMode();
 
             string guid;
-            if (checkOverride && service.TryLookupName(id, out ClassData? data, out var _))
+            if (overrideMode.IsOverriding() && service.TryLookupName(id, out ClassData? data, out var _))
             {
                 logger.Log(LogLevel.Info, $"Overriding Clan {id}...");
                 titleKey = data.GetTitleKey();
@@ -144,8 +145,7 @@ namespace TrainworksReloaded.Base.Class
             }
 
             //handel bool
-            var corruptionEnabled =
-                (bool)AccessTools.Field(typeof(ClassData), "corruptionEnabled").GetValue(data);
+            var corruptionEnabled = data.GetCorruptionEnabled();
             AccessTools
                 .Field(typeof(ClassData), "corruptionEnabled")
                 .SetValue(
@@ -153,16 +153,13 @@ namespace TrainworksReloaded.Base.Class
                     configuration.GetSection("corruption_enabled").ParseBool() ?? corruptionEnabled
                 );
 
-            var isCrew =
-                (bool)AccessTools.Field(typeof(ClassData), "isCrew").GetValue(data);
+            var isCrew = data.IsCrew();
             AccessTools
                 .Field(typeof(ClassData), "isCrew")
                 .SetValue(data, configuration.GetSection("is_crew").ParseBool() ?? isCrew);
 
             //string
-            var clanSelectSfxCue = checkOverride
-                ? (string)AccessTools.Field(typeof(ClassData), "clanSelectSfxCue").GetValue(data)
-                : "";
+            var clanSelectSfxCue = data.GetClanSelectSfxCue() ?? "";
             AccessTools
                 .Field(typeof(ClassData), "clanSelectSfxCue")
                 .SetValue(
@@ -171,17 +168,13 @@ namespace TrainworksReloaded.Base.Class
                 );
 
             //handle color
-            var uiColor = checkOverride
-                ? (Color)AccessTools.Field(typeof(ClassData), "uiColor").GetValue(data)
-                : Color.white;
+            var uiColor = overrideMode.IsNewContent() ? Color.white : data.GetUIColor();
             AccessTools
                 .Field(typeof(ClassData), "uiColor")
                 .SetValue(data, configuration.GetSection("ui_color").ParseColor() ?? uiColor);
 
             //handle color
-            var uiColorDark = checkOverride
-                ? (Color)AccessTools.Field(typeof(ClassData), "uiColorDark").GetValue(data)
-                : Color.black;
+            var uiColorDark = overrideMode.IsNewContent() ? Color.black : data.GetUIColorDark();
             AccessTools
                 .Field(typeof(ClassData), "uiColorDark")
                 .SetValue(
@@ -190,12 +183,11 @@ namespace TrainworksReloaded.Base.Class
                 );
 
             //parse gradient
-            var gradient = checkOverride
-                ? (Gradient)AccessTools.Field(typeof(ClassData), "uiColorGradient").GetValue(data)
-                : new Gradient();
-            var gradientKeysConfig = configuration.GetSection("ui_gradient").GetChildren();
+            var gradient = overrideMode.IsNewContent() ? new Gradient() :
+                (Gradient)AccessTools.Field(typeof(ClassData), "uiColorGradient").GetValue(data);
+            var gradientKeysConfig = configuration.GetSection("ui_gradient");
             List<GradientColorKey> gradientColorKeys = [];
-            foreach (var gradientKeyConfig in gradientKeysConfig)
+            foreach (var gradientKeyConfig in gradientKeysConfig.GetChildren())
             {
                 var time = gradientKeyConfig.GetSection("time").ParseFloat();
                 var color = gradientKeyConfig.GetSection("color").ParseColor() ?? Color.white;
@@ -212,13 +204,13 @@ namespace TrainworksReloaded.Base.Class
             var classUnlockPreviewTexts =
                 (List<string>)
                     AccessTools.Field(typeof(ClassData), "classUnlockPreviewTexts").GetValue(data);
-            var previews = configuration.GetDeprecatedSection("class_preview_texts", "class_unlock_preview_texts").GetChildren();
-            if (previews.Count() > 0)
+            var previews = configuration.GetDeprecatedSection("class_preview_texts", "class_unlock_preview_texts");
+            if (overrideMode == OverrideMode.Replace && previews.Exists())
             {
                 classUnlockPreviewTexts.Clear();
             }
             int i = 0;
-            foreach (var preview in previews)
+            foreach (var preview in previews.GetChildren())
             {
                 var val = preview.ParseLocalizationTerm();
                 if (val == null)
@@ -232,9 +224,7 @@ namespace TrainworksReloaded.Base.Class
             }
 
             //card style
-            var cardStyle = checkOverride
-                ? (ClassCardStyle)AccessTools.Field(typeof(ClassData), "cardStyle").GetValue(data)
-                : ClassCardStyle.None;
+            var cardStyle = data.GetCardStyle();
             AccessTools
                 .Field(typeof(ClassData), "cardStyle")
                 .SetValue(
@@ -243,10 +233,11 @@ namespace TrainworksReloaded.Base.Class
                 );
 
             //register before filling in data using
-            if (!checkOverride)
+            var modded = overrideMode.IsCloning() || overrideMode.IsNewContent();
+            if (modded)
                 service.Register(name, data);
 
-            return new ClassDataDefinition(key, data, configuration, checkOverride);
+            return new ClassDataDefinition(key, data, configuration, !modded);
         }
     }
 }

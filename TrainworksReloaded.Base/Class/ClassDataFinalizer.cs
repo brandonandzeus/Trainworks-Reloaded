@@ -8,6 +8,7 @@ using TrainworksReloaded.Base.Card;
 using TrainworksReloaded.Base.CardUpgrade;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Base.Relic;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
@@ -64,6 +65,7 @@ namespace TrainworksReloaded.Base.Class
             var configuration = definition.Configuration;
             var data = definition.Data;
             var key = definition.Key;
+            var overrideMode = configuration.GetSection("override").ParseOverrideMode();
 
             logger.Log(LogLevel.Debug, $"Finalizing Clan {data.name}...");
 
@@ -132,10 +134,13 @@ namespace TrainworksReloaded.Base.Class
             }
 
             //handle starter relics
-            var starterRelics =
-                (List<RelicData>)
-                    AccessTools.Field(typeof(ClassData), "starterRelics").GetValue(data) ?? [];
-            var relicReferences = configuration.GetSection("starter_relics")
+            var starterRelics = data.GetStarterRelics();
+            var relicConfig = configuration.GetSection("starter_relics");
+            if (overrideMode == OverrideMode.Replace && relicConfig.Exists())
+            {
+                starterRelics.Clear();
+            }
+            var relicReferences = relicConfig
                 .GetChildren()
                 .Select(x => x.ParseReference())
                 .Where(x => x != null)
@@ -151,11 +156,12 @@ namespace TrainworksReloaded.Base.Class
             AccessTools.Field(typeof(ClassData), "starterRelics").SetValue(data, starterRelics);
 
             //handle starter card upgrade
-            var upgradeConfig = configuration.GetDeprecatedSection("starter_upgrade", "starter_card_upgrade").ParseReference();
+            var upgradeConfig = configuration.GetDeprecatedSection("starter_upgrade", "starter_card_upgrade");
+            var starterUpgradeReference = configuration.GetDeprecatedSection("starter_upgrade", "starter_card_upgrade").ParseReference();
             if (
-                upgradeConfig != null
+                starterUpgradeReference != null
                 && upgradeDataRegister.TryLookupName(
-                    upgradeConfig.ToId(key, TemplateConstants.Upgrade),
+                    starterUpgradeReference.ToId(key, TemplateConstants.Upgrade),
                     out var upgradeData,
                     out var _
                 )
@@ -165,13 +171,20 @@ namespace TrainworksReloaded.Base.Class
                     .Field(typeof(ClassData), "starterCardUpgrade")
                     .SetValue(data, upgradeData);
             }
+            if (overrideMode == OverrideMode.Replace && starterUpgradeReference == null && upgradeConfig.Exists())
+            {
+                AccessTools
+                    .Field(typeof(ClassData), "starterCardUpgrade")
+                    .SetValue(data, null);
+            }
 
-            var enhancerPoolId = configuration.GetSection("random_draft_enhancer_pool").ParseReference();
-            if (enhancerPoolId != null)
+            var enhancerPoolConfig = configuration.GetSection("random_draft_enhancer_pool");
+            var enhancerPoolReference = enhancerPoolConfig.ParseReference();
+            if (enhancerPoolReference != null)
             {
                 if (
                     enhancerPoolRegister.TryLookupId(
-                        enhancerPoolId.ToId(key, TemplateConstants.EnhancerPool),
+                        enhancerPoolReference.ToId(key, TemplateConstants.EnhancerPool),
                         out var enhancerPool,
                         out var _
                     )
@@ -182,14 +195,25 @@ namespace TrainworksReloaded.Base.Class
                         .SetValue(data, enhancerPool);
                 }
             }
+            if (overrideMode == OverrideMode.Replace && enhancerPoolReference == null && enhancerPoolConfig.Exists())
+            {
+                AccessTools
+                    .Field(typeof(ClassData), "randomDraftEnhancerPool")
+                    .SetValue(data, null);
+            }    
 
             //handle champion data
             var champions = configuration.GetSection("champions").GetChildren().ToList();
             var championDatas =
                 (List<ChampionData>)
                     AccessTools.Field(typeof(ClassData), "champions").GetValue(data) ?? [];
-            championDatas.Clear();
 
+            if (overrideMode == OverrideMode.Replace && champions.Count > 0)
+            {
+                championDatas.Clear();
+            }
+
+            // TODO fix override with championData
             foreach (var champion in champions)
             {
                 var championData = ScriptableObject.CreateInstance<ChampionData>();
