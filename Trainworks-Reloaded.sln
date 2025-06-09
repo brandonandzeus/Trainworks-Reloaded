@@ -23,6 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "schemas", "schemas", "{02EA
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "schemas", "schemas", "{7F34227B-9306-44A2-9242-AD2B3573E8A2}"
 	ProjectSection(SolutionItems) = preProject
+		schemas\schemas\additional_tooltips.json = schemas\schemas\additional_tooltips.json
 		schemas\schemas\atlas_icons.json = schemas\schemas\atlas_icons.json
 		schemas\schemas\cards.json = schemas\schemas\cards.json
 		schemas\schemas\card_pools.json = schemas\schemas\card_pools.json
@@ -55,7 +56,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "schemas", "schemas", "{7F34
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "definitions", "definitions", "{19B13F81-0D53-4CD7-A8BC-F82DAE202770}"
 	ProjectSection(SolutionItems) = preProject
-		schemas\definitions\additional_tooltips.json = schemas\definitions\additional_tooltips.json
 		schemas\definitions\anim.json = schemas\definitions\anim.json
 		schemas\definitions\attack_phase.json = schemas\definitions\attack_phase.json
 		schemas\definitions\boss_action_behavior.json = schemas\definitions\boss_action_behavior.json

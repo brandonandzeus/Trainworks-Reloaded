@@ -15,7 +15,7 @@
             "type": "array",
             "description": "Additional tooltips to display for this room modifier.",
             "items": {
-              "$ref": "../definitions/additonal_tooltips.json"
+              "$ref": "../definitions/reference.json"
             }
           },
           "descriptions": {

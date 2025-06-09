@@ -16,7 +16,7 @@
             "type": "array",
             "description": "Additional tooltips to display for this card effect.",
             "items": {
-              "$ref": "../definitions/additonal_tooltips.json"
+              "$ref": "../definitions/reference.json"
             }
           },
           "anim_to_play": {

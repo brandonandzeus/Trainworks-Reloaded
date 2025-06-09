@@ -1,0 +1,54 @@
+{
+  "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/additional_tooltips.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "properties": {
+    "additional_tooltips": {
+      "type": "array",
+      "description": "List of additional tooltips for CardEffects, RelicEffects, and RoomModifiers.",
+      "required": ["id"],
+      "items": {
+        "allow_secondary_placement": {
+          "type": "boolean",
+          "description": "Whether to allow secondary tooltip placement."
+        },
+        "titles": {
+          "$ref": "../definitions/parse_term.json",
+          "description": "Title text for the tooltip."
+        },
+        "descriptions": {
+          "$ref": "../definitions/parse_term.json",
+          "description": "Description text for the tooltip."
+        },
+        "status": {
+          "type": "string",
+          "description": "Status effect reference for status tooltips."
+        },
+        "id": {
+          "minLength": 1,
+          "type": "string",
+          "description": "Identifier for this additional tooltip."
+        },
+        "is_status": {
+          "type": "boolean",
+          "description": "Whether this is a status effect tooltip."
+        },
+        "is_trigger": {
+          "type": "boolean",
+          "description": "Whether this is a trigger tooltip."
+        },
+        "character_trigger": {
+          "$ref": "../definitions/character_trigger.json",
+          "description": "Character trigger for trigger tooltips."
+        },
+        "hide_in_train_room_ui": {
+          "type": "boolean",
+          "description": "Whether to hide this tooltip in room UI."
+        },
+        "style": {
+          "$ref": "../definitions/tooltip_design.json",
+          "description": "Visual style for the tooltip."
+        }
+      }
+    }
+  }
+}

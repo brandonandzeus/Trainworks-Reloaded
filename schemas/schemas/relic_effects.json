@@ -10,9 +10,9 @@
         "properties": {
           "additional_tooltips": {
             "type": "array",
-            "description": "Additional tooltips to display for this card effect.",
+            "description": "Additional tooltips to display for this relic effect.",
             "items": {
-              "$ref": "../definitions/additonal_tooltips.json"
+              "$ref": "../definitions/reference.json"
             }
           },
           "applied_vfx": {
