@@ -102,7 +102,7 @@ namespace TrainworksReloaded.Base.Card
             {
                 SharedDiscoveryCards.Clear();
             }
-            var SharedDiscoveryCardReferences = configuration
+            var SharedDiscoveryCardReferences = SharedDiscoveryCardsConfig
                 .GetChildren()
                 .Select(x => x.ParseReference())
                 .Where(x => x != null)
@@ -203,9 +203,9 @@ namespace TrainworksReloaded.Base.Card
             foreach (var traitReference in cardTraitReferences)
             {
                 var id = traitReference.ToId(key, TemplateConstants.Trait);
-                if (traitRegister.TryLookupId(id, out var card, out var _))
+                if (traitRegister.TryLookupId(id, out var trait, out var _))
                 {
-                    cardTraitDatas.Add(card);
+                    cardTraitDatas.Add(trait);
                 }
             }
             AccessTools.Field(typeof(CardData), "traits").SetValue(data, cardTraitDatas);
