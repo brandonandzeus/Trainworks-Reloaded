@@ -65,7 +65,13 @@ namespace TrainworksReloaded.Base.Relic
 
         public static EnhancerPool? GetVanillaEnhancerPool(AllGameData allGameData, string poolName)
         {
-            if (poolName == "DraftUpgradePool")
+            if (poolName == "MalickaDraftUpgradePool")
+            {
+                PyreArtifactData? malickaPyre = allGameData.FindPyreArtifactData("68a9b977-3407-4128-bf35-245fd92f8e2b");
+                var effect = malickaPyre?.GetFirstRelicEffectData<RelicEffectAddStartingUpgradeToCardDrafts>();
+                return effect?.GetParamEnhancerPool();
+            }    
+            else if (poolName == "DraftUpgradePool")
             {
                 CollectableRelicData? capriciousReflection = allGameData.FindCollectableRelicData("9e0e5d4e-6d16-43f1-8cd4-cc4c2b431afd");
                 var effect = capriciousReflection?.GetFirstRelicEffectData<RelicEffectAddStartingUpgradeToCardDrafts>();
