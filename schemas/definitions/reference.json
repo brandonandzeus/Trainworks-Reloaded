@@ -23,6 +23,12 @@
       "minLength": 2,
       "pattern": "^@.+$",
       "description": "Unique reference to a particular object."
+    },
+    {
+      "enum": [
+        "null",
+        null
+      ]
     }
   ]
 }
