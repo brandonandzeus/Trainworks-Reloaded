@@ -212,7 +212,7 @@ namespace TrainworksReloaded.Base.Card
 
             var cardEffectDatas = data.GetEffects();
             var cardEffectDatasConfig = configuration.GetSection("effects");
-            if (overrideMode != OverrideMode.Replace && cardEffectDatasConfig.Exists())
+            if (overrideMode == OverrideMode.Replace && cardEffectDatasConfig.Exists())
             {
                 cardEffectDatas.Clear();
             }
