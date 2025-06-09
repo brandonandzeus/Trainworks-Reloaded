@@ -25,11 +25,11 @@
             "default": "none"
           },
           "applied_to_self_vfx": {
-            "$ref": "../defintions/vfx.json",
+            "$ref": "../definitions/vfx.json",
             "description": "Reference to VFX to use when applying the card effect to self."
           },
           "applied_vfx": {
-            "$ref": "../defintions/vfx.json",
+            "$ref": "../definitions/vfx.json",
             "description": "Reference to VFX to use when applying the card effect."
           },
           "copy_modifiers_from_source": {

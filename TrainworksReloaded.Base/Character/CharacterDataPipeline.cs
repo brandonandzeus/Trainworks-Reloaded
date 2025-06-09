@@ -7,6 +7,7 @@ using ShinyShoe;
 using SimpleInjector;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Base.Localization;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
@@ -87,10 +88,10 @@ namespace TrainworksReloaded.Base.Character
 
             var name = key.GetId(TemplateConstants.Character, id);
             var namekey = $"CharacterData_nameKey-{name}";
-            var checkOverride = configuration.GetSection("override").ParseBool() ?? false;
+            var overrideMode = configuration.GetSection("override").ParseOverrideMode();
 
             string guid;
-            if (checkOverride && service.TryLookupName(id, out CharacterData? data, out var _))
+            if (overrideMode.IsOverriding() && service.TryLookupName(id, out CharacterData? data, out var _))
             {
                 logger.Log(LogLevel.Info, $"Overriding Character {id}...");
                 namekey = data.GetNameKey();
@@ -230,23 +231,17 @@ namespace TrainworksReloaded.Base.Character
                 );
 
             //int
-            var size = checkOverride
-                ? (int)AccessTools.Field(typeof(CharacterData), "size").GetValue(data)
-                : 2;
+            var size = (int)AccessTools.Field(typeof(CharacterData), "size").GetValue(data);
             AccessTools
                 .Field(typeof(CharacterData), "size")
                 .SetValue(data, configuration.GetSection("size").ParseInt() ?? size);
 
-            var health = checkOverride
-                ? (int)AccessTools.Field(typeof(CharacterData), "health").GetValue(data)
-                : 0;
+            var health = overrideMode.IsNewContent() ? 0 : (int)AccessTools.Field(typeof(CharacterData), "health").GetValue(data);
             AccessTools
                 .Field(typeof(CharacterData), "health")
                 .SetValue(data, configuration.GetSection("health").ParseInt() ?? health);
 
-            var attackDamage = checkOverride
-                ? (int)AccessTools.Field(typeof(CharacterData), "attackDamage").GetValue(data)
-                : 0;
+            var attackDamage = overrideMode.IsNewContent() ? 0 :  (int)AccessTools.Field(typeof(CharacterData), "attackDamage").GetValue(data);
             AccessTools
                 .Field(typeof(CharacterData), "attackDamage")
                 .SetValue(
@@ -254,9 +249,7 @@ namespace TrainworksReloaded.Base.Character
                     configuration.GetSection("attack_damage").ParseInt() ?? attackDamage
                 );
 
-            var equipmentLimit = checkOverride
-                ? (int)AccessTools.Field(typeof(CharacterData), "equipmentLimit").GetValue(data)
-                : 1;
+            var equipmentLimit = (int)AccessTools.Field(typeof(CharacterData), "equipmentLimit").GetValue(data);
             AccessTools
                 .Field(typeof(CharacterData), "equipmentLimit")
                 .SetValue(
@@ -265,10 +258,7 @@ namespace TrainworksReloaded.Base.Character
                 );
 
             //attack phase
-            var validBossAttackPhase = checkOverride
-                ? (BossState.AttackPhase)
-                    AccessTools.Field(typeof(CharacterData), "validBossAttackPhase").GetValue(data)
-                : BossState.AttackPhase.Relentless;
+            var validBossAttackPhase = (BossState.AttackPhase) AccessTools.Field(typeof(CharacterData), "validBossAttackPhase").GetValue(data);
             AccessTools
                 .Field(typeof(CharacterData), "validBossAttackPhase")
                 .SetValue(
@@ -278,10 +268,8 @@ namespace TrainworksReloaded.Base.Character
                 );
 
             //death type
-            var deathType = checkOverride
-                ? (CharacterDeathVFX.Type)
-                    AccessTools.Field(typeof(CharacterData), "deathType").GetValue(data)
-                : CharacterDeathVFX.Type.Normal;
+            var deathType = (CharacterDeathVFX.Type)
+                    AccessTools.Field(typeof(CharacterData), "deathType").GetValue(data);
             AccessTools
                 .Field(typeof(CharacterData), "deathType")
                 .SetValue(
@@ -290,10 +278,8 @@ namespace TrainworksReloaded.Base.Character
                 );
 
             //death type
-            var bossTitanAffinity = checkOverride
-                ? (TitanAffinity)
-                    AccessTools.Field(typeof(CharacterData), "bossTitanAffinity").GetValue(data)
-                : TitanAffinity.None;
+            var bossTitanAffinity = overrideMode.IsNewContent() ? TitanAffinity.None :
+                    AccessTools.Field(typeof(CharacterData), "bossTitanAffinity").GetValue(data);
             AccessTools
                 .Field(typeof(CharacterData), "bossTitanAffinity")
                 .SetValue(
@@ -303,35 +289,30 @@ namespace TrainworksReloaded.Base.Character
                 );
 
             //handle tooltips
-            int tooltip_count = 0;
-            var tooltips = checkOverride
-                ? (List<String>)
-                    AccessTools.Field(typeof(CharacterData), "characterLoreTooltipKeys").GetValue(data)
-                : [];
-            foreach (var tooltip in configuration.GetDeprecatedSection("character_lore_tooltips", "lore_tooltips").GetChildren())
+            var tooltips = (List<String>)
+                    AccessTools.Field(typeof(CharacterData), "characterLoreTooltipKeys").GetValue(data);
+            var loreTooltipsSection = configuration.GetDeprecatedSection("character_lore_tooltips", "lore_tooltips");
+            if (overrideMode == OverrideMode.Replace && loreTooltipsSection.Exists())
+            {
+                tooltips.Clear();
+            }
+            int tooltip_count = tooltips.Count;
+            foreach (var tooltip in loreTooltipsSection.GetChildren())
             {
                 var localizationTooltipTerm = tooltip.ParseLocalizationTerm();
                 if (localizationTooltipTerm != null)
                 {
                     string tooltipKey = $"CharacterData_tooltipKey{tooltip_count}-{name}";
-                    if (checkOverride && tooltips.Contains(localizationTooltipTerm.Key))
-                    {
-                        tooltipKey = localizationTooltipTerm.Key;
-                    }
-                    else
-                    {
-                        localizationTooltipTerm.Key = tooltipKey;
-                        tooltips.Add(localizationTooltipTerm.Key);
-                    }
+                    localizationTooltipTerm.Key = localizationTooltipTerm.Key ?? tooltipKey;
+                    tooltips.Add(tooltipKey);
                     termRegister.Register(tooltipKey, localizationTooltipTerm);
                     tooltip_count++;
                 }
             }
-            AccessTools.Field(typeof(CharacterData), "characterLoreTooltipKeys").SetValue(data, tooltips);
+            AccessTools.Field(typeof(CardData), "characterLoreTooltipKeys").SetValue(data, tooltips);
 
-            var artistAttribution = checkOverride
-                ? (string)AccessTools.Field(typeof(CharacterData), "artistAttribution").GetValue(data)
-                : "";
+            var artistAttribution = overrideMode.IsNewContent() ? "" :
+                (string)AccessTools.Field(typeof(CharacterData), "artistAttribution").GetValue(data);
             AccessTools
                 .Field(typeof(CharacterData), "artistAttribution")
                 .SetValue(
@@ -340,7 +321,7 @@ namespace TrainworksReloaded.Base.Character
                 );
 
             //endless baseline stats
-            var endlessBaselineStats = checkOverride
+            var endlessBaselineStats = overrideMode.IsNewContent()
                 ? (EndlessBaselineStats)
                     AccessTools.Field(typeof(CharacterData), "endlessBaselineStats").GetValue(data)
                 : new EndlessBaselineStats();
@@ -369,10 +350,11 @@ namespace TrainworksReloaded.Base.Character
                 .SetValue(data, endlessBaselineStats);
 
             //register before filling in data using
-            if (!checkOverride)
+            var modded = overrideMode.IsCloning() || overrideMode.IsNewContent();
+            if (modded)
                 service.Register(name, data);
 
-            return new CharacterDataDefinition(key, data, configuration, checkOverride);
+            return new CharacterDataDefinition(key, data, configuration, modded);
         }
     }
 }

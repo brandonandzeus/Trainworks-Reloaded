@@ -7,6 +7,7 @@ using SimpleInjector;
 using TrainworksReloaded.Base.Card;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Base.Localization;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
@@ -87,10 +88,10 @@ namespace TrainworksReloaded.Base.CardUpgrade
             var titleKey = $"CardUpgrade_titleKey-{name}";
             var descriptionKey = $"CardUpgrade_descriptionKey-{name}";
             var notificationKey = $"CardUpgrade_notificationKey-{name}";
-            var checkOverride = configuration.GetSection("override").ParseBool() ?? false;
+            var overrideMode = configuration.GetSection("override").ParseOverrideMode();
 
             string guid;
-            if (checkOverride && service.TryLookupName(id, out CardUpgradeData? data, out var _))
+            if (overrideMode.IsOverriding() && service.TryLookupName(id, out CardUpgradeData? data, out var _))
             {
                 logger.Log(LogLevel.Info, $"Overriding Upgrade {id}...");
                 titleKey = data.GetUpgradeTitleKey();
@@ -224,23 +225,17 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 );
 
             //int
-            var bonusDamage = checkOverride
-                ? (int)AccessTools.Field(typeof(CardUpgradeData), "bonusDamage").GetValue(data)
-                : 0;
+            var bonusDamage = (int)AccessTools.Field(typeof(CardUpgradeData), "bonusDamage").GetValue(data);
             AccessTools
                 .Field(typeof(CardUpgradeData), "bonusDamage")
                 .SetValue(data, configuration.GetSection("bonus_damage").ParseInt() ?? bonusDamage);
 
-            var bonusHP = checkOverride
-                ? (int)AccessTools.Field(typeof(CardUpgradeData), "bonusHP").GetValue(data)
-                : 0;
+            var bonusHP = (int)AccessTools.Field(typeof(CardUpgradeData), "bonusHP").GetValue(data);
             AccessTools
                 .Field(typeof(CardUpgradeData), "bonusHP")
                 .SetValue(data, configuration.GetSection("bonus_hp").ParseInt() ?? bonusHP);
 
-            var costReduction = checkOverride
-                ? (int)AccessTools.Field(typeof(CardUpgradeData), "costReduction").GetValue(data)
-                : 0;
+            var costReduction = (int)AccessTools.Field(typeof(CardUpgradeData), "costReduction").GetValue(data);
             AccessTools
                 .Field(typeof(CardUpgradeData), "costReduction")
                 .SetValue(
@@ -248,9 +243,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
                     configuration.GetSection("cost_reduction").ParseInt() ?? costReduction
                 );
 
-            var xCostReduction = checkOverride
-                ? (int)AccessTools.Field(typeof(CardUpgradeData), "xCostReduction").GetValue(data)
-                : 0;
+            var xCostReduction = (int)AccessTools.Field(typeof(CardUpgradeData), "xCostReduction").GetValue(data);
             AccessTools
                 .Field(typeof(CardUpgradeData), "xCostReduction")
                 .SetValue(
@@ -258,23 +251,17 @@ namespace TrainworksReloaded.Base.CardUpgrade
                     configuration.GetSection("x_cost_reduction").ParseInt() ?? xCostReduction
                 );
 
-            var bonusHeal = checkOverride
-                ? (int)AccessTools.Field(typeof(CardUpgradeData), "bonusHeal").GetValue(data)
-                : 0;
+            var bonusHeal = (int)AccessTools.Field(typeof(CardUpgradeData), "bonusHeal").GetValue(data);
             AccessTools
                 .Field(typeof(CardUpgradeData), "bonusHeal")
                 .SetValue(data, configuration.GetSection("bonus_heal").ParseInt() ?? bonusHeal);
 
-            var bonusSize = checkOverride
-                ? (int)AccessTools.Field(typeof(CardUpgradeData), "bonusSize").GetValue(data)
-                : 0;
+            var bonusSize = (int)AccessTools.Field(typeof(CardUpgradeData), "bonusSize").GetValue(data);
             AccessTools
                 .Field(typeof(CardUpgradeData), "bonusSize")
                 .SetValue(data, configuration.GetSection("bonus_size").ParseInt() ?? bonusSize);
 
-            var bonusEquipment = checkOverride
-                ? (int)AccessTools.Field(typeof(CardUpgradeData), "bonusEquipment").GetValue(data)
-                : 0;
+            var bonusEquipment = (int)AccessTools.Field(typeof(CardUpgradeData), "bonusEquipment").GetValue(data);
             AccessTools
                 .Field(typeof(CardUpgradeData), "bonusEquipment")
                 .SetValue(
@@ -282,9 +269,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
                     configuration.GetSection("bonus_equipment").ParseInt() ?? bonusEquipment
                 );
 
-            var excludeFromClones = checkOverride
-                ? (bool)AccessTools.Field(typeof(CardUpgradeData), "excludeFromClones").GetValue(data)
-                : false;
+            var excludeFromClones = (bool)AccessTools.Field(typeof(CardUpgradeData), "excludeFromClones").GetValue(data);
             AccessTools
                 .Field(typeof(CardUpgradeData), "excludeFromClones")
                 .SetValue(
@@ -293,19 +278,17 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 );
 
             //List<String>
-            var removeTraitUpgrades =
-                (List<string>)
-                    AccessTools.Field(typeof(CardUpgradeData), "removeTraitUpgrades").GetValue(data)
-                ?? [];
-            var upgradeReferences = configuration.GetSection("remove_trait_upgrades")
+            var removeTraitUpgrades = data.GetRemoveTraitUpgrades() ?? [];
+            var removeTraitUpgradeConfig = configuration.GetSection("remove_trait_upgrades");
+            if (overrideMode == OverrideMode.Replace && removeTraitUpgradeConfig.Exists())
+            {
+                removeTraitUpgrades.Clear();
+            }    
+            var upgradeReferences = removeTraitUpgradeConfig 
                 .GetChildren()
                 .Select(x => x.ParseReference())
                 .Where(x => x != null)
                 .Cast<ReferencedObject>();
-            if (upgradeReferences.Count() > 0)
-            {
-                removeTraitUpgrades.Clear();
-            }
             foreach (var reference in upgradeReferences)
             {
                 var traitStateName = reference.id;
@@ -327,9 +310,10 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 .Field(typeof(CardUpgradeData), "removeTraitUpgrades")
                 .SetValue(data, removeTraitUpgrades);
 
-            if (!checkOverride)
+            var modded = overrideMode.IsNewContent() || overrideMode.IsCloning();
+            if (modded)
                 service.Register(name, data);
-            return new CardUpgradeDefinition(key, data, configuration, checkOverride);
+            return new CardUpgradeDefinition(key, data, configuration, modded);
         }
     }
 }

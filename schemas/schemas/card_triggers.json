@@ -40,7 +40,7 @@
                 "description": "Integer parameter for the trigger effect."
               },
               "param_upgrade": {
-                "$ref": "../defintions/card_upgrade.json",
+                "$ref": "../definitions/card_upgrade.json",
                 "description": "Reference to an upgrade that should be applied."
               },
               "persistence_mode": {

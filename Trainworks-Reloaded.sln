@@ -91,6 +91,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "definitions", "definitions"
 		schemas\definitions\lore_tooltip_style.json = schemas\definitions\lore_tooltip_style.json
 		schemas\definitions\map_node_type.json = schemas\definitions\map_node_type.json
 		schemas\definitions\map_skip_settings.json = schemas\definitions\map_skip_settings.json
+		schemas\definitions\override_mode.json = schemas\definitions\override_mode.json
 		schemas\definitions\parse_term.json = schemas\definitions\parse_term.json
 		schemas\definitions\persistence.json = schemas\definitions\persistence.json
 		schemas\definitions\rarity.json = schemas\definitions\rarity.json

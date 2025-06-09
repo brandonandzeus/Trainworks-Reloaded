@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using ShinyShoe.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -30,9 +31,10 @@ namespace TrainworksReloaded.Base.Extensions
         {
             string? id = section.Value ?? section.GetSection("id").Value;
             string? mod_reference = section.GetSection("mod_reference").Value;
-            if (id == null)
+
+            if (id.IsNullOrEmpty() || id == "null")
                 return null;
-            return new ReferencedObject(id, mod_reference);
+            return new ReferencedObject(id!, mod_reference);
         }
     }
 }

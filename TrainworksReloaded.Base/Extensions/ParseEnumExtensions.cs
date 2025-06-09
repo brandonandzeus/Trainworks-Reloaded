@@ -4,6 +4,7 @@ using ShinyShoe;
 using System;
 using System.Linq;
 using TrainworksReloaded.Base.Localization;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Extensions;
 using UnityEngine;
 using static BossState;
@@ -19,6 +20,24 @@ namespace TrainworksReloaded.Base.Extensions
 {
     public static class ParseEnumExtensions
     {
+        public static OverrideMode ParseOverrideMode(this IConfigurationSection section)
+        {
+            var val = section.Value;
+            if (string.IsNullOrEmpty(val))
+            {
+                return OverrideMode.New;
+            }
+            return val.ToLower() switch
+            {
+                "false" => OverrideMode.New,
+                "true" => OverrideMode.Replace,
+                "replace" => OverrideMode.Replace,
+                "append" => OverrideMode.Append,
+                "clone" => OverrideMode.Clone,
+                _ => OverrideMode.New
+            };
+        }
+
         public static MapNodeData.SkipCheckSettings? ParseSkipSettings(
             this IConfigurationSection section
         )
