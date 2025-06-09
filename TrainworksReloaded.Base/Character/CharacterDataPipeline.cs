@@ -290,7 +290,7 @@ namespace TrainworksReloaded.Base.Character
 
             //handle tooltips
             var tooltips = (List<String>)
-                    AccessTools.Field(typeof(CharacterData), "characterLoreTooltipKeys").GetValue(data);
+                    AccessTools.Field(typeof(CharacterData), "characterLoreTooltipKeys").GetValue(data) ?? [];
             var loreTooltipsSection = configuration.GetDeprecatedSection("character_lore_tooltips", "lore_tooltips");
             if (overrideMode == OverrideMode.Replace && loreTooltipsSection.Exists())
             {
@@ -309,7 +309,7 @@ namespace TrainworksReloaded.Base.Character
                     tooltip_count++;
                 }
             }
-            AccessTools.Field(typeof(CardData), "characterLoreTooltipKeys").SetValue(data, tooltips);
+            AccessTools.Field(typeof(CharacterData), "characterLoreTooltipKeys").SetValue(data, tooltips);
 
             var artistAttribution = overrideMode.IsNewContent() ? "" :
                 (string)AccessTools.Field(typeof(CharacterData), "artistAttribution").GetValue(data);

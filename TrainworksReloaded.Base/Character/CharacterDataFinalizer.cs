@@ -225,7 +225,7 @@ namespace TrainworksReloaded.Base.Character
                 .SetValue(data, statusEffectImmunities.ToArray());
 
             //status
-            var startingStatusEffects = data.GetStartingStatusEffects().ToList();
+            var startingStatusEffects = data.GetStartingStatusEffects()?.ToList() ?? [];
             var startingStatusEffectConfig = configuration.GetSection("starting_status_effects");
             if (overrideMode == OverrideMode.Replace && startingStatusEffectConfig.Exists())
             {
