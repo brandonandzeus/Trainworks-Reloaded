@@ -278,7 +278,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 );
 
             //List<String>
-            var removeTraitUpgrades = data.GetRemoveTraitUpgrades();
+            var removeTraitUpgrades = data.GetRemoveTraitUpgrades() ?? [];
             var removeTraitUpgradeConfig = configuration.GetSection("remove_trait_upgrades");
             if (overrideMode == OverrideMode.Replace && removeTraitUpgradeConfig.Exists())
             {

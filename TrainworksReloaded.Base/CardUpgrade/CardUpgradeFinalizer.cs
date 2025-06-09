@@ -169,7 +169,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
             AccessTools.Field(typeof(CardUpgradeData), "roomModifierUpgrades").SetValue(data, roomModifierUpgrades);
 
             //status
-            var statusEffectUpgrades = data.GetStatusEffectUpgrades();
+            var statusEffectUpgrades = data.GetStatusEffectUpgrades() ?? [];
             var statusEffectUpgradesConfig = configuration.GetSection("status_effect_upgrades");
             if (overrideMode == OverrideMode.Replace && statusEffectUpgradesConfig.Exists())
             {
