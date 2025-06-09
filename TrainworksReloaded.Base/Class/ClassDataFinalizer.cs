@@ -134,7 +134,7 @@ namespace TrainworksReloaded.Base.Class
             }
 
             //handle starter relics
-            var starterRelics = data.GetStarterRelics();
+            var starterRelics = data.GetStarterRelics() ?? [];
             var relicConfig = configuration.GetSection("starter_relics");
             if (overrideMode == OverrideMode.Replace && relicConfig.Exists())
             {

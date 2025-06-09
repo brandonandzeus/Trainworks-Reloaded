@@ -8,6 +8,7 @@ using TrainworksReloaded.Base.Prefab;
 using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
+using UnityEngine;
 using UnityEngine.AddressableAssets;
 using static TrainworksReloaded.Base.Extensions.ParseReferenceExtensions;
 
@@ -186,6 +187,14 @@ namespace TrainworksReloaded.Base.Card
                         .Field(typeof(CardData), "cardArtPrefabVariantRef")
                         .SetValue(data, gameObject);
                 }
+            }
+            else if (data.IsUnitAbility())
+            {
+                AccessTools.Field(typeof(CardData), "cardArtPrefabVariantRef").SetValue(data, new AssetReferenceGameObject());
+            }
+            else
+            {
+                logger.Log(LogLevel.Warning, $"Card {key} {definition.Id} is missing card_art. This is required for non ability cards.");
             }
 
             //handle traits
