@@ -119,8 +119,8 @@
             "description": "Whether this class is a crew member class."
           },
           "clan_select_sfx_cue": {
-            "$ref": "../definitions/reference.json",
-            "description": "Reference to the sound effect cue played for this class."
+            "$ref": "../definitions/sfx.json",
+            "description": "Reference to the sound effect cue played for this class (Not implemented)."
           },
           "starter_relics": {
             "type": "array",

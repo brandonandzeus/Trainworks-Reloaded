@@ -70,8 +70,8 @@
             "description": "Reference to the minimap icon sprite."
           },
           "node_selected_sfx_cue": {
-            "type": "string",
-            "description": "Reference to the sound cue played when selecting this node."
+            "$ref": "../definitions/sfx.json",
+            "description": "Reference to the sound cue played when selecting this node (Not implemented)."
           },
           "prefab": {
             "$ref": "../definitions/reference.json",

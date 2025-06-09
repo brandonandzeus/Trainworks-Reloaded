@@ -12,8 +12,8 @@
         ],
         "properties": {
           "collect_sfx_cue": {
-            "type": "string",
-            "description": "Reference to the sound sfx cue played when collecting this reward."
+            "$ref": "../definitions/sfx.json",
+            "description": "Reference to the sound sfx cue played when collecting this reward (Not implemented)."
           },
           "costs": {
             "type": "array",

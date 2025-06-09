@@ -35,8 +35,8 @@
             "description": "Whether to allow secondary UI placement."
           },
           "applied_sfx": {
-            "type": "string",
-            "description": "Reference to the sound effect played when the status is applied."
+            "$ref": "../definitions/sfx.json",
+            "description": "Reference to the sound effect played when the status is applied (Not implemented)."
           },
           "card_tooltips": {
             "$ref": "../definitions/parse_term.json",
@@ -207,8 +207,8 @@
             "default": "none"
           },
           "triggered_sfx": {
-            "type": "string",
-            "description": "Reference to the sound effect played when the status is triggered."
+            "$ref": "../definitions/sfx.json",
+            "description": "Reference to the sound effect played when the status is triggered (Not implemented)."
           },
           "triggered_vfx": {
             "$ref": "../definitions/vfx.json",
