@@ -96,7 +96,7 @@ namespace TrainworksReloaded.Base.Relic
             var data = definition.Data;
             var key = definition.Key;
 
-            logger.Log(LogLevel.Debug, $"Finalizing RelicEffect {key}... ");
+            logger.Log(LogLevel.Debug, $"Finalizing RelicEffect {key} {definition.Id}... ");
 
             // Handle status effects
             var statusEffects = new List<StatusEffectStackData>();
