@@ -27,7 +27,7 @@ namespace TrainworksReloaded.Base.Extensions
             bool ret = register.TryLookupIdentifier(name, RegisterIdentifierType.ReadableID, out lookup, out IsModded);
             if (!ret)
             {
-                Logger.LogWarning($"Could not find identifier in {typeof(T).Name} Register with id (name) {name}. Some data may not be present on {typeof(T).Name}");
+                Logger.LogWarning($"Could not find identifier in {register.GetType().Name} with id (name) {name}. Some data may not be present on {typeof(T).Name}");
                 Logger.LogDebug($"{Environment.StackTrace}");
             }
             return ret;
@@ -49,7 +49,7 @@ namespace TrainworksReloaded.Base.Extensions
             bool ret = register.TryLookupIdentifier(id, RegisterIdentifierType.GUID, out lookup, out IsModded);
             if (!ret)
             {
-                Logger.LogWarning($"Could not find identifier in {typeof(T).Name} Register with id (guid) {id}. Some data may not be present on {typeof(T).Name}");
+                Logger.LogWarning($"Could not find identifier in {register.GetType().Name} with id (guid) {id}. Some data may not be present on {typeof(T).Name}");
                 Logger.LogDebug($"{Environment.StackTrace}");
             }
             return ret;
