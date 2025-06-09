@@ -129,7 +129,7 @@ namespace TrainworksReloaded.Base.Map
                         out var mapLookup,
                         out var _
                     )
-                    // TODO this is questionable. MapNodePools are RandomMapDataContainers or MapNodeBucketContainer.
+                    // MapNodeBucketContainer is handled much later in Intialization steps.
                     && mapLookup is RandomMapDataContainer mapContainer
                 )
                 {

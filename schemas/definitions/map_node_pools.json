@@ -1,0 +1,68 @@
+{
+  "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/definitions/map_node_pools.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "anyOf": [
+    {
+      "$ref": "../definitions/reference.json"
+    },
+    {
+      "$comment": "Map Node Bucket Containers",
+      "type": "string",
+      "enum": [
+        "RandomChosenMainClassUnit",
+        "RandomChosenSubClassUnit",
+        "First Champion Upgrade - Level 1",
+        "Second Champion Upgrade - Level 4",
+        "Third Champion Upgrade - Level 6",
+        "Starter Blessing - Level 1",
+        "Merchant Ring 2",
+        "Merchant Ring 3",
+        "Merchant - Rings 6 and 7",
+        "Merchant - Rings 4 and 5",
+        "Merchant - Level 7 Artifact Guaranteed",
+        "Event - Level 3",
+        "Rewards Ring 7",
+        "Rewards Ring 6 Heal or Coin",
+        "Rewards Heal or Coin at 5",
+        "Rewards Rings 5 and 6",
+        "Rewards Rings 4",
+        "Rewards Rings 3",
+        "Rewards Ring 3 Heal or Coin",
+        "Merchant Ring 1",
+        "Banners Ring 1",
+        "Rewards Ring 2"
+      ]
+    },
+    {
+      "$comment": "Random Map Data Containers",
+      "type": "string",
+      "enum": [
+        "MerchantPoolFinal",
+        "RewardsSimpleSetNoHealOrCoinGuarnateedEventFor3",
+        "RewardsSimpleRingHealOrCoinMedium",
+        "RewardsSimpleSetNoHealOrCoinFor4",
+        "RewardsRing7",
+        "RandomChosenBanner",
+        "RandomForge",
+        "MerchantPoolArtifactAndSteelOrMagicFor3",
+        "MerchantPoolFirst",
+        "RewardsSimpleSetNoHealOrCoin",
+        "RewardsSimpleRing2HealOrOtherReward",
+        "RewardsSimpleRingHealOrCoinLarge",
+        "RewardsSimpleRing2Banners",
+        "RewardsSimpleRing3Bonus",
+        "RandomChosenMainClassUnit",
+        "Event",
+        "MerchantPoolRings4and5",
+        "RewardsSimpleSetNoHealCoinBannerArtifact",
+        "MerchantPoolRings6and7",
+        "RandomChosenSubClassUnit",
+        "RewardsSimpleLate",
+        "MerchantPoolEarly",
+        "RewardsSimpleRing4Bonus",
+        "MerchantPoolEquipmentAndSteelOrMagicFor2"
+      ]
+    }
+
+  ]
+}

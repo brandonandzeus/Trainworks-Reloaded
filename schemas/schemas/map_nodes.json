@@ -61,7 +61,7 @@
             "type": "array",
             "description": "List of random map pools this node can appear in.",
             "items": {
-              "$ref": "../definitions/reference.json",
+              "$ref": "../definitions/map_node_pools.json",
               "description": "Random Map Data Container Reference"
             }
           },
