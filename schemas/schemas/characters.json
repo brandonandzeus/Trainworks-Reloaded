@@ -195,9 +195,8 @@
             "description": "Localized text for this character's name."
           },
           "override": {
-            "type": "boolean",
-            "description": "Whether this character overrides an existing character with the same ID.",
-            "default": false
+            "$ref": "../definitions/override_mode.json",
+            "description": "Whether this character overrides an existing character with the same ID (requires the Unity Asset Name)."
           },
           "prevent_abilities_from_equipment": {
             "type": "boolean",

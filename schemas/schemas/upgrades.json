@@ -92,8 +92,8 @@
             "description": "Notification text to display when the upgrade is applied."
           },
           "override": {
-            "type": "boolean",
-            "description": "Whether this upgrade should override an existing upgrade with the same id."
+            "$ref": "../definitions/override_mode.json",
+            "description": "Whether this upgrade should override an existing upgrade with the same ID (Requires the Unity Asset Name)."
           },
           "persistent_vfx": {
             "$ref": "../definitions/vfx.json",
