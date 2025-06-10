@@ -19,7 +19,7 @@
           "$ref": "../definitions/parse_term.json",
           "description": "Description text for the tooltip."
         },
-        "status_id": {
+        "status": {
           "$ref": "../definitions/status_effect.json",
           "description": "Status effect reference for status tooltips."
         },
