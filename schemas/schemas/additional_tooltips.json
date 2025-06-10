@@ -19,8 +19,8 @@
           "$ref": "../definitions/parse_term.json",
           "description": "Description text for the tooltip."
         },
-        "status": {
-          "type": "string",
+        "status_id": {
+          "$ref": "../definitions/status_effect.json",
           "description": "Status effect reference for status tooltips."
         },
         "id": {
@@ -28,15 +28,7 @@
           "type": "string",
           "description": "Identifier for this additional tooltip."
         },
-        "is_status": {
-          "type": "boolean",
-          "description": "Whether this is a status effect tooltip."
-        },
-        "is_trigger": {
-          "type": "boolean",
-          "description": "Whether this is a trigger tooltip."
-        },
-        "character_trigger": {
+        "trigger": {
           "$ref": "../definitions/character_trigger.json",
           "description": "Character trigger for trigger tooltips."
         },
