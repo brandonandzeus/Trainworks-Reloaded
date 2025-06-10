@@ -192,7 +192,7 @@ namespace TrainworksReloaded.Base.Card
             {
                 AccessTools.Field(typeof(CardData), "cardArtPrefabVariantRef").SetValue(data, new AssetReferenceGameObject());
             }
-            else
+            else if (overrideMode.IsNewContent())
             {
                 logger.Log(LogLevel.Warning, $"Card {key} {definition.Id} is missing card_art. This is required for non ability cards.");
             }

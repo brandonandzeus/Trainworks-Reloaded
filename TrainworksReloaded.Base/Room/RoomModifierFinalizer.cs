@@ -215,7 +215,7 @@ namespace TrainworksReloaded.Base.Room
                 }
             }
             AccessTools
-                .Field(typeof(RelicEffectData), "additionalTooltips")
+                .Field(typeof(RoomModifierData), "additionalTooltips")
                 .SetValue(data, tooltips.ToArray());
         }
     }
