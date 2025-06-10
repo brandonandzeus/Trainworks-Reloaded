@@ -58,7 +58,7 @@ jobs:
           path: ${{ env.mod_namespace }}-${{ env.mod_name }}-${{ github.ref_name }}.zip
           
       - name: Github Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v2.2.2
         with:
           files: ${{ env.mod_namespace }}-${{ env.mod_name }}-${{ github.ref_name }}.zip
           prerelease: true
