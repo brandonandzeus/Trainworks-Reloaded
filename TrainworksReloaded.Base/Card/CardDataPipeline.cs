@@ -87,7 +87,7 @@ namespace TrainworksReloaded.Base.Card
                 return null;
             }
 
-            var name = key.GetId("Card", id);
+            var name = key.GetId(TemplateConstants.Card, id);
             var namekey = $"CardData_nameKey-{name}";
             var descriptionKey = $"CardData_descriptionKey-{name}";
             var overrideMode = configuration.GetSection("override").ParseOverrideMode();
