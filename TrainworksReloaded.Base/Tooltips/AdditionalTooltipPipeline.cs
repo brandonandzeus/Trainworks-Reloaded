@@ -60,7 +60,8 @@ namespace TrainworksReloaded.Base.Tooltips
             if (titleKeyTerm != null)
             {
                 string tooltipKey = $"AdditionalTooltipData_tooltipTitleKey-{name}";
-                titleKeyTerm.Key = titleKeyTerm.Key ?? tooltipKey;
+                if (titleKeyTerm.Key.IsNullOrEmpty())
+                    titleKeyTerm.Key =  tooltipKey;
                 data.titleKey = titleKeyTerm.Key;
                 if (titleKeyTerm.HasTranslation())
                     termRegister.Register(titleKeyTerm.Key, titleKeyTerm);
@@ -69,7 +70,8 @@ namespace TrainworksReloaded.Base.Tooltips
             if (descriptionTKeyTerm != null)
             {
                 string tooltipKey = $"AdditionalTooltipData_tooltipDescriptionKey-{name}";
-                descriptionTKeyTerm.Key = descriptionTKeyTerm.Key ?? tooltipKey;
+                if (descriptionTKeyTerm.Key.IsNullOrEmpty())
+                    descriptionTKeyTerm.Key = tooltipKey;
                 data.descriptionKey = descriptionTKeyTerm.Key;
                 if (descriptionTKeyTerm.HasTranslation())
                     termRegister.Register(descriptionTKeyTerm.Key, descriptionTKeyTerm);

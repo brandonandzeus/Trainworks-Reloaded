@@ -303,7 +303,8 @@ namespace TrainworksReloaded.Base.Character
                 if (localizationTooltipTerm != null)
                 {
                     string tooltipKey = $"CharacterData_tooltipKey{tooltip_count}-{name}";
-                    localizationTooltipTerm.Key = localizationTooltipTerm.Key ?? tooltipKey;
+                    if (localizationTooltipTerm.Key.IsNullOrEmpty())
+                        localizationTooltipTerm.Key = tooltipKey;
                     tooltips.Add(tooltipKey);
                     if (localizationTooltipTerm.HasTranslation())
                         termRegister.Register(tooltipKey, localizationTooltipTerm);
