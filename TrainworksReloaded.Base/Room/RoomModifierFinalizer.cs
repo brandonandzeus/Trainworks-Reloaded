@@ -16,6 +16,7 @@ namespace TrainworksReloaded.Base.Room
     {
         private readonly IModLogger<RoomModifierFinalizer> logger;
         private readonly ICache<IDefinition<RoomModifierData>> cache;
+        private readonly IRegister<AdditionalTooltipData> tooltipRegister;
         private readonly IRegister<Sprite> spriteRegister;
         private readonly IRegister<CardData> cardDataRegister;
         private readonly IRegister<CardUpgradeData> upgradeDataRegister;
@@ -28,6 +29,7 @@ namespace TrainworksReloaded.Base.Room
         public RoomModifierFinalizer(
             IModLogger<RoomModifierFinalizer> logger,
             ICache<IDefinition<RoomModifierData>> cache,
+            IRegister<AdditionalTooltipData> tooltipRegister,
             IRegister<Sprite> spriteRegister,
             IRegister<CardData> cardDataRegister,
             IRegister<CardUpgradeData> upgradeDataRegister,
@@ -40,6 +42,7 @@ namespace TrainworksReloaded.Base.Room
         {
             this.logger = logger;
             this.cache = cache;
+            this.tooltipRegister = tooltipRegister;
             this.spriteRegister = spriteRegister;
             this.cardDataRegister = cardDataRegister;
             this.upgradeDataRegister = upgradeDataRegister;
@@ -195,6 +198,25 @@ namespace TrainworksReloaded.Base.Room
             AccessTools
                 .Field(typeof(RoomModifierData), "paramSubtype")
                 .SetValue(data, paramSubtype);
+
+            var tooltips = new List<AdditionalTooltipData>();
+            var tooltipReferences = configuration
+                .GetSection("additional_tooltips")
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var reference in tooltipReferences)
+            {
+                var id = reference.ToId(key, TemplateConstants.AdditionalTooltip);
+                if (tooltipRegister.TryLookupName(id, out var tooltip, out var _))
+                {
+                    tooltips.Add(tooltip);
+                }
+            }
+            AccessTools
+                .Field(typeof(RelicEffectData), "additionalTooltips")
+                .SetValue(data, tooltips.ToArray());
         }
     }
 }
