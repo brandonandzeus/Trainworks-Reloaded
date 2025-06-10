@@ -149,7 +149,8 @@ namespace TrainworksReloaded.Base.Card
                     string tooltipKey = $"CardData_tooltipKey{tooltip_count}-{name}";
                     localizationTooltipTerm.Key = localizationTooltipTerm.Key ?? tooltipKey;    
                     tooltips.Add(tooltipKey);
-                    termRegister.Register(tooltipKey, localizationTooltipTerm);
+                    if (localizationTooltipTerm.HasTranslation())
+                        termRegister.Register(tooltipKey, localizationTooltipTerm);
                     tooltip_count++;
                 }
             }
