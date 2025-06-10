@@ -87,7 +87,7 @@ namespace TrainworksReloaded.Base.Card
                 return null;
             }
 
-            var name = key.GetId("Card", id);
+            var name = key.GetId(TemplateConstants.Card, id);
             var namekey = $"CardData_nameKey-{name}";
             var descriptionKey = $"CardData_descriptionKey-{name}";
             var overrideMode = configuration.GetSection("override").ParseOverrideMode();
@@ -147,9 +147,11 @@ namespace TrainworksReloaded.Base.Card
                 if (localizationTooltipTerm != null)
                 {
                     string tooltipKey = $"CardData_tooltipKey{tooltip_count}-{name}";
-                    localizationTooltipTerm.Key = localizationTooltipTerm.Key ?? tooltipKey;    
+                    if (localizationTooltipTerm.Key.IsNullOrEmpty())
+                        localizationTooltipTerm.Key = tooltipKey;    
                     tooltips.Add(tooltipKey);
-                    termRegister.Register(tooltipKey, localizationTooltipTerm);
+                    if (localizationTooltipTerm.HasTranslation())
+                        termRegister.Register(tooltipKey, localizationTooltipTerm);
                     tooltip_count++;
                 }
             }

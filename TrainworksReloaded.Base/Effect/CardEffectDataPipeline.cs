@@ -340,51 +340,6 @@ namespace TrainworksReloaded.Base.Effect
                 .Field(typeof(CardEffectData), "animToPlay")
                 .SetValue(data, configuration.GetSection("anim_to_play").ParseAnim() ?? animToPlay);
 
-            var additionalTooltips = new List<AdditionalTooltipData>();
-            int configCount = 0;
-            foreach (var config in configuration.GetSection("additional_tooltips").GetChildren())
-            {
-                var tooltipData = new AdditionalTooltipData();
-
-                var titleKey = $"CardEffectDataTooltip_titleKey_{configCount}-{name}";
-                var descriptionTKey = $"CardEffectDataTooltip_descriptionKey_{configCount}-{name}";
-
-                var titleKeyTerm = configuration.GetSection("titles").ParseLocalizationTerm();
-                if (titleKeyTerm != null)
-                {
-                    tooltipData.titleKey = titleKey;
-                    titleKeyTerm.Key = titleKey;
-                    termRegister.Register(titleKey, titleKeyTerm);
-                }
-                var descriptionTKeyTerm = configuration
-                    .GetSection("descriptions")
-                    .ParseLocalizationTerm();
-                if (descriptionTKeyTerm != null)
-                {
-                    tooltipData.descriptionKey = descriptionTKey;
-                    descriptionTKeyTerm.Key = descriptionTKey;
-                    termRegister.Register(descriptionTKey, descriptionTKeyTerm);
-                }
-
-                tooltipData.style =
-                    configuration.GetSection("style").ParseTooltipDesignType()
-                    ?? TooltipDesigner.TooltipDesignType.Default;
-                tooltipData.isStatusTooltip =
-                    configuration.GetSection("is_status").ParseBool() ?? false;
-                tooltipData.hideInTrainRoomUI =
-                    configuration.GetSection("hide_in_train_room").ParseBool() ?? false;
-                tooltipData.allowSecondaryPlacement =
-                    configuration.GetSection("allow_secondary_placement").ParseBool() ?? false;
-                tooltipData.isTriggerTooltip =
-                    configuration.GetSection("hide_in_train_room").ParseBool() ?? false;
-
-                configCount++;
-                additionalTooltips.Add(tooltipData);
-            }
-            AccessTools
-                .Field(typeof(CardEffectData), "additionalTooltips")
-                .SetValue(data, additionalTooltips.ToArray());
-
             service.Register(name, data);
             return new CardEffectDefinition(key, data, configuration);
         }

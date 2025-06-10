@@ -189,51 +189,6 @@ namespace TrainworksReloaded.Base.Room
                 .Field(typeof(RoomModifierData), "paramInt2")
                 .SetValue(data, configuration.GetSection("param_int_2").ParseInt() ?? paramInt2);
 
-            var additionalTooltips = new List<AdditionalTooltipData>();
-            int configCount = 0;
-            foreach (var config in configuration.GetSection("additional_tooltips").GetChildren())
-            {
-                var tooltipData = new AdditionalTooltipData();
-
-                var titleKey = $"RoomModifierDataTooltip_titleKey_{configCount}-{name}";
-                var descriptionTKey = $"RoomModifierDataTooltip_descriptionKey_{configCount}-{name}";
-
-                var titleKeyTerm = configuration.GetSection("titles").ParseLocalizationTerm();
-                if (titleKeyTerm != null)
-                {
-                    tooltipData.titleKey = titleKey;
-                    titleKeyTerm.Key = titleKey;
-                    termRegister.Register(titleKey, titleKeyTerm);
-                }
-                var descriptionTKeyTerm = configuration
-                    .GetSection("descriptions")
-                    .ParseLocalizationTerm();
-                if (descriptionTKeyTerm != null)
-                {
-                    tooltipData.descriptionKey = descriptionTKey;
-                    descriptionTKeyTerm.Key = descriptionTKey;
-                    termRegister.Register(descriptionTKey, descriptionTKeyTerm);
-                }
-
-                tooltipData.style =
-                    configuration.GetSection("param_trigger").ParseTooltipDesignType()
-                    ?? TooltipDesigner.TooltipDesignType.Default;
-                tooltipData.isStatusTooltip =
-                    configuration.GetSection("is_status").ParseBool() ?? false;
-                tooltipData.hideInTrainRoomUI =
-                    configuration.GetSection("hide_in_train_room").ParseBool() ?? false;
-                tooltipData.allowSecondaryPlacement =
-                    configuration.GetSection("allow_secondary_placement").ParseBool() ?? false;
-                tooltipData.isTriggerTooltip =
-                    configuration.GetSection("hide_in_train_room").ParseBool() ?? false;
-
-                configCount++;
-                additionalTooltips.Add(tooltipData);
-            }
-            AccessTools
-                .Field(typeof(RoomModifierData), "additionalTooltips")
-                .SetValue(data, additionalTooltips.ToArray());
-
             service.Register(name, data);
             return new RoomModifierDefinition(key, data, configuration) { Id = id };
         }

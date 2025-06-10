@@ -248,6 +248,10 @@ namespace TrainworksReloaded.Base.Extensions
                 return null;
             }
 
+            // I don't get the nullability stuff moving the ?? "" to the english line still makes it
+            // think it could be a null value even if defined as a string explicitly.
+            string def = english ?? "";
+
             return new LocalizationTerm()
             {
                 Key = key ?? "",
@@ -255,16 +259,16 @@ namespace TrainworksReloaded.Base.Extensions
                 Desc = description ?? "",
                 Group = group ?? "",
                 Descriptions = speaker_descriptions ?? "",
-                English = english ?? "",
-                French = french ?? "",
-                German = german ?? "",
-                Russian = russian ?? "",
-                Portuguese = portuguese ?? "",
-                Chinese = chinese ?? "",
-                Spanish = spanish ?? "",
-                ChineseTraditional = chinese_traditional ?? "",
-                Korean = korean ?? "",
-                Japanese = japanese ?? "",
+                English = def,
+                French = french ?? def,
+                German = german ?? def,
+                Russian = russian ?? def,
+                Portuguese = portuguese ?? def,
+                Chinese = chinese ?? def,
+                Spanish = spanish ?? def,
+                ChineseTraditional = chinese_traditional ?? def,
+                Korean = korean ?? def,
+                Japanese = japanese ?? def,
             };
         }
 

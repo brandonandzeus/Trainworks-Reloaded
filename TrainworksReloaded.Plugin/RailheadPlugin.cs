@@ -21,6 +21,7 @@ using TrainworksReloaded.Base.Reward;
 using TrainworksReloaded.Base.Room;
 using TrainworksReloaded.Base.StatusEffects;
 using TrainworksReloaded.Base.Subtype;
+using TrainworksReloaded.Base.Tooltips;
 using TrainworksReloaded.Base.Trait;
 using TrainworksReloaded.Base.Trigger;
 using TrainworksReloaded.Core;
@@ -114,6 +115,7 @@ namespace TrainworksReloaded.Plugin
                 c.Register<Finalizer, Finalizer>();
                 c.Collection.Register<IDataFinalizer>(
                     [
+                        typeof(AdditionalTooltipFinalizer),
                         typeof(CardDataFinalizer),
                         typeof(CardEffectFinalizer),
                         typeof(CardTraitDataFinalizer),
@@ -339,6 +341,20 @@ namespace TrainworksReloaded.Plugin
                 {
                     var pipeline = c.GetInstance<
                         IDataPipeline<IRegister<StatusEffectData>, StatusEffectData>
+                    >();
+                    pipeline.Run(x);
+                });
+
+                c.RegisterSingleton<IRegister<AdditionalTooltipData>, AdditionalTooltipRegister>();
+                c.RegisterSingleton<AdditionalTooltipRegister, AdditionalTooltipRegister>();
+                c.Register<
+                    IDataPipeline<IRegister<AdditionalTooltipData>, AdditionalTooltipData>,
+                    AdditionalTooltipPipeline
+                >();
+                c.RegisterInitializer<IRegister<AdditionalTooltipData>>(x =>
+                {
+                    var pipeline = c.GetInstance<
+                        IDataPipeline<IRegister<AdditionalTooltipData>, AdditionalTooltipData>
                     >();
                     pipeline.Run(x);
                 });

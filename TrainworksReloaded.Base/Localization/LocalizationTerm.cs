@@ -17,5 +17,10 @@
         public string ChineseTraditional { get; set; } = "";
         public string Korean { get; set; } = "";
         public string Japanese { get; set; } = "";
+
+        public bool HasTranslation()
+        {
+            return !(English == "" && French == "" && German == "" && Russian == "" && Portuguese == "" && Chinese == "" && Spanish == "" && ChineseTraditional == "" && Korean == "" && Japanese == "");
+        }
     }
 }

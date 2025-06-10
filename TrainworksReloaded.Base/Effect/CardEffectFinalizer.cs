@@ -14,6 +14,7 @@ namespace TrainworksReloaded.Base.Effect
 {
     public class CardEffectFinalizer : IDataFinalizer
     {
+        private readonly IRegister<AdditionalTooltipData> tooltipRegister;
         private readonly IRegister<CardData> cardRegister;
         private readonly IRegister<CharacterData> characterDataRegister;
         private readonly IRegister<CardUpgradeData> cardUpgradeRegister;
@@ -26,6 +27,7 @@ namespace TrainworksReloaded.Base.Effect
         private readonly ICache<IDefinition<CardEffectData>> cache;
 
         public CardEffectFinalizer(
+            IRegister<AdditionalTooltipData> tooltipRegister,
             IRegister<CardData> cardRegister,
             IRegister<CharacterData> characterDataRegister,
             IRegister<CardUpgradeData> cardUpgradeRegister,
@@ -38,6 +40,7 @@ namespace TrainworksReloaded.Base.Effect
             ICache<IDefinition<CardEffectData>> cache
         )
         {
+            this.tooltipRegister = tooltipRegister;
             this.cardRegister = cardRegister;
             this.characterDataRegister = characterDataRegister;
             this.cardUpgradeRegister = cardUpgradeRegister;
@@ -295,6 +298,25 @@ namespace TrainworksReloaded.Base.Effect
             AccessTools
                 .Field(typeof(CardEffectData), "paramSubtype")
                 .SetValue(data, paramSubtype);
+
+            var tooltips = new List<AdditionalTooltipData>();
+            var tooltipReferences = configuration
+                .GetSection("additional_tooltips")
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var reference in tooltipReferences)
+            {
+                var id = reference.ToId(key, TemplateConstants.AdditionalTooltip);
+                if (tooltipRegister.TryLookupName(id, out var tooltip, out var _))
+                {
+                    tooltips.Add(tooltip);
+                }
+            }
+            AccessTools
+                .Field(typeof(CardEffectData), "additionalTooltips")
+                .SetValue(data, tooltips.ToArray());
 
             var appliedToSelfVFXId = configuration.GetSection("applied_to_self_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx) ?? "";
             if (vfxRegister.TryLookupId(appliedToSelfVFXId, out var appliedToSelfVFX, out var _))
