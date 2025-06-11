@@ -446,6 +446,7 @@ namespace TrainworksReloaded.Base.Extensions
                 "any_card_played" => TrackedValueType.AnyCardPlayed,
                 "any_card_drawn" => TrackedValueType.AnyCardDrawn,
                 "any_exhausted" => TrackedValueType.AnyExhausted,
+                "any_character" => TrackedValueType.AnyCharacter,
                 "any_monster_spawned_top_floor" => TrackedValueType.AnyMonsterSpawnedTopFloor,
                 "monster_subtype_played" => TrackedValueType.MonsterSubtypePlayed,
                 "status_effect_count_in_target_room" =>
@@ -457,8 +458,7 @@ namespace TrainworksReloaded.Base.Extensions
                 "magic_power_in_target_room" => TrackedValueType.MagicPowerInTargetRoom,
                 "gold" => TrackedValueType.Gold,
                 "status_effect_count_on_last_ability_activator" =>
-                    TrackedValueType.StatusEffectCountOnLastAbilityActivator,
-                "const_one" => TrackedValueType.ConstOne,
+                    TrackedValueType.StatusEffectCountOnLastAbilityActivator,,
                 "pyre_heart_resurrection" => TrackedValueType.PyreHeartResurrection,
                 "num_specific_cards_in_deck" => TrackedValueType.NumSpecificCardsInDeck,
                 "any_status_effect_stacks_added" => TrackedValueType.AnyStatusEffectStacksAdded,
