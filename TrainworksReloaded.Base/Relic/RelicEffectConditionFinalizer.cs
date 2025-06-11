@@ -48,7 +48,7 @@ namespace TrainworksReloaded.Base.Relic
             {
                 var id = subtypeReference.ToId(key, TemplateConstants.Subtype);
                 subtypeRegister.TryLookupId(id, out var lookup, out var _);
-                AccessTools.Field(typeof(RelicEffectCondition), "paramSubtype").SetValue(data, lookup);
+                AccessTools.Field(typeof(RelicEffectCondition), "paramSubtype").SetValue(data, lookup?.Key);
             }
         }
     }
