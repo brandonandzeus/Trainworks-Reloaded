@@ -1,0 +1,37 @@
+{
+  "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/skeletons.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "properties": {
+    "skeletons": {
+      "type": "array",
+      "description": ".",
+      "items": {
+        "properties": {
+          "id": {
+            "minLength": 1,
+            "type": "string",
+            "description": "If this references a status effect icon or trigger icon, the ID must exactly match with the ID in the sprites section."
+          },
+          "atlas_path": {
+            "type": "string",
+            "description": "The path to the altas."
+          },
+          "shader": {
+            "type": "string",
+            "enum": [ "Standard", "Shiny Shoe/Character Shader" ],
+            "description": "Name of the shader to use (e.g. 'Standard' or 'Shiny Shoe/Character Shader')",
+            "default": "Shiny Shoe/Character Shader"
+          },
+          "data_path": {
+            "type": "string",
+            "description": "The path to the skeleton data file."
+          }
+          "texture_path": {
+            "type": "string",
+            "description": "The path to the texture."
+          }
+        }
+      }
+    }
+  }
+}
