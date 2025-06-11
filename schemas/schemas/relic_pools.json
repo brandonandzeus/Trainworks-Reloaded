@@ -1,31 +1,32 @@
 {
-    "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/relic_pools.json",
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "properties": {
-        "relic_pools": {
-            "type": "array",
-            "uniqueItems": true,
-            "description": "A collection of relic pools that define which collectable relics can appear in specific situations or rewards.",
+  "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/relic_pools.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "properties": {
+    "relic_pools": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "A collection of relic pools that define which collectable relics can appear in specific situations or rewards.",
+      "items": {
+        "properties": {
+          "id": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Unique identifier for this relic pool. Used to reference this pool from other parts of the game."
+          },
+          "relics": {
             "items": {
-                "properties": {
-                    "id": {
-                        "type": "string",
-                        "description": "Unique identifier for this relic pool. Used to reference this pool from other parts of the game."
-                    },
-                    "relics": {
-                        "items": {
-                            "type": "string",
-                            "description": "Reference to an relic's unique identifier that can appear in this pool (must be a collectable)."
-                        },
-                        "type": "array",
-                        "description": "List of relics references that can appear in this pool."
-                    }
-                },
-                "required": [
-                    "id"
-                ],
-                "description": "A relic pool definition that specifies which collectable  relics can appear together."
-            }
-        }
+              "$ref": "../definitions/reference.json",
+              "description": "Reference to an relic's unique identifier that can appear in this pool (must be a collectable)."
+            },
+            "type": "array",
+            "description": "List of relics references that can appear in this pool."
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "description": "A relic pool definition that specifies which collectable  relics can appear together."
+      }
     }
+  }
 }

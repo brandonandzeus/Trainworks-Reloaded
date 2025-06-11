@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using HarmonyLib;
 using TrainworksReloaded.Base.Card;
@@ -7,6 +8,7 @@ using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
+using static TrainworksReloaded.Base.Extensions.ParseReferenceExtensions;
 
 namespace TrainworksReloaded.Base.Room
 {
@@ -14,6 +16,7 @@ namespace TrainworksReloaded.Base.Room
     {
         private readonly IModLogger<RoomModifierFinalizer> logger;
         private readonly ICache<IDefinition<RoomModifierData>> cache;
+        private readonly IRegister<AdditionalTooltipData> tooltipRegister;
         private readonly IRegister<Sprite> spriteRegister;
         private readonly IRegister<CardData> cardDataRegister;
         private readonly IRegister<CardUpgradeData> upgradeDataRegister;
@@ -26,6 +29,7 @@ namespace TrainworksReloaded.Base.Room
         public RoomModifierFinalizer(
             IModLogger<RoomModifierFinalizer> logger,
             ICache<IDefinition<RoomModifierData>> cache,
+            IRegister<AdditionalTooltipData> tooltipRegister,
             IRegister<Sprite> spriteRegister,
             IRegister<CardData> cardDataRegister,
             IRegister<CardUpgradeData> upgradeDataRegister,
@@ -38,6 +42,7 @@ namespace TrainworksReloaded.Base.Room
         {
             this.logger = logger;
             this.cache = cache;
+            this.tooltipRegister = tooltipRegister;
             this.spriteRegister = spriteRegister;
             this.cardDataRegister = cardDataRegister;
             this.upgradeDataRegister = upgradeDataRegister;
@@ -68,16 +73,15 @@ namespace TrainworksReloaded.Base.Room
             var data = definition.Data;
             var key = definition.Key;
 
-            logger.Log(
-                Core.Interfaces.LogLevel.Info,
+            logger.Log(LogLevel.Debug, 
                 $"Finalizing Room Modifier {definition.Id.ToId(key, "RoomModifier")}... "
             );
 
-            var cardConfig = configuration.GetSection("param_card").Value;
+            var cardReference = configuration.GetSection("param_card").ParseReference();
             if (
-                cardConfig != null
+                cardReference != null
                 && cardDataRegister.TryLookupName(
-                    cardConfig.ToId(key, TemplateConstants.Card),
+                    cardReference.ToId(key, TemplateConstants.Card),
                     out var cardData,
                     out var _
                 )
@@ -88,11 +92,11 @@ namespace TrainworksReloaded.Base.Room
                     .SetValue(data, cardData);
             }
 
-            var param_card_upgrade = configuration.GetSection("param_upgrade").ParseString();
+            var upgradeReference = configuration.GetSection("param_upgrade").ParseReference();
             if (
-                param_card_upgrade != null
+                upgradeReference != null
                 && upgradeDataRegister.TryLookupId(
-                    param_card_upgrade.ToId(key, "Upgrade"),
+                    upgradeReference.ToId(key, TemplateConstants.Upgrade),
                     out var upgradeLookup,
                     out var _
                 )
@@ -103,11 +107,11 @@ namespace TrainworksReloaded.Base.Room
                     .SetValue(data, upgradeLookup);
             }
 
-            var trigered_vfx = configuration.GetSection("triggered_vfx").ParseString();
+            var triggeredVFXId = configuration.GetSection("triggered_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx);
             if (
-                trigered_vfx != null
+                triggeredVFXId != null
                 && vfxRegister.TryLookupId(
-                    trigered_vfx.ToId(key, "Vfx"),
+                    triggeredVFXId,
                     out var vfxLookup,
                     out var _
                 )
@@ -119,19 +123,14 @@ namespace TrainworksReloaded.Base.Room
             }
 
             var cardEffectDatas = new List<CardEffectData>();
-            var cardEffectDatasConfig = configuration.GetSection("effects").GetChildren();
-            foreach (var configEffect in cardEffectDatasConfig)
+            var effectReferences = configuration.GetDeprecatedSection("effects", "param_effects")
+               .GetChildren()
+               .Select(x => x.ParseReference())
+               .Where(x => x != null)
+               .Cast<ReferencedObject>();
+            foreach (var reference in effectReferences)
             {
-                if (configEffect == null)
-                {
-                    continue;
-                }
-                var idConfig = configEffect.GetSection("id").Value;
-                if (idConfig == null)
-                {
-                    continue;
-                }
-                var id = idConfig.ToId(key, "Effect");
+                var id = reference.ToId(key, TemplateConstants.Effect);
                 if (cardEffectDataRegister.TryLookupId(id, out var card, out var _))
                 {
                     cardEffectDatas.Add(card);
@@ -147,20 +146,18 @@ namespace TrainworksReloaded.Base.Room
             List<StatusEffectStackData> paramStatusEffects = [];
             foreach (var child in configuration.GetSection("param_status_effects").GetChildren())
             {
-                var idConfig = child?.GetSection("status").Value;
-                if (idConfig == null)
+                var statusReference = child.GetSection("status").ParseReference();
+                if (statusReference == null)
                     continue;
-                var statusEffectId = idConfig.ToId(key, TemplateConstants.StatusEffect);
-                string statusId = idConfig;
+                var statusEffectId = statusReference.ToId(key, TemplateConstants.StatusEffect);
                 if (statusRegister.TryLookupId(statusEffectId, out var statusEffectData, out var _))
                 {
-                    statusId = statusEffectData.GetStatusId();
+                    paramStatusEffects.Add(new StatusEffectStackData()
+                    {
+                        statusId = statusEffectData.GetStatusId(),
+                        count = child?.GetSection("count").ParseInt() ?? 0,
+                    });
                 }
-                paramStatusEffects.Add(new StatusEffectStackData()
-                {
-                    statusId = statusId,
-                    count = child?.GetSection("count").ParseInt() ?? 0,
-                });
             }
             AccessTools
                 .Field(typeof(RoomModifierData), "paramStatusEffects")
@@ -168,13 +165,12 @@ namespace TrainworksReloaded.Base.Room
 
             //trigger
             var paramTrigger = CharacterTriggerData.Trigger.OnDeath;
-            var triggerSection = configuration.GetSection("trigger");
-            if (triggerSection.Value != null)
+            var triggerReference = configuration.GetDeprecatedSection("trigger", "param_trigger").ParseReference();
+            if (triggerReference != null)
             {
-                var value = triggerSection.Value;
                 if (
                     !triggerEnumRegister.TryLookupId(
-                        value.ToId(key, TemplateConstants.CharacterTriggerEnum),
+                        triggerReference.ToId(key, TemplateConstants.CharacterTriggerEnum),
                         out var triggerFound,
                         out var _
                     )
@@ -182,21 +178,17 @@ namespace TrainworksReloaded.Base.Room
                 {
                     paramTrigger = triggerFound;
                 }
-                else
-                {
-                    paramTrigger = triggerSection.ParseTrigger() ?? default;
-                }
             }
             AccessTools
                 .Field(typeof(RoomModifierData), "paramTrigger")
                 .SetValue(data, paramTrigger);
 
             var paramSubtype = "SubtypesData_None";
-            var paramSubtypeId = configuration.GetSection("param_subtype").ParseString();
-            if (paramSubtypeId != null)
+            var subtypeReference = configuration.GetSection("param_subtype").ParseReference();
+            if (subtypeReference != null)
             {
                 if (subtypeRegister.TryLookupId(
-                    paramSubtypeId.ToId(key, TemplateConstants.Subtype),
+                    subtypeReference.ToId(key, TemplateConstants.Subtype),
                     out var lookup,
                     out var _))
                 {
@@ -206,6 +198,25 @@ namespace TrainworksReloaded.Base.Room
             AccessTools
                 .Field(typeof(RoomModifierData), "paramSubtype")
                 .SetValue(data, paramSubtype);
+
+            var tooltips = new List<AdditionalTooltipData>();
+            var tooltipReferences = configuration
+                .GetSection("additional_tooltips")
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var reference in tooltipReferences)
+            {
+                var id = reference.ToId(key, TemplateConstants.AdditionalTooltip);
+                if (tooltipRegister.TryLookupName(id, out var tooltip, out var _))
+                {
+                    tooltips.Add(tooltip);
+                }
+            }
+            AccessTools
+                .Field(typeof(RoomModifierData), "additionalTooltips")
+                .SetValue(data, tooltips.ToArray());
         }
     }
 }

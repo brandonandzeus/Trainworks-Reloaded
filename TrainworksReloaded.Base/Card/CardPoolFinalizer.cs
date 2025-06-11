@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using HarmonyLib;
 using Malee;
 using TrainworksReloaded.Base.Extensions;
-using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine.UIElements;
+using static TrainworksReloaded.Base.Extensions.ParseReferenceExtensions;
 
 namespace TrainworksReloaded.Base.Card
 {
@@ -43,24 +44,18 @@ namespace TrainworksReloaded.Base.Card
             var data = definition.Data;
             var key = definition.Key;
 
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Finalizing Card Pool {data.name}... ");
+            logger.Log(LogLevel.Debug, $"Finalizing Card Pool {data.name}... ");
 
-            //handle traits
+            //handle cards
             var cardDatas = new List<CardData>();
-            var cardDatasConfig = configuration.GetSection("cards").GetChildren();
-            foreach (var configData in cardDatasConfig)
+            var cardReferences = configuration.GetSection("cards")
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var reference in cardReferences)
             {
-                if (configData == null)
-                {
-                    continue;
-                }
-                var idConfig = configData.ParseString();
-                if (idConfig == null)
-                {
-                    continue;
-                }
-
-                var id = idConfig.ToId(key, TemplateConstants.Card);
+                var id = reference.ToId(key, TemplateConstants.Card);
                 if (cardRegister.TryLookupName(id, out var card, out var _))
                 {
                     cardDatas.Add(card);

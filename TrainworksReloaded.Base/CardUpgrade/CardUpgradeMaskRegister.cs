@@ -9,6 +9,7 @@ using TrainworksReloaded.Base.Card;
 using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
+using static RotaryHeart.Lib.DataBaseExample;
 
 namespace TrainworksReloaded.Base.CardUpgrade
 {
@@ -17,15 +18,27 @@ namespace TrainworksReloaded.Base.CardUpgrade
             IRegister<CardUpgradeMaskData>
     {
         private readonly IModLogger<CardUpgradeMaskRegister> logger;
+        private readonly Lazy<SaveManager> saveManager;
 
-        public CardUpgradeMaskRegister(IModLogger<CardUpgradeMaskRegister> logger)
+        public CardUpgradeMaskRegister(IModLogger<CardUpgradeMaskRegister> logger, GameDataClient client)
         {
+            saveManager = new Lazy<SaveManager>(() =>
+            {
+                if (client.TryGetProvider<SaveManager>(out var provider))
+                {
+                    return provider;
+                }
+                else
+                {
+                    return new SaveManager();
+                }
+            });
             this.logger = logger;
         }
 
         public void Register(string key, CardUpgradeMaskData item)
         {
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Registering Upgrade Mask {key}... ");
+            logger.Log(LogLevel.Debug, $"Registering Upgrade Mask {key}...");
             Add(key, item);
         }
 
@@ -38,7 +51,6 @@ namespace TrainworksReloaded.Base.CardUpgrade
                 _ => [],
             };
         }
-
 
         public bool TryLookupIdentifier(string identifier, RegisterIdentifierType identifierType, [NotNullWhen(true)] out CardUpgradeMaskData? lookup, [NotNullWhen(true)] out bool? IsModded)
         {
@@ -56,13 +68,48 @@ namespace TrainworksReloaded.Base.CardUpgrade
                             return true;
                         }
                     }
-                    return false;
+                    lookup = GetVanillaCardUpgradeMask(identifier);
+                    return lookup != null;
                 case RegisterIdentifierType.GUID:
                     bool ret = TryGetValue(identifier, out lookup);
                     IsModded = ret;
+                    if (ret == false)
+                    {
+                        lookup = GetVanillaCardUpgradeMask(identifier);
+                        return lookup != null;
+                    }
                     return ret;
             }
             return false;
+        }
+
+        public CardUpgradeMaskData? GetVanillaCardUpgradeMask(string maskName)
+        {
+            return GetVanillaCardUpgradeMask(saveManager.Value.GetAllGameData(), maskName);
+        }
+
+        public static CardUpgradeMaskData? GetVanillaCardUpgradeMask(AllGameData allGameData, string maskName)
+        {
+            foreach (var enhancer in allGameData.GetAllEnhancerData())
+            {
+                foreach (var effect in enhancer.GetEffects())
+                {
+                    if (effect.GetParamCardFilter()?.name == maskName)
+                        return effect.GetParamCardFilter();
+                    if (effect.GetParamCardFilterSecondary()?.name == maskName)
+                        return effect.GetParamCardFilterSecondary();
+
+                    var filters = effect.GetParamCardUpgradeData()?.GetFilters();
+                    if (filters.IsNullOrEmpty())
+                        continue;
+                    foreach (var filter in filters!)
+                    {
+                        if (filter.name == maskName)
+                            return filter;
+                    }
+                }
+            }
+            return null;
         }
 
     }

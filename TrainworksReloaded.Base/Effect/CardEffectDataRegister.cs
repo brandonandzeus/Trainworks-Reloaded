@@ -20,7 +20,7 @@ namespace TrainworksReloaded.Base.Effect
 
         public void Register(string key, CardEffectData item)
         {
-            logger.Log(LogLevel.Info, $"Register Effect ({key})");
+            logger.Log(LogLevel.Debug, $"Register Effect ({key})");
             Add(key, item);
         }
 
@@ -45,13 +45,11 @@ namespace TrainworksReloaded.Base.Effect
                         if (effect.GetEffectStateName() == identifier)
                         {
                             lookup = effect;
-                            IsModded = true;
                             return true;
                         }
                     }
                     return false;
                 case RegisterIdentifierType.GUID:
-                    IsModded = true;
                     return this.TryGetValue(identifier, out lookup);
             }
             return false;

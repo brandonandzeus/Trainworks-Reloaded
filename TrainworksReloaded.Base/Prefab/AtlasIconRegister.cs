@@ -18,7 +18,7 @@ namespace TrainworksReloaded.Base.Prefab
 
         public void Register(string key, Texture2D item)
         {
-            logger.Log(LogLevel.Info, $"Register Icon ({key})");
+            logger.Log(LogLevel.Debug, $"Register Icon {key}");
             this.Add(key, item);
         }
 

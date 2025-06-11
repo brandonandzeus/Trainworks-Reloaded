@@ -23,7 +23,7 @@ namespace TrainworksReloaded.Base.Trigger
 
         public void Register(string key, CharacterTriggerData item)
         {
-            logger.Log(LogLevel.Info, $"Register Character Trigger ({key})");
+            logger.Log(LogLevel.Debug, $"Register Character Trigger ({key})");
             Add(key, item);
         }
 

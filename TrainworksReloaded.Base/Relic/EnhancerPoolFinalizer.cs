@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using HarmonyLib;
 using Malee;
 using TrainworksReloaded.Base.Extensions;
-using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine.UIElements;
+using static TrainworksReloaded.Base.Extensions.ParseReferenceExtensions;
 
 namespace TrainworksReloaded.Base.Relic
 {
@@ -43,23 +44,17 @@ namespace TrainworksReloaded.Base.Relic
             var data = definition.Data;
             var key = definition.Key;
 
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Finalizing Enhancer Pool {data.name}... ");
+            logger.Log(LogLevel.Debug, $"Finalizing Enhancer Pool {data.name}... ");
 
             var enhancerDatas = new List<EnhancerData>();
-            var enhancerDatasConfig = configuration.GetSection("enhancers").GetChildren();
-            foreach (var configData in enhancerDatasConfig)
+            var enhancerReferences = configuration.GetSection("enhancers")
+               .GetChildren()
+               .Select(x => x.ParseReference())
+               .Where(x => x != null)
+               .Cast<ReferencedObject>();
+            foreach (var reference in enhancerReferences)
             {
-                if (configData == null)
-                {
-                    continue;
-                }
-                var idConfig = configData.ParseString();
-                if (idConfig == null)
-                {
-                    continue;
-                }
-
-                var id = idConfig.ToId(key, TemplateConstants.RelicData);
+                var id = reference.ToId(key, TemplateConstants.RelicData);
                 if (relicRegister.TryLookupName(id, out var relic, out var _))
                 {
                     if (relic is EnhancerData enhancer)

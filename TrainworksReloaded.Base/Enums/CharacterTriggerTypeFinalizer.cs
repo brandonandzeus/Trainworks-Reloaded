@@ -60,10 +60,7 @@ namespace TrainworksReloaded.Base.Enums
             var key = definition.Key;
             var trigger = definition.Data;
 
-            logger.Log(
-                LogLevel.Info,
-                $"Finalizing Character Trigger {key.GetId(TemplateConstants.CharacterTriggerEnum, definition.Id)}... "
-            );
+            logger.Log(LogLevel.Debug, $"Finalizing Character Trigger {key.GetId(TemplateConstants.CharacterTriggerEnum, definition.Id)}...");
 
             var baseKey = "CharacterTrigger_" + definition.Id;
 

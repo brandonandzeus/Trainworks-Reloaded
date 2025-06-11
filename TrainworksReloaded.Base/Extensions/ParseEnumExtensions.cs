@@ -4,6 +4,7 @@ using ShinyShoe;
 using System;
 using System.Linq;
 using TrainworksReloaded.Base.Localization;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Extensions;
 using UnityEngine;
 using static BossState;
@@ -19,6 +20,24 @@ namespace TrainworksReloaded.Base.Extensions
 {
     public static class ParseEnumExtensions
     {
+        public static OverrideMode ParseOverrideMode(this IConfigurationSection section)
+        {
+            var val = section.Value;
+            if (string.IsNullOrEmpty(val))
+            {
+                return OverrideMode.New;
+            }
+            return val.ToLower() switch
+            {
+                "false" => OverrideMode.New,
+                "true" => OverrideMode.Replace,
+                "replace" => OverrideMode.Replace,
+                "append" => OverrideMode.Append,
+                "clone" => OverrideMode.Clone,
+                _ => OverrideMode.New
+            };
+        }
+
         public static MapNodeData.SkipCheckSettings? ParseSkipSettings(
             this IConfigurationSection section
         )
@@ -229,6 +248,10 @@ namespace TrainworksReloaded.Base.Extensions
                 return null;
             }
 
+            // I don't get the nullability stuff moving the ?? "" to the english line still makes it
+            // think it could be a null value even if defined as a string explicitly.
+            string def = english ?? "";
+
             return new LocalizationTerm()
             {
                 Key = key ?? "",
@@ -236,16 +259,16 @@ namespace TrainworksReloaded.Base.Extensions
                 Desc = description ?? "",
                 Group = group ?? "",
                 Descriptions = speaker_descriptions ?? "",
-                English = english ?? "",
-                French = french ?? "",
-                German = german ?? "",
-                Russian = russian ?? "",
-                Portuguese = portuguese ?? "",
-                Chinese = chinese ?? "",
-                Spanish = spanish ?? "",
-                ChineseTraditional = chinese_traditional ?? "",
-                Korean = korean ?? "",
-                Japanese = japanese ?? "",
+                English = def,
+                French = french ?? def,
+                German = german ?? def,
+                Russian = russian ?? def,
+                Portuguese = portuguese ?? def,
+                Chinese = chinese ?? def,
+                Spanish = spanish ?? def,
+                ChineseTraditional = chinese_traditional ?? def,
+                Korean = korean ?? def,
+                Japanese = japanese ?? def,
             };
         }
 

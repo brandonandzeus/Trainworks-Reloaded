@@ -6,8 +6,8 @@ using HarmonyLib;
 using Microsoft.Extensions.Configuration;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Base.Reward;
-using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
+using static TrainworksReloaded.Base.Extensions.ParseReferenceExtensions;
 
 namespace TrainworksReloaded.Base.Map
 {
@@ -38,18 +38,18 @@ namespace TrainworksReloaded.Base.Map
         {
             foreach (var definition in cache.GetCacheItems())
             {
-                FinalizeRewardData(definition);
+                FinalizeRewardNodeData(definition);
             }
             decoratee.FinalizeData();
             cache.Clear();
         }
 
         /// <summary>
-        /// Finalize Card Definitions
+        /// Finalize RewardNode Definitions
         /// Handles Data to avoid lookup looks for names and ids
         /// </summary>
         /// <param name="definition"></param>
-        private void FinalizeRewardData(IDefinition<MapNodeData> definition)
+        private void FinalizeRewardNodeData(IDefinition<MapNodeData> definition)
         {
             var configuration1 = definition.Configuration;
             var data1 = definition.Data;
@@ -66,13 +66,10 @@ namespace TrainworksReloaded.Base.Map
             if (configuration == null)
                 return;
 
-            logger.Log(
-                Core.Interfaces.LogLevel.Info,
-                $"Finalizing Reward Node Data {definition.Id.ToId(key, TemplateConstants.RewardData)}... "
-            );
+            logger.Log(LogLevel.Debug, $"Finalizing Reward Node Data {definition.Data.name}...");
 
             //class
-            var required_class = configuration.GetSection("required_class").ParseString();
+            var required_class = configuration.GetDeprecatedSection("required_class", "class").ParseReference();
             if (
                 required_class != null
                 && classDataRegister.TryLookupName(
@@ -89,14 +86,15 @@ namespace TrainworksReloaded.Base.Map
 
             //rewards
             var rewards = new List<RewardData>();
-            var rewardsConfigs = configuration.GetSection("rewards").GetChildren();
-            foreach (var rewardConfig in rewardsConfigs)
+            var rewardsReferences = configuration.GetSection("rewards")
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var reference in rewardsReferences)
             {
-                var id = rewardConfig.GetSection("id").ParseString();
-                if (
-                    id != null
-                    && rewardDataRegister.TryLookupId(
-                        id.ToId(key, TemplateConstants.RewardData),
+                if (rewardDataRegister.TryLookupId(
+                        reference.ToId(key, TemplateConstants.RewardData),
                         out var rewardData,
                         out var _
                     )

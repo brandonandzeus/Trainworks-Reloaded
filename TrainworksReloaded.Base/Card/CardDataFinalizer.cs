@@ -2,11 +2,15 @@
 using System.Linq;
 using System.Runtime.Serialization;
 using HarmonyLib;
+using Microsoft.Extensions.Configuration;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Base.Prefab;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
+using UnityEngine;
 using UnityEngine.AddressableAssets;
+using static TrainworksReloaded.Base.Extensions.ParseReferenceExtensions;
 
 namespace TrainworksReloaded.Base.Card
 {
@@ -73,8 +77,10 @@ namespace TrainworksReloaded.Base.Card
             var configuration = definition.Configuration;
             var data = definition.Data;
             var key = definition.Key;
+            var overrideMode = configuration.GetSection("override").ParseOverrideMode();
+            var newlyCreatedContent = overrideMode.IsCloning() || overrideMode.IsNewContent();
 
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Finalizing Card {data.name}... ");
+            logger.Log(LogLevel.Debug, $"Finalizing Card {data.name}... ");
 
             //handle linked class
             var classfield = configuration.GetSection("class").ParseString();
@@ -91,20 +97,22 @@ namespace TrainworksReloaded.Base.Card
             }
 
             //handle discovery cards
-            var SharedDiscoveryCards = new List<CardData>();
-            var SharedDiscoveryCardConfig = configuration
-                .GetSection("shared_discovery_cards")
-                .GetChildren()
-                .Select(x => x.GetSection("id").ParseString());
-            foreach (var ConfigCard in SharedDiscoveryCardConfig)
+            var SharedDiscoveryCards = data.GetSharedDiscoveryCards();
+            var SharedDiscoveryCardsConfig = configuration.GetSection("shared_discovery_cards");
+            if (overrideMode == OverrideMode.Replace && SharedDiscoveryCardsConfig.Exists())
             {
-                if (ConfigCard == null)
-                {
-                    continue;
-                }
+                SharedDiscoveryCards.Clear();
+            }
+            var SharedDiscoveryCardReferences = SharedDiscoveryCardsConfig
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var cardReference in SharedDiscoveryCardReferences)
+            {
                 if (
                     cardRegister.TryLookupName(
-                        ConfigCard.ToId(key, TemplateConstants.Card),
+                        cardReference.ToId(key, TemplateConstants.Card),
                         out var card,
                         out var _
                     )
@@ -118,21 +126,22 @@ namespace TrainworksReloaded.Base.Card
                 .SetValue(data, SharedDiscoveryCards);
 
             //handle mastery cards
-            var SharedMasteryCards = new List<CardData>();
+            var SharedMasteryCards = data.GetSharedMasteryCards();
             var SharedMasteryCardConfig = configuration
-                .GetSection("shared_mastery_cards")
-                .GetChildren()
-                .Select(x => x.GetSection("id").ParseString());
-            foreach (var ConfigCard in SharedMasteryCardConfig)
+                .GetSection("shared_mastery_cards");
+            if (overrideMode == OverrideMode.Replace && SharedMasteryCardConfig.Exists())
             {
-                if (ConfigCard == null)
-                {
-                    continue;
-                }
-
+                SharedMasteryCards.Clear();
+            }
+            var sharedMasteryCardReferences = SharedMasteryCardConfig.GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var cardReference in sharedMasteryCardReferences)
+            {
                 if (
                     cardRegister.TryLookupName(
-                        ConfigCard.ToId(key, TemplateConstants.Card),
+                        cardReference.ToId(key, TemplateConstants.Card),
                         out var card,
                         out var _
                     )
@@ -145,30 +154,30 @@ namespace TrainworksReloaded.Base.Card
                 .Field(typeof(CardData), "sharedMasteryCards")
                 .SetValue(data, SharedMasteryCards);
 
-            //handle mastery card
-            var MasteryCardInfo = configuration.GetSection("mastery_card").ParseString();
-            if (
-                MasteryCardInfo != null
-                && cardRegister.TryLookupName(
-                    MasteryCardInfo.ToId(key, TemplateConstants.Card),
-                    out var MasteryCard,
-                    out var _
-                )
-            )
+            //handle linked mastery card
+            var MasteryCardConfig = configuration.GetDeprecatedSection("mastery_card", "linked_mastery_card");
+            var MasteryCardRef = MasteryCardConfig.ParseReference();
+            if (MasteryCardRef != null)
             {
+                cardRegister.TryLookupName(MasteryCardRef.ToId(key, TemplateConstants.Card), out var MasteryCard, out var _);
                 AccessTools
                     .Field(typeof(CardData), "linkedMasteryCard")
                     .SetValue(data, MasteryCard);
             }
+            if (overrideMode == OverrideMode.Replace && MasteryCardConfig.Exists() && MasteryCardRef == null)
+            {
+                AccessTools
+                    .Field(typeof(CardData), "linkedMasteryCard")
+                    .SetValue(data, null);
+            }
 
-            //handle art
-            var cardArtReference = configuration.GetSection("card_art_reference").ParseString();
+            //handle art (required field so don't allow override with null)
+            var cardArtReference = configuration.GetDeprecatedSection("card_art_reference", "card_art").ParseReference();
             if (cardArtReference != null)
             {
-                var gameObjectName = cardArtReference.ToId(key, "GameObject");
                 if (
                     assetReferenceRegister.TryLookupId(
-                        gameObjectName,
+                        cardArtReference.ToId(key, TemplateConstants.GameObject),
                         out var gameObject,
                         out var _
                     )
@@ -179,172 +188,136 @@ namespace TrainworksReloaded.Base.Card
                         .SetValue(data, gameObject);
                 }
             }
+            else if (data.IsUnitAbility())
+            {
+                AccessTools.Field(typeof(CardData), "cardArtPrefabVariantRef").SetValue(data, new AssetReferenceGameObject());
+            }
+            else if (overrideMode.IsNewContent())
+            {
+                logger.Log(LogLevel.Warning, $"Card {key} {definition.Id} is missing card_art. This is required for non ability cards.");
+            }
 
             //handle traits
-            var cardTraitDatas = new List<CardTraitData>();
-            var cardTraitDatasConfig = configuration.GetSection("traits").GetChildren();
-            foreach (var configTrait in cardTraitDatasConfig)
+            var cardTraitDatas = data.GetTraits();
+            var cardTraitConfig = configuration.GetSection("traits");
+            if (overrideMode == OverrideMode.Replace && cardTraitConfig.Exists())
             {
-                if (configTrait == null)
+                cardTraitDatas.Clear();
+            }
+            var cardTraitReferences = cardTraitConfig
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var traitReference in cardTraitReferences)
+            {
+                var id = traitReference.ToId(key, TemplateConstants.Trait);
+                if (traitRegister.TryLookupId(id, out var trait, out var _))
                 {
-                    continue;
-                }
-                var idConfig = configTrait.GetSection("id").Value;
-                if (idConfig == null)
-                {
-                    continue;
-                }
-
-                var id = idConfig.ToId(key, TemplateConstants.Trait);
-                if (traitRegister.TryLookupId(id, out var card, out var _))
-                {
-                    cardTraitDatas.Add(card);
+                    cardTraitDatas.Add(trait);
                 }
             }
-            if (cardTraitDatas.Count != 0)
-                AccessTools.Field(typeof(CardData), "traits").SetValue(data, cardTraitDatas);
+            AccessTools.Field(typeof(CardData), "traits").SetValue(data, cardTraitDatas);
 
-            var cardEffectDatas = new List<CardEffectData>();
-            var cardEffectDatasConfig = configuration.GetSection("effects").GetChildren();
-            foreach (var configEffect in cardEffectDatasConfig)
+            var cardEffectDatas = data.GetEffects();
+            var cardEffectDatasConfig = configuration.GetSection("effects");
+            if (overrideMode == OverrideMode.Replace && cardEffectDatasConfig.Exists())
             {
-                if (configEffect == null)
+                cardEffectDatas.Clear();
+            }
+            var cardEffectDatasReferences = cardEffectDatasConfig
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var effectReference in cardEffectDatasReferences)
+            {
+                if (effectRegister.TryLookupId(effectReference.ToId(key, TemplateConstants.Effect), out var effect, out var _))
                 {
-                    continue;
-                }
-                var idConfig = configEffect.GetSection("id").Value;
-                if (idConfig == null)
-                {
-                    continue;
-                }
-                var id = idConfig.ToId(key, TemplateConstants.Effect);
-                if (effectRegister.TryLookupId(id, out var card, out var _))
-                {
-                    cardEffectDatas.Add(card);
+                    cardEffectDatas.Add(effect);
                 }
             }
+            AccessTools.Field(typeof(CardData), "effects").SetValue(data, cardEffectDatas);
 
-            if (cardEffectDatas.Count != 0)
-                AccessTools.Field(typeof(CardData), "effects").SetValue(data, cardEffectDatas);
-
-            var cardTriggers = new List<CardTriggerEffectData>();
-            var cardTriggerEffectDataConfig = configuration.GetSection("triggers").GetChildren();
-            foreach (var configTrigger in cardTriggerEffectDataConfig)
+            var cardTriggers = data.GetCardTriggers();
+            var cardTriggerEffectDataConfig = configuration.GetSection("triggers");
+            if (overrideMode == OverrideMode.Replace && cardTriggerEffectDataConfig.Exists())
             {
-                if (configTrigger == null)
-                    continue;
-                
-                var idConfig = configTrigger.GetSection("id").Value;
-                if (idConfig == null)
+                cardTriggers.Clear();
+            }
+            var cardTriggerReferences = cardTriggerEffectDataConfig
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var triggerReference in cardTriggerReferences)
+            {   
+                var id = triggerReference.ToId(key, TemplateConstants.CardTrigger);
+                if (triggerEffectRegister.TryLookupId(id, out var trigger, out var _))
                 {
-                    continue;
-                }
-                var id = idConfig.ToId(key, "Trigger");
-                if (triggerEffectRegister.TryLookupId(id, out var card, out var _))
-                {
-                    cardTriggers.Add(card);
+                    cardTriggers.Add(trigger);
                 }
             }
+            AccessTools.Field(typeof(CardData), "triggers").SetValue(data, cardTriggers);
 
-            if (cardTriggers.Count != 0)
-                AccessTools.Field(typeof(CardData), "triggers").SetValue(data, cardTriggers);
-
-            var initialUpgrades = new List<CardUpgradeData>();
-            var initialUpgradesConfig = configuration.GetSection("initial_upgrades").GetChildren();
-            foreach (var upgradeConfig in initialUpgradesConfig)
+            List<CardUpgradeData> initialUpgrades = [];
+            var initialUpgradesRO = data.GetUpgradeData();
+            var initialUpgradesConfig = configuration.GetSection("initial_upgrades");
+            if (!(overrideMode == OverrideMode.Replace && initialUpgradesConfig.Exists()))
             {
-                if (upgradeConfig == null)
+                initialUpgrades.AddRange(initialUpgradesRO);
+            }    
+            var initialUpgradeReferences = initialUpgradesConfig
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var upgradeReference in initialUpgradeReferences)
+            {
+                var id = upgradeReference.ToId(key, TemplateConstants.Upgrade);
+                if (upgradeRegister.TryLookupId(id, out var upgrade, out var _))
                 {
-                    continue;
-                }
-                var idConfig = upgradeConfig.GetSection("id").Value;
-                if (idConfig == null)
-                {
-                    continue;
-                }
-
-                var id = idConfig.ToId(key, TemplateConstants.Upgrade);
-                if (upgradeRegister.TryLookupId(id, out var card, out var _))
-                {
-                    initialUpgrades.Add(card);
+                    initialUpgrades.Add(upgrade);
                 }
             }
-
-            if (initialUpgrades.Count != 0)
-                AccessTools
+            AccessTools
                     .Field(typeof(CardData), "startingUpgrades")
                     .SetValue(data, initialUpgrades);
 
-            var triggers = new List<CardTriggerEffectData>();
-            var triggersConfig = configuration.GetSection("triggers").GetChildren();
-            foreach (var configTrigger in triggersConfig)
+            var effectTriggers = data.GetEffectTriggers();
+            var effectTriggerConfig = configuration.GetSection("effect_triggers");
+            if (overrideMode == OverrideMode.Replace && effectTriggerConfig.Exists())
             {
-                if (configTrigger == null)
+                effectTriggers.Clear();
+            }
+            var effectTriggerReferences = effectTriggerConfig
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var characterTriggerReference in effectTriggerReferences)
+            {
+                var id = characterTriggerReference.ToId(key, TemplateConstants.CharacterTrigger);
+                if (triggerDataRegister.TryLookupId(id, out var trigger, out var _))
                 {
-                    continue;
-                }
-                var idConfig = configTrigger.GetSection("id").Value;
-                if (idConfig == null)
-                {
-                    continue;
-                }
-                var id = idConfig.ToId(key, TemplateConstants.CardTrigger);
-                if (triggerEffectRegister.TryLookupId(id, out var card, out var _))
-                {
-                    triggers.Add(card);
+                    effectTriggers.Add(trigger);
                 }
             }
-            if (triggers.Count != 0)
-                AccessTools.Field(typeof(CardData), "triggers").SetValue(data, triggers);
+            AccessTools.Field(typeof(CardData), "effectTriggers").SetValue(data, effectTriggers);
 
-            var effectTriggers = new List<CharacterTriggerData>();
-            var effectTriggersConfig = configuration.GetSection("effect_triggers").GetChildren();
-            foreach (var configTrigger in cardEffectDatasConfig)
+            // Do not allow the vfx to be set to null. As they are soft required. If not set then they are set to a Default VFX. Setting to null will crash the game.
+            var offCooldownVFXId = configuration.GetDeprecatedSection("vfx", "off_cooldown_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx);
+            if (newlyCreatedContent || offCooldownVFXId != null)
             {
-                if (configTrigger == null)
-                {
-                    continue;
-                }
-                var idConfig = configTrigger.GetSection("id").Value;
-                if (idConfig == null)
-                {
-                    continue;
-                }
-                var id = idConfig.ToId(key, TemplateConstants.CharacterTrigger);
-                if (triggerDataRegister.TryLookupId(id, out var card, out var _))
-                {
-                    effectTriggers.Add(card);
-                }
-            }
-            if (effectTriggers.Count != 0)
-                AccessTools
-                    .Field(typeof(CardData), "effectTriggers")
-                    .SetValue(data, effectTriggers);
-
-            var offCooldownVFXId = configuration.GetSection("off_cooldown_vfx").ParseString() ?? "";
-            if (
-                vfxRegister.TryLookupId(
-                    offCooldownVFXId.ToId(key, TemplateConstants.Vfx),
-                    out var offCooldownVfx,
-                    out var _
-                )
-            )
-            {
+                vfxRegister.TryLookupId(offCooldownVFXId ?? "", out var offCooldownVfx, out var _);
                 AccessTools.Field(typeof(CardData), "offCooldownVFX").SetValue(data, offCooldownVfx);
             }
 
-            var specialEdgeVFXId = configuration.GetSection("special_edge_vfx").ParseString() ?? "";
-            if (
-                vfxRegister.TryLookupId(
-                    specialEdgeVFXId.ToId(key, TemplateConstants.Vfx),
-                    out var specialEdgeVfx,
-                    out var _
-                )
-            )
+            var specialEdgeVFXId = configuration.GetSection("special_edge_vfx").ParseReference()?.ToId(key, TemplateConstants.Vfx);
+            if (newlyCreatedContent || specialEdgeVFXId != null)
             {
+                vfxRegister.TryLookupId(specialEdgeVFXId ?? "", out var specialEdgeVfx, out var _);
                 AccessTools.Field(typeof(CardData), "specialEdgeVFX").SetValue(data, specialEdgeVfx);
-            }else{
-                AccessTools.Field(typeof(CardData), "specialEdgeVFX").SetValue(data, VfxRegister.Default);
             }
 
             AccessTools

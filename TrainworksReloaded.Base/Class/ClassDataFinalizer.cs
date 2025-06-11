@@ -8,9 +8,11 @@ using TrainworksReloaded.Base.Card;
 using TrainworksReloaded.Base.CardUpgrade;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Base.Relic;
+using TrainworksReloaded.Core.Enum;
 using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
+using static TrainworksReloaded.Base.Extensions.ParseReferenceExtensions;
 using static Unity.Properties.TypeUtility;
 
 namespace TrainworksReloaded.Base.Class
@@ -63,8 +65,9 @@ namespace TrainworksReloaded.Base.Class
             var configuration = definition.Configuration;
             var data = definition.Data;
             var key = definition.Key;
+            var overrideMode = configuration.GetSection("override").ParseOverrideMode();
 
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Finalizing Class {data.name}... ");
+            logger.Log(LogLevel.Debug, $"Finalizing Clan {data.name}...");
 
             var iconSet = AccessTools.Field(typeof(ClassData), "icons").GetValue(data);
             var iconSetType = typeof(ClassData).GetNestedType(
@@ -78,11 +81,11 @@ namespace TrainworksReloaded.Base.Class
             }
             var iconField = configuration.GetSection("icons");
 
-            var smallIcon = iconField.GetSection("small").ParseString();
+            var smallIcon = iconField.GetSection("small").ParseReference();
             if (
                 smallIcon != null
                 && spriteRegister.TryLookupName(
-                    smallIcon.ToId(key, "Sprite"),
+                    smallIcon.ToId(key, TemplateConstants.Sprite),
                     out var lookup,
                     out var _
                 )
@@ -91,11 +94,11 @@ namespace TrainworksReloaded.Base.Class
                 AccessTools.Field(iconSetType, "small").SetValue(iconSet, lookup);
             }
 
-            var mediumIcon = iconField.GetSection("medium").ParseString();
+            var mediumIcon = iconField.GetSection("medium").ParseReference();
             if (
                 mediumIcon != null
                 && spriteRegister.TryLookupName(
-                    mediumIcon.ToId(key, "Sprite"),
+                    mediumIcon.ToId(key, TemplateConstants.Sprite),
                     out var lookup2,
                     out var _
                 )
@@ -104,11 +107,11 @@ namespace TrainworksReloaded.Base.Class
                 AccessTools.Field(iconSetType, "medium").SetValue(iconSet, lookup2);
             }
 
-            var largeIcon = iconField.GetSection("large").ParseString();
+            var largeIcon = iconField.GetSection("large").ParseReference();
             if (
                 largeIcon != null
                 && spriteRegister.TryLookupName(
-                    largeIcon.ToId(key, "Sprite"),
+                    largeIcon.ToId(key, TemplateConstants.Sprite),
                     out var lookup3,
                     out var _
                 )
@@ -117,11 +120,11 @@ namespace TrainworksReloaded.Base.Class
                 AccessTools.Field(iconSetType, "large").SetValue(iconSet, lookup3);
             }
 
-            var silhouette = iconField.GetSection("silhouette").ParseString();
+            var silhouette = iconField.GetSection("silhouette").ParseReference();
             if (
                 silhouette != null
                 && spriteRegister.TryLookupName(
-                    silhouette.ToId(key, "Sprite"),
+                    silhouette.ToId(key, TemplateConstants.Sprite),
                     out var lookup4,
                     out var _
                 )
@@ -131,16 +134,20 @@ namespace TrainworksReloaded.Base.Class
             }
 
             //handle starter relics
-            var starterRelics =
-                (List<RelicData>)
-                    AccessTools.Field(typeof(ClassData), "starterRelics").GetValue(data) ?? [];
-            foreach (var child in configuration.GetSection("starter_relics").GetChildren())
+            var starterRelics = data.GetStarterRelics() ?? [];
+            var relicConfig = configuration.GetSection("starter_relics");
+            if (overrideMode == OverrideMode.Replace && relicConfig.Exists())
             {
-                var id = child.GetSection("id").Value?.ToId(key, TemplateConstants.RelicData);
-                if (id == null)
-                {
-                    continue;
-                }
+                starterRelics.Clear();
+            }
+            var relicReferences = relicConfig
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var reference in relicReferences)
+            {
+                var id = reference.ToId(key, TemplateConstants.RelicData);
                 if (relicDataRegister.TryLookupName(id, out var relicData, out var _))
                 {
                     starterRelics.Add(relicData);
@@ -149,11 +156,12 @@ namespace TrainworksReloaded.Base.Class
             AccessTools.Field(typeof(ClassData), "starterRelics").SetValue(data, starterRelics);
 
             //handle starter card upgrade
-            var upgradeConfig = configuration.GetSection("starter_upgrade").Value;
+            var upgradeConfig = configuration.GetDeprecatedSection("starter_upgrade", "starter_card_upgrade");
+            var starterUpgradeReference = configuration.GetDeprecatedSection("starter_upgrade", "starter_card_upgrade").ParseReference();
             if (
-                upgradeConfig != null
+                starterUpgradeReference != null
                 && upgradeDataRegister.TryLookupName(
-                    upgradeConfig.ToId(key, TemplateConstants.Upgrade),
+                    starterUpgradeReference.ToId(key, TemplateConstants.Upgrade),
                     out var upgradeData,
                     out var _
                 )
@@ -163,13 +171,20 @@ namespace TrainworksReloaded.Base.Class
                     .Field(typeof(ClassData), "starterCardUpgrade")
                     .SetValue(data, upgradeData);
             }
+            if (overrideMode == OverrideMode.Replace && starterUpgradeReference == null && upgradeConfig.Exists())
+            {
+                AccessTools
+                    .Field(typeof(ClassData), "starterCardUpgrade")
+                    .SetValue(data, null);
+            }
 
-            var enhancerPoolId = configuration.GetSection("random_draft_enhancer_pool")?.ParseString();
-            if (enhancerPoolId != null)
+            var enhancerPoolConfig = configuration.GetSection("random_draft_enhancer_pool");
+            var enhancerPoolReference = enhancerPoolConfig.ParseReference();
+            if (enhancerPoolReference != null)
             {
                 if (
                     enhancerPoolRegister.TryLookupId(
-                        enhancerPoolId.ToId(key, TemplateConstants.EnhancerPool),
+                        enhancerPoolReference.ToId(key, TemplateConstants.EnhancerPool),
                         out var enhancerPool,
                         out var _
                     )
@@ -180,22 +195,25 @@ namespace TrainworksReloaded.Base.Class
                         .SetValue(data, enhancerPool);
                 }
             }
+            if (overrideMode == OverrideMode.Replace && enhancerPoolReference == null && enhancerPoolConfig.Exists())
+            {
+                AccessTools
+                    .Field(typeof(ClassData), "randomDraftEnhancerPool")
+                    .SetValue(data, null);
+            }    
 
             //handle champion data
             var champions = configuration.GetSection("champions").GetChildren().ToList();
             var championDatas =
                 (List<ChampionData>)
-                    AccessTools.Field(typeof(ClassData), "champions").GetValue(data);
-            if (championDatas != null)
+                    AccessTools.Field(typeof(ClassData), "champions").GetValue(data) ?? [];
+
+            if (overrideMode == OverrideMode.Replace && champions.Count > 0)
             {
                 championDatas.Clear();
             }
 
-            if (championDatas == null)
-            {
-                championDatas = new List<ChampionData>();
-                AccessTools.Field(typeof(ClassData), "champions").SetValue(data, championDatas);
-            }
+            // TODO fix override with championData
             foreach (var champion in champions)
             {
                 var championData = ScriptableObject.CreateInstance<ChampionData>();
@@ -205,11 +223,11 @@ namespace TrainworksReloaded.Base.Class
                     configuration.GetSection("selected_cue").ParseString() ?? "";
 
                 //card data
-                var championCardData = champion.GetSection("card_data").ParseString();
+                var championCardData = champion.GetSection("card_data").ParseReference();
                 if (
                     championCardData != null
                     && cardDataRegister.TryLookupName(
-                        championCardData.ToId(key, "Card"),
+                        championCardData.ToId(key, TemplateConstants.Card),
                         out var championCard,
                         out var _
                     )
@@ -218,11 +236,11 @@ namespace TrainworksReloaded.Base.Class
                     championData.championCardData = championCard;
                 }
 
-                var starterCardData = champion.GetSection("starter_card").ParseString();
+                var starterCardData = champion.GetSection("starter_card").ParseReference();
                 if (
                     starterCardData != null
                     && cardDataRegister.TryLookupName(
-                        starterCardData.ToId(key, "Card"),
+                        starterCardData.ToId(key, TemplateConstants.Card),
                         out var starterCard,
                         out var _
                     )
@@ -232,11 +250,11 @@ namespace TrainworksReloaded.Base.Class
                 }
 
                 //sprites
-                var championIcon = champion.GetSection("icon").ParseString();
+                var championIcon = champion.GetSection("icon").ParseReference();
                 if (
                     championIcon != null
                     && spriteRegister.TryLookupName(
-                        championIcon.ToId(key, "Sprite"),
+                        championIcon.ToId(key, TemplateConstants.Sprite),
                         out var icon1,
                         out var _
                     )
@@ -245,11 +263,11 @@ namespace TrainworksReloaded.Base.Class
                     championData.championIcon = icon1;
                 }
 
-                var championLockedIcon = champion.GetSection("locked_icon").ParseString();
+                var championLockedIcon = champion.GetSection("locked_icon").ParseReference();
                 if (
                     championLockedIcon != null
                     && spriteRegister.TryLookupName(
-                        championLockedIcon.ToId(key, "Sprite"),
+                        championLockedIcon.ToId(key, TemplateConstants.Sprite),
                         out var icon2,
                         out var _
                     )
@@ -258,11 +276,11 @@ namespace TrainworksReloaded.Base.Class
                     championData.championLockedIcon = icon2;
                 }
 
-                var championPortrait = champion.GetSection("portrait").ParseString();
+                var championPortrait = champion.GetSection("portrait").ParseReference();
                 if (
                     championPortrait != null
                     && spriteRegister.TryLookupName(
-                        championPortrait.ToId(key, "Sprite"),
+                        championPortrait.ToId(key, TemplateConstants.Sprite),
                         out var icon3,
                         out var _
                     )
@@ -278,6 +296,7 @@ namespace TrainworksReloaded.Base.Class
                     var championSpawn = championData.championCardData.GetSpawnCharacterData();
                     if (championSpawn != null)
                     {
+                        // TODO this may not be necessary. Unused field.
                         AccessTools
                             .Field(typeof(CardUpgradeTreeData), "champion")
                             .SetValue(upgradeTreeData, championSpawn);
@@ -295,13 +314,15 @@ namespace TrainworksReloaded.Base.Class
                     AccessTools
                         .Field(typeof(CardUpgradeTreeData.UpgradeTree), "cardUpgrades")
                         .SetValue(upgradeTree, upgrades);
-                    foreach (var upgrade in config.GetChildren())
+                    var upgradeReferences = config
+                        .GetChildren()
+                        .Select(x => x.ParseReference())
+                        .Where(x => x != null)
+                        .Cast<ReferencedObject>();
+                    foreach (var upgradeReference in upgradeReferences)
                     {
-                        var upgradeString = upgrade.ParseString();
-                        if (
-                            upgradeString != null
-                            && upgradeDataRegister.TryLookupName(
-                                upgradeString.ToId(key, "Upgrade"),
+                        if (upgradeDataRegister.TryLookupName(
+                                upgradeReference.ToId(key, TemplateConstants.Upgrade),
                                 out var upgradeObj,
                                 out var _
                             )
@@ -319,6 +340,9 @@ namespace TrainworksReloaded.Base.Class
 
                 championDatas.Add(championData);
             }
+
+            AccessTools.Field(typeof(ClassData), "champions").SetValue(data, championDatas);
         }
+
     }
 }

@@ -87,6 +87,7 @@ namespace TrainworksReloaded.Base.Relic
                 )
             )
             {
+                _logger.Log(LogLevel.Error, $"Failed to load relic effect class name {effectStateName} in {name} with mod reference {modReference}. Make sure it is a class inheriting from relicEffectBase.");
                 return null;
             }
             AccessTools.Field(typeof(RelicEffectData), "relicEffectClassName").SetValue(data, fullyQualifiedName);
@@ -133,10 +134,10 @@ namespace TrainworksReloaded.Base.Relic
             var useIntRange = config.GetSection("use_int_range").ParseBool() ?? false;
             AccessTools.Field(typeof(RelicEffectData), "paramUseIntRange").SetValue(data, useIntRange);
 
-            var minInt = config.GetSection("min_int").ParseInt() ?? 0;
+            var minInt = config.GetDeprecatedSection("min_int", "param_min_int").ParseInt() ?? 0;
             AccessTools.Field(typeof(RelicEffectData), "paramMinInt").SetValue(data, minInt);
 
-            var maxInt = config.GetSection("max_int").ParseInt() ?? 0;
+            var maxInt = config.GetDeprecatedSection("max_int", "param_max_int").ParseInt() ?? 0;
             AccessTools.Field(typeof(RelicEffectData), "paramMaxInt").SetValue(data, maxInt);
 
             // Handle string parameter
@@ -144,7 +145,7 @@ namespace TrainworksReloaded.Base.Relic
             AccessTools.Field(typeof(RelicEffectData), "paramString").SetValue(data, paramString);
 
             // Handle special character type
-            var specialCharacterType = config.GetSection("special_character_type").ParseSpecialCharacterType() ?? SpecialCharacterType.None;
+            var specialCharacterType = config.GetDeprecatedSection("special_character_type", "param_special_character_type").ParseSpecialCharacterType() ?? SpecialCharacterType.None;
             AccessTools.Field(typeof(RelicEffectData), "paramSpecialCharacterType").SetValue(data, specialCharacterType);
 
             // Handle boolean parameters
@@ -162,7 +163,7 @@ namespace TrainworksReloaded.Base.Relic
             AccessTools.Field(typeof(RelicEffectData), "paramTargetMode").SetValue(data, targetMode);
 
             // Handle card type
-            var cardType = config.GetSection("card_type").ParseCardType() ?? CardType.Spell;
+            var cardType = config.GetDeprecatedSection("card_type", "param_card_type").ParseCardType() ?? CardType.Spell;
             AccessTools.Field(typeof(RelicEffectData), "paramCardType").SetValue(data, cardType);
 
 
@@ -180,43 +181,24 @@ namespace TrainworksReloaded.Base.Relic
 
 
             // Handle source card trait
-            var sourceCardTrait = config.GetSection("source_card_trait").ParseString();
-            if (sourceCardTrait != null && sourceCardTrait.GetFullyQualifiedName<CardTraitState>(
-                    assembly,
-                    out string? sourceCardTraitName
-                ))
-            {
-                AccessTools.Field(typeof(RelicEffectData), "sourceCardTraitParam").SetValue(data, sourceCardTraitName);
-            }
-            else
-            {
-                AccessTools.Field(typeof(RelicEffectData), "sourceCardTraitParam").SetValue(data, "");
-            }
+            var sourceCardTraitConfig = config.GetSection("source_card_trait");
+            var sourceCardTraitName = ParseEffectType<CardTraitState>(sourceCardTraitConfig, key, _atlas, effectId);
+            AccessTools.Field(typeof(RelicEffectData), "sourceCardTraitParam").SetValue(data, sourceCardTraitName ?? "");
 
             // Handle target card trait
-            var targetCardTrait = config.GetSection("target_card_trait").ParseString();
-            if (targetCardTrait != null && targetCardTrait.GetFullyQualifiedName<CardTraitState>(
-                    assembly,
-                    out string? targetCardTraitName
-                ))
-            {
-                AccessTools.Field(typeof(RelicEffectData), "targetCardTraitParam").SetValue(data, targetCardTraitName);
-            }
-            else
-            {
-                AccessTools.Field(typeof(RelicEffectData), "targetCardTraitParam").SetValue(data, "");
-            }
+            var targetCardTraitConfig = config.GetSection("target_card_trait");
+            var targetCardTraitName = ParseEffectType<CardTraitState>(targetCardTraitConfig, key, _atlas, effectId);
+            AccessTools.Field(typeof(RelicEffectData), "targetCardTraitParam").SetValue(data, targetCardTraitName ?? "");
 
             // Handle rarity ticket type
-            var rarityTicketType = config.GetSection("rarity_ticket_type").ParseRarityTicketType() ?? RarityTicketType.None;
+            var rarityTicketType = config.GetDeprecatedSection("rarity_ticket_type", "param_rarity_ticket_type").ParseRarityTicketType() ?? RarityTicketType.None;
             AccessTools.Field(typeof(RelicEffectData), "paramRarityTicketType").SetValue(data, rarityTicketType);
 
             // Handle card rarity type
-            var cardRarityType = config.GetSection("card_rarity_type").ParseRarity() ?? CollectableRarity.Common;
+            var cardRarityType = config.GetDeprecatedSection("card_rarity_type", "param_card_rarity_type").ParseRarity() ?? CollectableRarity.Common;
             AccessTools.Field(typeof(RelicEffectData), "paramCardRarityType").SetValue(data, cardRarityType);
 
         
-
             //Handle cardTriggers
             var cardTriggers = config.GetSection("card_triggers").GetChildren()
                 .Select(x => x.ParseCardTriggerType())
@@ -237,56 +219,26 @@ namespace TrainworksReloaded.Base.Relic
             }
             AccessTools.Field(typeof(RelicEffectData), "effectConditions").SetValue(data, relicEffectConditions);
 
-            var additionalTooltips = new List<AdditionalTooltipData>();
-            int configCount = 0;
-            foreach (var tooltipConfig in config.GetSection("additional_tooltips").GetChildren())
-            {
-                var tooltipData = new AdditionalTooltipData();
-
-                var titleKey = $"RelicEffectDataTooltip_titleKey_{configCount}-{name}";
-                var descriptionTKey = $"RelicEffectDataTooltip_descriptionKey_{configCount}-{name}";
-
-                var titleKeyTerm = tooltipConfig.GetSection("titles").ParseLocalizationTerm();
-                if (titleKeyTerm != null)
-                {
-                    tooltipData.titleKey = titleKey;
-                    titleKeyTerm.Key = titleKey;
-                    _termRegister.Register(titleKey, titleKeyTerm);
-                }
-                var descriptionTKeyTerm = tooltipConfig
-                    .GetSection("descriptions")
-                    .ParseLocalizationTerm();
-                if (descriptionTKeyTerm != null)
-                {
-                    tooltipData.descriptionKey = descriptionTKey;
-                    descriptionTKeyTerm.Key = descriptionTKey;
-                    _termRegister.Register(descriptionTKey, descriptionTKeyTerm);
-                }
-
-                tooltipData.style =
-                    tooltipConfig.GetSection("param_trigger").ParseTooltipDesignType()
-                    ?? TooltipDesigner.TooltipDesignType.Default;
-                tooltipData.isStatusTooltip =
-                    tooltipConfig.GetSection("is_status").ParseBool() ?? false;
-                tooltipData.hideInTrainRoomUI =
-                    tooltipConfig.GetSection("hide_in_train_room").ParseBool() ?? false;
-                tooltipData.allowSecondaryPlacement =
-                    tooltipConfig.GetSection("allow_secondary_placement").ParseBool() ?? false;
-                tooltipData.isTriggerTooltip =
-                    tooltipConfig.GetSection("hide_in_train_room").ParseBool() ?? false;
-
-                configCount++;
-                additionalTooltips.Add(tooltipData);
-            }
-            AccessTools
-                .Field(typeof(RelicEffectData), "additionalTooltips")
-                .SetValue(data, additionalTooltips.ToArray());
-
-
             service.Register(name, data);
             return new RelicEffectDataDefinition(key, data, config){
                 Id = effectId
             };
+        }
+
+        private string? ParseEffectType<T>(IConfigurationSection configuration, string key, PluginAtlas atlas, string id)
+        {
+            var reference = configuration.ParseReference();
+            if (reference == null)
+                return null;
+            var name = reference.id;
+            var modReference = reference.mod_reference ?? key;
+            var assembly = atlas.PluginDefinitions.GetValueOrDefault(modReference)?.Assembly;
+            if (name.GetFullyQualifiedName<T>(assembly, out string? fullyQualifiedName))
+            {
+                return fullyQualifiedName;
+            }
+            _logger.Log(LogLevel.Warning, $"Failed to load class name {name} in relic_effect {id} with mod reference {modReference}, Note that this isn't a reference to a CardTraitData, but a class that inherits from {typeof(T).Name}.");
+            return null;
         }
     }
 }

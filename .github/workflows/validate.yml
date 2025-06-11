@@ -20,11 +20,8 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Install check-jsonschema
+      run: pip install check-jsonschema
+
     - name: Validate JSON Schema
-      uses: walbo/validate-json@v1.1.0
-      with:
-        files: 
-          schemas/schemas/*.json
-          schemas/definitions/*.json
-        print-valid-files: true
-        schema-version: draft-07
+      run: check-jsonschema schemas/**/*.json --schemafile=http://json-schema.org/draft-07/schema#

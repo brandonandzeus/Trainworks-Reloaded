@@ -50,29 +50,27 @@ namespace TrainworksReloaded.Base.Trait
             var data = definition.Data;
             var key = definition.Key;
 
-            logger.Log(
-                Core.Interfaces.LogLevel.Info,
+            logger.Log(LogLevel.Debug, 
                 $"Finalizing Card Trait {definition.Id.ToId(key, TemplateConstants.Trait)}... "
             );
 
             // Card
-            var cardConfig = configuration.GetSection("param_card_data").Value;
+            var cardReference = configuration.GetDeprecatedSection("param_card_data", "param_card").ParseReference();
             CardData? card = null;
-            if (cardConfig != null)
+            if (cardReference != null)
             {
-                var cardId = cardConfig.ToId(key, TemplateConstants.Card);
-                cardRegister.TryLookupId(cardId, out card, out var _);
+                cardRegister.TryLookupId(cardReference.ToId(key, TemplateConstants.Card), out card, out var _);
             }
             AccessTools
                 .Field(typeof(CardTraitData), "paramCardData")
                 .SetValue(data, card);
 
             // CardUpgrade
-            var cardUpgradeConfig = configuration.GetSection("param_upgrade").Value;
+            var cardUpgradeReference = configuration.GetSection("param_upgrade").ParseReference();
             CardUpgradeData? cardUpgrade = null;
-            if (cardUpgradeConfig != null)
+            if (cardUpgradeReference != null)
             {
-                var cardUpgradeId = cardUpgradeConfig.ToId(key, TemplateConstants.Upgrade);
+                var cardUpgradeId = cardUpgradeReference.ToId(key, TemplateConstants.Upgrade);
                 upgradeRegister.TryLookupId(cardUpgradeId, out cardUpgrade, out var _);
             }
             AccessTools
@@ -83,31 +81,29 @@ namespace TrainworksReloaded.Base.Trait
             List<StatusEffectStackData> paramStatusEffects = [];
             foreach (var child in configuration.GetSection("param_status_effects").GetChildren())
             {
-                var idConfig = child?.GetSection("status").Value;
-                if (idConfig == null)
+                var statusReference = child.GetSection("status").ParseReference();
+                if (statusReference == null)
                     continue;
-                var statusEffectId = idConfig.ToId(key, TemplateConstants.StatusEffect);
-                string statusId = idConfig;
+                var statusEffectId = statusReference.ToId(key, TemplateConstants.StatusEffect);
                 if (statusRegister.TryLookupId(statusEffectId, out var statusEffectData, out var _))
                 {
-                    statusId = statusEffectData.GetStatusId();
+                    paramStatusEffects.Add(new StatusEffectStackData
+                    {
+                        statusId = statusEffectData.GetStatusId(),
+                        count = child.GetSection("count").ParseInt() ?? 0,
+                    });
                 }
-                paramStatusEffects.Add(new StatusEffectStackData()
-                {
-                    statusId = statusId,
-                    count = child?.GetSection("count").ParseInt() ?? 0,
-                });
             }
             AccessTools
                 .Field(typeof(CardTraitData), "paramStatusEffects")
                 .SetValue(data, paramStatusEffects.ToArray());
 
             var paramSubtype = "SubtypesData_None";
-            var paramSubtypeId = configuration.GetSection("param_subtype").ParseString();
-            if (paramSubtypeId != null)
+            var paramSubtypeReference = configuration.GetSection("param_subtype").ParseReference();
+            if (paramSubtypeReference != null)
             {
                 if (subtypeRegister.TryLookupId(
-                    paramSubtypeId.ToId(key, TemplateConstants.Subtype),
+                    paramSubtypeReference.ToId(key, TemplateConstants.Subtype),
                     out var lookup,
                     out var _
                 ))

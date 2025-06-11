@@ -1,31 +1,26 @@
 {
-    "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/definitions/card_target_mode.json",
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "type": "string",
-    "description": "Target modes for cards. Multiple modes can be combined using the '|' character.",
-    "examples": [
-        "all",
-        "single",
-        "targetless",
-        "other",
-        "none",
-        "all|single",
-        "single|targetless",
-        "all|single|targetless"
-    ],
-    "oneOf": [{
-            "enum": [
-                "all",
-                "single",
-                "targetless",
-                "other",
-                "none"
-            ]
-        },
-        {
-            "type": "string",
-            "pattern": "^(all|single|targetless|other|none)(\\|(all|single|targetless|other|none))*$",
-            "description": "Multiple target modes combined with '|' character"
-        }
-    ]
+  "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/definitions/card_target_mode.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Target modes for cards. The CardTargetMode is determined by the first effects' target mode.",
+  "examples": [
+    [ "all" ],
+    [ "single" ],
+    [ "single", "targetless" ]
+  ],
+  "oneOf": [
+    {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "all",
+          "single",
+          "targetless",
+          "other",
+          "none"
+        ]
+      }
+    }
+  ]
 }

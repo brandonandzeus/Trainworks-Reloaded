@@ -31,7 +31,6 @@ namespace TrainworksReloaded.Base.CardUpgrade
 
         public List<IDefinition<CardUpgradeMaskData>> Run(IRegister<CardUpgradeMaskData> service)
         {
-            // We load all cards and then finalize them to avoid dependency loops
             var processList = new List<IDefinition<CardUpgradeMaskData>>();
             foreach (var config in atlas.PluginDefinitions)
             {
@@ -41,7 +40,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
         }
 
         /// <summary>
-        /// Loads the Card Definitions in
+        /// Loads the Upgrade Mask Definitions in
         /// </summary>
         /// <param name="service"></param>
         /// <param name="key"></param>
@@ -201,7 +200,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
             List<string> requiredEffects = [];
             foreach (var child in configuration.GetSection("required_effects").GetChildren())
             {
-                var effectType = ParseEffectType<CardEffectBase>(child, key, atlas);
+                var effectType = ParseEffectType<CardEffectBase>(child, key, atlas, id);
                 if (effectType != null)
                 {
                     requiredEffects.Add(effectType);
@@ -212,7 +211,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
             List<string> excludedEffects = [];
             foreach (var child in configuration.GetSection("excluded_effects").GetChildren())
             {
-                var effectType = ParseEffectType<CardEffectBase>(child, key, atlas);
+                var effectType = ParseEffectType<CardEffectBase>(child, key, atlas, id);
                 if (effectType != null)
                 {
                     excludedEffects.Add(effectType);
@@ -223,7 +222,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
             List<string> requiredTraits = [];
             foreach (var child in configuration.GetSection("required_traits").GetChildren())
             {
-                var effectType = ParseEffectType<CardTraitState>(child, key, atlas);
+                var effectType = ParseEffectType<CardTraitState>(child, key, atlas, id);
                 if (effectType != null)
                 {
                     requiredTraits.Add(effectType);
@@ -234,7 +233,7 @@ namespace TrainworksReloaded.Base.CardUpgrade
             List<string> excludedTraits = [];
             foreach (var child in configuration.GetSection("excluded_traits").GetChildren())
             {
-                var effectType = ParseEffectType<CardTraitState>(child, key, atlas);
+                var effectType = ParseEffectType<CardTraitState>(child, key, atlas, id);
                 if (effectType != null)
                 {
                     excludedTraits.Add(effectType);
@@ -243,28 +242,26 @@ namespace TrainworksReloaded.Base.CardUpgrade
             AccessTools.Field(typeof(CardUpgradeMaskData), "excludedCardTraits").SetValue(data, excludedTraits);
 
             service.Register(name, data);
-            return new CardUpgradeMaskDefinition(key, data, configuration);
+            return new CardUpgradeMaskDefinition(key, data, configuration)
+            {
+                Id = id
+            };
         }
 
-        private string? ParseEffectType<T>(IConfiguration configuration, string key, PluginAtlas atlas)
+        private string? ParseEffectType<T>(IConfigurationSection configuration, string key, PluginAtlas atlas, string id)
         {
-            var name = configuration.GetSection("name").ParseString();
-            if (name == null)
-            {
+            var reference = configuration.ParseReference();
+            if (reference == null)
                 return null;
-            }
-            var modReference = configuration.GetSection("mod_reference").Value ?? key;
+            var name = reference.id;
+            var modReference = reference.mod_reference ?? key;
             var assembly = atlas.PluginDefinitions.GetValueOrDefault(modReference)?.Assembly;
-            if (
-                !name.GetFullyQualifiedName<T>(
-                    assembly,
-                    out string? fullyQualifiedName
-                )
-            )
+            if (name.GetFullyQualifiedName<T>(assembly, out string? fullyQualifiedName))
             {
-                return null;
+                return fullyQualifiedName;
             }
-            return fullyQualifiedName;
+            logger.Log(LogLevel.Warning, $"Failed to load class name {name} in upgrade_mask {id} with mod reference {modReference}, Note that this isn't a reference, but a class that inherits from {typeof(T).Name}.");
+            return null;
         }
     }
 }

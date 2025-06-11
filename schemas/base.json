@@ -8,6 +8,9 @@
     "atlas_icons": {
       "$ref": "schemas/atlas_icons.json#/properties/atlas_icons"
     },
+    "additional_toolitps": {
+      "$ref": "schemas/additional_tooltips.json#/properties/additional_tooltips"
+    },
     "card_pools": {
       "$ref": "schemas/card_pools.json#/properties/card_pools"
     },

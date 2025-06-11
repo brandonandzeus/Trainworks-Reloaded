@@ -5,7 +5,6 @@ using System.Text;
 using HarmonyLib;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Core.Enum;
-using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
 using UnityEngine.AddressableAssets;

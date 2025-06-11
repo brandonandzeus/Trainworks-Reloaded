@@ -66,15 +66,18 @@ namespace TrainworksReloaded.Base.StatusEffects
             {
                 return null;
             }
-            var internalID = key.GetId(TemplateConstants.StatusEffect, id);
-            var statusId = internalID.ToLowerInvariant();
+            // modguid_statusid
+            var statusId = key.GetId(TemplateConstants.StatusEffect, id);
 
             var data = new StatusEffectData();
             AccessTools.Field(typeof(StatusEffectData), "statusId").SetValue(data, statusId);
 
             var statusEffectStateName = configuration.GetSection("class_name").Value;
             if (statusEffectStateName == null)
+            {
+                logger.Log(LogLevel.Error, $"Missing class_name parameter for status effect id {id}.");
                 return null;
+            }
 
             // Because the statusId is coupled with the class, only search the Assembly defining the status effect.
             var assembly = atlas.PluginDefinitions[key].Assembly;
@@ -83,6 +86,7 @@ namespace TrainworksReloaded.Base.StatusEffects
                 out string? fullyQualifiedName)
             )
             {
+                logger.Log(LogLevel.Error, $"Failed to load status effect state name {statusEffectStateName} in {id}, Make sure the class inherits from StatusEffectState.");
                 return null;
             }
             AccessTools.Field(typeof(StatusEffectData), "statusEffectStateName").SetValue(data, fullyQualifiedName);
@@ -261,7 +265,7 @@ namespace TrainworksReloaded.Base.StatusEffects
             var paramSecondaryInt = 0;
             AccessTools
                 .Field(typeof(StatusEffectData), "paramSecondaryInt")
-                .SetValue(data, configuration.GetSection("param_secondary_int").ParseInt() ?? paramSecondaryInt);
+                .SetValue(data, configuration.GetDeprecatedSection("param_secondary_int", "param_int_2").ParseInt() ?? paramSecondaryInt);
 
             var paramFloat = 0f;
             AccessTools
@@ -279,7 +283,7 @@ namespace TrainworksReloaded.Base.StatusEffects
                 .Field(typeof(StatusEffectData), "allowSecondaryUIPlacement")
                 .SetValue(data, configuration.GetSection("allow_secondary_ui_placement").ParseBool() ?? allowSecondaryUIPlacement);
 
-            service.Register(internalID, data);
+            service.Register(statusId, data);
             return new StatusEffectDataDefinition(key, data, configuration)
             {
                 Id = statusId,

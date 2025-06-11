@@ -31,6 +31,6 @@ namespace TrainworksReloaded.Base
         public const string Character = "Character";
         public const string Chatter = "Chatter";
         public const string Subtype = "Subtype";
-        public const string AssetBundle = "AssetBundle";
+        public const string AdditionalTooltip = "AdditionalTooltip";
     }
 }

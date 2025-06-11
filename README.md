@@ -1,9 +1,11 @@
 # Trainworks-Reloaded
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded)
+
 Modding Framework for Monster Train 2
 
 ## How to Install
 
-(Note: Trainsworks Reloaded is Built as a BepInEx 5 mod. Install version 5, not 6.)
+(Note: Trainworks Reloaded is built as a BepInEx 5 mod. Install version 5, not 6.)
 
 1. [Install BepInEx into Monster Train 2](https://docs.bepinex.dev/articles/user_guide/installation/index.html)
 2. Install our latest plugin and unzip it into the BepInEx plugins folder.

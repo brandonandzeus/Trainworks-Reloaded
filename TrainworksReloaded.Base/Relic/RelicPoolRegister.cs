@@ -19,7 +19,7 @@ namespace TrainworksReloaded.Base.Relic
 
         public void Register(string key, RelicPool item)
         {
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Register Relic Pool {key}... ");
+            logger.Log(LogLevel.Info, $"Register Relic Pool {key}... ");
             Add(key, item);
         }
 
@@ -38,6 +38,15 @@ namespace TrainworksReloaded.Base.Relic
         {
             IsModded = true;
             return this.TryGetValue(identifier, out lookup);
+        }
+
+        public static RelicPool? GetVanillaRelicPool(AllGameData allGameData, string poolName)
+        {
+            if (poolName == "megapool" || poolName == "MegaRelicPool")
+            {
+                return allGameData.GetBalanceData().GetFtueBlessingPool();
+            }
+            return null;
         }
     }
 }

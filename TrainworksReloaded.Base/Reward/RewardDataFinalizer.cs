@@ -4,7 +4,6 @@ using System.Text;
 using HarmonyLib;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Base.Room;
-using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
 
@@ -47,12 +46,11 @@ namespace TrainworksReloaded.Base.Reward
             var data = definition.Data;
             var key = definition.Key;
 
-            logger.Log(
-                Core.Interfaces.LogLevel.Info,
-                $"Finalizing Reward Data {definition.Id.ToId(key, TemplateConstants.RewardData)}... "
+            logger.Log(LogLevel.Debug, 
+                $"Finalizing Reward Data {definition.Id.ToId(key, TemplateConstants.RewardData)}..."
             );
 
-            var sprite = configuration.GetSection("sprite").ParseString();
+            var sprite = configuration.GetSection("sprite").ParseReference();
             if (
                 sprite != null
                 && spriteRegister.TryLookupId(

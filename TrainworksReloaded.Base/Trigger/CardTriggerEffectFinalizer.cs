@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
 using HarmonyLib;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Core.Extensions;
+using TrainworksReloaded.Core.Impl;
 using TrainworksReloaded.Core.Interfaces;
+using static TrainworksReloaded.Base.Extensions.ParseReferenceExtensions;
 
 namespace TrainworksReloaded.Base.Trigger
 {
@@ -14,8 +18,10 @@ namespace TrainworksReloaded.Base.Trigger
         private readonly IRegister<CardUpgradeData> upgradeRegister;
         private readonly IRegister<CardTriggerType> triggerEnumRegister;
         private readonly ICache<IDefinition<CardTriggerEffectData>> cache;
+        private readonly PluginAtlas atlas;
 
         public CardTriggerEffectFinalizer(
+            PluginAtlas atlas,
             IModLogger<CardTriggerEffectFinalizer> logger,
             IRegister<CardEffectData> effectRegister,
             IRegister<CardUpgradeData> upgradeRegister,
@@ -23,6 +29,7 @@ namespace TrainworksReloaded.Base.Trigger
             ICache<IDefinition<CardTriggerEffectData>> cache
         )
         {
+            this.atlas = atlas;
             this.logger = logger;
             this.effectRegister = effectRegister;
             this.upgradeRegister = upgradeRegister;
@@ -45,30 +52,24 @@ namespace TrainworksReloaded.Base.Trigger
             var key = definition.Key;
             var data = definition.Data;
 
-            logger.Log(
-                Core.Interfaces.LogLevel.Info,
+            logger.Log(LogLevel.Debug, 
                 $"Finalizing Card Trigger {key.GetId(TemplateConstants.CardTrigger, definition.Id)}... "
             );
 
             //handle trigger
             var trigger = CardTriggerType.OnCast;
-            var triggerSection = configuration.GetSection("trigger");
-            if (triggerSection.Value != null)
+            var triggerReference = configuration.GetSection("trigger").ParseReference();
+            if (triggerReference != null)
             {
-                var value = triggerSection.Value;
                 if (
                     triggerEnumRegister.TryLookupId(
-                        value.ToId(key, TemplateConstants.CardTriggerEnum),
+                        triggerReference.ToId(key, TemplateConstants.CardTriggerEnum),
                         out var triggerFound,
                         out var _
                     )
                 )
                 {
                     trigger = triggerFound;
-                }
-                else
-                {
-                    trigger = triggerSection.ParseCardTriggerType() ?? default;
                 }
             }
             AccessTools
@@ -77,36 +78,66 @@ namespace TrainworksReloaded.Base.Trigger
 
 
             var triggers = new List<CardTriggerData>();
-            foreach (var triggerEffect in configuration.GetSection("trigger_effects").GetChildren())
+            foreach (var child in configuration.GetSection("trigger_effects").GetChildren())
             {
                 var triggerData = new CardTriggerData();
 
                 triggerData.persistenceMode =
-                    triggerEffect.GetSection("persistence").ParsePersistenceMode()
+                    child.GetDeprecatedSection("persistence", "persistence_mode").ParsePersistenceMode()
                     ?? PersistenceMode.SingleRun;
-                triggerData.paramInt = triggerEffect.GetSection("param_int").ParseInt() ?? 0;
-                var effect = triggerEffect.GetSection("trigger_effect").Value;
-                if (effect == null)
+                triggerData.paramInt = child.GetSection("param_int").ParseInt() ?? 0;
+
+                var effectStateReference = child.GetSection("trigger_effect").ParseReference();
+                if (effectStateReference == null)
                 {
                     continue;
                 }
-                triggerData.cardTriggerEffect = effect;
-
-                var buffEffectType = "";
-                triggerData.buffEffectType = triggerEffect.GetSection("buff_effect").Value ?? buffEffectType;
-
-                var paramUpgrade = triggerEffect.GetSection("param_upgrade").Value;
+                var triggerEffectName = effectStateReference.id;
+                var modReference = effectStateReference.mod_reference ?? key;
+                var assembly = atlas.PluginDefinitions.GetValueOrDefault(modReference)?.Assembly;
                 if (
-                    paramUpgrade != null
-                    && upgradeRegister.TryLookupId(
-                        paramUpgrade.ToId(key, "Upgrade"),
-                        out var lookup,
-                        out var _
+                    !triggerEffectName.GetFullyQualifiedName<ICardTriggerEffect>(
+                        assembly,
+                        out string? fullyQualifiedName
                     )
                 )
                 {
+                    logger.Log(LogLevel.Error, $"Failed to load trigger effect state name {triggerEffectName} in {definition.Id} with mod reference {modReference}. Make sure the class implements interface ICardTriggerEffect.");
+                    continue;
+                }
+                triggerData.cardTriggerEffect = fullyQualifiedName;
+
+                effectStateReference = child.GetSection("buff_effect").ParseReference();
+                if (effectStateReference == null)
+                {
+                    continue;
+                }
+                var effectStateName = effectStateReference.id;
+                modReference = effectStateReference.mod_reference ?? key;
+                assembly = atlas.PluginDefinitions.GetValueOrDefault(modReference)?.Assembly;
+                if (
+                    !triggerEffectName.GetFullyQualifiedName<CardEffectBase>(
+                        assembly,
+                        out fullyQualifiedName
+                    )
+                )
+                {
+                    logger.Log(LogLevel.Error, $"Failed to load effect state name {effectStateName} in {definition.Id} with mod reference {modReference}. Make sure the class inherits from CardEffectBase.");
+                    continue;
+                }
+                triggerData.buffEffectType = fullyQualifiedName;
+
+                var upgradeReference = child.GetSection("param_upgrade").ParseReference();
+                if (upgradeReference != null)
+                {
+                    upgradeRegister.TryLookupId(
+                        upgradeReference.ToId(key, TemplateConstants.Upgrade),
+                        out var lookup,
+                        out var _
+                    );
                     triggerData.paramUpgrade = lookup;
                 }
+
                 triggers.Add(triggerData);
             }
             AccessTools
@@ -114,21 +145,15 @@ namespace TrainworksReloaded.Base.Trigger
                 .SetValue(data, triggers);
 
             var effects = new List<CardEffectData>();
-            foreach (var effect in configuration.GetSection("effects").GetChildren())
+            var effectReferences = configuration.GetSection("effects")
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var reference in effectReferences)
             {
-                if (effect == null)
-                {
-                    continue;
-                }
-                var paramEffect = effect.GetSection("id").Value;
-                if (
-                    paramEffect != null
-                    && effectRegister.TryLookupId(
-                        paramEffect.ToId(key, "Effect"),
-                        out var lookup,
-                        out var _
-                    )
-                )
+                var id = reference.ToId(key, TemplateConstants.Effect);
+                if (effectRegister.TryLookupId(id, out var lookup, out var _))
                 {
                     effects.Add(lookup);
                 }

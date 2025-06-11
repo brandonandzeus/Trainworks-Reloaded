@@ -32,7 +32,7 @@ namespace TrainworksReloaded.Base.Relic
 
         public void Register(string key, EnhancerPool item)
         {
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Register Enhancer Pool {key}... ");
+            logger.Log(LogLevel.Info, $"Register Enhancer Pool {key}...");
             Add(key, item);
         }
 
@@ -65,23 +65,19 @@ namespace TrainworksReloaded.Base.Relic
 
         public static EnhancerPool? GetVanillaEnhancerPool(AllGameData allGameData, string poolName)
         {
-            var merchantPoolName = poolName switch
+            if (poolName == "MalickaDraftUpgradePool")
             {
-                "unit_upgrade_common" => "UnitUpgradePoolCommon",
-                "unit_upgrade_rare" => "UnitUpgradePoolRare",
-                "spell_upgrade_common" => "SpellUpgradePoolCommon",
-                "spell_upgrade_cost_reduction" => "SpellUpgradePoolCostReduction",
-                "spell_upgrade_rare" => "SpellUpgradePoolRare",
-                _ => null
-            };
-
-            if (poolName == "draft_upgrade")
+                PyreArtifactData? malickaPyre = allGameData.FindPyreArtifactData("68a9b977-3407-4128-bf35-245fd92f8e2b");
+                var effect = malickaPyre?.GetFirstRelicEffectData<RelicEffectAddStartingUpgradeToCardDrafts>();
+                return effect?.GetParamEnhancerPool();
+            }    
+            else if (poolName == "DraftUpgradePool")
             {
                 CollectableRelicData? capriciousReflection = allGameData.FindCollectableRelicData("9e0e5d4e-6d16-43f1-8cd4-cc4c2b431afd");
                 var effect = capriciousReflection?.GetFirstRelicEffectData<RelicEffectAddStartingUpgradeToCardDrafts>();
                 return effect?.GetParamEnhancerPool();
             }
-            else if (merchantPoolName != null)
+            else if (poolName != null)
             {
                 IReadOnlyList<string> Merchants = [
                     "ed1b1cfa-9da2-4588-85fe-6360913ef41e", // Unit Upgrades
@@ -100,7 +96,7 @@ namespace TrainworksReloaded.Base.Relic
                             if (reward is EnhancerPoolRewardData enhancerPoolReward)
                             {
                                 var foundEnhancerPool = (EnhancerPool)AccessTools.Field(typeof(EnhancerPoolRewardData), "relicPool").GetValue(enhancerPoolReward);
-                                if (foundEnhancerPool.name == merchantPoolName)
+                                if (foundEnhancerPool.name == poolName)
                                 {
                                     return foundEnhancerPool;
                                 }

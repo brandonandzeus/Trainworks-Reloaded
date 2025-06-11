@@ -1,38 +1,39 @@
 {
-    "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/vfxs.json",
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "properties": {
-        "vfxs": {
-            "type": "array",
-            "description": "A collection of all visual effects (VFX) in the game, defining their properties and behaviors.",
-            "items": {
-                "required": [
-                    "id"
-                ],
-                "properties": {
-                    "facing": {
-                        "$ref": "../definitions/vfx_facing.json",
-                        "description": "Direction the VFX should face when spawned."
-                    },
-                    "id": {
-                        "type": "string",
-                        "description": "Unique identifier for this VFX."
-                    },
-                    "spawn_location": {
-                        "$ref": "../definitions/vfx_location.json",
-                        "description": "Location where the VFX should be spawned relative to its target."
-                    },
-                    "vfx_left": {
-                        "type": "string",
-                        "description": "Reference to the left-facing GameObject asset for this VFX."
-                    },
-                    "vfx_right": {
-                        "type": "string",
-                        "description": "Reference to the right-facing GameObject asset for this VFX."
-                    }
-                },
-                "description": "A VFX definition that specifies the properties and behaviors of a visual effect in the game."
-            }
-        }
+  "$id": "https://raw.githubusercontent.com/Monster-Train-2-Modding-Group/Trainworks-Reloaded/refs/heads/main/schemas/schemas/vfxs.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "properties": {
+    "vfxs": {
+      "type": "array",
+      "description": "A collection of all visual effects (VFX) in the game, defining their properties and behaviors.",
+      "items": {
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "facing": {
+            "$ref": "../definitions/vfx_facing.json",
+            "description": "Direction the VFX should face when spawned."
+          },
+          "id": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Unique identifier for this VFX."
+          },
+          "spawn_location": {
+            "$ref": "../definitions/vfx_location.json",
+            "description": "Location where the VFX should be spawned relative to its target."
+          },
+          "vfx_left": {
+            "type": "string",
+            "description": "Reference to the left-facing GameObject asset for this VFX."
+          },
+          "vfx_right": {
+            "type": "string",
+            "description": "Reference to the right-facing GameObject asset for this VFX."
+          }
+        },
+        "description": "A VFX definition that specifies the properties and behaviors of a visual effect in the game."
+      }
     }
+  }
 }

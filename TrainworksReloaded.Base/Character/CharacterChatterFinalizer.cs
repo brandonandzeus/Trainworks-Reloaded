@@ -6,7 +6,6 @@ using System.Xml.Linq;
 using TrainworksReloaded.Base.Extensions;
 using TrainworksReloaded.Base.Localization;
 using TrainworksReloaded.Base.Prefab;
-using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine.AddressableAssets;
 using static CharacterChatterData;
@@ -52,30 +51,25 @@ namespace TrainworksReloaded.Base.Character
             var key = definition.Key;
             var name = data.name;
 
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Finalizing Character Chatter {data.name}... ");
+            logger.Log(LogLevel.Debug, $"Finalizing Character Chatter {data.name}...");
 
             int i = 0;
             List<TriggerChatterExpressionData> triggerExpressions = [];
             foreach (var child in configuration.GetSection("trigger_expressions").GetChildren())
             {
                 var trigger = CharacterTriggerData.Trigger.OnDeath;
-                var triggerSection = configuration.GetSection("trigger");
-                if (triggerSection.Value != null)
+                var triggerReference = configuration.GetSection("trigger").ParseReference();
+                if (triggerReference != null)
                 {
-                    var value = triggerSection.Value;
                     if (
                         triggerEnumRegister.TryLookupId(
-                            value.ToId(key, TemplateConstants.CharacterTriggerEnum),
+                            triggerReference.ToId(key, TemplateConstants.CharacterTriggerEnum),
                             out var triggerFound,
                             out var _
                         )
                     )
                     {
                         trigger = triggerFound;
-                    }
-                    else
-                    {
-                        trigger = triggerSection.ParseTrigger() ?? default;
                     }
                 }
 
@@ -94,10 +88,10 @@ namespace TrainworksReloaded.Base.Character
             }
             AccessTools.Field(typeof(CharacterChatterData), "characterTriggerExpressions").SetValue(data, triggerExpressions);
 
-            var chatterId = configuration.GetSection("base_chatter").ParseString();
-            if (chatterId != null)
+            var chatterReference = configuration.GetSection("base_chatter").ParseReference();
+            if (chatterReference != null)
             {
-                if (chatterRegister.TryLookupId(chatterId.ToId(key, TemplateConstants.Chatter), out var lookup, out var _))
+                if (chatterRegister.TryLookupId(chatterReference.ToId(key, TemplateConstants.Chatter), out var lookup, out var _))
                 { 
                     AccessTools.Field(typeof(CharacterChatterData), "baseData").SetValue(data, lookup);
                 }

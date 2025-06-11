@@ -55,7 +55,7 @@ namespace TrainworksReloaded.Base.Prefab
                 .Configuration.GetSection("extensions")
                 .GetSection("character_art");
 
-            var spriteVal = characterConfig.GetSection("sprite").Value;
+            var spriteVal = characterConfig.GetSection("sprite").ParseReference();
             if (spriteVal == null)
                 return;
 
@@ -109,14 +109,14 @@ namespace TrainworksReloaded.Base.Prefab
             var characterUIObject = character_scale.Find("CharacterUI");
             if (characterUIObject == null)
             {
-                logger.Log(LogLevel.Error, $"Failed to find CharacterUI component on prefab for {definition.Key}");
+                logger.Log(LogLevel.Error, $"Failed to find CharacterUI component on CharacterScale for {definition.Key}");
                 return;
             }
 
             var quad_default = characterUIObject.Find("Quad_Default");
             if (quad_default == null)
             {
-                logger.Log(LogLevel.Error, $"Failed to find Quad_Default component on prefab for {definition.Key}");
+                logger.Log(LogLevel.Error, $"Failed to find Quad_Default component on CharacterUI for {definition.Key}");
                 return;
             }
 
@@ -124,6 +124,20 @@ namespace TrainworksReloaded.Base.Prefab
             if (meshRenderer == null)
             {
                 logger.Log(LogLevel.Error, $"Failed to find MeshRenderer component on Quad_Default for {definition.Key}");
+                return;
+            }
+
+            var unitAbilityUI = original.transform.Find("DetailsUIRoot/BottomAnchor/Stats/AbilityAndTriggersGroup/UnitAbilityUI");
+            if (unitAbilityUI == null)
+            {
+                logger.Log(LogLevel.Error, $"Failed to find UnitAbilityUI game object on prefab for {definition.Key}");
+                return;
+            }
+
+            var unitAbilityIconUI = unitAbilityUI.GetComponent<UnitAbilityIconUI>();
+            if (unitAbilityIconUI == null)
+            {
+                logger.Log(LogLevel.Error, $"Failed to find UnitAbilityIconUI game object on UnitAbilityUI game object for {definition.Key}");
                 return;
             }
 
@@ -193,6 +207,8 @@ namespace TrainworksReloaded.Base.Prefab
             spriteRenderer.enabled = true;
             AccessTools.Field(typeof(CharacterState), "sprite").SetValue(character_state, sprite);
             AccessTools.Field(typeof(CharacterState), "charUI").SetValue(character_state, characterUI);
+            AccessTools.Field(typeof(UnitAbilityIconUI), "characterState").SetValue(unitAbilityIconUI, character_state);
+
 
             // Get transform adjustments from configuration
             var transformConfig = characterConfig.GetSection("transform");

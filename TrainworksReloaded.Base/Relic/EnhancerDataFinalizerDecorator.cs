@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TrainworksReloaded.Base.Extensions;
-using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 
 namespace TrainworksReloaded.Base.Relic
@@ -59,14 +58,11 @@ namespace TrainworksReloaded.Base.Relic
             if (configuration == null)
                 return;
 
-            logger.Log(
-                Core.Interfaces.LogLevel.Info,
-                $"Finalizing Enhancer Data {relicId}... "
-            );
+            logger.Log(LogLevel.Debug, $"Finalizing Enhancer Data {relicId}...");
 
             // Handle linked class
-            var linkedClassId = configuration.GetSection("class").ParseString();
-            if (linkedClassId != null && classRegister.TryLookupName(linkedClassId.ToId(key, TemplateConstants.Class), out var linkedClass, out var _))
+            var linkedClassReference = configuration.GetSection("class").ParseReference();
+            if (linkedClassReference != null && classRegister.TryLookupName(linkedClassReference.ToId(key, TemplateConstants.Class), out var linkedClass, out var _))
             {
                 AccessTools.Field(typeof(EnhancerData), "linkedClass").SetValue(enhancer, linkedClass);
             }

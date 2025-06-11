@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using HarmonyLib;
 using TrainworksReloaded.Base.Extensions;
-using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
+using static TrainworksReloaded.Base.Extensions.ParseReferenceExtensions;
 
 namespace TrainworksReloaded.Base.Relic
 {
@@ -42,10 +43,10 @@ namespace TrainworksReloaded.Base.Relic
             var data = definition.Data;
             var key = definition.Key;
 
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Finalizing Relic {data.name}... ");
+            logger.Log(LogLevel.Debug, $"Finalizing Relic {data.name}...");
             
             // Handle relic sprite
-            var iconSprite = configuration.GetSection("icon").ParseString();
+            var iconSprite = configuration.GetSection("icon").ParseReference();
             if (
                 iconSprite != null
                 && spriteRegister.TryLookupId(
@@ -59,7 +60,7 @@ namespace TrainworksReloaded.Base.Relic
             }
 
             // Handle relic activated sprite
-            var iconSmallSprite = configuration.GetSection("icon_small").ParseString();
+            var iconSmallSprite = configuration.GetSection("icon_small").ParseReference();
             if (
                 iconSmallSprite != null
                 && spriteRegister.TryLookupId(
@@ -74,11 +75,14 @@ namespace TrainworksReloaded.Base.Relic
 
             //handle relic effects
             var relicEffects = new List<RelicEffectData>();
-            var relicEffectsConfig = configuration.GetSection("relic_effects").GetChildren();
-            foreach (var relicEffectConfig in relicEffectsConfig)
+            var relicEffectsReferences = configuration.GetSection("relic_effects")
+                .GetChildren()
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var reference in relicEffectsReferences)
             {
-                var relicEffectId = relicEffectConfig?.GetSection("id")?.ParseString();
-                if (relicEffectId != null && relicEffectRegister.TryLookupId(relicEffectId.ToId(key, TemplateConstants.RelicEffectData), out var relicEffectLookup, out var _))
+                if (relicEffectRegister.TryLookupId(reference.ToId(key, TemplateConstants.RelicEffectData), out var relicEffectLookup, out var _))
                 {
                     relicEffects.Add(relicEffectLookup);
                 }

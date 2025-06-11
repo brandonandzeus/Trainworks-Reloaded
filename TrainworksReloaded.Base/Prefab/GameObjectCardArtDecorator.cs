@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using SimpleInjector;
 using TrainworksReloaded.Base.Extensions;
-using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using UnityEngine;
 using UnityEngine.UI;
@@ -42,7 +41,7 @@ namespace TrainworksReloaded.Base.Prefab
                 .Configuration.GetSection("extensions")
                 .GetSection("card_art")
                 .GetSection("sprite")
-                .Value;
+                .ParseReference();
             if (spriteVal == null)
                 return;
 

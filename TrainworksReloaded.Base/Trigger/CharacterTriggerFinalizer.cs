@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using HarmonyLib;
 using TrainworksReloaded.Base.Extensions;
-using TrainworksReloaded.Core.Extensions;
 using TrainworksReloaded.Core.Interfaces;
 using static RimLight;
+using static TrainworksReloaded.Base.Extensions.ParseReferenceExtensions;
 
 namespace TrainworksReloaded.Base.Trigger
 {
@@ -45,30 +45,24 @@ namespace TrainworksReloaded.Base.Trigger
             var key = definition.Key;
             var data = definition.Data;
 
-            logger.Log(
-                Core.Interfaces.LogLevel.Info,
-                $"Finalizing Character Trigger {key.GetId(TemplateConstants.CharacterTrigger, definition.Id)}... "
+            logger.Log(LogLevel.Debug, 
+                $"Finalizing Character Trigger {key.GetId(TemplateConstants.CharacterTrigger, definition.Id)}..."
             );
 
             //handle trigger
             var trigger = CharacterTriggerData.Trigger.OnDeath;
-            var triggerSection = configuration.GetSection("trigger");
-            if (triggerSection.Value != null)
+            var triggerReference = configuration.GetSection("trigger").ParseReference();
+            if (triggerReference != null)
             {
-                var value = triggerSection.Value;
                 if (
                     triggerEnumRegister.TryLookupId(
-                        value.ToId(key, TemplateConstants.CharacterTriggerEnum),
+                        triggerReference.ToId(key, TemplateConstants.CharacterTriggerEnum),
                         out var triggerFound,
                         out var _
                     )
                 )
                 {
                     trigger = triggerFound;
-                }
-                else
-                {
-                    trigger = triggerSection.ParseTrigger() ?? default;
                 }
             }
             AccessTools
@@ -77,29 +71,22 @@ namespace TrainworksReloaded.Base.Trigger
 
             //handle effects cards
             var effectDatas = new List<CardEffectData>();
-            var effectDatasConfig = configuration
+            var effectReferences = configuration
                 .GetSection("effects")
                 .GetChildren()
-                .Select(x => x.GetSection("id").ParseString());
-            foreach (var effectData in effectDatasConfig)
+                .Select(x => x.ParseReference())
+                .Where(x => x != null)
+                .Cast<ReferencedObject>();
+            foreach (var reference in effectReferences)
             {
-                if (effectData == null)
-                {
-                    continue;
-                }
-
                 if (
                     effectRegister.TryLookupId(
-                        effectData.ToId(key, TemplateConstants.Effect),
+                        reference.ToId(key, TemplateConstants.Effect),
                         out var effect,
                         out var _
                     )
                 )
                 {
-                    logger.Log(
-                        Core.Interfaces.LogLevel.Info,
-                        $"Adding Effect {effect.GetEffectStateName()}"
-                    );
                     effectDatas.Add(effect);
                 }
             }

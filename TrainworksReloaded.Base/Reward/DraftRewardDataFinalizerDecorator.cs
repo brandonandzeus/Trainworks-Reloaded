@@ -66,13 +66,12 @@ namespace TrainworksReloaded.Base.Reward
             if (draftConfiguration == null)
                 return;
 
-            logger.Log(
-                Core.Interfaces.LogLevel.Info,
-                $"Finalizing Draft Reward Data {definition.Id.ToId(key, TemplateConstants.RewardData)}... "
+            logger.Log(LogLevel.Debug, 
+                $"Finalizing Draft Reward Data {definition.Id.ToId(key, TemplateConstants.RewardData)}..."
             );
 
             // Set draft pool
-            var draftPool = draftConfiguration.GetSection("draft_pool").ParseString();
+            var draftPool = draftConfiguration.GetSection("draft_pool").ParseReference();
             if (
                 draftPool != null
                 && cardPoolRegister.TryLookupId(
@@ -134,7 +133,7 @@ namespace TrainworksReloaded.Base.Reward
             AccessTools.Field(typeof(DraftRewardData), "rarityCeilingOverride").SetValue(draftData, rarityCeiling);
 
             // Set class data override
-            var classDataOverride = draftConfiguration.GetSection("class_data_override").ParseString();
+            var classDataOverride = draftConfiguration.GetSection("class_data_override").ParseReference();
             if (classDataOverride != null && classRegister.TryLookupName(classDataOverride.ToId(key, TemplateConstants.Class), out var classData, out var _))
             {
                 AccessTools.Field(typeof(DraftRewardData), "classDataOverride").SetValue(draftData, classData);
@@ -179,16 +178,6 @@ namespace TrainworksReloaded.Base.Reward
             AccessTools
                 .Field(typeof(DraftRewardData), "relicRarityTicketValues")
                 .SetValue(draftData, relicRarityTicketValues);
-
-            // Set GrantableRewardData fields
-            var isServiceMerchantReward = draftConfiguration.GetSection("is_service_merchant_reward").ParseBool() ?? false;
-            AccessTools.Field(typeof(GrantableRewardData), "_isServiceMerchantReward").SetValue(draftData, isServiceMerchantReward);
-
-            var merchantServiceIndex = draftConfiguration.GetSection("merchant_service_index").ParseInt() ?? 0;
-            AccessTools.Field(typeof(GrantableRewardData), "_merchantServiceIndex").SetValue(draftData, merchantServiceIndex);
-
-            var applyTrialDataModifiers = draftConfiguration.GetSection("apply_trial_data_modifiers").ParseBool() ?? false;
-            AccessTools.Field(typeof(GrantableRewardData), "_applyTrialDataModifiers").SetValue(draftData, applyTrialDataModifiers);
         }
     }
 }

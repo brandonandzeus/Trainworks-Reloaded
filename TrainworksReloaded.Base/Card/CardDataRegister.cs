@@ -40,7 +40,7 @@ namespace TrainworksReloaded.Base.Card
 
         public void Register(string key, CardData item)
         {
-            logger.Log(Core.Interfaces.LogLevel.Info, $"Register Card {key}... ");
+            logger.Log(LogLevel.Info, $"Register Card {key}... ");
             CardPoolBacking.Add(item);
             var gamedata = SaveManager.Value.GetAllGameData();
             var CardDatas =
