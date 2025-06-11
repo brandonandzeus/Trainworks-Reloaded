@@ -15,6 +15,7 @@ using static CharacterUI;
 using static MetagameSaveData;
 using static TooltipDesigner;
 using static VfxAtLoc;
+using static RelicEffectCondition;
 
 namespace TrainworksReloaded.Base.Extensions
 {
@@ -293,7 +294,19 @@ namespace TrainworksReloaded.Base.Extensions
             var val = section.Value;
             if (string.IsNullOrEmpty(val))
             {
-                return null;
+                if (!section.GetChildren().Any())
+                {
+                    return null;
+                }
+                CardTargetMode ret = CardTargetMode.All;
+                foreach (var child in section.GetChildren())
+                {
+                    if (child.Value != null)
+                    {
+                        ret |= (ParseCardTargetMode(section) ?? CardTargetMode.All); 
+                    }
+                }
+                return ret;
             }
             
             val = val.ToLower();
@@ -1116,6 +1129,52 @@ namespace TrainworksReloaded.Base.Extensions
                 return defaultValue;
             }
             return value.Value;
+        }
+
+        public static Comparator? ParseComparator(this IConfigurationSection section)
+        {
+            var val = section.Value;
+            if (string.IsNullOrEmpty(val))
+            {
+                if (!section.GetChildren().Any())
+                {
+                    return null;
+                }
+                Comparator ret = 0;
+                foreach (var child in section.GetChildren())
+                {
+                    if (child.Value != null)
+                    {
+                        ret |= (ParseComparator(section) ?? 0);
+                    }
+                }
+                return ret;
+            }
+
+            val = val.ToLower();
+            var values = val.Split('|', StringSplitOptions.RemoveEmptyEntries)
+                           .Select(v => v.Trim())
+                           .ToList();
+
+            Comparator result = 0;
+            foreach (var value in values)
+            {
+                Comparator? flag = value switch
+                {
+                    "less_than" => Comparator.LessThan,
+                    "greater_than" => Comparator.GreaterThan,
+                    "equal" => Comparator.Equal,
+                    _ => null
+                };
+
+                if (flag == null)
+                {
+                    return null;
+                }
+
+                result |= flag.Value;
+            }
+            return result;
         }
     }
 }
