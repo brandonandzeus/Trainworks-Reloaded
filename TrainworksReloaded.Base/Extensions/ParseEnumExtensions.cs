@@ -458,7 +458,7 @@ namespace TrainworksReloaded.Base.Extensions
                 "magic_power_in_target_room" => TrackedValueType.MagicPowerInTargetRoom,
                 "gold" => TrackedValueType.Gold,
                 "status_effect_count_on_last_ability_activator" =>
-                    TrackedValueType.StatusEffectCountOnLastAbilityActivator,,
+                    TrackedValueType.StatusEffectCountOnLastAbilityActivator,
                 "pyre_heart_resurrection" => TrackedValueType.PyreHeartResurrection,
                 "num_specific_cards_in_deck" => TrackedValueType.NumSpecificCardsInDeck,
                 "any_status_effect_stacks_added" => TrackedValueType.AnyStatusEffectStacksAdded,
